@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# Run this script in the top of a terraform folder to amend
+# the README.md with terraform input/output tables.
+#
+# Usage: ./terraform-docs-update [target_dir]
+#
+set -euo pipefail
+
+BANNER_START="<!-- terraform-docs-start -->"
+BANNER_END="<!-- terraform-docs-end -->"
+doc=README.md
+
+
+cd "${1:-$PWD}"
+
+if grep "$BANNER_START" "$doc" >/dev/null ; then
+  if [[ -f "$doc.bak" ]]; then
+    echo "$doc.bak file detected, aborting" >&2
+    exit 1
+  fi
+
+  mv "$doc" "$doc.bak"
+  {
+    sed "/$BANNER_START/q" "$doc.bak"
+    terraform-docs md .
+    sed -n -e "/$BANNER_END/,\$p" "$doc.bak"
+  } > "$doc"
+
+  rm "$doc.bak"
+else
+  {
+    echo "$BANNER_START"
+    terraform-docs md .
+    echo "$BANNER_END"
+  } >> "$doc"
+fi
