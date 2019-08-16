@@ -5,14 +5,6 @@
 }:
 
 let
-  # https://github.com/tweag/ormolu/issues/311
-  ormoluCmd =
-    writeScript "ormolu-pre-commit-check" ''
-    #!/usr/bin/env bash
-    for f in "$@"; do
-      ${tools.ormolu}/bin/ormolu --mode inplace $f
-    done
-  '';
   hooksYaml =
     writeText "pre-commit-hooks" ''
   -   id: hlint
@@ -24,7 +16,7 @@ let
   -   id: ormolu
       name: ormolu
       description: Haskell code prettifier.
-      entry: ${ormoluCmd}
+      entry: ${tools.ormolu}/bin/ormolu --mode inplace
       language: script
       files: '\.l?hs$'
   -   id: cabal-fmt
