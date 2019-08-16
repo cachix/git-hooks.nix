@@ -68,10 +68,11 @@ let
 
   run =
     runCommand "pre-commit-run" { buildInputs = [ git ]; } ''
+    set +e
     HOME=$PWD
-    ln -s ${hooksYaml} .pre-commit-hooks
     cp --no-preserve=mode -R ${src} src
-    ln -s ${hooks} src/.pre-commit-hooks
+    unlink src/.pre-commit-hooks || true
+    ln -fs ${hooks} src/.pre-commit-hooks
     cd src
     rm -rf src/.git
     git init
@@ -81,7 +82,9 @@ let
     git commit -m "init"
     echo "Running: $ pre-commit run --all-files"
     ${pre-commit}/bin/pre-commit run --all-files
+    exitcode=$?
     git diff
+    [ $? -eq 0 ] && exit $exitcode
     touch $out
   '';
 in
