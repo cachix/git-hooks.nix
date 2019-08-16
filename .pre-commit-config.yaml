@@ -1,0 +1,6 @@
+repos:
+   - repo: .pre-commit-hooks/
+     rev: master
+     hooks:
+      -   id: shellcheck
+      -   id: canonix

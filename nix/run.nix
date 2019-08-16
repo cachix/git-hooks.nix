@@ -6,13 +6,15 @@
 
 let
   # https://github.com/tweag/ormolu/issues/311
-  ormoluCmd = writeScript "ormolu-pre-commit-check" ''
+  ormoluCmd =
+    writeScript "ormolu-pre-commit-check" ''
     #!/usr/bin/env bash
     for f in "$@"; do
       ${tools.ormolu}/bin/ormolu --mode inplace $f
     done
   '';
-  hooksYaml = writeText "pre-commit-hooks" ''
+  hooksYaml =
+    writeText "pre-commit-hooks" ''
   -   id: hlint
       name: hlint
       description: HLint gives suggestions on how to improve your source code.
@@ -51,7 +53,8 @@ let
       language: system
   '';
 
-  hooks = runCommand "pre-commit-hooks-dir" { buildInputs = [git]; } ''
+  hooks =
+    runCommand "pre-commit-hooks-dir" { buildInputs = [ git ]; } ''
     HOME=$PWD
     mkdir -p $out
     ln -s ${hooksYaml} $out/.pre-commit-hooks.yaml
@@ -63,18 +66,26 @@ let
     git commit -m "init"
   '';
 
-  run = runCommand "pre-commit-run" { buildInputs = [git]; } ''
+  run =
+    runCommand "pre-commit-run" { buildInputs = [ git ]; } ''
     HOME=$PWD
     ln -s ${hooksYaml} .pre-commit-hooks
     cp --no-preserve=mode -R ${src} src
     ln -s ${hooks} src/.pre-commit-hooks
     cd src
-    rm -rf src/.git/*
+    rm -rf src/.git
     git init
+    git add .
+    git config --global user.email "you@example.com"
+    git config --global user.name "Your Name"
+    git commit -m "init"
     echo "Running: $ pre-commit run --all-files"
     ${pre-commit}/bin/pre-commit run --all-files
+    git diff
+    touch $out
   '';
-in run // {
+in
+  run // {
   shellHook = ''
     ln -s ${hooks} .pre-commit-hooks
     export PATH=$PATH:${pre-commit}

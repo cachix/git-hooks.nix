@@ -25,7 +25,7 @@ This project's goal is to manage these hooks with Nix and provide:
 
 2. (optional) Use binary caches to avoid compilation:
 
-   ```
+   ```bash
    $ nix-env -iA cachix -f https://cachix.org/api/v1/install
    $ cachix use hercules-ci
    ```
