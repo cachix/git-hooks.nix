@@ -34,7 +34,7 @@ This project's goal is to manage these hooks with Nix and provide:
    ```nix
     let
       inherit (import (builtins.fetchTarball "https://github.com/hercules-ci/gitignore/tarball/master" {})) gitignoreSource;
-      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/hercules-ci/nix-pre-commit-hooks/tarball/master" {});
+      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/hercules-ci/nix-pre-commit-hooks/tarball/master");
     in {
       pre-commit = nix-pre-commit-hooks.run {
         src = gitignoreSource ./.;
