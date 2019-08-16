@@ -76,8 +76,8 @@ let
     ${pre-commit}/bin/pre-commit run --all-files
     exitcode=$?
     git diff
-    [ $? -eq 0 ] && exit $exitcode
     touch $out
+    [ $? -eq 0 ] && exit $exitcode
   '';
 in
   run // {
