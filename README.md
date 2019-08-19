@@ -1,14 +1,19 @@
-Seamless integration of [pre-commit](https://pre-commit.com/) hooks with [Nix](https://nixos.org/nix).
+# Seamless integration of [pre-commit](https://pre-commit.com/) hooks with [Nix](https://nixos.org/nix)
 
-`pre-commit` is a project that manages a set of hooks that are executed by git before committing code.
+[pre-commit](https://pre-commit.com/) manages a set of hooks that are executed by git before committing code:
 
-It allows to always keep the code fresh from linting and formatting issues.
+![pre-commit.png](pre-commit.png)
 
-This project's goal is to manage these hooks with Nix and provide:
+The goal is to manage these hooks with Nix and solve the following:
 
-- Common set of hooks for popular languages like Haskell, Elm, etc.
-- Nix function for installing and running your hook as a build (as part of your CI)
-- Nix-shell integration to install and run your hooks as part of your development environment.
+a) Simpler integration for Nix projects (wires up a few things behind the scenes)
+
+b) Provide a low-overhead build of all the tooling available for the hooks to use
+   (naive implementation of calling nix-shell does bring some latency when committing)
+
+c) Common package set of hooks for popular languages like Haskell, Elm, etc.
+
+d) Two trivial Nix functions to run hooks as part of development and on your CI
 
 # Installation & Usage
 
