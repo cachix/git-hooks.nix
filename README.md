@@ -6,14 +6,14 @@
 
 The goal is to manage these hooks with Nix and solve the following:
 
-a) Simpler integration for Nix projects (wires up a few things behind the scenes)
+- Simpler integration for Nix projects (wires up a few things behind the scenes)
 
-b) Provide a low-overhead build of all the tooling available for the hooks to use
+- Provide a low-overhead build of all the tooling available for the hooks to use
    (naive implementation of calling nix-shell does bring some latency when committing)
 
-c) Common package set of hooks for popular languages like Haskell, Elm, etc.
+- Common package set of hooks for popular languages like Haskell, Elm, etc.
 
-d) Two trivial Nix functions to run hooks as part of development and on your CI
+- Two trivial Nix functions to run hooks as part of development and on your CI
 
 # Installation & Usage
 
