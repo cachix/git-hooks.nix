@@ -22,7 +22,7 @@ let
   -   id: cabal-fmt
       name: cabal-fmt
       description: Format Cabal files
-      entry: cabal-fmt --inplace
+      entry: ${tools.cabal-fmt}/bin/cabal-fmt --inplace
       language: system
       files: '\.cabal$'
   -   id: canonix
