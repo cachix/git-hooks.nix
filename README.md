@@ -17,7 +17,7 @@ The goal is to manage these hooks with Nix and solve the following:
 
 # Installation & Usage
 
-1. Create `.pre-commit-config.yaml` with hooks you want to run:
+1. Create `.pre-commit-config.yaml` with hooks you want to run in your git repository:
    ```yaml
    repos:
    - repo: .pre-commit-hooks/
