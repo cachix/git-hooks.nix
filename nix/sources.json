@@ -23,6 +23,18 @@
         "url": "https://github.com/hercules-ci/canonix/archive/2600422b204b5795fc1f8992d253fedca4d10ea8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "haskell.nix": {
+        "branch": "master",
+        "description": "Alternative Haskell Infrastructure for Nixpkgs",
+        "homepage": "https://input-output-hk.github.io/haskell.nix",
+        "owner": "input-output-hk",
+        "repo": "haskell.nix",
+        "rev": "2c161d73b51f4c26adb95bd58a63e6e463bcba1c",
+        "sha256": "18apq45lfnn1sgsccn0vi0dnq29zzzvi3naakd8xzdsfn0xp61g9",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/haskell.nix/archive/2c161d73b51f4c26adb95bd58a63e6e463bcba1c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
@@ -35,14 +47,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-18.09",
+        "branch": "nixos-19.03",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "a7e559a5504572008567383c3dc8e142fa7a8633",
-        "sha256": "16j95q58kkc69lfgpjkj76gw5sx8rcxwi3civm0mlfaxxyw9gzp6",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/a7e559a5504572008567383c3dc8e142fa7a8633.tar.gz",
+        "rev": "67135fbcc5d5d28390c127ef519b09a362ef2466",
+        "sha256": "00591607zmn1hfjs4959ksh164b0gjqwkvbrc4anx6da8xmhfcc2",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/67135fbcc5d5d28390c127ef519b09a362ef2466.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "ormolu": {
