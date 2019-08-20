@@ -89,6 +89,7 @@ let
 in
   run // {
   shellHook = ''
+    [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
     ln -s ${hooks} .pre-commit-hooks
     export PATH=$PATH:${pre-commit}
     pre-commit install
