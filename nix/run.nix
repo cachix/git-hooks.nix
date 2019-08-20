@@ -5,13 +5,6 @@
 }:
 
 let
-  cabal-fmt-hook =
-    writeScript "cabal-fmt-hook" ''
-    #!/usr/bin/env bash
-    for f in "$@"; do
-      ${tools.cabal-fmt}/bin/cabal-fmt --inplace $f
-    done
-  '';
   hooksYaml =
     writeText "pre-commit-hooks" ''
   -   id: hlint
@@ -29,7 +22,7 @@ let
   -   id: cabal-fmt
       name: cabal-fmt
       description: Format Cabal files
-      entry: ${cabal-fmt-hook}
+      entry: ${tools.cabal-fmt}/bin/cabal-fmt --inplace 
       language: script
       files: '\.cabal$'
   -   id: canonix
