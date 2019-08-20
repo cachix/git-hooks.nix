@@ -41,7 +41,7 @@ The goal is to manage these hooks with Nix and solve the following:
       inherit (import (builtins.fetchTarball "https://github.com/hercules-ci/gitignore/tarball/master" {})) gitignoreSource;
       nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/hercules-ci/nix-pre-commit-hooks/tarball/master");
     in {
-      pre-commit = nix-pre-commit-hooks.run {
+      pre-commit-check = nix-pre-commit-hooks.run {
         src = gitignoreSource ./.;
       };
     }
@@ -51,12 +51,8 @@ The goal is to manage these hooks with Nix and solve the following:
 
 2. Integrate hooks to prepare environment as part of `shell.nix`:
    ```nix
-    let
-      pkgs = import <nixpkgs> {};
-    in pkgs.stdenv.mkDerivation {
-      shellHook = ''
-        ${(import ./. {}).pre-commit.shellHook}
-      '';
+    (import <nixpkgs> {}).mkShell {
+      inherit ((import ./. {}).pre-commit-check) shellHook;
     }
    ```
 
