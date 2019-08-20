@@ -93,5 +93,7 @@ in
     ln -s ${hooks} .pre-commit-hooks
     export PATH=$PATH:${pre-commit}
     pre-commit install
+    # this is needed as the hook repo configuration is cached
+    pre-commit gc
   '';
 }
