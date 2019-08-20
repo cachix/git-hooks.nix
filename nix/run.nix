@@ -5,6 +5,13 @@
 }:
 
 let
+  cabal-fmt-hook =
+    writeScript "cabal-fmt-hook" ''
+    #!/usr/bin/env bash
+    for f in "$@"; do
+      ${tools.cabal-fmt}/bin/cabal-fmt --inplace $f
+    done
+  '';
   hooksYaml =
     writeText "pre-commit-hooks" ''
   -   id: hlint
@@ -22,8 +29,8 @@ let
   -   id: cabal-fmt
       name: cabal-fmt
       description: Format Cabal files
-      entry: ${tools.cabal-fmt}/bin/cabal-fmt --inplace
-      language: system
+      entry: ${cabal-fmt-hook}
+      language: script
       files: '\.cabal$'
   -   id: canonix
       name: canonix
@@ -35,7 +42,7 @@ let
       name: elm-format
       description: Format Elm files
       entry: ${tools.elm-format}/bin/elm-format --yes --elm-version=0.19
-      language: system
+      language: script
       files: \.elm$
   -   id: shellcheck
       name: shellcheck
@@ -82,8 +89,11 @@ let
 in
   run // {
   shellHook = ''
+    [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
     ln -s ${hooks} .pre-commit-hooks
     export PATH=$PATH:${pre-commit}
     pre-commit install
+    # this is needed as the hook repo configuration is cached
+    pre-commit gc
   '';
 }
