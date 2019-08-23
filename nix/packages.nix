@@ -1,11 +1,11 @@
 { hlint, shellcheck, ormolu, cabal-fmt, canonix, elmPackages
-, gitAndTools, runCommand, writeText, writeScript, git
+, gitAndTools, runCommand, writeText, writeScript, git, nixpkgs-fmt
 }:
 
 let
   tools =
     {
-      inherit hlint shellcheck ormolu cabal-fmt canonix;
+      inherit hlint shellcheck ormolu cabal-fmt canonix nixpkgs-fmt;
       inherit (elmPackages) elm-format;
     };
 in

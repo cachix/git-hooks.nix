@@ -21,6 +21,7 @@ with {
           inherit (import sources.niv {}) niv;
           inherit (import sources.ormolu {}) ormolu;
           inherit (import sources.canonix {}) canonix;
+          nixpkgs-fmt = import sources.nixpkgs-fmt {};
           cabal-fmt =
             pkgSet.config.hsPkgs.cabal-fmt.components.exes.cabal-fmt;
           packages = pkgs.callPackages ./packages.nix {};
