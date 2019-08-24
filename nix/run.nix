@@ -34,8 +34,8 @@ let
   -   id: nixpkgs-fmt
       name: nixpkgs-fmt
       description: Nix code prettifier.
-      entry: ${tools.nixpkgs-fmt}/bin/nixpkgs-fmt
-      language: system
+      entry: ${tools.nixpkgs-fmt}/bin/nixpkgs-fmt -i
+      language: script
       files: '\.nix$'
   -   id: elm-format
       name: elm-format
