@@ -18,9 +18,11 @@ with {
               modules = [];
             };
         in {
-          inherit (import sources.niv {}) niv;
-          inherit (import sources.ormolu {}) ormolu;
+          inherit (import sources.niv { inherit pkgs; }) niv;
+          inherit (import sources.ormolu { inherit pkgs; }) ormolu;
+          # TODO: expose overlay to avoid evaluating nixpkgs twice
           inherit (import sources.canonix {}) canonix;
+          nixpkgs-fmt = import sources.nixpkgs-fmt { inherit pkgs; };
           cabal-fmt =
             pkgSet.config.hsPkgs.cabal-fmt.components.exes.cabal-fmt;
           packages = pkgs.callPackages ./packages.nix {};
