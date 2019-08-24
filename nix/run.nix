@@ -93,6 +93,6 @@ in
     export PATH=$PATH:${pre-commit}
     pre-commit install
     # this is needed as the hook repo configuration is cached
-    pre-commit gc
+    pre-commit clean
   '';
 }
