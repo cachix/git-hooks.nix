@@ -47,7 +47,7 @@ The goal is to manage these hooks with Nix and solve the following:
     }
    ```
 
-   Run `$ nix-build -A pre-commit`.
+   Run `$ nix-build -A pre-commit-check` to perform the checks as a Nix derivation.
 
 2. Integrate hooks to prepare environment as part of `shell.nix`:
    ```nix
