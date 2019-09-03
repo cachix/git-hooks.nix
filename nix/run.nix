@@ -90,7 +90,7 @@ in
   shellHook = ''
     [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
     ln -s ${hooks} .pre-commit-hooks
-    export PATH=$PATH:${pre-commit}
+    export PATH=$PATH:${pre-commit}/bin
     pre-commit install
     # this is needed as the hook repo configuration is cached
     pre-commit clean
