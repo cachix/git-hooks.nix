@@ -67,6 +67,7 @@ The goal is to manage these hooks with Nix and solve the following:
 
 - [canonix](https://github.com/hercules-ci/canonix/)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
+- [nixfmt](https://github.com/serokell/nixfmt/)
 
 ## Haskell
 

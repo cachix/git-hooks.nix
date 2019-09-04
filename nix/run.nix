@@ -31,6 +31,12 @@ let
       entry: ${tools.canonix}/bin/canonix
       language: system
       files: '\.nix$'
+  -   id: nixfmt
+      name: nixfmt
+      description: Nix code prettifier.
+      entry: ${tools.nixfmt}/bin/nixfmt
+      language: script
+      files: '\.nix$'
   -   id: nixpkgs-fmt
       name: nixpkgs-fmt
       description: Nix code prettifier.

@@ -22,6 +22,7 @@ with {
           inherit (import sources.ormolu { inherit pkgs; }) ormolu;
           # TODO: expose overlay to avoid evaluating nixpkgs twice
           inherit (import sources.canonix {}) canonix;
+          nixfmt = import sources.nixfmt { inherit pkgs; };
           nixpkgs-fmt = import sources.nixpkgs-fmt { inherit pkgs; };
           cabal-fmt =
             pkgSet.config.hsPkgs.cabal-fmt.components.exes.cabal-fmt;

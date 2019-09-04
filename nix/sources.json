@@ -47,6 +47,18 @@
         "description": "An experiment of formatting .cabal files",
         "rev": "177b4ca8a446682ee91c536a5492157c1e232864"
     },
+    "nixfmt": {
+        "branch": "master",
+        "description": "A formatter for Nix code",
+        "homepage": "https://nixfmt.serokell.io",
+        "owner": "serokell",
+        "repo": "nixfmt",
+        "rev": "9b178986e339f260d0c335aef6f4950327af85dc",
+        "sha256": "1agzz8v6lpxjr1arfb6q00r1yk4nwyh8l3sd8zmdhvh2zckip6j9",
+        "type": "tarball",
+        "url": "https://github.com/serokell/nixfmt/archive/9b178986e339f260d0c335aef6f4950327af85dc.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs-fmt": {
         "homepage": "https://nix-community.github.io/nixpkgs-fmt/",
         "url": "https://github.com/nix-community/nixpkgs-fmt/archive/b812c05cc22cd619cd771a0a5ba0bcee3c472c02.tar.gz",
