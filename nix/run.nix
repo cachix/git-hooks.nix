@@ -55,6 +55,19 @@ let
       types: [bash]
       entry: ${tools.shellcheck}/bin/shellcheck
       language: system
+  -   id: terraform-format
+      name: terraform-format
+      description: Format terraform (.tf) files
+      entry: ${tools.terraform-fmt}/bin/terraform-fmt
+      files: '\.tf$'
+      language: script
+  -   id: terraform-docs-updater
+      name: terraform-docs-updater
+      description: Maintain terraform README.md files
+      entry: ${tools.terraform-docs-updater-wrapper}/bin/terraform-docs-updater-wrapper
+      files: '(^|/)README.md$|\.tf$'
+      require_serial: true
+      language: script
   '';
 
   hooks =

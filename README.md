@@ -83,6 +83,11 @@ The goal is to manage these hooks with Nix and solve the following:
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
 
+## Terraform
+
+- `terraform-format`: built-in formatter
+- `terraform-docs-updater`: automatic module docs for your `README.md`
+
 # Contributing hooks
 
 Everyone is encouraged to add new hooks.

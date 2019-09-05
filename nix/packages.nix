@@ -1,5 +1,6 @@
 { hlint, shellcheck, ormolu, cabal-fmt, canonix, elmPackages, niv
 , gitAndTools, runCommand, writeText, writeScript, git, nixpkgs-fmt, nixfmt
+, callPackage
 }:
 
 let
@@ -7,6 +8,12 @@ let
     {
       inherit hlint shellcheck ormolu cabal-fmt canonix nixpkgs-fmt nixfmt;
       inherit (elmPackages) elm-format;
+      terraform-fmt = callPackage ./terraform-fmt {};
+      terraform-docs-updater-wrapper =
+        callPackage ./terraform-docs-updater/wrapper.nix {
+          terraform-docs-updater = callPackage ./terraform-docs-updater {};
+        };
+
     };
 in
   tools // rec {

@@ -28,10 +28,12 @@ if grep "$BANNER_START" "$doc" >/dev/null ; then
   } > "$doc"
 
   rm "$doc.bak"
-else
+
+elif find . -maxdepth 1 -name '*.tf' | grep -E . >/dev/null; then
   {
     echo "$BANNER_START"
     terraform-docs md .
     echo "$BANNER_END"
   } >> "$doc"
+
 fi
