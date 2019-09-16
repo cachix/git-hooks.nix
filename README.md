@@ -61,6 +61,23 @@ The goal is to manage these hooks with Nix and solve the following:
    - symlink hooks to `.pre-commit-hooks/`
    - provide `pre-commit` executable that `git commit` will invoke
 
+## Optional
+
+### Direnv + Lorri
+
+`.envrc`
+
+```
+eval "$(lorri direnv)"
+
+# Use system PKI
+unset SSL_CERT_FILE
+unset NIX_SSL_CERT_FILE
+
+# Install pre-commit hooks
+eval "$shellHook"
+```
+
 # Hooks
 
 ## Nix
