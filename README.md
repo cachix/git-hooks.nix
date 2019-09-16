@@ -95,3 +95,4 @@ There's no guarantee the hook will be accepted, but the general guidelines are:
 
 - Nix closure of the tool should be small e.g. `< 50MB`
 - The tool must not be very specific (e.g. language tooling is OK, but project specific tooling is not)
+- The tool needs to live in a separate repository (even if a simple bash script, unless it's a oneliner)
