@@ -61,13 +61,6 @@ let
       entry: ${tools.terraform-fmt}/bin/terraform-fmt
       files: '\.tf$'
       language: script
-  -   id: terraform-docs-updater
-      name: terraform-docs-updater
-      description: Maintain terraform README.md files
-      entry: ${tools.terraform-docs-updater-wrapper}/bin/terraform-docs-updater-wrapper
-      files: '(^|/)README.md$|\.tf$'
-      require_serial: true
-      language: script
   '';
 
   hooks =

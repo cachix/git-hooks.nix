@@ -86,7 +86,6 @@ The goal is to manage these hooks with Nix and solve the following:
 ## Terraform
 
 - `terraform-format`: built-in formatter
-- `terraform-docs-updater`: automatic module docs for your `README.md`
 
 # Contributing hooks
 
