@@ -83,6 +83,10 @@ The goal is to manage these hooks with Nix and solve the following:
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
 
+## Terraform
+
+- `terraform-format`: built-in formatter
+
 # Contributing hooks
 
 Everyone is encouraged to add new hooks.

@@ -55,6 +55,12 @@ let
       types: [bash]
       entry: ${tools.shellcheck}/bin/shellcheck
       language: system
+  -   id: terraform-format
+      name: terraform-format
+      description: Format terraform (.tf) files
+      entry: ${tools.terraform-fmt}/bin/terraform-fmt
+      files: '\.tf$'
+      language: script
   '';
 
   hooks =
