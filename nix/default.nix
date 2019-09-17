@@ -20,6 +20,8 @@ with {
         in {
           inherit (import sources.niv { inherit pkgs; }) niv;
           inherit (import sources.ormolu { inherit pkgs; }) ormolu;
+          hindent =
+            pkgs.haskellPackages.callCabal2nix "hindent" sources.hindent {};
           # TODO: expose overlay to avoid evaluating nixpkgs twice
           inherit (import sources.canonix {}) canonix;
           nixfmt = import sources.nixfmt { inherit pkgs; };

@@ -83,6 +83,18 @@
         "description": "A formatter for Haskell source code",
         "rev": "a7076c0f83e5c06ea9067b71171859fa2ba8afd9"
     },
+    "hindent": {
+        "homepage": null,
+        "url": "https://github.com/chrisdone/hindent/archive/1583be4a8a01b765841f7306284528ae713abb7b.tar.gz",
+        "owner": "chrisdone",
+        "branch": "master",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
+        "repo": "hindent",
+        "type": "tarball",
+        "sha256": "1p4n2ja4ciw3qfskn65ggpy37mvgf2sslxqmqn8s8jjarnqcyfny",
+        "description": "Haskell pretty printer",
+        "rev": "1583be4a8a01b765841f7306284528ae713abb7b"
+    },
     "niv": {
         "homepage": "https://github.com/nmattia/niv",
         "url": "https://github.com/nmattia/niv/archive/8b7b70465c130d8d7a98fba1396ad1481daee518.tar.gz",

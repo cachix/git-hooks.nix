@@ -19,6 +19,12 @@ let
       entry: ${tools.ormolu}/bin/ormolu --mode inplace
       language: script
       files: '\.l?hs$'
+  -   id: hindent
+      name: hindent
+      description: Haskell code prettifier.
+      entry: ${tools.hindent}/bin/hindent
+      language: script
+      files: '\.l?hs$'
   -   id: cabal-fmt
       name: cabal-fmt
       description: Format Cabal files
