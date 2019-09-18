@@ -17,10 +17,10 @@
         "homepage": null,
         "owner": "hercules-ci",
         "repo": "canonix",
-        "rev": "530a869d73e1ee1142d0227cae62956ebd8b4cda",
-        "sha256": "01yj7xvh02i2vh1mddb18d1pfnnzkk2si6mwhrmgb6nwc9z7f14f",
+        "rev": "a3369542aef56366d3432e01e3e73374a310ca4a",
+        "sha256": "0bw17sahfn5vqcygvmabafq8i0qszjh9jxl2524k4b3mh12apivm",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/canonix/archive/530a869d73e1ee1142d0227cae62956ebd8b4cda.tar.gz",
+        "url": "https://github.com/hercules-ci/canonix/archive/a3369542aef56366d3432e01e3e73374a310ca4a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell.nix": {
