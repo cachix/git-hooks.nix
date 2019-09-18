@@ -91,7 +91,7 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
         "repo": "hindent",
         "type": "tarball",
-        "sha256": "1p4n2ja4ciw3qfskn65ggpy37mvgf2sslxqmqn8s8jjarnqcyfny",
+        "sha256": "sha256:1l8v3vq3yw7zr1yxyscfw8lggcf0klnyszhv18505c6myybp2dkp",
         "description": "Haskell pretty printer",
         "rev": "1583be4a8a01b765841f7306284528ae713abb7b"
     },
