@@ -1,4 +1,4 @@
-{ tools, pre-commit, git, runCommand, writeText, writeScript }:
+{ tools, pre-commit, git, runCommand, writeText, writeScript, lib }:
 
 { src
 , hooks ? null
@@ -103,14 +103,36 @@ let
     touch $out
     [ $? -eq 0 ] && exit $exitcode
   '';
+
+  srcStr = toString ( src.origSrc or src );
 in
   run // {
   shellHook = ''
-    [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
-    ln -s ${hooks} .pre-commit-hooks
     export PATH=$PATH:${pre-commit}/bin
-    pre-commit install
-    # this is needed as the hook repo configuration is cached
-    pre-commit clean
+    if ! type -t git >/dev/null; then
+      # This happens in pure shells, including lorri
+      echo 1>&2 "WARNING: nix-pre-commit-hooks: git command not found; skipping installation."
+    else
+      (
+        # We use srcStr to protect against installing pre-commit hooks
+        # in the wrong places such as for example ./. when invoking
+        #   nix-shell ../../other-project/shell.nix
+        cd ${lib.escapeShellArg srcStr} && {
+          # Avoid filesystem churn. We may be watched!
+          # This prevents lorri from looping after every interactive shell command.
+          if readlink .pre-commit-hooks >/dev/null \
+             && [[ $(readlink .pre-commit-hooks) == ${hooks} ]]; then
+            echo 1>&2 "nix-pre-commit-hooks: hooks up to date"
+          else
+            echo 1>&2 "nix-pre-commit-hooks: updating" ${lib.escapeShellArg srcStr}
+            [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
+            ln -s ${hooks} .pre-commit-hooks
+            pre-commit install
+            # this is needed as the hook repo configuration is cached
+            pre-commit clean
+          fi
+        }
+      )
+    fi
   '';
 }

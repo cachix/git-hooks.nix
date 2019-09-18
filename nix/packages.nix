@@ -1,6 +1,6 @@
 { hlint, shellcheck, ormolu, hindent, cabal-fmt, canonix, elmPackages, niv
 , gitAndTools, runCommand, writeText, writeScript, git, nixpkgs-fmt, nixfmt
-, callPackage
+, callPackage, lib
 }:
 
 let
@@ -14,6 +14,6 @@ in
   tools // rec {
   inherit niv;
   inherit (gitAndTools) pre-commit;
-  run = import ./run.nix { inherit tools pre-commit runCommand writeText writeScript git; };
+  run = import ./run.nix { inherit tools pre-commit runCommand writeText writeScript git lib; };
   pre-commit-check = run { src = ../.; };
 }
