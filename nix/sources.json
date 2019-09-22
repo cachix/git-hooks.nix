@@ -1,51 +1,63 @@
 {
-    "haskell.nix": {
-        "homepage": "https://input-output-hk.github.io/haskell.nix",
-        "url": "https://github.com/input-output-hk/haskell.nix/archive/2c161d73b51f4c26adb95bd58a63e6e463bcba1c.tar.gz",
-        "owner": "input-output-hk",
+    "cabal-fmt": {
         "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "haskell.nix",
+        "description": "An experiment of formatting .cabal files",
+        "homepage": null,
+        "owner": "phadej",
+        "repo": "cabal-fmt",
+        "rev": "177b4ca8a446682ee91c536a5492157c1e232864",
+        "sha256": "1yir989pl2aizlv9wsf5amrixdayf1rc97n8jwfy0f63szrw1rf9",
         "type": "tarball",
-        "sha256": "18apq45lfnn1sgsccn0vi0dnq29zzzvi3naakd8xzdsfn0xp61g9",
-        "description": "Alternative Haskell Infrastructure for Nixpkgs",
-        "rev": "2c161d73b51f4c26adb95bd58a63e6e463bcba1c"
-    },
-    "nixpkgs": {
-        "homepage": "https://github.com/NixOS/nixpkgs",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/8f84220eb292beae78b10e9e53a22d14221e3cbe.tar.gz",
-        "owner": "NixOS",
-        "branch": "nixos-unstable",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "nixpkgs-channels",
-        "type": "tarball",
-        "sha256": "1aq62igjnbv7hw94m8n9akj3kscfrfvb2csb26zzv2lvs5aamiam",
-        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
-        "rev": "8f84220eb292beae78b10e9e53a22d14221e3cbe"
+        "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "canonix": {
-        "homepage": null,
-        "url": "https://github.com/hercules-ci/canonix/archive/530a869d73e1ee1142d0227cae62956ebd8b4cda.tar.gz",
-        "owner": "hercules-ci",
         "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "canonix",
-        "type": "tarball",
-        "sha256": "01yj7xvh02i2vh1mddb18d1pfnnzkk2si6mwhrmgb6nwc9z7f14f",
         "description": "Experiment in Nix formatting",
-        "rev": "530a869d73e1ee1142d0227cae62956ebd8b4cda"
-    },
-    "cabal-fmt": {
         "homepage": null,
-        "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
-        "owner": "phadej",
-        "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "cabal-fmt",
+        "owner": "hercules-ci",
+        "repo": "canonix",
+        "rev": "a3369542aef56366d3432e01e3e73374a310ca4a",
+        "sha256": "0bw17sahfn5vqcygvmabafq8i0qszjh9jxl2524k4b3mh12apivm",
         "type": "tarball",
-        "sha256": "1yir989pl2aizlv9wsf5amrixdayf1rc97n8jwfy0f63szrw1rf9",
-        "description": "An experiment of formatting .cabal files",
-        "rev": "177b4ca8a446682ee91c536a5492157c1e232864"
+        "url": "https://github.com/hercules-ci/canonix/archive/a3369542aef56366d3432e01e3e73374a310ca4a.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "haskell.nix": {
+        "branch": "master",
+        "description": "Alternative Haskell Infrastructure for Nixpkgs",
+        "homepage": "https://input-output-hk.github.io/haskell.nix",
+        "owner": "input-output-hk",
+        "repo": "haskell.nix",
+        "rev": "2c161d73b51f4c26adb95bd58a63e6e463bcba1c",
+        "sha256": "18apq45lfnn1sgsccn0vi0dnq29zzzvi3naakd8xzdsfn0xp61g9",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/haskell.nix/archive/2c161d73b51f4c26adb95bd58a63e6e463bcba1c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "hindent": {
+        "branch": "master",
+        "description": "Haskell pretty printer",
+        "homepage": null,
+        "owner": "chrisdone",
+        "repo": "hindent",
+        "rev": "1583be4a8a01b765841f7306284528ae713abb7b",
+        "sha256": "sha256:1l8v3vq3yw7zr1yxyscfw8lggcf0klnyszhv18505c6myybp2dkp",
+        "type": "tarball",
+        "url": "https://github.com/chrisdone/hindent/archive/1583be4a8a01b765841f7306284528ae713abb7b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "niv": {
+        "branch": "master",
+        "description": "Easy dependency management for Nix projects",
+        "homepage": "https://github.com/nmattia/niv",
+        "owner": "nmattia",
+        "repo": "niv",
+        "rev": "efce82e4ba77a84835f9febefe3b2fe52a8c7ede",
+        "sha256": "19ah2il98hjb2c8d4p1ph3nxrkzi4hl9vbw21snza5w7x4jhx4jk",
+        "type": "tarball",
+        "url": "https://github.com/nmattia/niv/archive/efce82e4ba77a84835f9febefe3b2fe52a8c7ede.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixfmt": {
         "branch": "master",
@@ -59,51 +71,40 @@
         "url": "https://github.com/serokell/nixfmt/archive/9b178986e339f260d0c335aef6f4950327af85dc.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "nixpkgs-fmt": {
-        "homepage": "https://nix-community.github.io/nixpkgs-fmt/",
-        "url": "https://github.com/nix-community/nixpkgs-fmt/archive/b812c05cc22cd619cd771a0a5ba0bcee3c472c02.tar.gz",
-        "owner": "nix-community",
-        "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "nixpkgs-fmt",
+    "nixpkgs": {
+        "branch": "nixos-unstable",
+        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
+        "homepage": "https://github.com/NixOS/nixpkgs",
+        "owner": "NixOS",
+        "repo": "nixpkgs-channels",
+        "rev": "8f84220eb292beae78b10e9e53a22d14221e3cbe",
+        "sha256": "1aq62igjnbv7hw94m8n9akj3kscfrfvb2csb26zzv2lvs5aamiam",
         "type": "tarball",
-        "sha256": "0p34gbrlyi4bcz332iwasdw4621qqmx1hr9had13p4drjmnfhypz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/8f84220eb292beae78b10e9e53a22d14221e3cbe.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs-fmt": {
+        "branch": "master",
         "description": "Nix code formatter for nixpkgs [maintainer=@zimbatm]",
-        "rev": "b812c05cc22cd619cd771a0a5ba0bcee3c472c02"
+        "homepage": "https://nix-community.github.io/nixpkgs-fmt/",
+        "owner": "nix-community",
+        "repo": "nixpkgs-fmt",
+        "rev": "b812c05cc22cd619cd771a0a5ba0bcee3c472c02",
+        "sha256": "0p34gbrlyi4bcz332iwasdw4621qqmx1hr9had13p4drjmnfhypz",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/nixpkgs-fmt/archive/b812c05cc22cd619cd771a0a5ba0bcee3c472c02.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "ormolu": {
-        "homepage": null,
-        "url": "https://github.com/tweag/ormolu/archive/a7076c0f83e5c06ea9067b71171859fa2ba8afd9.tar.gz",
-        "owner": "tweag",
         "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "ormolu",
-        "type": "tarball",
-        "sha256": "1p4n2ja4ciw3qfskn65ggpy37mvgf2sslxqmqn8s8jjarnqcyfny",
         "description": "A formatter for Haskell source code",
-        "rev": "a7076c0f83e5c06ea9067b71171859fa2ba8afd9"
-    },
-    "hindent": {
         "homepage": null,
-        "url": "https://github.com/chrisdone/hindent/archive/1583be4a8a01b765841f7306284528ae713abb7b.tar.gz",
-        "owner": "chrisdone",
-        "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "hindent",
+        "owner": "tweag",
+        "repo": "ormolu",
+        "rev": "a7076c0f83e5c06ea9067b71171859fa2ba8afd9",
+        "sha256": "1p4n2ja4ciw3qfskn65ggpy37mvgf2sslxqmqn8s8jjarnqcyfny",
         "type": "tarball",
-        "sha256": "sha256:1l8v3vq3yw7zr1yxyscfw8lggcf0klnyszhv18505c6myybp2dkp",
-        "description": "Haskell pretty printer",
-        "rev": "1583be4a8a01b765841f7306284528ae713abb7b"
-    },
-    "niv": {
-        "homepage": "https://github.com/nmattia/niv",
-        "url": "https://github.com/nmattia/niv/archive/8b7b70465c130d8d7a98fba1396ad1481daee518.tar.gz",
-        "owner": "nmattia",
-        "branch": "master",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "repo": "niv",
-        "sha256": "0fgdrxn2vzpnzr6pxaiyn5zzbd812c6f7xjjhfir0kpzamjnxwwl",
-        "description": "Easy dependency management for Nix projects",
-        "rev": "8b7b70465c130d8d7a98fba1396ad1481daee518"
+        "url": "https://github.com/tweag/ormolu/archive/a7076c0f83e5c06ea9067b71171859fa2ba8afd9.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
