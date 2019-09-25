@@ -14,6 +14,14 @@ in
   tools // rec {
   inherit niv;
   inherit (gitAndTools) pre-commit;
-  run = import ./run.nix { inherit tools pre-commit runCommand writeText writeScript git; };
-  pre-commit-check = run { src = ../.; };
+  run = callPackage ./run.nix { inherit tools; };
+
+  # A pre-commit-check for nix-pre-commit itself
+  pre-commit-check = run {
+    src = ../.;
+    hooks = {
+      shellcheck.enable = true;
+      canonix.enable = true;
+    };
+  };
 }
