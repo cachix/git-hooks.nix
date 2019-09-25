@@ -17,39 +17,32 @@ The goal is to manage these hooks with Nix and solve the following:
 
 # Installation & Usage
 
-1. Create `.pre-commit-config.yaml` with hooks you want to run in your git repository:
-   ```yaml
-   repos:
-   - repo: .pre-commit-hooks/
-     rev: master
-     hooks:
-      -   id: ormolu
-      -   id: shellcheck
-      -   id: elm-format
-   ```
-
-2. (optional) Use binary caches to avoid compilation:
+1. (optional) Use binary caches to avoid compilation:
 
    ```bash
    $ nix-env -iA cachix -f https://cachix.org/api/v1/install
    $ cachix use hercules-ci
    ```
 
-3. Integrate hooks to be built as part of `default.nix`:
+2. Integrate hooks to be built as part of `default.nix`:
    ```nix
     let
-      inherit (import (builtins.fetchTarball "https://github.com/hercules-ci/gitignore/tarball/master" {})) gitignoreSource;
       nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/hercules-ci/nix-pre-commit-hooks/tarball/master");
     in {
       pre-commit-check = nix-pre-commit-hooks.run {
-        src = gitignoreSource ./.;
+        src = ./.;
+        hooks = {
+          elm-format.enable = true;
+          ormolu.enable = true;
+          shellcheck.enable = true;
+        };
       };
     }
    ```
 
    Run `$ nix-build -A pre-commit-check` to perform the checks as a Nix derivation.
 
-2. Integrate hooks to prepare environment as part of `shell.nix`:
+3. Integrate hooks to prepare environment as part of `shell.nix`:
    ```nix
     (import <nixpkgs> {}).mkShell {
       inherit ((import ./. {}).pre-commit-check) shellHook;
