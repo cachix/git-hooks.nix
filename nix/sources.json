@@ -118,17 +118,5 @@
         "type": "tarball",
         "url": "https://github.com/tweag/ormolu/archive/a7076c0f83e5c06ea9067b71171859fa2ba8afd9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "project.nix": {
-        "branch": "pre-commit",
-        "description": "A configuration manager for your projects",
-        "homepage": null,
-        "owner": "hercules-ci",
-        "repo": "project.nix",
-        "rev": "ec17ac79904a296f358961ffcff7a13948c2b92e",
-        "sha256": "1gkb9k995ly53d5sxn5hr4lyzh57sq25j3i2cw8zva92g8x69gb5",
-        "type": "tarball",
-        "url": "https://github.com/hercules-ci/project.nix/archive/ec17ac79904a296f358961ffcff7a13948c2b92e.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
