@@ -5,7 +5,8 @@
 {
   imports =
     [
-      ../modules/pre-commit.nix
-      ../modules/hooks.nix
+      ../modules/all-modules.nix
     ];
+
+  # TODO: move project.nix/modules/pre-commit.nix here
 }

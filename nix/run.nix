@@ -11,7 +11,7 @@ let
     lib.evalModules {
       modules =
         [
-          ./project-module.nix
+          ../modules/all-modules.nix
           {
             options =
               {
