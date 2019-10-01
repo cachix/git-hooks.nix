@@ -206,6 +206,11 @@ in {
 
               nix-pre-commit comes with its own set of packages for this purpose.
             '';
+          # This default is for when the module is the entry point rather than
+          # /default.nix. /default.nix will override this for efficiency.
+          default = (import ../nix {}).callPackage ../nix/tools.nix {};
+          defaultText =
+            literalExample ''nix-pre-commit-hooks-pkgs.callPackage tools-dot-nix {}'';
         };
 
       hooks =
