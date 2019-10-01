@@ -183,29 +183,6 @@ in {
   options.pre-commit =
     {
 
-      enable =
-        mkOption {
-          type = types.bool;
-          default = false;
-          description =
-            ''
-              Whether to enable pre-commit integration.
-
-              https://pre-commit.com/
-            '';
-        };
-
-      enableAutoInstall =
-        mkOption {
-          type = types.bool;
-          default = true;
-          description =
-            ''
-              Whether to auto install pre-commit when invoking nix-shell in the
-              project root.
-            '';
-        };
-
       package =
         mkOption {
           type = types.package;
