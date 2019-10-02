@@ -102,6 +102,9 @@ eval "$shellHook"
 
 Everyone is encouraged to add new hooks.
 
+<!-- TODO generate option docs -->
+Have a look at the [existing hooks](modules/hooks.nix) and the [options](modules/pre-commit.nix).
+
 There's no guarantee the hook will be accepted, but the general guidelines are:
 
 - Nix closure of the tool should be small e.g. `< 50MB`
