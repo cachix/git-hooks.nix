@@ -110,35 +110,24 @@ let
                 {
                   inherit (config) name entry language files types;
                   id = name;
-                  exclude =
-                    if config.excludes == [] then "^$" else
-                      "(${concatStringsSep "|" config.excludes})";
+                  exclude = mergeExcludes config.excludes;
                 };
             };
         }
     );
 
+  mergeExcludes =
+    excludes:
+      if excludes == [] then "^$" else "(${concatStringsSep "|" excludes})";
+
   enabledHooks = filterAttrs ( id: value: value.enable ) cfg.hooks;
   processedHooks =
     mapAttrsToList ( id: value: value.raw // { inherit id; } ) enabledHooks;
 
-  precommitConfig =
-    {
-      repos =
-        [
-          {
-            repo = ".pre-commit-hooks/";
-            rev = "master";
-            hooks =
-              mapAttrsToList ( id: _value: { inherit id; } ) enabledHooks;
-          }
-        ];
-    };
-
   hooksFile =
     writeText "pre-commit-hooks.json" ( builtins.toJSON processedHooks );
   configFile =
-    writeText "pre-commit-config.json" ( builtins.toJSON precommitConfig );
+    writeText "pre-commit-config.json" ( builtins.toJSON cfg.rawConfig );
 
   hooks =
     runCommand "pre-commit-hooks-dir" { buildInputs = [ git ]; } ''
@@ -256,10 +245,47 @@ in {
           default = gitignoreSource config.root;
         };
 
+      excludes =
+        mkOption {
+          type = types.listOf types.str;
+          description =
+            ''
+              Exclude files that were matched by these patterns.
+            '';
+          default = [];
+        };
+
+      rawConfig =
+        mkOption {
+          type = types.attrs;
+          description =
+            ''
+              The raw configuration before writing to file.
+
+              This option does not have an appropriate merge function.
+              It is accessible in case you need to set an attribute that doesn't have an option.
+            '';
+          internal = true;
+        };
     };
 
   config =
     {
+
+      pre-commit.rawConfig =
+        {
+        repos =
+          [
+            {
+              repo = ".pre-commit-hooks/";
+              rev = "master";
+              hooks =
+                mapAttrsToList ( id: _value: { inherit id; } ) enabledHooks;
+            }
+          ];
+      } // lib.optionalAttrs (cfg.excludes != []) {
+        exclude = mergeExcludes cfg.excludes;
+      };
 
       pre-commit.installationScript =
         ''

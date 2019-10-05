@@ -15,5 +15,8 @@ in
       shellcheck.enable = true;
       canonix.enable = true;
     };
+    excludes = [
+      "nix/sources.nix$"
+    ];
   };
 }

@@ -2,6 +2,7 @@
 
 { src
 , hooks ? {}
+, excludes ? []
 }:
 
 let
@@ -27,8 +28,10 @@ let
             config =
               {
                 _module.args.pkgs = pkgs;
-                pre-commit.hooks = hooks;
-                pre-commit.tools = lib.mkDefault tools;
+                pre-commit =
+                  {
+                    inherit hooks excludes tools;
+                  };
               };
           }
         ];
