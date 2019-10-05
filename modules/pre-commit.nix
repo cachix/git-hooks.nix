@@ -193,8 +193,8 @@ in {
           default = pkgs.pre-commit;
           defaultText =
             literalExample ''
-        pkgs.pre-commit
-      '';
+              pkgs.pre-commit
+            '';
         };
 
       tools =
