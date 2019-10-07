@@ -12,6 +12,7 @@ let
     mkOption
     types
     ;
+  inherit (import ../nix/lazyAttrsOf.nix { inherit lib; }) lazyAttrsOf;
 
   inherit (pkgs) runCommand writeText git;
 
@@ -199,7 +200,8 @@ in {
 
       tools =
         mkOption {
-          type = types.attrsOf types.package;
+          type = lazyAttrsOf { elemType = types.package; };
+
           description =
             ''
               Tool set from which nix-pre-commit will pick binaries.
