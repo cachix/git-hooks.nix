@@ -18,14 +18,12 @@ with {
               modules = [];
             };
         in {
-          inherit (import sources.niv { inherit pkgs; }) niv;
-          inherit (import sources.ormolu { inherit pkgs; }) ormolu;
+          inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt;
           hindent =
             pkgs.haskellPackages.callCabal2nix "hindent" sources.hindent {};
           # TODO: expose overlay to avoid evaluating nixpkgs twice
           inherit (import sources.canonix {}) canonix;
-          nixfmt = import sources.nixfmt { inherit pkgs; };
-          nixpkgs-fmt = import sources.nixpkgs-fmt { inherit pkgs; };
+          # Requires Cabal 3, wait for LTS 15
           cabal-fmt =
             pkgSet.config.hsPkgs.cabal-fmt.components.exes.cabal-fmt;
           packages = pkgs.callPackages ./packages.nix {};
