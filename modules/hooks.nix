@@ -51,7 +51,7 @@ in {
         {
           name = "nixpkgs-fmt";
           description = "Nix code prettifier.";
-          entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt -i";
+          entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
           files = "\\.nix$";
         };
       elm-format =
