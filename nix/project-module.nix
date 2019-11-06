@@ -1,6 +1,5 @@
 /*
-  This module is picked up by project.nix but is also used internally
-  to find these imported modules.
+  This module is picked up by https://github.com/hercules-ci/project.nix
  */
 {
   imports =
