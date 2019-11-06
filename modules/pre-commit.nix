@@ -179,20 +179,6 @@ let
   inherit (import (import ../nix/sources.nix).gitignore { inherit lib; })
     gitignoreSource
     ;
-
-  patch =
-    pre-commit:
-      pre-commit.overrideAttrs (
-        drv:
-          {
-            patches =
-              (drv.patches or []) ++ [
-              ../nix/pre-commit-resolve-symlink.patch
-            ];
-            name = "${drv.name}-nix";
-          }
-      );
-
 in {
   options.pre-commit =
     {
@@ -204,10 +190,10 @@ in {
             ''
               The pre-commit package to use.
             '';
-          default = patch pkgs.pre-commit;
+          default = pkgs.pre-commit;
           defaultText =
             literalExample ''
-              patch pkgs.pre-commit
+              pkgs.pre-commit
             '';
         };
 
@@ -303,7 +289,7 @@ in {
         repos =
           [
             {
-              repo = ".pre-commit-hooks";
+              repo = ".pre-commit-hooks/";
               rev = "master";
               hooks =
                 mapAttrsToList ( id: _value: { inherit id; } ) enabledHooks;
@@ -353,6 +339,8 @@ in {
 
             if $doInstall; then
               pre-commit install
+              # this is needed as the hook repo configuration is cached
+              pre-commit clean
             fi
           fi
         '';

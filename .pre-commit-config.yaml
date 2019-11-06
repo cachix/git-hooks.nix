@@ -12,7 +12,7 @@
           "id": "shellcheck"
         }
       ],
-      "repo": ".pre-commit-hooks",
+      "repo": ".pre-commit-hooks/",
       "rev": "master"
     }
   ]
