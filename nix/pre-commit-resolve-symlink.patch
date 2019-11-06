@@ -1,0 +1,33 @@
+diff --git a/pre_commit/repository.py b/pre_commit/repository.py
+index 3042f12..16ad603 100644
+--- a/pre_commit/repository.py
++++ b/pre_commit/repository.py
+@@ -195,11 +195,27 @@ def _cloned_repository_hooks(repo_config, store, root_config):
+     )
+ 
+ 
++def _adapt_for_external_cache(repo_config):
++    if os.path.exists(repo_config['repo']) and os.path.islink(repo_config['repo']):
++        target = os.readlink(repo_config['repo'])
++        if target.startswith("/nix/store/"):
++            repo_config['repo'] = target
++            return True
++        else:
++            return False
++    else:
++        return False
++
++
+ def _repository_hooks(repo_config, store, root_config):
+     if repo_config['repo'] in {LOCAL, META}:
+         return _non_cloned_repository_hooks(repo_config, store, root_config)
+     else:
+-        return _cloned_repository_hooks(repo_config, store, root_config)
++        if _adapt_for_external_cache(repo_config):
++            # No real need to clone, but _non_cloned seems to be broken...
++            return _cloned_repository_hooks(repo_config, store, root_config)
++        else:
++            return _cloned_repository_hooks(repo_config, store, root_config)
+ 
+ 
+ def install_hook_envs(hooks, store):
