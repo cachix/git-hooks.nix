@@ -125,8 +125,6 @@ let
   processedHooks =
     mapAttrsToList ( id: value: value.raw // { inherit id; } ) enabledHooks;
 
-  hooksFile =
-    writeText "pre-commit-hooks.json" ( builtins.toJSON processedHooks );
   configFile =
     runCommand "pre-commit-config.json" {
       buildInputs = [ pkgs.jq ];
@@ -140,26 +138,12 @@ let
       } >$out
     '';
 
-  hooks =
-    runCommand "pre-commit-hooks-dir" { buildInputs = [ git ]; } ''
-      HOME=$PWD
-      mkdir -p $out
-      ln -s ${hooksFile} $out/.pre-commit-hooks.yaml
-      cd $out
-      git config --global user.email "you@example.com"
-      git config --global user.name "Your Name"
-      git init
-      git add .
-      git commit -m "init"
-    '';
-
   run =
     runCommand "pre-commit-run" { buildInputs = [ git ]; } ''
       set +e
       HOME=$PWD
       cp --no-preserve=mode -R ${cfg.rootSrc} src
-      unlink src/.pre-commit-hooks || true
-      ln -fs ${hooks} src/.pre-commit-hooks
+      ln -fs ${configFile} src/.pre-commit-config.yaml
       cd src
       rm -rf src/.git
       git init
@@ -289,10 +273,8 @@ in {
         repos =
           [
             {
-              repo = ".pre-commit-hooks/";
-              rev = "master";
-              hooks =
-                mapAttrsToList ( id: _value: { inherit id; } ) enabledHooks;
+              repo = "local";
+              hooks = processedHooks;
             }
           ];
       } // lib.optionalAttrs (cfg.excludes != []) {
@@ -306,41 +288,20 @@ in {
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: nix-pre-commit-hooks: git command not found; skipping installation."
           else
-            local doInstall=false
-
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
             # and prevents installation loops by via lorri.
 
-            if readlink .pre-commit-hooks >/dev/null \
-              && [[ $(readlink .pre-commit-hooks) == ${hooks} ]]; then
+            if readlink .pre-commit-config.yaml >/dev/null \
+              && [[ $(readlink .pre-commit-config.yaml) == ${configFile} ]]; then
               echo 1>&2 "nix-pre-commit-hooks: hooks up to date"
             else
               echo 1>&2 "nix-pre-commit-hooks: updating $PWD repo"
 
-              [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
-              ln -s ${hooks} .pre-commit-hooks
+              [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
+              ln -s ${configFile} .pre-commit-config.yaml
 
-              doInstall=true
-            fi
-
-            if cmp ${configFile} .pre-commit-config.yaml &>/dev/null; then
-              echo 1>&2 "nix-pre-commit-hooks: config up to date"
-            else
-              echo 1>&2 "nix-pre-commit-hooks: updating $PWD config"
-
-              # This can't be a symlink because its path is not constant,
-              # thus can not be committed and is invisible to pre-commit.
-              rm -f .pre-commit-config.yaml
-              cat ${configFile} >.pre-commit-config.yaml
-
-              doInstall=true
-            fi
-
-            if $doInstall; then
               pre-commit install
-              # this is needed as the hook repo configuration is cached
-              pre-commit clean
             fi
           fi
         '';

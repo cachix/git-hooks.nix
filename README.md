@@ -49,10 +49,12 @@ The goal is to manage these hooks with Nix and solve the following:
     }
    ```
 
+   Add `/.pre-commit-config.yaml` to `.gitignore`.
+
    Run `$ nix-shell` to execute `shellHook` which will:
-   - install git hooks
-   - symlink hooks to `.pre-commit-hooks/`
-   - provide `pre-commit` executable that `git commit` will invoke
+   - build the tools and `.pre-commit-config.yaml` config file symlink which
+     references the binaries, for speed and safe garbage collection
+   - provide the `pre-commit` executable that `git commit` will invoke
 
 ## Optional
 
