@@ -352,9 +352,6 @@ in {
             fi
 
             if $doInstall; then
-              # This because we're still using a clone. The clean invocation can
-              # be rid of when the patch uses a *working* non-clone code path.
-              pre-commit clean
               pre-commit install
             fi
           fi
