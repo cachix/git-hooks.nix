@@ -125,8 +125,6 @@ let
   processedHooks =
     mapAttrsToList ( id: value: value.raw // { inherit id; } ) enabledHooks;
 
-  hooksFile =
-    writeText "pre-commit-hooks.json" ( builtins.toJSON processedHooks );
   configFile =
     runCommand "pre-commit-config.json" {
       buildInputs = [ pkgs.jq ];
@@ -140,26 +138,12 @@ let
       } >$out
     '';
 
-  hooks =
-    runCommand "pre-commit-hooks-dir" { buildInputs = [ git ]; } ''
-      HOME=$PWD
-      mkdir -p $out
-      ln -s ${hooksFile} $out/.pre-commit-hooks.yaml
-      cd $out
-      git config --global user.email "you@example.com"
-      git config --global user.name "Your Name"
-      git init
-      git add .
-      git commit -m "init"
-    '';
-
   run =
     runCommand "pre-commit-run" { buildInputs = [ git ]; } ''
       set +e
       HOME=$PWD
       cp --no-preserve=mode -R ${cfg.rootSrc} src
-      unlink src/.pre-commit-hooks || true
-      ln -fs ${hooks} src/.pre-commit-hooks
+      ln -fs ${configFile} src/.pre-commit-config.yaml
       cd src
       rm -rf src/.git
       git init
@@ -179,20 +163,6 @@ let
   inherit (import (import ../nix/sources.nix).gitignore { inherit lib; })
     gitignoreSource
     ;
-
-  patch =
-    pre-commit:
-      pre-commit.overrideAttrs (
-        drv:
-          {
-            patches =
-              (drv.patches or []) ++ [
-              ../nix/pre-commit-resolve-symlink.patch
-            ];
-            name = "${drv.name}-nix";
-          }
-      );
-
 in {
   options.pre-commit =
     {
@@ -204,10 +174,10 @@ in {
             ''
               The pre-commit package to use.
             '';
-          default = patch pkgs.pre-commit;
+          default = pkgs.pre-commit;
           defaultText =
             literalExample ''
-              patch pkgs.pre-commit
+              pkgs.pre-commit
             '';
         };
 
@@ -303,10 +273,8 @@ in {
         repos =
           [
             {
-              repo = ".pre-commit-hooks";
-              rev = "master";
-              hooks =
-                mapAttrsToList ( id: _value: { inherit id; } ) enabledHooks;
+              repo = "local";
+              hooks = processedHooks;
             }
           ];
       } // lib.optionalAttrs (cfg.excludes != []) {
@@ -320,42 +288,28 @@ in {
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: nix-pre-commit-hooks: git command not found; skipping installation."
           else
-            local doInstall=false
-
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
             # and prevents installation loops by via lorri.
 
-            if readlink .pre-commit-hooks >/dev/null \
-              && [[ $(readlink .pre-commit-hooks) == ${hooks} ]]; then
+            if readlink .pre-commit-config.yaml >/dev/null \
+              && [[ $(readlink .pre-commit-config.yaml) == ${configFile} ]]; then
               echo 1>&2 "nix-pre-commit-hooks: hooks up to date"
             else
               echo 1>&2 "nix-pre-commit-hooks: updating $PWD repo"
 
-              [ -L .pre-commit-hooks ] && unlink .pre-commit-hooks
-              ln -s ${hooks} .pre-commit-hooks
+              [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
 
-              doInstall=true
-            fi
-
-            if cmp ${configFile} .pre-commit-config.yaml &>/dev/null; then
-              echo 1>&2 "nix-pre-commit-hooks: config up to date"
-            else
-              echo 1>&2 "nix-pre-commit-hooks: updating $PWD config"
-
-              # This can't be a symlink because its path is not constant,
-              # thus can not be committed and is invisible to pre-commit.
-              rm -f .pre-commit-config.yaml
-              cat ${configFile} >.pre-commit-config.yaml
-
-              doInstall=true
-            fi
-
-            if $doInstall; then
-              # This because we're still using a clone. The clean invocation can
-              # be rid of when the patch uses a *working* non-clone code path.
-              pre-commit clean
-              pre-commit install
+              if [ -e .pre-commit-config.yaml ]; then
+                echo 1>&2 "nix-pre-commit-hooks: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
+                echo 1>&2 "    1. Translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
+                echo 1>&2 "        see https://github.com/hercules-ci/nix-pre-commit-hooks#installation--usage"
+                echo 1>&2 "    2. remove .pre-commit-config.yaml"
+                echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
+              else
+                ln -s ${configFile} .pre-commit-config.yaml
+                pre-commit install
+              fi
             fi
           fi
         '';

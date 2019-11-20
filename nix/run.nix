@@ -1,8 +1,9 @@
-{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript, lib }:
+builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript, lib }:
 
 { src
 , hooks ? {}
 , excludes ? []
+, tools ? {}
 }:
 
 let
@@ -30,7 +31,8 @@ let
                 _module.args.pkgs = pkgs;
                 pre-commit =
                   {
-                    inherit hooks excludes tools;
+                    inherit hooks excludes;
+                    tools = builtinStuff.tools // tools;
                   };
               };
           }

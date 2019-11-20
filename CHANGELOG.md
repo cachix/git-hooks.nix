@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and is a rolling release.
 
+## 2019-11-06
+
+### Changed
+
+ - **BREAKING:** Add `/.pre-commit-config.yaml` to `/.gitignore`
+
+ - Do not generate `.pre-commit-hooks` fake repo
+
 ## 2019-10-02
 
 ### Added
