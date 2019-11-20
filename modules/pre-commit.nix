@@ -302,10 +302,10 @@ in {
 
               if [ -e .pre-commit-config.yaml ]; then
                 echo 1>&2 "nix-pre-commit-hooks: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
-                echo 1>&2 "    - Please translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
+                echo 1>&2 "    1. Translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
                 echo 1>&2 "        see https://github.com/hercules-ci/nix-pre-commit-hooks#installation--usage"
-                echo 1>&2 "    - remove .pre-commit-config.yaml,"
-                echo 1>&2 "    - and add /.pre-commit-config.yaml to .gitignore"
+                echo 1>&2 "    2. remove .pre-commit-config.yaml"
+                echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
                 ln -s ${configFile} .pre-commit-config.yaml
                 pre-commit install
