@@ -45,7 +45,7 @@ The goal is to manage these hooks with Nix and solve the following:
 3. Integrate hooks to prepare environment as part of `shell.nix`:
    ```nix
     (import <nixpkgs> {}).mkShell {
-      inherit ((import ./. {}).pre-commit-check) shellHook;
+      inherit ((import ./default.nix).pre-commit-check) shellHook;
     }
    ```
 
