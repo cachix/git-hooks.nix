@@ -18,6 +18,14 @@ in {
 
   config.pre-commit.hooks =
     {
+      ansible-lint =
+        {
+          name = "ansible-lint";
+          description =
+            "Ansible linter";
+          entry = "${tools.ansible-lint}/bin/ansible-lint";
+          files = "\\.yml$";
+        };
       hlint =
         {
           name = "hlint";
@@ -32,7 +40,7 @@ in {
           description = "Haskell code prettifier.";
           entry =
             "${tools.ormolu}/bin/ormolu --mode inplace ${
-              lib.escapeShellArgs (lib.concatMap (ext: ["--ghc-opt" "-X${ext}"]) settings.ormolu.defaultExtensions)
+            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
             }";
           files = "\\.l?hs$";
         };
