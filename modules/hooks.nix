@@ -1,7 +1,21 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (config.pre-commit) tools;
+  inherit (config.pre-commit) tools settings;
+  inherit (lib) mkOption types;
 in {
+  options.pre-commit.settings =
+    {
+      ormolu =
+        {
+          defaultExtensions =
+            mkOption {
+              type = types.listOf types.str;
+              description = "Haskell language extensions to enable";
+              default = [];
+            };
+        };
+    };
+
   config.pre-commit.hooks =
     {
       hlint =
@@ -16,7 +30,10 @@ in {
         {
           name = "ormolu";
           description = "Haskell code prettifier.";
-          entry = "${tools.ormolu}/bin/ormolu --mode inplace";
+          entry =
+            "${tools.ormolu}/bin/ormolu --mode inplace ${
+              lib.escapeShellArgs (lib.concatMap (ext: ["--ghc-opt" "-X${ext}"]) settings.ormolu.defaultExtensions)
+            }";
           files = "\\.l?hs$";
         };
       hindent =
