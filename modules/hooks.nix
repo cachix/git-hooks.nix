@@ -104,5 +104,11 @@ in {
           entry = "${tools.terraform-fmt}/bin/terraform-fmt";
           files = "\\.tf$";
         };
+      yamllint =
+        {
+          name = "yamllint";
+          description = "Yaml linter";
+          entry = "${tools.yamllint}/bin/yamllint";
+        };
     };
 }
