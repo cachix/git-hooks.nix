@@ -18,6 +18,13 @@ in {
 
   config.pre-commit.hooks =
     {
+      ansible-lint =
+        {
+          name = "ansible-lint";
+          description =
+            "Ansible linter";
+          entry = "${tools.ansible-lint}/bin/ansible-lint";
+        };
       hlint =
         {
           name = "hlint";
@@ -32,7 +39,7 @@ in {
           description = "Haskell code prettifier.";
           entry =
             "${tools.ormolu}/bin/ormolu --mode inplace ${
-              lib.escapeShellArgs (lib.concatMap (ext: ["--ghc-opt" "-X${ext}"]) settings.ormolu.defaultExtensions)
+            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
             }";
           files = "\\.l?hs$";
         };
@@ -95,6 +102,13 @@ in {
           description = "Format terraform (.tf) files";
           entry = "${tools.terraform-fmt}/bin/terraform-fmt";
           files = "\\.tf$";
+        };
+      yamllint =
+        {
+          name = "yamllint";
+          description = "Yaml linter";
+          types = [ "file" "yaml" ];
+          entry = "${tools.yamllint}/bin/yamllint";
         };
     };
 }
