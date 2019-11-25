@@ -107,6 +107,7 @@ in {
         {
           name = "yamllint";
           description = "Yaml linter";
+          types = [ "file" "yaml" ];
           entry = "${tools.yamllint}/bin/yamllint";
         };
     };
