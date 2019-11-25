@@ -24,7 +24,6 @@ in {
           description =
             "Ansible linter";
           entry = "${tools.ansible-lint}/bin/ansible-lint";
-          files = "\\.yml$";
         };
       hlint =
         {
