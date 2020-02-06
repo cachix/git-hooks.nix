@@ -21,55 +21,62 @@ let
   lazyAttrsOf =
     args@
     { elemType
-    , default ?
-        # ^ A default value in case an attribute was retroactively undefined
-        #   by `mkIf false`.
-        #   Default: an exception.
+    , default ? # ^ A default value in case an attribute was retroactively undefined
+      #   by `mkIf false`.
+      #   Default: an exception.
 
-        # This default is only here to mark it as optional. We use defaultFunction instead.
-        abort "No default provided for mkIf false in lazyAttrsOf"
-    , defaultFunction ?
-        # ^ Function to call when a value is missing due to mkIf false.
-        #   Default: an exception.
-        #
-        #   Parameters:
-        #     - option location (list of strings)
-        #     - definitions for this option (list of { file : string })
-        #     - name of the attribute
-        if args?default
-        then _loc: _defs: _n: args.default
-        else defaultLazyAttrsOfDefaultFunction
+      # This default is only here to mark it as optional. We use defaultFunction instead.
+      abort "No default provided for mkIf false in lazyAttrsOf"
+    , defaultFunction ? # ^ Function to call when a value is missing due to mkIf false.
+      #   Default: an exception.
+      #
+      #   Parameters:
+      #     - option location (list of strings)
+      #     - definitions for this option (list of { file : string })
+      #     - name of the attribute
+      if args?default
+      then _loc: _defs: _n: args.default
+      else defaultLazyAttrsOfDefaultFunction
     }:
-    let ao = types.attrsOf elemType;
-    in ao // {
-      name = "lazyAttrsOf";
-      description = "attribute set of lazily merged ${elemType.description}s";
-      check = lib.isAttrs;
+      let
+        ao = types.attrsOf elemType;
+      in
+        ao // {
+          name = "lazyAttrsOf";
+          description = "attribute set of lazily merged ${elemType.description}s";
+          check = lib.isAttrs;
 
-      # TODO: add v location to mkIf error message
-      # TODO: allow specifying a default value in such cases
-      merge = loc: defs:
-        mapAttrs
-          (n: v: 
-            let defFiles = lib.showFiles (map (def: def.file) defs);
-            in builtins.addErrorContext
-                "while evaluating the '${n}' attribute of ${lib.showOption loc} defined in ${defFiles}"
-                v.value or (defaultFunction loc defs n)
-            )
-          (zipAttrsWith
-            (name: defs:
-              (mergeDefinitions (loc ++ [name]) elemType defs).optionalValue // { inherit defs; }
-            )
-            # Push down position info.
-            (map (def: mapAttrs (n: v: { inherit (def) file; value = v; }) def.value)
-            defs
-          ));
-    };
+          # TODO: add v location to mkIf error message
+          # TODO: allow specifying a default value in such cases
+          merge = loc: defs:
+            mapAttrs
+              (
+                n: v:
+                  let
+                    defFiles = lib.showFiles (map (def: def.file) defs);
+                  in
+                    builtins.addErrorContext
+                      "while evaluating the '${n}' attribute of ${lib.showOption loc} defined in ${defFiles}"
+                      v.value or (defaultFunction loc defs n)
+              )
+              (
+                zipAttrsWith
+                  (
+                    name: defs:
+                      (mergeDefinitions (loc ++ [ name ]) elemType defs).optionalValue // { inherit defs; }
+                  )
+                  # Push down position info.
+                  (
+                    map (def: mapAttrs (n: v: { inherit (def) file; value = v; }) def.value)
+                      defs
+                  )
+              );
+        };
 
   defaultLazyAttrsOfDefaultFunction =
     loc: defs: n:
       let
-        defFiles = lib.showFiles ( map ( def: def.file ) defs );
+        defFiles = lib.showFiles (map (def: def.file) defs);
       in
         throw ''
           A value is missing from a lazy attribute set.
@@ -93,21 +100,22 @@ let
         '';
 
 
-# TODO when upstreaming, add automated tests, with cases
-#   - without mkIf:
-#     - exception in value to test non-strictness (laziness)
-#     - normal case
-#   - with mkIf true
-#     - normal case
-#   - with mkIf false, no default
-#     - normal case
-#     - no exception if not used
-#     - exception if used
-#   - with mkIf false, with default
-#     - no exception
-#   - with invalid value according to elemType.check
-#     - exception when value is used
+  # TODO when upstreaming, add automated tests, with cases
+  #   - without mkIf:
+  #     - exception in value to test non-strictness (laziness)
+  #     - normal case
+  #   - with mkIf true
+  #     - normal case
+  #   - with mkIf false, no default
+  #     - normal case
+  #     - no exception if not used
+  #     - exception if used
+  #   - with mkIf false, with default
+  #     - no exception
+  #   - with invalid value according to elemType.check
+  #     - exception when value is used
 
-in {
+in
+{
   inherit lazyAttrsOf;
 }

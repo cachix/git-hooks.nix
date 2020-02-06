@@ -2,7 +2,8 @@
 let
   inherit (config.pre-commit) tools settings;
   inherit (lib) mkOption types;
-in {
+in
+{
   options.pre-commit.settings =
     {
       ormolu =
@@ -56,13 +57,6 @@ in {
           description = "Format Cabal files";
           entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
-        };
-      canonix =
-        {
-          name = "canonix";
-          description = "Nix code prettifier.";
-          entry = "${tools.canonix}/bin/canonix";
-          files = "\\.nix$";
         };
       nixfmt =
         {

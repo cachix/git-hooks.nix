@@ -121,9 +121,9 @@ let
     excludes:
       if excludes == [] then "^$" else "(${concatStringsSep "|" excludes})";
 
-  enabledHooks = filterAttrs ( id: value: value.enable ) cfg.hooks;
+  enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
   processedHooks =
-    mapAttrsToList ( id: value: value.raw // { inherit id; } ) enabledHooks;
+    mapAttrsToList (id: value: value.raw // { inherit id; }) enabledHooks;
 
   configFile =
     runCommand "pre-commit-config.json" {
@@ -163,7 +163,8 @@ let
   inherit (import (import ../nix/sources.nix).gitignore { inherit lib; })
     gitignoreSource
     ;
-in {
+in
+{
   options.pre-commit =
     {
 
@@ -270,16 +271,16 @@ in {
 
       pre-commit.rawConfig =
         {
-        repos =
-          [
-            {
-              repo = "local";
-              hooks = processedHooks;
-            }
-          ];
-      } // lib.optionalAttrs (cfg.excludes != []) {
-        exclude = mergeExcludes cfg.excludes;
-      };
+          repos =
+            [
+              {
+                repo = "local";
+                hooks = processedHooks;
+              }
+            ];
+        } // lib.optionalAttrs (cfg.excludes != []) {
+          exclude = mergeExcludes cfg.excludes;
+        };
 
       pre-commit.installationScript =
         ''

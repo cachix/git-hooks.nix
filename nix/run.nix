@@ -42,6 +42,6 @@ let
   inherit (project.config.pre-commit) installationScript;
 
 in
-  project.config.pre-commit.run // {
-    shellHook = installationScript;
-  }
+project.config.pre-commit.run // {
+  shellHook = installationScript;
+}
