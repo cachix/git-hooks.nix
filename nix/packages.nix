@@ -3,7 +3,7 @@
 let
   tools = callPackage ./tools.nix {};
 in
-  tools // rec {
+tools // rec {
   inherit niv;
   inherit (gitAndTools) pre-commit;
   run = callPackage ./run.nix { inherit tools; };

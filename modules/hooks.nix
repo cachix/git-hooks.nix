@@ -2,7 +2,8 @@
 let
   inherit (config.pre-commit) tools settings;
   inherit (lib) mkOption types;
-in {
+in
+{
   options.pre-commit.settings =
     {
       ormolu =
