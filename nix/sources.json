@@ -11,18 +11,6 @@
         "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "canonix": {
-        "branch": "master",
-        "description": "Experiment in Nix formatting",
-        "homepage": null,
-        "owner": "hercules-ci",
-        "repo": "canonix",
-        "rev": "a3369542aef56366d3432e01e3e73374a310ca4a",
-        "sha256": "0bw17sahfn5vqcygvmabafq8i0qszjh9jxl2524k4b3mh12apivm",
-        "type": "tarball",
-        "url": "https://github.com/hercules-ci/canonix/archive/a3369542aef56366d3432e01e3e73374a310ca4a.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "gitignore": {
         "branch": "master",
         "description": "Nix function for filtering local git sources",

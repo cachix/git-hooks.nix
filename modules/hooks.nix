@@ -57,13 +57,6 @@ in {
           entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
         };
-      canonix =
-        {
-          name = "canonix";
-          description = "Nix code prettifier.";
-          entry = "${tools.canonix}/bin/canonix";
-          files = "\\.nix$";
-        };
       nixfmt =
         {
           name = "nixfmt";
