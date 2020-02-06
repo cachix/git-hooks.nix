@@ -1,18 +1,20 @@
-{ sources ? import ./sources.nix }:
+{ sources ? import ./sources.nix 
+, system ? builtins.currentSystem
+}:
 
 with {
+    haskellnix = import sources."haskell.nix";
     overlay =
       _: pkgs:
         let
-          haskell = import sources."haskell.nix" { inherit pkgs; };
           pkgPlan =
-            haskell.callCabalProjectToNix {
-              index-state = "2019-08-18T00:00:00Z";
+            pkgs.haskell-nix.callCabalProjectToNix {
+              #index-state = "2020-02-18T00:00:00Z";
               src = sources.cabal-fmt;
             };
           # Instantiate a package set using the generated file.
           pkgSet =
-            haskell.mkCabalProjectPkgSet {
+            pkgs.haskell-nix.mkCabalProjectPkgSet {
               plan-pkgs = import pkgPlan;
               pkg-def-extras = [];
               modules = [];
@@ -29,5 +31,8 @@ with {
           packages = pkgs.callPackages ./packages.nix {};
         };
   };
-
-import sources.nixpkgs { overlays = [ overlay ]; config = {}; }
+import sources.nixpkgs {
+  overlays = haskellnix.overlays ++ [ overlay ];
+  config = haskellnix.config // {};
+  inherit system;
+}
