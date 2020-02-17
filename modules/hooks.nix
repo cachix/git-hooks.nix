@@ -15,6 +15,16 @@ in
               default = [];
             };
         };
+      nix-linter =
+        {
+          checks =
+            mkOption {
+              type = types.listOf types.str;
+              description =
+                "Available checks (See `nix-linter --help-for [CHECK]` for more details)";
+              default = [];
+            };
+        };
     };
 
   config.pre-commit.hooks =
@@ -70,6 +80,16 @@ in
           name = "nixpkgs-fmt";
           description = "Nix code prettifier.";
           entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
+          files = "\\.nix$";
+        };
+      nix-linter =
+        {
+          name = "nix-linter";
+          description = "Linter for the Nix expression language.";
+          entry =
+            "${tools.nix-linter}/bin/nix-linter ${
+            lib.escapeShellArgs (lib.concatMap (check: [ "-W" "${check}" ]) settings.nix-linter.checks)
+            }";
           files = "\\.nix$";
         };
       elm-format =

@@ -59,6 +59,18 @@
         "url": "https://github.com/nmattia/niv/archive/efce82e4ba77a84835f9febefe3b2fe52a8c7ede.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nix-linter": {
+        "branch": "master",
+        "description": "Linter for the Nix expression language",
+        "homepage": "",
+        "owner": "Synthetica9",
+        "repo": "nix-linter",
+        "rev": "4aaf60195cd2d9f9e2345fbdf4aac48e1451292c",
+        "sha256": "0c7rcjaxd8z0grwambsw46snv7cg66h3pszw3549z4xz0i60yq87",
+        "type": "tarball",
+        "url": "https://github.com/Synthetica9/nix-linter/archive/4aaf60195cd2d9f9e2345fbdf4aac48e1451292c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs": {
         "branch": "nixos-unstable",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
