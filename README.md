@@ -21,13 +21,13 @@ The goal is to manage these hooks with Nix and solve the following:
 
    ```bash
    $ nix-env -iA cachix -f https://cachix.org/api/v1/install
-   $ cachix use hercules-ci
+   $ cachix use pre-commit-hooks
    ```
 
 2. Integrate hooks to be built as part of `default.nix`:
    ```nix
     let
-      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/hercules-ci/nix-pre-commit-hooks/tarball/master");
+      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/nix-pre-commit-hooks/tarball/master");
     in {
       pre-commit-check = nix-pre-commit-hooks.run {
         src = ./.;
