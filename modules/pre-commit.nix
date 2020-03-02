@@ -194,9 +194,9 @@ in
             '';
           # This default is for when the module is the entry point rather than
           # /default.nix. /default.nix will override this for efficiency.
-          default = (import ../nix {}).callPackage ../nix/tools.nix {};
+          default = (import ../nix { inherit (pkgs) system; }).callPackage ../nix/tools.nix {};
           defaultText =
-            literalExample ''nix-pre-commit-hooks-pkgs.callPackage tools-dot-nix {}'';
+            literalExample ''nix-pre-commit-hooks-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
         };
 
       hooks =
