@@ -27,7 +27,7 @@ The goal is to manage these hooks with Nix and solve the following:
 2. Integrate hooks to be built as part of `default.nix`:
    ```nix
     let
-      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/nix-pre-commit-hooks/tarball/master");
+      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
     in {
       pre-commit-check = nix-pre-commit-hooks.run {
         src = ./.;
