@@ -11,28 +11,16 @@
         "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "gitignore": {
+    "gitignore.nix": {
         "branch": "master",
         "description": "Nix function for filtering local git sources",
         "homepage": "",
         "owner": "hercules-ci",
-        "repo": "gitignore",
-        "rev": "f9e996052b5af4032fe6150bba4a6fe4f7b9d698",
-        "sha256": "0jrh5ghisaqdd0vldbywags20m2cxpkbbk5jjjmwaw0gr8nhsafv",
+        "repo": "gitignore.nix",
+        "rev": "2ced4519f865341adcb143c5d668f955a2cb997f",
+        "sha256": "0fc5bgv9syfcblp23y05kkfnpgh3gssz6vn24frs8dzw39algk2z",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/gitignore/archive/f9e996052b5af4032fe6150bba4a6fe4f7b9d698.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "haskell.nix": {
-        "branch": "master",
-        "description": "Alternative Haskell Infrastructure for Nixpkgs",
-        "homepage": "https://input-output-hk.github.io/haskell.nix",
-        "owner": "input-output-hk",
-        "repo": "haskell.nix",
-        "rev": "659d80f56349982ad0803c5b6552c99a062ebd8d",
-        "sha256": "1z6w3g0ra37p5grd8brk4q717d6iwm5pwshl9z9pzhgckyzjyd9s",
-        "type": "tarball",
-        "url": "https://github.com/input-output-hk/haskell.nix/archive/659d80f56349982ad0803c5b6552c99a062ebd8d.tar.gz",
+        "url": "https://github.com/hercules-ci/gitignore/archive/2ced4519f865341adcb143c5d668f955a2cb997f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hindent": {
@@ -47,28 +35,16 @@
         "url": "https://github.com/chrisdone/hindent/archive/1583be4a8a01b765841f7306284528ae713abb7b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "niv": {
-        "branch": "master",
-        "description": "Easy dependency management for Nix projects",
-        "homepage": "https://github.com/nmattia/niv",
-        "owner": "nmattia",
-        "repo": "niv",
-        "rev": "efce82e4ba77a84835f9febefe3b2fe52a8c7ede",
-        "sha256": "19ah2il98hjb2c8d4p1ph3nxrkzi4hl9vbw21snza5w7x4jhx4jk",
-        "type": "tarball",
-        "url": "https://github.com/nmattia/niv/archive/efce82e4ba77a84835f9febefe3b2fe52a8c7ede.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nixpkgs": {
-        "branch": "nixos-unstable",
+        "branch": "nixos-20.03",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2cc1939a0f46a20ce7770c459c54b3b8f9e5b182",
-        "sha256": "0l5ry08ghv3rkxafplhghdzyp0ifvhpc2p5f74c91c5zdcnd12cj",
+        "rev": "99a3d7a86fce9e9c9f23b3e304d7d2b1270a12b8",
+        "sha256": "0i40cl3n6600z2lkwrpiy28dcnv2r63fcgfswj91aaf1xfn2chql",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/2cc1939a0f46a20ce7770c459c54b3b8f9e5b182.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/99a3d7a86fce9e9c9f23b3e304d7d2b1270a12b8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

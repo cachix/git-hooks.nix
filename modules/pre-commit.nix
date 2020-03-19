@@ -160,7 +160,7 @@ let
     '';
 
   # TODO: provide a default pin that the user may override
-  inherit (import (import ../nix/sources.nix).gitignore { inherit lib; })
+  inherit (import (import ../nix/sources.nix)."gitignore.nix" { inherit lib; })
     gitignoreSource
     ;
 in

@@ -3,7 +3,6 @@
 }:
 
 let
-  haskellnix = import sources."haskell.nix";
   overlay =
     _: pkgs:
       let
@@ -25,7 +24,7 @@ let
         };
 in
 import sources.nixpkgs {
-  overlays = haskellnix.overlays ++ [ overlay ];
-  config = haskellnix.config // {};
+  overlays = [ overlay ];
+  config = {};
   inherit system;
 }
