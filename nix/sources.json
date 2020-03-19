@@ -11,16 +11,16 @@
         "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "gitignore": {
+    "gitignore.nix": {
         "branch": "master",
         "description": "Nix function for filtering local git sources",
         "homepage": "",
         "owner": "hercules-ci",
-        "repo": "gitignore",
-        "rev": "f9e996052b5af4032fe6150bba4a6fe4f7b9d698",
-        "sha256": "0jrh5ghisaqdd0vldbywags20m2cxpkbbk5jjjmwaw0gr8nhsafv",
+        "repo": "gitignore.nix",
+        "rev": "2ced4519f865341adcb143c5d668f955a2cb997f",
+        "sha256": "0fc5bgv9syfcblp23y05kkfnpgh3gssz6vn24frs8dzw39algk2z",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/gitignore/archive/f9e996052b5af4032fe6150bba4a6fe4f7b9d698.tar.gz",
+        "url": "https://github.com/hercules-ci/gitignore/archive/2ced4519f865341adcb143c5d668f955a2cb997f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "haskell.nix": {
