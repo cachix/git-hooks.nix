@@ -26,6 +26,13 @@ in
             "Ansible linter";
           entry = "${tools.ansible-lint}/bin/ansible-lint";
         };
+      brittany =
+        {
+          name = "brittany";
+          description = "Haskell source code formatter.";
+          entry = "${tools.brittany}/bin/brittany --write-mode=inplace";
+          files = "\\.l?hs$";
+        };
       hlint =
         {
           name = "hlint";
