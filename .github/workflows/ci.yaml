@@ -15,3 +15,4 @@ jobs:
       with:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: nix-build
