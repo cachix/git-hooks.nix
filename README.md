@@ -87,6 +87,7 @@ eval "$shellHook"
 - [hlint](https://github.com/ndmitchell/hlint)
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
 - [brittany](https://github.com/lspitzner/brittany)
+- [hpack](https://github.com/sol/hpack)
 
 ## Elm
 

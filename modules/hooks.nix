@@ -41,6 +41,14 @@ in
           entry = "${tools.hlint}/bin/hlint";
           files = "\\.l?hs$";
         };
+      hpack =
+        {
+          name = "hpack";
+          description =
+            "hpack converts package definitions in the hpack format (package.yaml) to Cabal files.";
+          entry = "${tools.hpack}/bin/hpack";
+          files = "^package.yaml$";
+        };
       ormolu =
         {
           name = "ormolu";
