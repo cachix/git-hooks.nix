@@ -21,7 +21,7 @@
 {
   inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt;
   inherit (elmPackages) elm-format;
-  inherit (haskellPackages) brittany;
+  inherit (haskellPackages) brittany hpack;
   inherit (pythonPackages) yamllint;
   terraform-fmt = callPackage ./terraform-fmt {};
 }
