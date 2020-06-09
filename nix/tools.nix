@@ -14,12 +14,13 @@
 , git
 , nixpkgs-fmt
 , nixfmt
+, nix-linter
 , callPackage
 , pythonPackages
 }:
 
 {
-  inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt;
+  inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter;
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) brittany hpack;
   inherit (pythonPackages) yamllint;
