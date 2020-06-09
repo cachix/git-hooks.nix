@@ -11,8 +11,7 @@ let
           pkgs.haskellPackages.callCabal2nix "cabal-fmt" sources.cabal-fmt {};
       in
         {
-          inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt;
-          inherit (import sources.nix-linter { inherit pkgs; }) nix-linter;
+          inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt nix-linter;
           hindent =
             pkgs.haskellPackages.callCabal2nix "hindent" sources.hindent {};
           cabal-fmt =
