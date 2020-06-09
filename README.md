@@ -79,6 +79,7 @@ eval "$shellHook"
 
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [nixfmt](https://github.com/serokell/nixfmt/)
+- [nix-linter](https://github.com/Synthetica9/nix-linter)
 
 ## Haskell
 
