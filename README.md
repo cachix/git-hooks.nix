@@ -1,7 +1,5 @@
 # Seamless integration of [pre-commit](https://pre-commit.com/) git hooks with [Nix](https://nixos.org/nix)
 
-[pre-commit](https://pre-commit.com/) manages a set of hooks that are executed by git before committing code and on CI:
-
 ![pre-commit.png](pre-commit.png)
 
 The goal is to **manage commit hooks with Nix** and solve the following:
