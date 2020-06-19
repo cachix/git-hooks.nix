@@ -1,21 +1,21 @@
 # Seamless integration of [pre-commit](https://pre-commit.com/) git hooks with [Nix](https://nixos.org/nix)
 
-[pre-commit](https://pre-commit.com/) manages a set of hooks that are executed by git before committing code:
+[pre-commit](https://pre-commit.com/) manages a set of hooks that are executed by git before committing code and on CI:
 
 ![pre-commit.png](pre-commit.png)
 
-The goal is to manage these hooks with Nix and solve the following:
+The goal is to **manage commit hooks with Nix** and solve the following:
 
-- Simpler integration for Nix projects (wires up a few things behind the scenes)
+- **Trivial integration for Nix projects** (wires up a few things behind the scenes)
 
 - Provide a low-overhead build of all the tooling available for the hooks to use
    (naive implementation of calling nix-shell does bring some latency when committing)
 
-- Common package set of hooks for popular languages like Haskell, Elm, etc.
+- **Common hooks for languages** like Python, Haskell, Elm, etc.
 
-- Two trivial Nix functions to run hooks as part of development and on your CI
+- Run hooks **as part of development** and **on your CI**
 
-# Installation & Usage
+# Getting started
 
 1. (optional) Use binary caches to avoid compilation:
 
@@ -45,13 +45,16 @@ The goal is to manage these hooks with Nix and solve the following:
 3. Integrate hooks to prepare environment as part of `shell.nix`:
    ```nix
     (import <nixpkgs> {}).mkShell {
-      inherit ((import ./default.nix).pre-commit-check) shellHook;
+       shellHook = ''
+        ${(import ./default.nix).pre-commit-check.shellHook}
+      '';
     }
    ```
 
    Add `/.pre-commit-config.yaml` to `.gitignore`.
 
    Run `$ nix-shell` to execute `shellHook` which will:
+   
    - build the tools and `.pre-commit-config.yaml` config file symlink which
      references the binaries, for speed and safe garbage collection
    - provide the `pre-commit` executable that `git commit` will invoke
