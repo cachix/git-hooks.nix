@@ -104,12 +104,18 @@ let
                     '';
                   default = [];
                 };
+              pass_filenames =
+                mkOption {
+                  type = types.bool;
+                  description = "Whether to pass filenames as arguments to the entry point.";
+                  default = true;
+                };
             };
           config =
             {
               raw =
                 {
-                  inherit (config) name entry language files types;
+                  inherit (config) name entry language files types pass_filenames;
                   id = name;
                   exclude = mergeExcludes config.excludes;
                 };
