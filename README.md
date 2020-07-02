@@ -71,7 +71,7 @@ unset SSL_CERT_FILE
 unset NIX_SSL_CERT_FILE
 
 # Install pre-commit hooks
-eval "$shellHook"
+eval "$lorriHook"
 ```
 
 # Hooks
