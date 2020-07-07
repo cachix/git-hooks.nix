@@ -26,7 +26,7 @@ The goal is to **manage commit hooks with Nix** and solve the following:
    ```nix
     let
       nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
-      pkgs = import <nixpkgs>
+      pkgs = import <nixpkgs> {};
     in {
       pre-commit-check = nix-pre-commit-hooks.run {
         src = pkgs.nix-gitignore.gitignoreSource [".git"] ./.;
