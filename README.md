@@ -27,9 +27,18 @@ The goal is to **manage commit hooks with Nix** and solve the following:
     let
       nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
       pkgs = import <nixpkgs> {};
+      gitignoreSrc = pkgs.fetchFromGitHub { 
+        owner = "hercules-ci";
+        repo = "gitignore";
+        # put the latest commit sha of gitignore Nix library here:
+        rev = "";
+        # use what nix suggests in the mismatch message here:
+        sha256 = "sha256:0000000000000000000000000000000000000000000000000000";
+      };
+      inherit (import gitignoreSrc { inherit (pkgs) lib; }) gitignoreSource;
     in {
       pre-commit-check = nix-pre-commit-hooks.run {
-        src = pkgs.nix-gitignore.gitignoreSource [".git"] ./.;
+        src = gitignoreSource ./.;
         hooks = {
           elm-format.enable = true;
           ormolu.enable = true;
