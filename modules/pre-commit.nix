@@ -15,6 +15,7 @@ let
   inherit (pkgs) runCommand writeText git;
 
   cfg = config;
+  install_stages = cfg.default_stages;
 
   hookType =
     types.submodule (
@@ -268,6 +269,18 @@ in
           default = [ ];
         };
 
+      default_stages =
+        mkOption {
+          type = types.listOf types.str;
+          description =
+            ''
+              A configuration wide option for the stages property.
+              Installs hooks to the defined stages.
+              Default is empty which falls back to 'commit'.
+            '';
+          default = [ ];
+        };
+
       rawConfig =
         mkOption {
           type = types.attrs;
@@ -296,6 +309,8 @@ in
             ];
         } // lib.optionalAttrs (cfg.excludes != [ ]) {
           exclude = mergeExcludes cfg.excludes;
+        } // lib.optionalAttrs (cfg.default_stages != [ ]) {
+          default_stages = cfg.default_stages;
         };
 
       installationScript =
@@ -325,7 +340,36 @@ in
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
                 ln -s ${configFile} .pre-commit-config.yaml
-                pre-commit install
+                # Remove any previously installed hooks (since pre-commit itself has no convergent design)
+                hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
+                for hook in $hooks; do
+                  pre-commit uninstall -t $hook
+                done
+                # Add hooks for configured stages (only) ...
+                if [ ! -z "${concatStringsSep " " install_stages}" ]; then
+                  for stage in ${concatStringsSep " " install_stages}; do
+                    if [[ "$stage" == "manual" ]]; then
+                      continue
+                    fi
+                    case $stage in
+                      # if you amend these switches please also review $hooks above
+                      commit | merge-commit | push)
+                        stage="pre-"$stage
+                        pre-commit install -t $stage
+                        ;;
+                      prepare-commit-msg | commit-msg | post-checkout | post-commit)
+                        pre-commit install -t $stage
+                        ;;
+                      *)
+                        echo 1>&2 "ERROR: nix-pre-commit-hooks: either $stage is not a valid stage or pre-commit-hooks.nix doesn't yet support it."
+                        exit 1
+                        ;;
+                    esac
+                  done
+                # ... or default 'pre-commit' hook
+                else
+                  pre-commit install
+                fi
               fi
             fi
           fi
