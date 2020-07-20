@@ -329,7 +329,31 @@ in
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
                 ln -s ${configFile} .pre-commit-config.yaml
-                pre-commit install
+                # Remove any previously installed hooks (since pre-commit itself has no convergent design)
+                hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
+                for hook in $hooks; do
+                  pre-commit uninstall -t $hook
+                done
+                # Add hooks for configured stages (only) ...
+                if [ ! -z "${concatStringsSep " " cfg.default_stages}" ]; then
+                  for stage in ${concatStringsSep " " cfg.default_stages}; do
+                    case $stage in
+                      commit | merge-commit | push)
+                        stage="pre-"$stage
+                        pre-commit install -t $stage
+                        ;;
+                      prepare-commit-msg | commit-msg | post-checkout | post-commit)
+                        stage="pre-"$stage
+                        pre-commit install -t $stage
+                        ;;
+                      *)
+                        ;;
+                    esac
+                  done
+                # ... or default 'pre-commit' hook
+                else
+                  pre-commit install
+                fi
               fi
             fi
           fi
