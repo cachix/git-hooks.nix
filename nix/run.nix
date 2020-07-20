@@ -5,6 +5,7 @@ builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript,
 , excludes ? []
 , tools ? {}
 , settings ? {}
+, default_stages ? []
 }:
 
 let
@@ -32,7 +33,7 @@ let
                 _module.args.pkgs = pkgs;
                 pre-commit =
                   {
-                    inherit hooks excludes settings;
+                    inherit hooks excludes settings default_stages;
                     tools = builtinStuff.tools // tools;
                   };
               };

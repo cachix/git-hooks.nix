@@ -258,6 +258,18 @@ in
           default = [];
         };
 
+      default_stages =
+        mkOption {
+          type = types.listOf types.str;
+          description =
+            ''
+              A configuration wide option for the stages property.
+              Installs hooks to the defined stages.
+              Default is empty which falls back to 'commit'.
+            '';
+          default = [];
+        };
+
       rawConfig =
         mkOption {
           type = types.attrs;
@@ -286,6 +298,8 @@ in
             ];
         } // lib.optionalAttrs (cfg.excludes != []) {
           exclude = mergeExcludes cfg.excludes;
+        } // lib.optionalAttrs (cfg.default_stages != []) {
+          default_stages = cfg.default_stages;
         };
 
       pre-commit.installationScript =
