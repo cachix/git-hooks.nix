@@ -29,8 +29,8 @@ The goal is to **manage commit hooks with Nix** and solve the following:
     in {
       pre-commit-check = nix-pre-commit-hooks.run {
         src = ./.;
-        # Leaving out this option falls back to install all hooks into the 'commit' stage
-        default_stages = ["manual" "push"];
+        # If your hooks are intrusive, avoid running on each commit with a default_states like this:
+        # default_stages = ["manual" "push"];
         hooks = {
           elm-format.enable = true;
           ormolu.enable = true;
