@@ -331,24 +331,14 @@ in
                 ln -s ${configFile} .pre-commit-config.yaml
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
-                uninstall_help=$(pre-commit uninstall --help)
-                install_help=$(pre-commit install --help)
                 for hook in $hooks; do
-                  # different version of pre-commit support different hooks
-                  if [[ "$uninstall_help" =~ "$hook" ]]; then
-                    pre-commit uninstall -t $hook
-                  fi
+                  pre-commit uninstall -t $hook
                 done
                 # Add hooks for configured stages (only) ...
                 if [ ! -z "${concatStringsSep " " cfg.default_stages}" ]; then
                   for stage in ${concatStringsSep " " cfg.default_stages}; do
                     if [[ "$stage" == "manual" ]]; then
                       continue
-                    fi
-                    # different version of pre-commit support different hooks
-                    if [[ ! "$install_help" =~ "$stage" ]];then
-                        echo 1>&2 "WARNING: nix-pre-commit-hooks: '$stage' is not supported by this pre-commit version."
-                        continue
                     fi
                     case $stage in
                       commit | merge-commit | push)
