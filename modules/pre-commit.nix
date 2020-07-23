@@ -349,6 +349,8 @@ in
                         pre-commit install -t $stage
                         ;;
                       *)
+                        echo 1>&2 "ERROR: nix-pre-commit-hooks: either $stage is not a valid stage or pre-commit-hook.nix doesn't yet support it."
+                        exit 1
                         ;;
                     esac
                   done
