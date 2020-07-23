@@ -341,6 +341,7 @@ in
                       continue
                     fi
                     case $stage in
+                      # if you amend these switches please also review $hooks above
                       commit | merge-commit | push)
                         stage="pre-"$stage
                         pre-commit install -t $stage
