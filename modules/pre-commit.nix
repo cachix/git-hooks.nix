@@ -17,6 +17,8 @@ let
   inherit (pkgs) runCommand writeText git;
 
   cfg = config.pre-commit;
+  # TODO: add per-hook stages to install here
+  install_stages = cfg.default_stages;
 
   hookType =
     types.submodule (
@@ -335,8 +337,8 @@ in
                   pre-commit uninstall -t $hook
                 done
                 # Add hooks for configured stages (only) ...
-                if [ ! -z "${concatStringsSep " " cfg.default_stages}" ]; then
-                  for stage in ${concatStringsSep " " cfg.default_stages}; do
+                if [ ! -z "${concatStringsSep " " install_stages}" ]; then
+                  for stage in ${concatStringsSep " " install_stages}; do
                     if [[ "$stage" == "manual" ]]; then
                       continue
                     fi
