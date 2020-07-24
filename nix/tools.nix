@@ -17,10 +17,13 @@
 , nix-linter
 , callPackage
 , pythonPackages
+, rustfmt
+, clippy
+, cargo
 }:
 
 {
-  inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter;
+  inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter rustfmt clippy cargo;
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) brittany hpack;
   inherit (pythonPackages) yamllint;

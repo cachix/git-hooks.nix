@@ -140,5 +140,29 @@ in
           types = [ "file" "yaml" ];
           entry = "${tools.yamllint}/bin/yamllint";
         };
+      rustfmt =
+        {
+          name = "rustfmt";
+          description = "Format Rust code.";
+          entry = "${tools.rustfmt}/bin/cargo-fmt fmt -- --check --color always";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      clippy =
+        {
+          name = "clippy";
+          description = "Lint Rust code.";
+          entry = "${tools.clippy}/bin/cargo-clippy clippy";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      cargo-check =
+        {
+          name = "cargo-check";
+          description = "Check the cargo package for errors";
+          entry = "${tools.cargo}/bin/cargo check";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
     };
 }
