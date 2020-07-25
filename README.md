@@ -95,6 +95,17 @@ eval "$shellHook"
 
 - [elm-format](https://github.com/avh4/elm-format)
 
+## Rust
+
+- [rustfmt](https://github.com/rust-lang/rustfmt)
+- [clippy](https://github.com/rust-lang/rust-clippy)
+- cargo-check: Runs `cargo check`
+
+*Warning*: running `clippy` after `cargo check` hides
+(https://github.com/rust-lang/rust-clippy/issues/4612) all clippy specific
+errors. Clippy subsumes `cargo check` so only one of these two checks should by
+used at the same time.
+
 ## Shell
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
