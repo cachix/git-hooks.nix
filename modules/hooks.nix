@@ -36,6 +36,13 @@ in
             "Ansible linter";
           entry = "${tools.ansible-lint}/bin/ansible-lint";
         };
+      black =
+        {
+          name = "black";
+          description = "The uncompromising Python code formatter";
+          entry = "${pkgs.python3Packages.black}/bin/black";
+          types = [ "file" "python" ];
+        };
       brittany =
         {
           name = "brittany";

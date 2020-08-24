@@ -97,6 +97,10 @@ eval "$shellHook"
 
 - [elm-format](https://github.com/avh4/elm-format)
 
+## Python
+
+- [black](https://github.com/psf/black)
+
 ## Rust
 
 - [rustfmt](https://github.com/rust-lang/rustfmt)
