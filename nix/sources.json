@@ -46,17 +46,5 @@
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/99a3d7a86fce9e9c9f23b3e304d7d2b1270a12b8.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "pre-commit": {
-        "branch": "v2.6.0",
-        "description": "A framework for managing and maintaining multi-language pre-commit hooks.",
-        "homepage": "https://pre-commit.com",
-        "owner": "pre-commit",
-        "repo": "pre-commit",
-        "rev": "6fe1702ee106f4d7f4a8ad73550db2145208ef24",
-        "sha256": "144hcnz8vz07nkx7hk8a3ac822186ardwxa8jnl6s8qvm5ip92f2",
-        "type": "tarball",
-        "url": "https://github.com/pre-commit/pre-commit/archive/6fe1702ee106f4d7f4a8ad73550db2145208ef24.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
