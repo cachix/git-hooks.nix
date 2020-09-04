@@ -16,21 +16,10 @@ let
         [
           ../modules/all-modules.nix
           {
-            options =
-              {
-                root =
-                  lib.mkOption {
-                    description = "Internal option";
-                    default = src;
-                    internal = true;
-                    readOnly = true;
-                    type = lib.types.unspecified;
-                  };
-              };
             config =
               {
                 _module.args.pkgs = pkgs;
-                inherit hooks excludes settings;
+                inherit hooks excludes settings src;
                 tools = builtinStuff.tools // tools;
               };
           }

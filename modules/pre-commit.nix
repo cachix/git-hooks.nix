@@ -237,15 +237,26 @@ in
           readOnly = true;
         };
 
+      src =
+        lib.mkOption {
+          description = ''
+            Root of the project. By default this will be filtered with the gitignoreSource
+            function later, unless rootSrc is specified.
+          '';
+          type = lib.types.path;
+        };
+
       rootSrc =
         mkOption {
           type = types.package;
           description =
             ''
               The source of the project to be checked.
+
+              This is used in the derivation that performs the check.
             '';
-          defaultText = literalExample ''gitignoreSource config.root'';
-          default = gitignoreSource config.root;
+          defaultText = literalExample ''gitignoreSource config.src'';
+          default = gitignoreSource config.src;
         };
 
       excludes =
