@@ -16,7 +16,7 @@ let
 
   inherit (pkgs) runCommand writeText git;
 
-  cfg = config.pre-commit;
+  cfg = config;
 
   hookType =
     types.submodule (
@@ -171,7 +171,7 @@ let
     ;
 in
 {
-  options.pre-commit =
+  options =
     {
 
       package =
@@ -275,7 +275,7 @@ in
   config =
     {
 
-      pre-commit.rawConfig =
+      rawConfig =
         {
           repos =
             [
@@ -288,7 +288,7 @@ in
           exclude = mergeExcludes cfg.excludes;
         };
 
-      pre-commit.installationScript =
+      installationScript =
         ''
           export PATH=$PATH:${cfg.package}/bin
           if ! type -t git >/dev/null; then

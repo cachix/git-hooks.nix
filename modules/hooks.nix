@@ -1,10 +1,10 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (config.pre-commit) tools settings;
+  inherit (config) tools settings;
   inherit (lib) mkOption types;
 in
 {
-  options.pre-commit.settings =
+  options.settings =
     {
       ormolu =
         {
@@ -27,7 +27,7 @@ in
         };
     };
 
-  config.pre-commit.hooks =
+  config.hooks =
     {
       ansible-lint =
         {
