@@ -129,7 +129,7 @@ in
           description = "Format shell files";
           types =
             [
-              "bash"
+              "shell"
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
