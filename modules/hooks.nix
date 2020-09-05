@@ -129,7 +129,12 @@ in
           description = "Format shell files";
           types =
             [
-              "shell"
+              "sh"
+              "ash"
+              "bash"
+              "bats"
+              "dash"
+              "ksh"
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
