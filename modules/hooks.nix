@@ -12,7 +12,7 @@ in
             mkOption {
               type = types.listOf types.str;
               description = "Haskell language extensions to enable";
-              default = [];
+              default = [ ];
             };
         };
       nix-linter =
@@ -22,7 +22,7 @@ in
               type = types.listOf types.str;
               description =
                 "Available checks (See `nix-linter --help-for [CHECK]` for more details)";
-              default = [];
+              default = [ ];
             };
         };
     };
