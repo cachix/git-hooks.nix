@@ -1,16 +1,4 @@
 {
-    "cabal-fmt": {
-        "branch": "master",
-        "description": "An experiment of formatting .cabal files",
-        "homepage": null,
-        "owner": "phadej",
-        "repo": "cabal-fmt",
-        "rev": "177b4ca8a446682ee91c536a5492157c1e232864",
-        "sha256": "1yir989pl2aizlv9wsf5amrixdayf1rc97n8jwfy0f63szrw1rf9",
-        "type": "tarball",
-        "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "gitignore.nix": {
         "branch": "master",
         "description": "Nix function for filtering local git sources",
