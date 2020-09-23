@@ -61,7 +61,13 @@ The goal is to **manage commit hooks with Nix** and solve the following:
 
 ## nix flakes
 
-The following snippet shows how pre-commit hooks may be used in a `flake.nix`:
+To initialise a project with a `flake.nix` and pre-commit hooks, run:
+
+```bash
+nix flake init -t github:cachix/pre-commit-hooks.nix
+```
+
+Alternatively, the following snippet shows how pre-commit hooks may be integrated into an already existing `flake.nix`:
 
 ```nix
 {

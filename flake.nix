@@ -77,5 +77,12 @@
                     inherit (pre-commit-check) shellHook;
                   };
               }
-        );
+        )
+      // rec {
+        templates.pre-commit-hook = {
+          path = ./templates/pre-commit-hooks;
+          description = "Nix flake with pre-commit hooks";
+        };
+        defaultTemplate = templates.pre-commit-hook;
+      };
 }
