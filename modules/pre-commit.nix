@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, gitignore-nix, ... }:
 
 let
 
@@ -165,10 +165,6 @@ let
       [ $? -eq 0 ] && exit $exitcode
     '';
 
-  # TODO: provide a default pin that the user may override
-  inherit (import (import ../nix/sources.nix)."gitignore.nix" { inherit lib; })
-    gitignoreSource
-    ;
 in
 {
   options.pre-commit =
@@ -198,9 +194,6 @@ in
 
               nix-pre-commit comes with its own set of packages for this purpose.
             '';
-          # This default is for when the module is the entry point rather than
-          # /default.nix. /default.nix will override this for efficiency.
-          default = (import ../nix { inherit (pkgs) system; }).callPackage ../nix/tools.nix {};
           defaultText =
             literalExample ''nix-pre-commit-hooks-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
         };
@@ -245,7 +238,6 @@ in
               The source of the project to be checked.
             '';
           defaultText = literalExample ''gitignoreSource config.root'';
-          default = gitignoreSource config.root;
         };
 
       excludes =

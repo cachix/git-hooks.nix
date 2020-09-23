@@ -59,6 +59,64 @@ The goal is to **manage commit hooks with Nix** and solve the following:
      references the binaries, for speed and safe garbage collection
    - provide the `pre-commit` executable that `git commit` will invoke
 
+## nix flakes
+
+The following snippet shows how pre-commit hooks may be used in a `flake.nix`:
+
+```nix
+{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs-channels/nixos-20.03";
+
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+
+  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix/master";
+
+  outputs = { self, nixpkgs, flake-utils, pre-commit-hooks }:
+    flake-utils.lib.eachDefaultSystem
+      (
+        system: rec {
+          pre-commit-check = pre-commit-hooks.packages.${system}.run {
+            src = ./.;
+            # If your hooks are intrusive, avoid running on each commit with a default_states like this:
+            # default_stages = ["manual" "push"];
+            hooks = {
+              elm-format.enable = true;
+              ormolu.enable = true;
+              shellcheck.enable = true;
+            };
+          };
+
+          devShell =
+            nixpkgs.legacyPackages.${system}.mkShell {
+              inherit (pre-commit-check) shellHook;
+            };
+        }
+      );
+}
+```
+
+Add `/.pre-commit-config.yaml` to the `.gitignore`.
+
+With this in place you may run
+
+```bash
+nix build '.#pre-commit-check.{system}' --impure
+```
+
+(in which `{system}` is one of `aarch64-linux`, `i686-linux`, `x86_64-darwin`, and `x86_64-linux`)
+
+to perform the checks as a Nix derivation or run
+
+```bash
+nix develop
+```
+
+to execute the `shellHook` which will:
+
+- build the tools and `.pre-commit-config.yaml` config file symlink which
+  references the binaries, for speed and safe garbage collection
+- provide the `pre-commit` executable that `git commit` will invoke
+
 ## Optional
 
 ### Direnv + Lorri

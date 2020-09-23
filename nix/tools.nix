@@ -6,7 +6,6 @@
 , hindent
 , cabal-fmt
 , elmPackages
-, niv
 , gitAndTools
 , runCommand
 , writeText

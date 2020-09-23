@@ -1,4 +1,7 @@
-{ sources ? import ./sources.nix
+{ nixpkgs
+, hindent-src
+, cabal-fmt-src
+, pre-commit-hooks-module
 , system ? builtins.currentSystem
 }:
 
@@ -7,12 +10,11 @@ let
     _: pkgs:
       let
         cabal-fmt =
-          pkgs.haskellPackages.callCabal2nix "cabal-fmt" sources.cabal-fmt {};
+          pkgs.haskellPackages.callCabal2nix "cabal-fmt" cabal-fmt-src {};
       in
         {
-          inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt nix-linter;
           hindent =
-            pkgs.haskellPackages.callCabal2nix "hindent" sources.hindent {};
+            pkgs.haskellPackages.callCabal2nix "hindent" hindent-src {};
           cabal-fmt =
             cabal-fmt.overrideScope (
               self: super:
@@ -20,11 +22,13 @@ let
                   Cabal = self.Cabal_3_0_0_0;
                 }
             );
-          packages = pkgs.callPackages ./packages.nix {};
+          packages = pkgs.callPackages ./packages.nix { inherit pre-commit-hooks-module; };
         };
 in
-import sources.nixpkgs {
-  overlays = [ overlay ];
+import nixpkgs {
+  overlays = [
+    overlay
+  ];
   config = {};
   inherit system;
 }

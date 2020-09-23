@@ -1,4 +1,4 @@
-builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript, lib }:
+builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript, lib, pre-commit-hooks-module }:
 
 { src
 , hooks ? {}
@@ -8,13 +8,11 @@ builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript,
 }:
 
 let
-  sources = import ./sources.nix;
-
   project =
     lib.evalModules {
       modules =
         [
-          ../modules/all-modules.nix
+          pre-commit-hooks-module
           {
             options =
               {
