@@ -10,4 +10,4 @@
   ) {
     src = ./.;
   }
-).defaultNix
+).defaultNix.outputs.packages.${builtins.currentSystem}
