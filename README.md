@@ -18,8 +18,8 @@ The goal is to **manage commit hooks with Nix** and solve the following:
 1. (optional) Use binary caches to avoid compilation:
 
    ```bash
-   $ nix-env -iA cachix -f https://cachix.org/api/v1/install
-   $ cachix use pre-commit-hooks
+   nix-env -iA cachix -f https://cachix.org/api/v1/install
+   cachix use pre-commit-hooks
    ```
 
 2. Integrate hooks to be built as part of `default.nix`:
@@ -40,7 +40,7 @@ The goal is to **manage commit hooks with Nix** and solve the following:
     }
    ```
 
-   Run `$ nix-build -A pre-commit-check` to perform the checks as a Nix derivation.
+   Run `nix-build -A pre-commit-check` to perform the checks as a Nix derivation.
 
 3. Integrate hooks to prepare environment as part of `shell.nix`:
    ```nix
@@ -53,7 +53,7 @@ The goal is to **manage commit hooks with Nix** and solve the following:
 
    Add `/.pre-commit-config.yaml` to `.gitignore`.
 
-   Run `$ nix-shell` to execute `shellHook` which will:
+   Run `nix-shell` to execute `shellHook` which will:
    
    - build the tools and `.pre-commit-config.yaml` config file symlink which
      references the binaries, for speed and safe garbage collection
