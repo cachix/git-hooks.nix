@@ -1,7 +1,5 @@
 { config, lib, pkgs, ... }:
-
 let
-
   inherit (lib)
     attrNames
     concatStringsSep
@@ -21,122 +19,123 @@ let
   hookType =
     types.submodule (
       { config, name, ... }:
-        {
-          options =
-            {
-              enable =
-                mkOption {
-                  type = types.bool;
-                  description = "Whether to enable this pre-commit hook.";
-                  default = false;
-                };
-              raw =
-                mkOption {
-                  type = types.attrsOf types.unspecified;
-                  description =
-                    ''
-                      Raw fields of a pre-commit hook. This is mostly for internal use but
-                      exposed in case you need to work around something.
+      {
+        options =
+          {
+            enable =
+              mkOption {
+                type = types.bool;
+                description = "Whether to enable this pre-commit hook.";
+                default = false;
+              };
+            raw =
+              mkOption {
+                type = types.attrsOf types.unspecified;
+                description =
+                  ''
+                    Raw fields of a pre-commit hook. This is mostly for internal use but
+                    exposed in case you need to work around something.
 
-                      Default: taken from the other hook options.
-                    '';
-                };
-              name =
-                mkOption {
-                  type = types.str;
-                  default = name;
-                  defaultText = literalExample "internal name, same as id";
-                  description =
-                    ''
-                      The name of the hook - shown during hook execution.
-                    '';
-                };
-              entry =
-                mkOption {
-                  type = types.str;
-                  description =
-                    ''
-                      The entry point - the executable to run. entry can also contain arguments that will not be overridden such as entry: autopep8 -i.
-                    '';
-                };
-              language =
-                mkOption {
-                  type = types.str;
-                  description =
-                    ''
-                      The language of the hook - tells pre-commit how to install the hook.
-                    '';
-                  default = "system";
-                };
-              files =
-                mkOption {
-                  type = types.str;
-                  description =
-                    ''
-                      The pattern of files to run on.
-                    '';
-                  default = "";
-                };
-              types =
-                mkOption {
-                  type = types.listOf types.str;
-                  description =
-                    ''
-                      List of file types to run on. See Filtering files with types (https://pre-commit.com/#plugins).
-                    '';
-                  default = [ "file" ];
-                };
-              description =
-                mkOption {
-                  type = types.str;
-                  description =
-                    ''
-                      Description of the hook. used for metadata purposes only.
-                    '';
-                  default = "";
-                };
-              excludes =
-                mkOption {
-                  type = types.listOf types.str;
-                  description =
-                    ''
-                      Exclude files that were matched by these patterns.
-                    '';
-                  default = [];
-                };
-              pass_filenames =
-                mkOption {
-                  type = types.bool;
-                  description = "Whether to pass filenames as arguments to the entry point.";
-                  default = true;
-                };
-            };
-          config =
-            {
-              raw =
-                {
-                  inherit (config) name entry language files types pass_filenames;
-                  id = name;
-                  exclude = mergeExcludes config.excludes;
-                };
-            };
-        }
+                    Default: taken from the other hook options.
+                  '';
+              };
+            name =
+              mkOption {
+                type = types.str;
+                default = name;
+                defaultText = literalExample "internal name, same as id";
+                description =
+                  ''
+                    The name of the hook - shown during hook execution.
+                  '';
+              };
+            entry =
+              mkOption {
+                type = types.str;
+                description =
+                  ''
+                    The entry point - the executable to run. entry can also contain arguments that will not be overridden such as entry: autopep8 -i.
+                  '';
+              };
+            language =
+              mkOption {
+                type = types.str;
+                description =
+                  ''
+                    The language of the hook - tells pre-commit how to install the hook.
+                  '';
+                default = "system";
+              };
+            files =
+              mkOption {
+                type = types.str;
+                description =
+                  ''
+                    The pattern of files to run on.
+                  '';
+                default = "";
+              };
+            types =
+              mkOption {
+                type = types.listOf types.str;
+                description =
+                  ''
+                    List of file types to run on. See Filtering files with types (https://pre-commit.com/#plugins).
+                  '';
+                default = [ "file" ];
+              };
+            description =
+              mkOption {
+                type = types.str;
+                description =
+                  ''
+                    Description of the hook. used for metadata purposes only.
+                  '';
+                default = "";
+              };
+            excludes =
+              mkOption {
+                type = types.listOf types.str;
+                description =
+                  ''
+                    Exclude files that were matched by these patterns.
+                  '';
+                default = [ ];
+              };
+            pass_filenames =
+              mkOption {
+                type = types.bool;
+                description = "Whether to pass filenames as arguments to the entry point.";
+                default = true;
+              };
+          };
+        config =
+          {
+            raw =
+              {
+                inherit (config) name entry language files types pass_filenames;
+                id = name;
+                exclude = mergeExcludes config.excludes;
+              };
+          };
+      }
     );
 
   mergeExcludes =
     excludes:
-      if excludes == [] then "^$" else "(${concatStringsSep "|" excludes})";
+    if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
 
   enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
   processedHooks =
     mapAttrsToList (id: value: value.raw // { inherit id; }) enabledHooks;
 
   configFile =
-    runCommand "pre-commit-config.json" {
-      buildInputs = [ pkgs.jq ];
-      passAsFile = [ "rawJSON" ];
-      rawJSON = builtins.toJSON cfg.rawConfig;
-    } ''
+    runCommand "pre-commit-config.json"
+      {
+        buildInputs = [ pkgs.jq ];
+        passAsFile = [ "rawJSON" ];
+        rawJSON = builtins.toJSON cfg.rawConfig;
+      } ''
       {
         echo '# DO NOT MODIFY';
         echo '# This file was generated by nix-pre-commit-hooks';
@@ -200,7 +199,7 @@ in
             '';
           # This default is for when the module is the entry point rather than
           # /default.nix. /default.nix will override this for efficiency.
-          default = (import ../nix { inherit (pkgs) system; }).callPackage ../nix/tools.nix {};
+          default = (import ../nix { inherit (pkgs) system; }).callPackage ../nix/tools.nix { };
           defaultText =
             literalExample ''nix-pre-commit-hooks-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
         };
@@ -212,7 +211,7 @@ in
             ''
               The hook definitions.
             '';
-          default = {};
+          default = { };
         };
 
       run =
@@ -255,7 +254,7 @@ in
             ''
               Exclude files that were matched by these patterns.
             '';
-          default = [];
+          default = [ ];
         };
 
       rawConfig =
@@ -284,7 +283,7 @@ in
                 hooks = processedHooks;
               }
             ];
-        } // lib.optionalAttrs (cfg.excludes != []) {
+        } // lib.optionalAttrs (cfg.excludes != [ ]) {
           exclude = mergeExcludes cfg.excludes;
         };
 

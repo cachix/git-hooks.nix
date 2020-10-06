@@ -1,7 +1,6 @@
 { niv, gitAndTools, callPackage }:
-
 let
-  tools = callPackage ./tools.nix {};
+  tools = callPackage ./tools.nix { };
 in
 tools // rec {
   inherit niv;

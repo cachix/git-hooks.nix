@@ -27,5 +27,5 @@
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) brittany hpack;
   inherit (pythonPackages) yamllint;
-  terraform-fmt = callPackage ./terraform-fmt {};
+  terraform-fmt = callPackage ./terraform-fmt { };
 }

@@ -38,66 +38,66 @@ let
       then _loc: _defs: _n: args.default
       else defaultLazyAttrsOfDefaultFunction
     }:
-      let
-        ao = types.attrsOf elemType;
-      in
-        ao // {
-          name = "lazyAttrsOf";
-          description = "attribute set of lazily merged ${elemType.description}s";
-          check = lib.isAttrs;
+    let
+      ao = types.attrsOf elemType;
+    in
+    ao // {
+      name = "lazyAttrsOf";
+      description = "attribute set of lazily merged ${elemType.description}s";
+      check = lib.isAttrs;
 
-          # TODO: add v location to mkIf error message
-          # TODO: allow specifying a default value in such cases
-          merge = loc: defs:
-            mapAttrs
+      # TODO: add v location to mkIf error message
+      # TODO: allow specifying a default value in such cases
+      merge = loc: defs:
+        mapAttrs
+          (
+            n: v:
+              let
+                defFiles = lib.showFiles (map (def: def.file) defs);
+              in
+              builtins.addErrorContext
+                "while evaluating the '${n}' attribute of ${lib.showOption loc} defined in ${defFiles}"
+                v.value or (defaultFunction loc defs n)
+          )
+          (
+            zipAttrsWith
               (
-                n: v:
-                  let
-                    defFiles = lib.showFiles (map (def: def.file) defs);
-                  in
-                    builtins.addErrorContext
-                      "while evaluating the '${n}' attribute of ${lib.showOption loc} defined in ${defFiles}"
-                      v.value or (defaultFunction loc defs n)
+                name: defs:
+                  (mergeDefinitions (loc ++ [ name ]) elemType defs).optionalValue // { inherit defs; }
               )
+              # Push down position info.
               (
-                zipAttrsWith
-                  (
-                    name: defs:
-                      (mergeDefinitions (loc ++ [ name ]) elemType defs).optionalValue // { inherit defs; }
-                  )
-                  # Push down position info.
-                  (
-                    map (def: mapAttrs (n: v: { inherit (def) file; value = v; }) def.value)
-                      defs
-                  )
-              );
-        };
+                map (def: mapAttrs (n: v: { inherit (def) file; value = v; }) def.value)
+                  defs
+              )
+          );
+    };
 
   defaultLazyAttrsOfDefaultFunction =
     loc: defs: n:
-      let
-        defFiles = lib.showFiles (map (def: def.file) defs);
-      in
-        throw ''
-          A value is missing from a lazy attribute set.
-            in option ${lib.showOption loc}
-            defined in ${defFiles}
+    let
+      defFiles = lib.showFiles (map (def: def.file) defs);
+    in
+    throw ''
+      A value is missing from a lazy attribute set.
+        in option ${lib.showOption loc}
+        defined in ${defFiles}
 
-          Module users:
-            Please use lib.optionalAttrs instead of mkIf when defining conditional values
-            for lazyAttrsOf options.
+      Module users:
+        Please use lib.optionalAttrs instead of mkIf when defining conditional values
+        for lazyAttrsOf options.
 
-            The purpose of a lazy attribute set option is to allow the set of keys to be
-            determined without evaluating the values. This can only be done by ignoring
-            any mkIfs until it's too late.
+        The purpose of a lazy attribute set option is to allow the set of keys to be
+        determined without evaluating the values. This can only be done by ignoring
+        any mkIfs until it's too late.
 
-          Module authors:
-            In some cases, this problem can be worked around by adding a default value,
-            but do consider that the key set is going to be different for {} as opposed
-            to { x = mkIf false y; }!
-            Only add a default if you know that the set of attribute names is not used
-            in any significant way.
-        '';
+      Module authors:
+        In some cases, this problem can be worked around by adding a default value,
+        but do consider that the key set is going to be different for {} as opposed
+        to { x = mkIf false y; }!
+        Only add a default if you know that the set of attribute names is not used
+        in any significant way.
+    '';
 
 
   # TODO when upstreaming, add automated tests, with cases

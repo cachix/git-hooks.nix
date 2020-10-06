@@ -1,12 +1,11 @@
 builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript, lib }:
 
 { src
-, hooks ? {}
-, excludes ? []
-, tools ? {}
-, settings ? {}
+, hooks ? { }
+, excludes ? [ ]
+, tools ? { }
+, settings ? { }
 }:
-
 let
   sources = import ./sources.nix;
 
