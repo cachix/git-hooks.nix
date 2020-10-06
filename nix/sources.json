@@ -17,10 +17,10 @@
         "homepage": null,
         "owner": "chrisdone",
         "repo": "hindent",
-        "rev": "1583be4a8a01b765841f7306284528ae713abb7b",
-        "sha256": "sha256:1l8v3vq3yw7zr1yxyscfw8lggcf0klnyszhv18505c6myybp2dkp",
+        "rev": "a75d4033969ecf7d4d0a5eb985d3d1abb3b9301f",
+        "sha256": "0g9dm3mr7wi7bk55fvswv0zcw1khgyr2bmchrg6ks82jc9znxkr6",
         "type": "tarball",
-        "url": "https://github.com/chrisdone/hindent/archive/1583be4a8a01b765841f7306284528ae713abb7b.tar.gz",
+        "url": "https://github.com/chrisdone/hindent/archive/a75d4033969ecf7d4d0a5eb985d3d1abb3b9301f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
