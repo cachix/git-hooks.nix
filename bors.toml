@@ -1,5 +1,0 @@
-status = [
-  "ci/hercules/derivations",
-  "ci/hercules/evaluation",
-]
-delete_merged_branches = true
