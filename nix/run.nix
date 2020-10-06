@@ -15,32 +15,18 @@ let
         [
           ../modules/all-modules.nix
           {
-            options =
-              {
-                root =
-                  lib.mkOption {
-                    description = "Internal option";
-                    default = src;
-                    internal = true;
-                    readOnly = true;
-                    type = lib.types.unspecified;
-                  };
-              };
             config =
               {
                 _module.args.pkgs = pkgs;
-                pre-commit =
-                  {
-                    inherit hooks excludes settings;
-                    tools = builtinStuff.tools // tools;
-                  };
+                inherit hooks excludes settings src;
+                tools = builtinStuff.tools // tools;
               };
           }
         ];
     };
-  inherit (project.config.pre-commit) installationScript;
+  inherit (project.config) installationScript;
 
 in
-project.config.pre-commit.run // {
+project.config.run // {
   shellHook = installationScript;
 }

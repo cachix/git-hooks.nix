@@ -14,7 +14,7 @@ let
 
   inherit (pkgs) runCommand writeText git;
 
-  cfg = config.pre-commit;
+  cfg = config;
 
   hookType =
     types.submodule (
@@ -170,7 +170,7 @@ let
     ;
 in
 {
-  options.pre-commit =
+  options =
     {
 
       package =
@@ -236,15 +236,26 @@ in
           readOnly = true;
         };
 
+      src =
+        lib.mkOption {
+          description = ''
+            Root of the project. By default this will be filtered with the gitignoreSource
+            function later, unless rootSrc is specified.
+          '';
+          type = lib.types.path;
+        };
+
       rootSrc =
         mkOption {
           type = types.package;
           description =
             ''
               The source of the project to be checked.
+
+              This is used in the derivation that performs the check.
             '';
-          defaultText = literalExample ''gitignoreSource config.root'';
-          default = gitignoreSource config.root;
+          defaultText = literalExample ''gitignoreSource config.src'';
+          default = gitignoreSource config.src;
         };
 
       excludes =
@@ -274,7 +285,7 @@ in
   config =
     {
 
-      pre-commit.rawConfig =
+      rawConfig =
         {
           repos =
             [
@@ -287,7 +298,7 @@ in
           exclude = mergeExcludes cfg.excludes;
         };
 
-      pre-commit.installationScript =
+      installationScript =
         ''
           export PATH=$PATH:${cfg.package}/bin
           if ! type -t git >/dev/null; then
