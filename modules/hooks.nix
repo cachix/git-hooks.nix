@@ -55,7 +55,7 @@ in
           name = "hlint";
           description =
             "HLint gives suggestions on how to improve your source code.";
-          entry = "${tools.hlint}/bin/hlint";
+          entry = "${tools.hlint}/bin/hlint --refactor --refactor-options='--inplace'";
           files = "\\.l?hs$";
         };
       hpack =
