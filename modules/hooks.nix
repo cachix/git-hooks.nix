@@ -91,6 +91,13 @@ in
           entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
         };
+      stylish-haskell =
+        {
+          name = "stylish-haskell";
+          description = "A simple Haskell code prettifier";
+          entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
+          files = "\\.l?hs$";
+        };
       nixfmt =
         {
           name = "nixfmt";
