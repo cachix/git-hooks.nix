@@ -110,7 +110,7 @@ in
           name = "nixpkgs-fmt";
           description = "Nix code prettifier.";
           entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
-          files = "\\.nix$";
+          files = "(\\.nix$)|(\\.ignore$)";
         };
       nix-linter =
         {
