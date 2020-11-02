@@ -98,6 +98,10 @@ eval "$shellHook"
 
 - [elm-format](https://github.com/avh4/elm-format)
 
+## Purescript
+
+- [purty](https://gitlab.com/joneshf/purty)
+
 ## Python
 
 - [black](https://github.com/psf/black)

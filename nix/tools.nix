@@ -20,6 +20,7 @@
 , rustfmt
 , clippy
 , cargo
+, nodePackages
 }:
 
 {
@@ -27,5 +28,6 @@
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) stylish-haskell brittany hpack;
   inherit (pythonPackages) yamllint;
+  inherit (nodePackages) purty;
   terraform-fmt = callPackage ./terraform-fmt { };
 }
