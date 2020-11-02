@@ -277,6 +277,7 @@ in
               A configuration wide option for the stages property.
               Installs hooks to the defined stages.
               Default is empty which falls back to 'commit'.
+              See https://pre-commit.com/#confining-hooks-to-run-at-certain-stages
             '';
           default = [ ];
         };
