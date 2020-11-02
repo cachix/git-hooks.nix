@@ -184,5 +184,12 @@ in
           files = "\\.rs$";
           pass_filenames = false;
         };
+      purty =
+        {
+          name = "purty";
+          description = "Format purescript files";
+          entry = "${tools.purty}/bin/purty --write";
+          files = "\\.purs$";
+        };
     };
 }
