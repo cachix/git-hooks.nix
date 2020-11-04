@@ -5,6 +5,7 @@ builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript,
 , excludes ? [ ]
 , tools ? { }
 , settings ? { }
+, default_stages ? [ ]
 }:
 let
   sources = import ./sources.nix;
@@ -18,7 +19,7 @@ let
             config =
               {
                 _module.args.pkgs = pkgs;
-                inherit hooks excludes settings src;
+                inherit hooks excludes settings src default_stages;
                 tools = builtinStuff.tools // tools;
               };
           }
