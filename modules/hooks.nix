@@ -188,7 +188,7 @@ in
         {
           name = "purty";
           description = "Format purescript files";
-          entry = "${tools.purty}/bin/purty --write";
+          entry = "${tools.purty}/bin/purty";
           files = "\\.purs$";
         };
     };
