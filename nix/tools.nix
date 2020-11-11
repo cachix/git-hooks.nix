@@ -28,6 +28,6 @@
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) stylish-haskell brittany hpack;
   inherit (pythonPackages) yamllint;
-  inherit (nodePackages) purty;
+  purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
 }
