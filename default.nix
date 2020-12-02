@@ -1,1 +1,4 @@
-let pkgs = import ./nix { }; in pkgs.packages
+let
+  pkgs = import ./nix { };
+in
+pkgs.packages
