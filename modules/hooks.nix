@@ -29,7 +29,7 @@ in
         {
           binPath =
             mkOption {
-              type = types.str;
+              type = types.path;
               description =
                 "Prettier binary path. E.g. if you want to use the prettier in node_modules, use ./node_modules/.bin/prettier";
               default = "${tools.prettier}/bin/prettier";
