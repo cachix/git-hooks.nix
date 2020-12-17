@@ -29,5 +29,6 @@
   inherit (haskellPackages) stylish-haskell brittany hpack;
   inherit (pythonPackages) yamllint;
   purty = callPackage ./purty { purty = nodePackages.purty; };
+  prettier = callPackage ./prettier { prettier = nodePackages.prettier; };
   terraform-fmt = callPackage ./terraform-fmt { };
 }

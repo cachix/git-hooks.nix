@@ -25,6 +25,16 @@ in
               default = [ ];
             };
         };
+      prettier =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description =
+                "Prettier binary path. E.g. if you want to use the prettier in node_modules, use ./node_modules/.bin/prettier";
+              default = "${tools.prettier}/bin/prettier";
+            };
+        };
     };
 
   config.hooks =
@@ -190,6 +200,13 @@ in
           description = "Format purescript files";
           entry = "${tools.purty}/bin/purty";
           files = "\\.purs$";
+        };
+      prettier =
+        {
+          name = "prettier";
+          description = "Opinionated multi-language code formatter";
+          entry = "${settings.prettier.binPath} --write --list-different --ignore-unknown";
+          types = [ "text" ];
         };
     };
 }
