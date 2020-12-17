@@ -28,7 +28,7 @@
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) stylish-haskell brittany hpack;
   inherit (pythonPackages) yamllint;
+  inherit (nodePackages) prettier;
   purty = callPackage ./purty { purty = nodePackages.purty; };
-  prettier = callPackage ./prettier { prettier = nodePackages.prettier; };
   terraform-fmt = callPackage ./terraform-fmt { };
 }
