@@ -87,6 +87,16 @@ in
             }";
           files = "\\.l?hs$";
         };
+      fourmolu =
+        {
+          name = "fourmolu";
+          description = "Haskell code prettifier.";
+          entry =
+            "${tools.fourmolu}/bin/fourmolu --mode inplace ${
+            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
+            }";
+          files = "\\.l?hs$";
+        };
       hindent =
         {
           name = "hindent";
