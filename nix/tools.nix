@@ -21,6 +21,7 @@
 , clippy
 , cargo
 , nodePackages
+, hunspell
 }:
 
 {
@@ -31,4 +32,5 @@
   inherit (nodePackages) prettier;
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
+  hunspell = callPackage ./hunspell { };
 }

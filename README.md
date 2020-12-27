@@ -125,6 +125,10 @@ used at the same time.
 
 - `terraform-format`: built-in formatter
 
+## Spell checkers
+
+- [hunspell](https://github.com/hunspell/hunspell)
+
 # Contributing hooks
 
 Everyone is encouraged to add new hooks.

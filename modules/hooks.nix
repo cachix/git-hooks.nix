@@ -208,5 +208,12 @@ in
           entry = "${settings.prettier.binPath} --write --list-different --ignore-unknown";
           types = [ "text" ];
         };
+      hunspell =
+        {
+          name = "hunspell";
+          description = "Spell checker and morphological analyzer";
+          entry = "${tools.hunspell}/bin/hunspell -l";
+          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
+        };
     };
 }
