@@ -22,10 +22,11 @@
 , cargo
 , nodePackages
 , hunspell
+, html-tidy
 }:
 
 {
-  inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter rustfmt clippy cargo;
+  inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter rustfmt clippy cargo html-tidy;
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) stylish-haskell brittany hpack fourmolu;
   inherit (pythonPackages) yamllint;

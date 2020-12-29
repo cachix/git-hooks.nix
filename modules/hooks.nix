@@ -225,5 +225,12 @@ in
           entry = "${tools.hunspell}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
         };
+      html-tidy =
+        {
+          name = "html-tidy";
+          description = "HTML linter";
+          entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
+          files = "\\.html$";
+        };
     };
 }
