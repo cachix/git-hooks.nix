@@ -27,7 +27,7 @@
 {
   inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter rustfmt clippy cargo;
   inherit (elmPackages) elm-format;
-  inherit (haskellPackages) stylish-haskell brittany hpack;
+  inherit (haskellPackages) stylish-haskell brittany hpack fourmolu;
   inherit (pythonPackages) yamllint;
   inherit (nodePackages) prettier;
   purty = callPackage ./purty { purty = nodePackages.purty; };

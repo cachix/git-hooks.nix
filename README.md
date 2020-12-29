@@ -87,6 +87,7 @@ eval "$shellHook"
 ## Haskell
 
 - [ormolu](https://github.com/tweag/ormolu)
+- [fourmolu](https://github.com/parsonsmatt/fourmolu)
 - [hindent](https://github.com/chrisdone/hindent)
 - [stylish-haskell](https://github.com/jaspervdj/stylish-haskell)
 - [hlint](https://github.com/ndmitchell/hlint)
