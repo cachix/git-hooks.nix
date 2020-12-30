@@ -122,6 +122,10 @@ used at the same time.
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
 
+## HTML
+
+- [html-tidy](https://github.com/htacg/tidy-html5)
+
 ## Terraform
 
 - `terraform-format`: built-in formatter
