@@ -134,6 +134,59 @@ used at the same time.
 
 - [hunspell](https://github.com/hunspell/hunspell)
 
+## Custom hooks
+
+Sometimes it is useful to add a project specific command as an extra check that
+is not part of the pre-defined set of hooks provided by this project.
+
+Example configuration:
+```nix
+ let
+   nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
+ in {
+   pre-commit-check = nix-pre-commit-hooks.run {
+     hooks = {
+       # ...
+
+       # Example custom hook for a C project using Make:
+       unit-tests = {
+         enable = true;
+
+         # The name of the hook (appears on the report table):
+         name = "Unit tests";
+
+         # The command to execute (mandatory):
+         entry = "make check";
+
+         # The pattern of files to run on (default: "" (all))
+         # see also https://pre-commit.com/#hooks-files
+         files = "\\.(c|h)$";
+
+         # List of file types to run on (default: [ "file" ] (all files))
+         # see also https://pre-commit.com/#filtering-files-with-types
+         # You probably only need to specify one of `files` or `types`:
+         types = [ "text" "c" ];
+
+         # Exclude files that were matched by these patterns (default: [ ] (none)):
+         excludes = [ "irrelevant\\.c" ];
+
+         # The language of the hook - tells pre-commit
+         # how to install the hook (default: "system")
+         # see also https://pre-commit.com/#supported-languages
+         language = "system";
+
+         # Set this to false to not pass the changed files
+         # to the command (default: true):
+         pass_filenames = false;
+       };
+     };
+   };
+ }
+```
+
+Custom hooks are defined with the same schema as [pre-defined
+hooks](modules/pre-commit.nix).
+
 # Contributing hooks
 
 Everyone is encouraged to add new hooks.
