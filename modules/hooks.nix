@@ -200,7 +200,7 @@ in
         {
           name = "cargo-check";
           description = "Check the cargo package for errors";
-          entry = "${tools.cargo}/bin/cargo check";
+          entry = "${tools.cargo}/bin/cargo check --frozen";
           files = "\\.rs$";
           pass_filenames = false;
         };
