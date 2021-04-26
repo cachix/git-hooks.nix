@@ -1,50 +1,26 @@
 {
-    "cabal-fmt": {
-        "branch": "master",
-        "description": "An experiment of formatting .cabal files",
-        "homepage": null,
-        "owner": "phadej",
-        "repo": "cabal-fmt",
-        "rev": "177b4ca8a446682ee91c536a5492157c1e232864",
-        "sha256": "1yir989pl2aizlv9wsf5amrixdayf1rc97n8jwfy0f63szrw1rf9",
-        "type": "tarball",
-        "url": "https://github.com/phadej/cabal-fmt/archive/177b4ca8a446682ee91c536a5492157c1e232864.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "gitignore.nix": {
         "branch": "master",
         "description": "Nix function for filtering local git sources",
         "homepage": "",
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
-        "rev": "2ced4519f865341adcb143c5d668f955a2cb997f",
-        "sha256": "0fc5bgv9syfcblp23y05kkfnpgh3gssz6vn24frs8dzw39algk2z",
+        "rev": "211907489e9f198594c0eb0ca9256a1949c9d412",
+        "sha256": "06j7wpvj54khw0z10fjyi31kpafkr6hi1k0di13k1xp8kywvfyx8",
         "type": "tarball",
-        "url": "https://github.com/hercules-ci/gitignore/archive/2ced4519f865341adcb143c5d668f955a2cb997f.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "hindent": {
-        "branch": "master",
-        "description": "Haskell pretty printer",
-        "homepage": null,
-        "owner": "chrisdone",
-        "repo": "hindent",
-        "rev": "1583be4a8a01b765841f7306284528ae713abb7b",
-        "sha256": "sha256:1l8v3vq3yw7zr1yxyscfw8lggcf0klnyszhv18505c6myybp2dkp",
-        "type": "tarball",
-        "url": "https://github.com/chrisdone/hindent/archive/1583be4a8a01b765841f7306284528ae713abb7b.tar.gz",
+        "url": "https://github.com/hercules-ci/gitignore.nix/archive/211907489e9f198594c0eb0ca9256a1949c9d412.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-20.03",
+        "branch": "master",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "99a3d7a86fce9e9c9f23b3e304d7d2b1270a12b8",
-        "sha256": "0i40cl3n6600z2lkwrpiy28dcnv2r63fcgfswj91aaf1xfn2chql",
+        "rev": "927f070592c7cfbd9c0507e90fb9049f039b454a",
+        "sha256": "1y1h38hpr1rrlm02jma87h1zwsm7jxzdsgsc0zxisa3dwr9nyj4m",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/99a3d7a86fce9e9c9f23b3e304d7d2b1270a12b8.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/927f070592c7cfbd9c0507e90fb9049f039b454a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

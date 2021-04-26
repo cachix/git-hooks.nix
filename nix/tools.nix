@@ -16,7 +16,7 @@
 , nixfmt
 , nix-linter
 , callPackage
-, pythonPackages
+, python3Packages
 , rustfmt
 , clippy
 , cargo
@@ -26,6 +26,6 @@
   inherit ansible-lint hlint shellcheck ormolu hindent cabal-fmt nixpkgs-fmt nixfmt nix-linter rustfmt clippy cargo;
   inherit (elmPackages) elm-format;
   inherit (haskellPackages) brittany hpack;
-  inherit (pythonPackages) yamllint;
-  terraform-fmt = callPackage ./terraform-fmt {};
+  inherit (python3Packages) yamllint;
+  terraform-fmt = callPackage ./terraform-fmt { };
 }
