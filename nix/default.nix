@@ -1,25 +1,26 @@
 { sources ? import ./sources.nix
 , system ? builtins.currentSystem
 , nixpkgs ? sources.nixpkgs
+, gitignore-nix-src ? sources."gitignore.nix"
+, isFlakes ? false
 }:
 let
   overlay =
-    _: pkgs:
+    self: pkgs:
     let
-      run = pkgs.callPackage ./run.nix { inherit tools; };
-      tools = pkgs.callPackage ./tools.nix { };
+      tools = pkgs.lib.filterAttrs (k: v: !(pkgs.lib.any (a: k == a) [ "override" "overrideDerivation" ])) (pkgs.callPackage ./tools.nix { });
+      run = pkgs.callPackage ./run.nix { inherit pkgs tools isFlakes gitignore-nix-src; };
     in
     {
       inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt nix-linter;
       cabal-fmt = pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.cabal-fmt;
       hindent = pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.hindent;
-      inherit tools;
+      inherit tools run;
       # Flake style attributes
-      packages = {
-        inherit tools run;
-        inherit (pkgs.gitAndTools) pre-commit;
+      packages = tools // {
+        inherit (pkgs) pre-commit;
       };
-      checks = tools // {
+      checks = self.packages // {
         # A pre-commit-check for nix-pre-commit itself
         pre-commit-check = run {
           src = ../.;

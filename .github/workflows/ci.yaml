@@ -16,3 +16,22 @@ jobs:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: nix-build
+  tests-flakes:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v13
+      with:
+          install_url: https://nixos-nix-install-tests.cachix.org/serve/lb41az54kzk6j12p81br4bczary7m145/install
+          install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+    - uses: cachix/cachix-action@v10
+      with:
+        name: pre-commit-hooks
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: nix flake check
+    - run: nix eval .#lib.x86_64-linux.run
