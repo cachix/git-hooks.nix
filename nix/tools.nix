@@ -33,5 +33,6 @@
   inherit (nodePackages) prettier;
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
+  hpack-dir = callPackage ./hpack-dir { hpack = haskellPackages.hpack; };
   hunspell = callPackage ./hunspell { };
 }
