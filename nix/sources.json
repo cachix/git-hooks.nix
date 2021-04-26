@@ -11,28 +11,16 @@
         "url": "https://github.com/hercules-ci/gitignore/archive/2ced4519f865341adcb143c5d668f955a2cb997f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "hindent": {
-        "branch": "master",
-        "description": "Haskell pretty printer",
-        "homepage": null,
-        "owner": "chrisdone",
-        "repo": "hindent",
-        "rev": "a75d4033969ecf7d4d0a5eb985d3d1abb3b9301f",
-        "sha256": "0g9dm3mr7wi7bk55fvswv0zcw1khgyr2bmchrg6ks82jc9znxkr6",
-        "type": "tarball",
-        "url": "https://github.com/chrisdone/hindent/archive/a75d4033969ecf7d4d0a5eb985d3d1abb3b9301f.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "nixpkgs": {
-        "branch": "release-20.09",
+        "branch": "master",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "b60f5e90cf20d08be6b26177b50b44f2c6d653f5",
-        "sha256": "1pfk4gmsr1z3wz5f3crfy5r306d157ncqaidnmbrcjm812iy2baq",
+        "rev": "3be2b567425214cd7cab693a9820717d11b0bdac",
+        "sha256": "12kbh6fkyq703s1vcrypra7k844m8qnhz54ilqvldjap7hj1c57w",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/b60f5e90cf20d08be6b26177b50b44f2c6d653f5.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/3be2b567425214cd7cab693a9820717d11b0bdac.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
