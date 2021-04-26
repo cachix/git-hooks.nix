@@ -10,7 +10,6 @@ let
     mkOption
     types
     ;
-  inherit (import ../nix/lazyAttrsOf.nix { inherit lib; }) lazyAttrsOf;
 
   inherit (pkgs) runCommand writeText git;
 
@@ -190,7 +189,7 @@ in
 
       tools =
         mkOption {
-          type = lazyAttrsOf { elemType = types.package; };
+          type = types.lazyAttrsOf types.package;
 
           description =
             ''
