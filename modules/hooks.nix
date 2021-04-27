@@ -73,9 +73,8 @@ in
           name = "hpack";
           description =
             "hpack converts package definitions in the hpack format (package.yaml) to Cabal files.";
-          entry = "${tools.hpack}/bin/hpack --force .";
+          entry = "${tools.hpack-dir}/bin/hpack-dir";
           files = "(\\.l?hs$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
-          pass_filenames = false;
         };
       ormolu =
         {
