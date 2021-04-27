@@ -1,4 +1,4 @@
 let
   pkgs = import ./nix { };
 in
-pkgs.packages
+pkgs.packages // pkgs.checks
