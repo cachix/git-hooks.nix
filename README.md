@@ -187,6 +187,51 @@ Example configuration:
 Custom hooks are defined with the same schema as [pre-defined
 hooks](modules/pre-commit.nix).
 
+# Nix Flakes support
+
+Given the following `flake.nix` example:
+
+```nix
+{
+  description = "An example project.";
+
+  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+
+  outputs = { self, nixpkgs, pre-commit-hooks, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      {
+        checks = {
+          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              nixpkgs-fmt.enable = true;
+            };
+          };
+        };
+        devShell = nixpkgs.legacyPackages.${system}.mkShell {
+          inherit (self.checks.${system}.pre-commit-check) shellHook;
+        };
+      }
+    );
+}
+```
+
+
+Add `/.pre-commit-config.yaml` to the `.gitignore`.
+
+To run the all the hooks on CI:
+
+```bash
+nix flake check 
+```
+
+To install pre-commit hooks developers would run:
+
+```bash
+nix develop
+```
+
 # Contributing hooks
 
 Everyone is encouraged to add new hooks.
