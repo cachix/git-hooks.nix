@@ -1,4 +1,4 @@
-builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript, lib }:
+builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, writeScript, lib, gitignore-nix-src }:
 
 { src
 , hooks ? { }
@@ -8,8 +8,6 @@ builtinStuff@{ pkgs, tools, pre-commit, git, runCommand, writeText, writeScript,
 , default_stages ? [ ]
 }:
 let
-  sources = import ./sources.nix;
-
   project =
     lib.evalModules {
       modules =
@@ -19,9 +17,15 @@ let
             config =
               {
                 _module.args.pkgs = pkgs;
-                inherit hooks excludes settings src default_stages;
+                _module.args.gitignore-nix-src = gitignore-nix-src;
+                inherit hooks excludes settings default_stages;
                 tools = builtinStuff.tools // tools;
-              };
+                package = pre-commit;
+              } // (if isFlakes
+              then { rootSrc = src; }
+              else {
+                rootSrc = (import gitignore-nix-src { inherit (pkgs) lib; }).gitignoreSource src;
+              });
           }
         ];
     };

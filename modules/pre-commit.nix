@@ -163,11 +163,6 @@ let
       touch $out
       [ $? -eq 0 ] && exit $exitcode
     '';
-
-  # TODO: provide a default pin that the user may override
-  inherit (import (import ../nix/sources.nix)."gitignore.nix" { inherit lib; })
-    gitignoreSource
-    ;
 in
 {
   options =
@@ -180,7 +175,6 @@ in
             ''
               The pre-commit package to use.
             '';
-          default = pkgs.pre-commit;
           defaultText =
             literalExample ''
               pkgs.pre-commit
@@ -190,16 +184,12 @@ in
       tools =
         mkOption {
           type = types.lazyAttrsOf types.package;
-
           description =
             ''
               Tool set from which nix-pre-commit will pick binaries.
 
               nix-pre-commit comes with its own set of packages for this purpose.
             '';
-          # This default is for when the module is the entry point rather than
-          # /default.nix. /default.nix will override this for efficiency.
-          default = (import ../nix { inherit (pkgs) system; }).callPackage ../nix/tools.nix { };
           defaultText =
             literalExample ''nix-pre-commit-hooks-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
         };
@@ -247,7 +237,7 @@ in
 
       rootSrc =
         mkOption {
-          type = types.package;
+          type = types.path;
           description =
             ''
               The source of the project to be checked.
@@ -255,7 +245,6 @@ in
               This is used in the derivation that performs the check.
             '';
           defaultText = literalExample ''gitignoreSource config.src'';
-          default = gitignoreSource config.src;
         };
 
       excludes =
