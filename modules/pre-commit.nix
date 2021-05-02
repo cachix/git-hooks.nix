@@ -84,6 +84,15 @@ let
                   '';
                 default = [ "file" ];
               };
+            types_or =
+              mkOption {
+                type = types.listOf types.str;
+                description =
+                  ''
+                    List of file types to run on, where only a single type needs to match.
+                  '';
+                default = [ ];
+              };
             description =
               mkOption {
                 type = types.str;
@@ -113,7 +122,7 @@ let
           {
             raw =
               {
-                inherit (config) name entry language files types pass_filenames;
+                inherit (config) name entry language files types types_or pass_filenames;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
