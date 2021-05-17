@@ -134,6 +134,10 @@ used at the same time.
 
 - [hunspell](https://github.com/hunspell/hunspell)
 
+## Other Formatters
+
+- [prettier](https://prettier.io)
+
 ## Custom hooks
 
 Sometimes it is useful to add a project specific command as an extra check that
