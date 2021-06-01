@@ -98,6 +98,8 @@ eval "$shellHook"
 ## Elm
 
 - [elm-format](https://github.com/avh4/elm-format)
+- [elm-review](https://github.com/jfmengels/elm-review)
+- [elm-test](https://github.com/rtfeldman/node-test-runner)
 
 ## Purescript
 

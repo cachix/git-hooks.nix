@@ -149,6 +149,22 @@ in
             "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
           files = "\\.elm$";
         };
+      elm-review =
+        {
+          name = "elm-review";
+          description = "Analyzes Elm projects, to help find mistakes before your users find them.";
+          entry = "${tools.elm-review}/bin/elm-review";
+          files = "\\.elm$";
+          pass_filenames = false;
+        };
+      elm-test =
+        {
+          name = "elm-review";
+          description = "Run unit and fuzz tests for Elm code.";
+          entry = "${tools.elm-test}/bin/elm-test";
+          files = "\\.elm$";
+          pass_filenames = false;
+        };
       shellcheck =
         {
           name = "shellcheck";
