@@ -13,7 +13,7 @@ let
     in
     {
       inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt nix-linter;
-      cabal-fmt = pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.cabal-fmt;
+      cabal-fmt = (pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.cabal-fmt).bin;
       hindent = pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.hindent;
       inherit tools run;
       # Flake style attributes
