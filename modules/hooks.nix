@@ -179,6 +179,7 @@ in
               "bats"
               "dash"
               "ksh"
+              "shell"
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
