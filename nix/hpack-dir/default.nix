@@ -1,15 +1,17 @@
 { writeScriptBin, hpack }:
 
 writeScriptBin "hpack-dir" ''#!/usr/bin/env bash
-  for arg in "$@"; do
+  if [ "$1" == "--silent" ]; then
+    flag=$1
+  fi
+  for arg in "''${@:2}"; do
     dirname "$arg"
   done \
     | sort \
     | uniq \
     | while read dir; do
-        local packageyaml="$dir/package.yaml"
-        if [ -f "$packageyaml" ]; then
-          ${hpack}/bin/hpack --force "$packageyaml"
+        if [ -f "$dir/package.yaml" ]; then
+          ${hpack}/bin/hpack --force $flag "$dir/package.yaml"
         fi
       done
 ''
