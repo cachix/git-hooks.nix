@@ -53,6 +53,13 @@ in
           entry = "${pkgs.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
+      clang-format =
+        {
+          name = "clang-format";
+          description = "Format your code using clang-format";
+          entry = "${tools.clang-tools}/bin/clang-format -style=file -i";
+          types = [ "file" ];
+        };
       brittany =
         {
           name = "brittany";
