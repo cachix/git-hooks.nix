@@ -134,6 +134,17 @@ eval "$shellHook"
 ## Other Formatters
 
 - [prettier](https://prettier.io)
+- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+
+You must configure which languages should be formatted by `clang_format` using
+`clang-format.types_or`. For example to check both C and C++ files:
+
+```nix
+clang-format = {
+  enable = true;
+  types_or = [ "c" "c++" ];
+};
+```
 
 ## Custom hooks
 
