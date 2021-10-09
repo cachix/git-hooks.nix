@@ -6,6 +6,15 @@ in
 {
   options.settings =
     {
+      hpack =
+        {
+          silent =
+            mkOption {
+              type = types.bool;
+              description = "Should generation should be silent";
+              default = false;
+            };
+        };
       ormolu =
         {
           defaultExtensions =
@@ -80,7 +89,7 @@ in
           name = "hpack";
           description =
             "hpack converts package definitions in the hpack format (package.yaml) to Cabal files.";
-          entry = "${tools.hpack-dir}/bin/hpack-dir";
+          entry = "${tools.hpack-dir}/bin/hpack-dir --${if settings.hpack.silent then "silent" else "verbose"}";
           files = "(\\.l?hs$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
         };
       ormolu =
