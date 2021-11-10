@@ -108,6 +108,7 @@ eval "$shellHook"
 ## Python
 
 - [black](https://github.com/psf/black)
+- [isort](https://github.com/PyCQA/isort)
 
 ## Rust
 

@@ -92,6 +92,13 @@ in
           entry = "${tools.hpack-dir}/bin/hpack-dir --${if settings.hpack.silent then "silent" else "verbose"}";
           files = "(\\.l?hs$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
         };
+      isort =
+        {
+          name = "isort";
+          description = "A Python utility / library to sort imports.";
+          entry = "${pkgs.python3Packages.isort}/bin/isort";
+          types = [ "file" "python" ];
+        };
       ormolu =
         {
           name = "ormolu";
