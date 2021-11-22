@@ -12,7 +12,10 @@
         "x86_64-linux"
       ];
     in
-    flake-utils.lib.eachSystem defaultSystems (system:
+    {
+      flakeModule = ./flake-module.nix;
+    }
+    // flake-utils.lib.eachSystem defaultSystems (system:
       let
         exposed = import ./nix { nixpkgs = nixpkgs; inherit system; gitignore-nix-src = null; isFlakes = true; };
       in
