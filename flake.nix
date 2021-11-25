@@ -14,6 +14,13 @@
     in
     {
       flakeModule = ./flake-module.nix;
+
+      defaultTemplate = {
+        path = ./template;
+        description = ''
+          A template with flake-parts and nixpkgs-fmt.
+        '';
+      };
     }
     // flake-utils.lib.eachSystem defaultSystems (system:
       let
