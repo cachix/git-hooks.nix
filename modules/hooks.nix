@@ -24,6 +24,23 @@ in
               default = [ ];
             };
         };
+      statix =
+        {
+          format =
+            mkOption {
+              type = types.enum [ "stderr" "errfmt" "json" ];
+              description = "Error Output format";
+              default = "errfmt";
+            };
+
+          ignore =
+            mkOption {
+              type = types.listOf types.str;
+              description = "Globs of file patterns to skip";
+              default = [ ];
+              example = [ "flake.nix" "_*" ];
+            };
+        };
       nix-linter =
         {
           checks =
@@ -153,6 +170,15 @@ in
           description = "Nix code prettifier.";
           entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
           files = "\\.nix$";
+        };
+      statix =
+        {
+          name = "statix";
+          description = "Lints and suggestions for the Nix programming language.";
+          entry = with settings.statix;
+            "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
+          files = "\\.nix$";
+          pass_filenames = false;
         };
       nix-linter =
         {
