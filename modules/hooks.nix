@@ -24,6 +24,16 @@ in
               default = [ ];
             };
         };
+      alejandra =
+        {
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = "Files or directories to exclude from formatting";
+              default = [ ];
+              example = [ "flake.nix" "./templates" ];
+            };
+        };
       statix =
         {
           format =
@@ -156,6 +166,14 @@ in
           description = "A simple Haskell code prettifier";
           entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
           files = "\\.l?hs$";
+        };
+      alejandra =
+        {
+          name = "alejandra";
+          description = "The Uncompromising Nix Code Formatter";
+          entry = with settings.alejandra;
+            "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
+          files = "\\.nix$";
         };
       nixfmt =
         {
