@@ -80,6 +80,7 @@ eval "$shellHook"
 
 ## Nix
 
+- [alejandra](https://github.com/kamadorueda/alejandra)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [nixfmt](https://github.com/serokell/nixfmt/)
 - [nix-linter](https://github.com/Synthetica9/nix-linter)
