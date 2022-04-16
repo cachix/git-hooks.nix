@@ -23,6 +23,12 @@ in
               description = "Haskell language extensions to enable";
               default = [ ];
             };
+          cabalDefaultExtensions =
+            mkOption {
+              type = types.bool;
+              description = "Use default-extensions from .cabal files";
+              default = false;
+            };
         };
       alejandra =
         {
@@ -131,9 +137,13 @@ in
           name = "ormolu";
           description = "Haskell code prettifier.";
           entry =
-            "${tools.ormolu}/bin/ormolu --mode inplace ${
-            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
-            }";
+            let
+              extensions =
+                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions);
+              cabalExtensions =
+                if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
+            in
+            "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
           files = "\\.l?hs$";
         };
       fourmolu =
