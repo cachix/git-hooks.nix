@@ -329,7 +329,7 @@ in
         {
           name = "hadolint";
           description = "Dockerfile linter, validate inline bash";
-          entry = "${tools.hadolint}/bin/hadolint -quiet -errors";
+          entry = "${tools.hadolint}/bin/hadolint";
           files = "Dockerfile$";
         };
     };
