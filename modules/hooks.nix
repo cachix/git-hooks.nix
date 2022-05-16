@@ -325,5 +325,12 @@ in
           entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
           files = "\\.html$";
         };
+      hadolint =
+        {
+          name = "hadolint";
+          description = "Dockerfile linter, validate inline bash";
+          entry = "${tools.hadolint}/bin/hadolint -quiet -errors";
+          files = "Dockerfile$";
+        };
     };
 }
