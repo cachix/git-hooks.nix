@@ -2,15 +2,15 @@
   description = "A flake with pre-commit hooks";
 
   inputs = {
-    flake-modules-core.url = "github:hercules-ci/flake-modules-core";
-    flake-modules-core.inputs.nixpkgs.follows = "nixpkgs";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     pre-commit-hooks-nix.url = "github:hercules-ci/pre-commit-hooks.nix/flakeModule";
     pre-commit-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, flake-modules-core, ... }:
-    (flake-modules-core.lib.evalFlakeModule
+  outputs = inputs@{ self, flake-parts, ... }:
+    (flake-parts.lib.evalFlakeModule
       { inherit self; }
       {
         imports = [

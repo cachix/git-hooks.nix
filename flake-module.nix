@@ -1,10 +1,10 @@
 /*
-  A module to import into flakes based on flake-modules-core.
+  A module to import into flakes based on flake-parts.
   Makes integration into a flake easy and tidy.
-  See https://github.com/hercules-ci/flake-modules-core#readme
+  See https://flake.parts
 */
 
-{ lib, self, ... }:
+{ lib, self, flake-parts-lib, ... }:
 let
   inherit (lib)
     mkOption
@@ -12,10 +12,9 @@ let
     ;
 in
 {
-  config = {
-    perSystem = system: { config, self', inputs', ... }:
-      let
-        cfg = config.pre-commit;
+  options = {
+    perSystem = flake-parts-lib.mkPerSystemOption ({ config, pkgs, ... }:
+      let cfg = config.pre-commit;
       in
       {
         options = {
@@ -25,16 +24,8 @@ in
               description = ''
                 Nixpkgs to use for pre-commit checking.
               '';
-              # Not sure what's the best default:
-              #  - pre-commit-hooks-nix.inputs.nixpkgs.legacyPackages.${system}
-              #    (could be passed in, making this file a function to a module function)
-              #    ci-checked but incompatible with user pkgs unless they use inputs.nixpkgs.follows
-              #    awkward if user wants to use an overlay
-              #  - config._module.args.pkgs (a default pkgs set by user / some other module)
-              #    always compatible with user pkgs, because it is user pkgs
-              #    not sure if we want to standardize having a default pkgs
-              #  - nothing: keep this as a manual setting.
-              #    foolproof but inconvenient.
+              default = pkgs;
+              defaultText = "pkgs  # module argument";
             };
             settings = mkOption {
               type = types.submoduleWith {
@@ -59,6 +50,6 @@ in
             tools = import ./nix/call-tools.nix pkgs;
           };
         };
-      };
+      });
   };
 }
