@@ -10,22 +10,22 @@
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
-    (flake-parts.lib.evalFlakeModule
+    flake-parts.lib.mkFlake
       { inherit self; }
       {
         imports = [
           inputs.pre-commit-hooks-nix.flakeModule
         ];
         systems = [ "x86_64-linux" "aarch64-darwin" ];
-        perSystem = system: { config, self', inputs', ... }: {
+        perSystem = { config, self', inputs', pkgs, ... }: {
           # Per-system attributes can be defined here. The self' and inputs'
           # module parameters provide easy access to attributes of the same
           # system.
 
-          packages.hello = inputs'.nixpkgs.legacyPackages.hello;
-          pre-commit.pkgs = inputs'.nixpkgs.legacyPackages;
+          # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
+          packages.hello = pkgs.hello;
           pre-commit.settings.hooks.nixpkgs-fmt.enable = true;
-          devShell = inputs'.nixpkgs.legacyPackages.mkShell {
+          devShells.default = pkgs.mkShell {
             shellHook = ''
               ${config.pre-commit.installationScript}
               echo 1>&2 "Welcome to the development shell!"
@@ -38,6 +38,5 @@
           # those are more easily expressed in perSystem.
 
         };
-      }
-    ).config.flake;
+      };
 }
