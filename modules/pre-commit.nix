@@ -44,7 +44,7 @@ let
               mkOption {
                 type = types.str;
                 default = name;
-                defaultText = literalExample "internal name, same as id";
+                defaultText = lib.literalDocBook or literalExample "internal name, same as id";
                 description =
                   ''
                     The name of the hook - shown during hook execution.
@@ -202,7 +202,7 @@ in
               The pre-commit package to use.
             '';
           defaultText =
-            literalExample ''
+            lib.literalExpression or literalExample ''
               pkgs.pre-commit
             '';
         };
@@ -217,7 +217,7 @@ in
               nix-pre-commit comes with its own set of packages for this purpose.
             '';
           defaultText =
-            literalExample ''pre-commit-hooks.nix-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
+            lib.literalExpression or literalExample ''pre-commit-hooks.nix-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
         };
 
       hooks =
@@ -240,6 +240,7 @@ in
             '';
           readOnly = true;
           default = run;
+          defaultText = "<derivation>";
         };
 
       installationScript =
@@ -270,7 +271,7 @@ in
 
               This is used in the derivation that performs the check.
             '';
-          defaultText = literalExample ''gitignoreSource config.src'';
+          defaultText = lib.literalExpression or literalExample ''gitignoreSource config.src'';
         };
 
       excludes =

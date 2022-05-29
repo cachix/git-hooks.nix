@@ -25,7 +25,7 @@ in
                 Nixpkgs to use for pre-commit checking.
               '';
               default = pkgs;
-              defaultText = "pkgs  # module argument";
+              defaultText = lib.literalDocBook "<literal>pkgs</literal> (module argument)";
             };
             settings = mkOption {
               type = types.submoduleWith {
@@ -38,6 +38,7 @@ in
               type = types.str;
               description = "A bash fragment that sets up pre-commit.";
               default = cfg.settings.installationScript;
+              defaultText = lib.literalDocBook "bash statements";
               readOnly = true;
             };
           };
