@@ -259,6 +259,19 @@ in
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
+      shfmt =
+        {
+          name = "shfmt";
+          description = "Format shell files";
+          types = [ "shell" ];
+          types_or =
+            [
+              "sh"
+              "bash"
+              "dash"
+            ];
+          entry = "${tools.shfmt}/bin/shfmt -w -s";
+        };
       terraform-format =
         {
           name = "terraform-format";
