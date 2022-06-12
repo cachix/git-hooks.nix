@@ -77,6 +77,24 @@ in
               default = "${tools.prettier}/bin/prettier";
             };
         };
+      eslint =
+        {
+          binPath =
+            mkOption {
+              type = types.path;
+              description =
+                "Eslint binary path. E.g. if you want to use the eslint in node_modules, use ./node_modules/.bin/eslint";
+              default = "${tools.eslint}/bin/eslint";
+            };
+
+          extensions =
+            mkOption {
+              type = types.str;
+              description =
+                "The pattern of files to run on, see https://pre-commit.com/#hooks-files";
+              default = "\\.js$";
+            };
+        };
     };
 
   config.hooks =
@@ -324,6 +342,13 @@ in
           description = "HTML linter";
           entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
           files = "\\.html$";
+        };
+      eslint =
+        {
+          name = "eslint";
+          description = "Find and fix problems in your JavaScript code";
+          entry = "${settings.eslint.binPath} --fix";
+          files = "${settings.eslint.extensions}";
         };
     };
 }

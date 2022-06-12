@@ -34,7 +34,7 @@
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) stylish-haskell brittany hpack fourmolu;
   inherit (python39Packages) yamllint ansible-lint;
-  inherit (nodePackages) prettier;
+  inherit (nodePackages) eslint prettier;
   ormolu = haskell.packages.ghc921.ormolu;
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
