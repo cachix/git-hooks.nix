@@ -365,7 +365,14 @@ in
           description = "Dockerfile linter, validate inline bash";
           entry = "${tools.hadolint}/bin/hadolint";
           files = "Dockerfile$";
+        };
 
+      markdownlint =
+        {
+          name = "markdownlint";
+          description = "Style checker and linter for markdown files";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint";
+          files = "\\.md$";
         };
     };
 }
