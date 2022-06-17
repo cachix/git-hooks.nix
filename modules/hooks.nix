@@ -264,13 +264,7 @@ in
           name = "shfmt";
           description = "Format shell files";
           types = [ "shell" ];
-          types_or =
-            [
-              "sh"
-              "bash"
-              "dash"
-            ];
-          entry = "${tools.shfmt}/bin/shfmt -w -s";
+          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
         };
       terraform-format =
         {
