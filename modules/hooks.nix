@@ -277,6 +277,13 @@ in
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
+      shfmt =
+        {
+          name = "shfmt";
+          description = "Format shell files";
+          types = [ "shell" ];
+          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
+        };
       terraform-format =
         {
           name = "terraform-format";

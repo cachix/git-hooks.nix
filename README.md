@@ -121,6 +121,7 @@ eval "$shellHook"
 ## Shell
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
+- [shfmt](https://github.com/mvdan/sh)
 
 ## HTML
 
