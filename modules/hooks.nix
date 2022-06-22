@@ -343,12 +343,21 @@ in
           entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
           files = "\\.html$";
         };
+
       eslint =
         {
           name = "eslint";
           description = "Find and fix problems in your JavaScript code";
           entry = "${settings.eslint.binPath} --fix";
           files = "${settings.eslint.extensions}";
+
+      hadolint =
+        {
+          name = "hadolint";
+          description = "Dockerfile linter, validate inline bash";
+          entry = "${tools.hadolint}/bin/hadolint";
+          files = "Dockerfile$";
+
         };
     };
 }

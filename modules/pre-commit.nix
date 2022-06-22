@@ -163,7 +163,10 @@ let
     runCommand "pre-commit-run" { buildInputs = [ git ]; } ''
       set +e
       HOME=$PWD
-      cp --no-preserve=mode -R ${cfg.rootSrc} src
+      # Use `chmod +w` instead of `cp --no-preserve=mode` to be able to write and to
+      # preserve the executable bit at the same time
+      cp -R ${cfg.rootSrc} src
+      chmod -R +w src
       ln -fs ${configFile} src/.pre-commit-config.yaml
       cd src
       rm -rf src/.git
