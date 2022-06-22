@@ -357,6 +357,7 @@ in
           description = "Find and fix problems in your JavaScript code";
           entry = "${settings.eslint.binPath} --fix";
           files = "${settings.eslint.extensions}";
+        };
 
       hadolint =
         {
