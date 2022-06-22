@@ -138,6 +138,7 @@ eval "$shellHook"
 
 - [prettier](https://prettier.io)
 - [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+- [hadolint](https://github.com/hadolint/hadolint)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:
