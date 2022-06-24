@@ -18,11 +18,12 @@ The goal is to **manage commit hooks with Nix** and solve the following:
 1. (optional) Use binary caches to avoid compilation:
 
    ```bash
-   $ nix-env -iA cachix -f https://cachix.org/api/v1/install
-   $ cachix use pre-commit-hooks
+   nix-env -iA cachix -f https://cachix.org/api/v1/install
+   cachix use pre-commit-hooks
    ```
 
 2. Integrate hooks to be built as part of `default.nix`:
+
    ```nix
     let
       nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
@@ -43,6 +44,7 @@ The goal is to **manage commit hooks with Nix** and solve the following:
    Run `$ nix-build -A pre-commit-check` to perform the checks as a Nix derivation.
 
 3. Integrate hooks to prepare environment as part of `shell.nix`:
+
    ```nix
     (import <nixpkgs> {}).mkShell {
        shellHook = ''
@@ -54,7 +56,7 @@ The goal is to **manage commit hooks with Nix** and solve the following:
    Add `/.pre-commit-config.yaml` to `.gitignore`.
 
    Run `$ nix-shell` to execute `shellHook` which will:
-   
+
    - build the tools and `.pre-commit-config.yaml` config file symlink which
      references the binaries, for speed and safe garbage collection
    - provide the `pre-commit` executable that `git commit` will invoke
@@ -127,6 +129,10 @@ eval "$shellHook"
 
 - [html-tidy](https://github.com/htacg/tidy-html5)
 
+## Markdown
+
+- [markdownlint](https://github.com/DavidAnson/markdownlint)
+
 ## Terraform
 
 - `terraform-format`: built-in formatter
@@ -157,6 +163,7 @@ Sometimes it is useful to add a project specific command as an extra check that
 is not part of the pre-defined set of hooks provided by this project.
 
 Example configuration:
+
 ```nix
  let
    nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
@@ -234,13 +241,12 @@ Given the following `flake.nix` example:
 }
 ```
 
-
 Add `/.pre-commit-config.yaml` to the `.gitignore`.
 
 To run the all the hooks on CI:
 
 ```bash
-nix flake check 
+nix flake check
 ```
 
 To install pre-commit hooks developers would run:
