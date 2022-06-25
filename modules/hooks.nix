@@ -277,6 +277,13 @@ in
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
+      stylua =
+        {
+          name = "stylua";
+          description = "An Opinionated Lua Code Formatter";
+          types = [ "file" "lua" ];
+          entry = "${tools.stylua}/bin/stylua";
+        };
       shfmt =
         {
           name = "shfmt";

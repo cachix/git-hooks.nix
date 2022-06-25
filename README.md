@@ -125,6 +125,10 @@ eval "$shellHook"
 - [shellcheck](https://github.com/koalaman/shellcheck)
 - [shfmt](https://github.com/mvdan/sh)
 
+## Lua
+
+- [stylua](https://github.com/JohnnyMorganz/StyLua)
+
 ## HTML
 
 - [html-tidy](https://github.com/htacg/tidy-html5)
