@@ -4,6 +4,7 @@
 , hlint
 , shellcheck
 , stylua
+, shfmt
 , ormolu
 , hindent
 , cabal-fmt
@@ -32,11 +33,11 @@
 }:
 
 {
-  inherit hlint shellcheck stylua hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint;
+  inherit hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) stylish-haskell brittany hpack fourmolu;
   inherit (python39Packages) yamllint ansible-lint;
-  inherit (nodePackages) eslint prettier;
+  inherit (nodePackages) eslint markdownlint-cli prettier;
   ormolu = haskell.packages.ghc921.ormolu;
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };

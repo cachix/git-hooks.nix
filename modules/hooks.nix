@@ -284,6 +284,13 @@ in
           types = [ "file" "lua" ];
           entry = "${tools.stylua}/bin/stylua";
         };
+      shfmt =
+        {
+          name = "shfmt";
+          description = "Format shell files";
+          types = [ "shell" ];
+          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
+        };
       terraform-format =
         {
           name = "terraform-format";
@@ -357,6 +364,7 @@ in
           description = "Find and fix problems in your JavaScript code";
           entry = "${settings.eslint.binPath} --fix";
           files = "${settings.eslint.extensions}";
+        };
 
       hadolint =
         {
@@ -364,7 +372,14 @@ in
           description = "Dockerfile linter, validate inline bash";
           entry = "${tools.hadolint}/bin/hadolint";
           files = "Dockerfile$";
+        };
 
+      markdownlint =
+        {
+          name = "markdownlint";
+          description = "Style checker and linter for markdown files";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint";
+          files = "\\.md$";
         };
     };
 }
