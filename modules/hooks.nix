@@ -306,18 +306,40 @@ in
           entry = "${tools.yamllint}/bin/yamllint";
         };
       rustfmt =
+        let
+          wrapper = pkgs.symlinkJoin {
+            name = "rustfmt-wrapped";
+            paths = [ tools.rustfmt ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/cargo-fmt \
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
+            '';
+          };
+        in
         {
           name = "rustfmt";
           description = "Format Rust code.";
-          entry = "${tools.rustfmt}/bin/cargo-fmt fmt -- --check --color always";
+          entry = "${wrapper}/bin/cargo-fmt fmt -- --check --color always";
           files = "\\.rs$";
           pass_filenames = false;
         };
       clippy =
+        let
+          wrapper = pkgs.symlinkJoin {
+            name = "clippy-wrapped";
+            paths = [ tools.clippy ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/cargo-clippy \
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
+            '';
+          };
+        in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${tools.clippy}/bin/cargo-clippy clippy";
+          entry = "${wrapper}/bin/cargo-clippy clippy";
           files = "\\.rs$";
           pass_filenames = false;
         };
