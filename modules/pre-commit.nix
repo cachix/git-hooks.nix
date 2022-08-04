@@ -3,6 +3,7 @@ let
   inherit (lib)
     attrNames
     concatStringsSep
+    compare
     filterAttrs
     literalExample
     mapAttrsToList
@@ -175,8 +176,14 @@ let
       git config --global user.email "you@example.com"
       git config --global user.name "Your Name"
       git commit -m "init"
-      echo "Running: $ pre-commit run --all-files"
-      ${cfg.package}/bin/pre-commit run --all-files
+      if [[ ${toString (compare install_stages [ "manual" ])} -eq 0 ]]
+      then
+        echo "Running: $ pre-commit run --hook-stage manual --all-files"
+        ${cfg.package}/bin/pre-commit run --hook-stage manual --all-files
+      else
+        echo "Running: $ pre-commit run --all-files"
+        ${cfg.package}/bin/pre-commit run --all-files
+      fi
       exitcode=$?
       git --no-pager diff --color
       touch $out
