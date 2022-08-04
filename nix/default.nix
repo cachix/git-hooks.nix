@@ -8,13 +8,10 @@ let
   overlay =
     self: pkgs:
     let
-      tools = pkgs.lib.filterAttrs (k: v: !(pkgs.lib.any (a: k == a) [ "override" "overrideDerivation" ])) (pkgs.callPackage ./tools.nix { });
+      tools = import ./call-tools.nix pkgs;
       run = pkgs.callPackage ./run.nix { inherit pkgs tools isFlakes gitignore-nix-src; };
     in
     {
-      inherit (pkgs) nixfmt niv ormolu nixpkgs-fmt nix-linter;
-      cabal-fmt = (pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.cabal-fmt).bin;
-      hindent = pkgs.haskell.lib.enableSeparateBinOutput pkgs.haskellPackages.hindent;
       inherit tools run;
       # Flake style attributes
       packages = tools // {
