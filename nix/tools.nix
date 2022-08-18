@@ -5,7 +5,6 @@
 , shellcheck
 , stylua
 , shfmt
-, ormolu
 , hindent
 , cabal-fmt
 , elmPackages
@@ -30,12 +29,15 @@
 , html-tidy
 , clang-tools
 , hadolint
+, hpack
+, ormolu
+, stylish-haskell
 }:
 
 {
-  inherit hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint;
+  inherit hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint ormolu stylish-haskell hpack;
   inherit (elmPackages) elm-format elm-review elm-test;
-  inherit (haskellPackages) stylish-haskell brittany hpack fourmolu ormolu;
+  inherit (haskellPackages) brittany fourmolu;
   inherit (python39Packages) yamllint ansible-lint;
   inherit (nodePackages) eslint markdownlint-cli prettier;
   purty = callPackage ./purty { purty = nodePackages.purty; };
