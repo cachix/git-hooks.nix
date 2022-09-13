@@ -313,7 +313,7 @@ in
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-fmt \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo tools.rustfmt ]}
             '';
           };
         in
