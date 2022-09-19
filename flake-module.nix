@@ -19,6 +19,16 @@ in
       {
         options = {
           pre-commit = {
+            check.enable = mkOption {
+              description = ''
+                Whether to add a derivation to the flake <literal>checks</literal>.
+
+                You can disable this if one of your hooks does not run properly in
+                the Nix sandbox; for example because it needs network access.
+              '';
+              type = types.bool;
+              default = true;
+            };
             pkgs = mkOption {
               type = types.uniq (types.lazyAttrsOf (types.raw or types.unspecified));
               description = ''
@@ -44,7 +54,7 @@ in
           };
         };
         config = {
-          checks.pre-commit = cfg.settings.run;
+          checks = lib.optionalAttrs cfg.check.enable { pre-commit = cfg.settings.run; };
           pre-commit.settings = { pkgs, ... }: {
             rootSrc = self.outPath;
             package = lib.mkDefault pkgs.pre-commit;
