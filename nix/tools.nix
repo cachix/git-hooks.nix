@@ -44,7 +44,7 @@
   inherit (luaPackages) luacheck;
   inherit (python39Packages) yamllint ansible-lint;
   inherit (nodePackages) eslint markdownlint-cli prettier;
-  inherit (texlive) chktex;
+  inherit (texlive) chktex latexindent;
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
   hpack-dir = callPackage ./hpack-dir { hpack = haskellPackages.hpack; };

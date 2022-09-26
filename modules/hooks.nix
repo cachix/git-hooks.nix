@@ -158,6 +158,13 @@ in
           entry = "${pkgs.python3Packages.isort}/bin/isort";
           types = [ "file" "python" ];
         };
+      latexindent =
+        {
+          name = "latexindent";
+          description = "Perl script to add indentation to LaTeX files";
+          types = [ "file" "tex" ];
+          entry = "${tools.latexindent}/bin/latexindent --local --silent --modifyIfDifferent";
+        };
       luacheck =
         {
           name = "luacheck";
