@@ -4,6 +4,7 @@
 , hlint
 , shellcheck
 , stylua
+, luaPackages
 , shfmt
 , hindent
 , cabal-fmt
@@ -38,6 +39,7 @@
   inherit hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint ormolu stylish-haskell hpack;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) brittany fourmolu;
+  inherit (luaPackages) luacheck;
   inherit (python39Packages) yamllint ansible-lint;
   inherit (nodePackages) eslint markdownlint-cli prettier;
   purty = callPackage ./purty { purty = nodePackages.purty; };

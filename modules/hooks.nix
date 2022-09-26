@@ -150,6 +150,13 @@ in
           entry = "${pkgs.python3Packages.isort}/bin/isort";
           types = [ "file" "python" ];
         };
+      luacheck =
+        {
+          name = "luacheck";
+          description = "A tool for linting and static analysis of Lua code";
+          types = [ "file" "lua" ];
+          entry = "${tools.luacheck}/bin/luacheck";
+        };
       ormolu =
         {
           name = "ormolu";
