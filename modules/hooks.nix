@@ -99,6 +99,14 @@ in
 
   config.hooks =
     {
+      actionlint =
+        {
+          name = "actionlint";
+          description = "Static checker for GitHub Actions workflow files";
+          files = "^.github/workflows/";
+          types = [ "yaml" ];
+          entry = "${tools.actionlint}/bin/actionlint";
+        };
       ansible-lint =
         {
           name = "ansible-lint";

@@ -1,4 +1,5 @@
-{ ansible-lint
+{ actionlint
+, ansible-lint
 , haskell
 , haskellPackages
 , hlint
@@ -36,7 +37,7 @@
 }:
 
 {
-  inherit hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint ormolu stylish-haskell hpack;
+  inherit actionlint hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint ormolu stylish-haskell hpack;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
