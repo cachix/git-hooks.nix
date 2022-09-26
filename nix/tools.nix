@@ -38,15 +38,15 @@
 }:
 
 {
-  inherit actionlint hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint ormolu stylish-haskell hpack;
+  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (python39Packages) yamllint ansible-lint;
   inherit (nodePackages) eslint markdownlint-cli prettier;
+  inherit (python39Packages) ansible-lint yamllint;
   inherit (texlive) chktex latexindent;
-  purty = callPackage ./purty { purty = nodePackages.purty; };
-  terraform-fmt = callPackage ./terraform-fmt { };
   hpack-dir = callPackage ./hpack-dir { hpack = haskellPackages.hpack; };
   hunspell = callPackage ./hunspell { };
+  purty = callPackage ./purty { purty = nodePackages.purty; };
+  terraform-fmt = callPackage ./terraform-fmt { };
 }
