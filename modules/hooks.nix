@@ -203,6 +203,13 @@ in
           entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
         };
+      chktex =
+        {
+          name = "chktex";
+          description = "LaTeX semantic checker";
+          types = [ "file" "tex" ];
+          entry = "${tools.chktex}/bin/chktex";
+        };
       stylish-haskell =
         {
           name = "stylish-haskell";
