@@ -39,6 +39,43 @@ in
               default = [ ];
               example = [ "flake.nix" "./templates" ];
             };
+          };
+      deadnix =
+        {
+          fix =
+            mkOption {
+              type = types.bool;
+              description = "Remove unused code and write to source file";
+              default = false;
+            };
+
+          noLambdaArg =
+            mkOption {
+              type = types.bool;
+              description = "Don't check lambda parameter arguments";
+              default = false;
+            };
+
+          noLambdaPatternNames =
+            mkOption {
+              type = types.bool;
+              description = "Don't check lambda pattern names (don't break nixpkgs callPackage)";
+              default = false;
+            };
+
+          noUnderscore =
+            mkOption {
+              type = types.bool;
+              description = "Don't check any bindings that start with a _";
+              default = false;
+            };
+
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = "Don't print dead code report";
+              default = false;
+            };
         };
       statix =
         {
@@ -230,6 +267,18 @@ in
           description = "The Uncompromising Nix Code Formatter";
           entry = with settings.alejandra;
             "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
+          files = "\\.nix$";
+        };
+      deadnix =
+        {
+          name = "deadnix";
+          description = "Scan Nix files for dead code (unused variable bindings).";
+          entry =
+          let
+            toArg = string: "--" + (lib.concatMapStringsSep "-" lib.toLower (lib.filter (x: x != "") (lib.flatten (lib.split "([[:upper:]]+[[:lower:]]+)" string))));
+            args = lib.concatMapStringsSep " " toArg (lib.filter (attr: settings.deadnix."${attr}") (lib.attrNames settings.deadnix));
+            in
+              "${tools.deadnix}/bin/deadnix ${args} --fail --";
           files = "\\.nix$";
         };
       nixfmt =

@@ -6,6 +6,7 @@
 , cargo
 , clang-tools
 , clippy
+, deadnix
 , elmPackages
 , git
 , gitAndTools
@@ -38,7 +39,7 @@
 }:
 
 {
-  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua;
+  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy deadnix hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
