@@ -99,6 +99,14 @@ in
 
   config.hooks =
     {
+      actionlint =
+        {
+          name = "actionlint";
+          description = "Static checker for GitHub Actions workflow files";
+          files = "^.github/workflows/";
+          types = [ "yaml" ];
+          entry = "${tools.actionlint}/bin/actionlint";
+        };
       ansible-lint =
         {
           name = "ansible-lint";
@@ -150,6 +158,20 @@ in
           entry = "${pkgs.python3Packages.isort}/bin/isort";
           types = [ "file" "python" ];
         };
+      latexindent =
+        {
+          name = "latexindent";
+          description = "Perl script to add indentation to LaTeX files";
+          types = [ "file" "tex" ];
+          entry = "${tools.latexindent}/bin/latexindent --local --silent --modifyIfDifferent";
+        };
+      luacheck =
+        {
+          name = "luacheck";
+          description = "A tool for linting and static analysis of Lua code";
+          types = [ "file" "lua" ];
+          entry = "${tools.luacheck}/bin/luacheck";
+        };
       ormolu =
         {
           name = "ormolu";
@@ -187,6 +209,13 @@ in
           description = "Format Cabal files";
           entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
+        };
+      chktex =
+        {
+          name = "chktex";
+          description = "LaTeX semantic checker";
+          types = [ "file" "tex" ];
+          entry = "${tools.chktex}/bin/chktex";
         };
       stylish-haskell =
         {
