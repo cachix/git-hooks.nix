@@ -149,6 +149,7 @@ eval "$shellHook"
 ## Other Formatters
 
 - [prettier](https://prettier.io)
+- `dhall format`: built-in formatter
 - [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
 - [hadolint](https://github.com/hadolint/hadolint)
 

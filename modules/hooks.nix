@@ -172,6 +172,12 @@ in
           entry = "${tools.brittany}/bin/brittany --write-mode=inplace";
           files = "\\.l?hs$";
         };
+      dhall-format = {
+        name = "dhall-format";
+        description = "Dhall code formatter";
+        entry = "${tools.dhall}/bin/dhall format";
+        files = "\\.dhall$";
+      };
       hlint =
         {
           name = "hlint";
