@@ -338,7 +338,7 @@ in
         };
       elm-test =
         {
-          name = "elm-review";
+          name = "elm-test";
           description = "Run unit and fuzz tests for Elm code.";
           entry = "${tools.elm-test}/bin/elm-test";
           files = "\\.elm$";
