@@ -1,48 +1,55 @@
-{ ansible-lint
+{ actionlint
+, alejandra
+, ansible-lint
+, cabal-fmt
+, callPackage
+, cargo
+, clang-tools
+, clippy
+, deadnix
 , dhall
+, elmPackages
+, git
+, gitAndTools
+, hadolint
 , haskell
 , haskellPackages
-, hlint
-, shellcheck
-, stylua
-, shfmt
 , hindent
-, cabal-fmt
-, elmPackages
-, niv
-, gitAndTools
-, runCommand
-, writeText
-, writeScript
-, git
-, alejandra
-, nixpkgs-fmt
-, nixfmt
-, nix-linter
-, statix
-, callPackage
-, python39Packages
-, rustfmt
-, clippy
-, cargo
-, nodePackages
-, hunspell
-, html-tidy
-, clang-tools
-, hadolint
+, hlint
 , hpack
+, html-tidy
+, hunspell
+, luaPackages
+, niv
+, nix-linter
+, nixfmt
+, nixpkgs-fmt
+, nodePackages
 , ormolu
+, python39Packages
+, runCommand
+, rustfmt
+, shellcheck
+, shfmt
+, statix
 , stylish-haskell
+, stylua
+, texlive
+, writeScript
+, writeText
 }:
 
 {
-  inherit dhall hlint shellcheck stylua shfmt hindent cabal-fmt alejandra nixpkgs-fmt nixfmt nix-linter statix rustfmt clippy cargo html-tidy clang-tools hadolint ormolu stylish-haskell hpack;
+  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) brittany fourmolu;
-  inherit (python39Packages) yamllint ansible-lint;
+  inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier;
-  purty = callPackage ./purty { purty = nodePackages.purty; };
-  terraform-fmt = callPackage ./terraform-fmt { };
+  inherit (python39Packages) ansible-lint yamllint;
   hpack-dir = callPackage ./hpack-dir { hpack = haskellPackages.hpack; };
   hunspell = callPackage ./hunspell { };
+  purty = callPackage ./purty { purty = nodePackages.purty; };
+  terraform-fmt = callPackage ./terraform-fmt { };
+  latexindent = texlive.combined.scheme-medium;
+  chktex = texlive.combined.scheme-medium;
 }

@@ -40,6 +40,43 @@ in
               example = [ "flake.nix" "./templates" ];
             };
         };
+      deadnix =
+        {
+          fix =
+            mkOption {
+              type = types.bool;
+              description = "Remove unused code and write to source file";
+              default = false;
+            };
+
+          noLambdaArg =
+            mkOption {
+              type = types.bool;
+              description = "Don't check lambda parameter arguments";
+              default = false;
+            };
+
+          noLambdaPatternNames =
+            mkOption {
+              type = types.bool;
+              description = "Don't check lambda pattern names (don't break nixpkgs callPackage)";
+              default = false;
+            };
+
+          noUnderscore =
+            mkOption {
+              type = types.bool;
+              description = "Don't check any bindings that start with a _";
+              default = false;
+            };
+
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = "Don't print dead code report";
+              default = false;
+            };
+        };
       statix =
         {
           format =
@@ -99,6 +136,14 @@ in
 
   config.hooks =
     {
+      actionlint =
+        {
+          name = "actionlint";
+          description = "Static checker for GitHub Actions workflow files";
+          files = "^.github/workflows/";
+          types = [ "yaml" ];
+          entry = "${tools.actionlint}/bin/actionlint";
+        };
       ansible-lint =
         {
           name = "ansible-lint";
@@ -156,6 +201,20 @@ in
           entry = "${pkgs.python3Packages.isort}/bin/isort";
           types = [ "file" "python" ];
         };
+      latexindent =
+        {
+          name = "latexindent";
+          description = "Perl script to add indentation to LaTeX files";
+          types = [ "file" "tex" ];
+          entry = "${tools.latexindent}/bin/latexindent --local --silent --modifyIfDifferent";
+        };
+      luacheck =
+        {
+          name = "luacheck";
+          description = "A tool for linting and static analysis of Lua code";
+          types = [ "file" "lua" ];
+          entry = "${tools.luacheck}/bin/luacheck";
+        };
       ormolu =
         {
           name = "ormolu";
@@ -194,6 +253,13 @@ in
           entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
         };
+      chktex =
+        {
+          name = "chktex";
+          description = "LaTeX semantic checker";
+          types = [ "file" "tex" ];
+          entry = "${tools.chktex}/bin/chktex";
+        };
       stylish-haskell =
         {
           name = "stylish-haskell";
@@ -207,6 +273,18 @@ in
           description = "The Uncompromising Nix Code Formatter";
           entry = with settings.alejandra;
             "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
+          files = "\\.nix$";
+        };
+      deadnix =
+        {
+          name = "deadnix";
+          description = "Scan Nix files for dead code (unused variable bindings).";
+          entry =
+            let
+              toArg = string: "--" + (lib.concatMapStringsSep "-" lib.toLower (lib.filter (x: x != "") (lib.flatten (lib.split "([[:upper:]]+[[:lower:]]+)" string))));
+              args = lib.concatMapStringsSep " " toArg (lib.filter (attr: settings.deadnix."${attr}") (lib.attrNames settings.deadnix));
+            in
+            "${tools.deadnix}/bin/deadnix ${args} --fail --";
           files = "\\.nix$";
         };
       nixfmt =
