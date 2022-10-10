@@ -46,6 +46,7 @@
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier;
   inherit (python39Packages) ansible-lint yamllint;
+  cabal2nix-dir = callPackage ./cabal2nix-dir { cabal2nix = haskellPackages.cabal2nix; };
   hpack-dir = callPackage ./hpack-dir { hpack = haskellPackages.hpack; };
   hunspell = callPackage ./hunspell { };
   purty = callPackage ./purty { purty = nodePackages.purty; };

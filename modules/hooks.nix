@@ -158,6 +158,13 @@ in
           entry = "${pkgs.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
+      cabal2nix =
+        {
+          name = "cabal2nix";
+          description = "Run cabal2nix on all *.cabal files to generate corresponding default.nix files.";
+          files = "\\.cabal$";
+          entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir";
+        };
       clang-format =
         {
           name = "clang-format";
