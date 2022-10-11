@@ -1,10 +1,11 @@
 { writeScriptBin, cabal2nix }:
 
 writeScriptBin "cabal2nix-dir" ''#!/usr/bin/env bash
+  projectdir="$(pwd)"
   for cabalFile in "''$@"; do
     echo "$cabalFile"
     dir="$(dirname $cabalFile)"
-    defaultFile="$dir/default.nix"
-    ${cabal2nix}/bin/cabal2nix --no-hpack "$dir" > "$defaultFile"
+    cd "$projectdir/$dir"
+    ${cabal2nix}/bin/cabal2nix --no-hpack . > default.nix
   done
 ''
