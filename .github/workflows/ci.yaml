@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: cachix/install-nix-action@v17
-    - uses: cachix/cachix-action@v10
+    - uses: cachix/cachix-action@v11
       with:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
@@ -27,7 +27,7 @@ jobs:
       with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-    - uses: cachix/cachix-action@v10
+    - uses: cachix/cachix-action@v11
       with:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
