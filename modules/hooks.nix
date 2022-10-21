@@ -494,5 +494,26 @@ in
           entry = "${tools.markdownlint-cli}/bin/markdownlint";
           files = "\\.md$";
         };
+
+      govet =
+        let
+          script = pkgs.writeShellScript "precommit-govet" ''
+            for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                ${tools.go}/bin/go vet ./"$dir"
+            done
+          '';
+        in
+        {
+          name = "govet";
+          description = "Checks correctness of Go programs";
+          entry = builtins.toString script;
+          raw = {
+            # go vet requires package (directory) names as inputs. To avoid
+            # calculating the same directory more than once, we want to have all
+            # filenames in a single entry invocation.
+            require_serial = true;
+          };
+          files = "\\.go$";
+        };
     };
 }
