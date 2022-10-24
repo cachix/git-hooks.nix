@@ -119,6 +119,11 @@ use nix
 - [clippy](https://github.com/rust-lang/rust-clippy)
 - cargo-check: Runs `cargo check`
 
+## Golang
+
+- [govet](https://pkg.go.dev/cmd/vet)
+- [revive](https://github.com/mgechev/revive)
+
 ## Shell
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
