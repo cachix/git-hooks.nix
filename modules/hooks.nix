@@ -525,6 +525,7 @@ in
             let
               # go vet requires package (directory) names as inputs.
               script = pkgs.writeShellScript "precommit-govet" ''
+                set -e
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
                   ${tools.go}/bin/go vet ./"$dir"
                 done
