@@ -518,21 +518,22 @@ in
         };
 
       govet =
-        let
-          script = pkgs.writeShellScript "precommit-govet" ''
-            for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${tools.go}/bin/go vet ./"$dir"
-            done
-          '';
-        in
         {
           name = "govet";
           description = "Checks correctness of Go programs";
-          entry = builtins.toString script;
+          entry =
+            let
+              # go vet requires package (directory) names as inputs.
+              script = pkgs.writeShellScript "precommit-govet" ''
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${tools.go}/bin/go vet ./"$dir"
+                done
+              '';
+            in
+            builtins.toString script;
           raw = {
-            # go vet requires package (directory) names as inputs. To avoid
-            # calculating the same directory more than once, we want to have all
-            # filenames in a single entry invocation.
+            # to avoid multiple invocations of the same directory input, provide
+            # all file names in a single run.
             require_serial = true;
           };
           files = "\\.go$";
