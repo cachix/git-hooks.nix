@@ -270,6 +270,10 @@ Have a look at the [existing hooks](modules/hooks.nix) and the [options](modules
 
 There's no guarantee the hook will be accepted, but the general guidelines are:
 
-- Nix closure of the tool should be small e.g. `< 50MB`
+- Nix closure of the tool should be small e.g. `< 50MB`. A problematic example:
+```
+   $ du -sh $(nix-build -A go)
+   463M	/nix/store/v4ys4lrjngf62lvvrdbs7r9kbxh9nqaa-go-1.18.6
+```
 - The tool must not be very specific (e.g. language tooling is OK, but project specific tooling is not)
 - The tool needs to live in a separate repository (even if a simple bash script, unless it's a oneliner)
