@@ -37,6 +37,11 @@ The goal is to **manage commit hooks with Nix** and solve the following:
           ormolu.enable = true;
           shellcheck.enable = true;
         };
+
+        # Some hooks offer custom settings that affect how they execute
+        settings = {
+          ormolu.defaultExtensions = [ "lhs" "hs" ];
+        };
       };
     }
    ```
