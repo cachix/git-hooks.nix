@@ -2,6 +2,7 @@
 , alejandra
 , ansible-lint
 , cabal-fmt
+, cabal2nix
 , callPackage
 , cargo
 , clang-tools
@@ -42,14 +43,15 @@
 }:
 
 {
-  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua go mdsh;
+  inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua go mdsh;
   inherit (elmPackages) elm-format elm-review elm-test;
+  # TODO: these two should be statically compiled
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier;
   inherit (python39Packages) ansible-lint yamllint;
-  cabal2nix-dir = callPackage ./cabal2nix-dir { cabal2nix = haskellPackages.cabal2nix; };
-  hpack-dir = callPackage ./hpack-dir { hpack = haskellPackages.hpack; };
+  cabal2nix-dir = callPackage ./cabal2nix-dir { };
+  hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
