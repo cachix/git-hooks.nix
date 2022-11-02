@@ -21,6 +21,7 @@
 , hunspell
 , luaPackages
 , niv
+, mdsh
 , nix-linter
 , nixfmt
 , nixpkgs-fmt
@@ -41,7 +42,7 @@
 }:
 
 {
-  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua go;
+  inherit actionlint alejandra cabal-fmt cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua go mdsh;
   inherit (elmPackages) elm-format elm-review elm-test;
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
