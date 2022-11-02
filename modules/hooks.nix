@@ -282,6 +282,7 @@ in
             "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
           files = "\\.nix$";
         };
+
       deadnix =
         {
           name = "deadnix";
@@ -293,6 +294,20 @@ in
             in
             "${tools.deadnix}/bin/deadnix ${args} --fail --";
           files = "\\.nix$";
+        };
+      mdsh =
+        let
+          script = pkgs.writeShellScript "precommit-mdsh" ''
+            for file in $(echo "$@"); do
+                ${tools.mdsh}/bin/mdsh -i $file"
+            done
+          '';
+        in
+        {
+          name = "mdsh";
+          description = "Markdown shell pre-processor.";
+          entry = toString script;
+          files = "\\.md$";
         };
       nixfmt =
         {
