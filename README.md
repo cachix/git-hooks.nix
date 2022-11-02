@@ -63,19 +63,12 @@ The goal is to **manage commit hooks with Nix** and solve the following:
 
 ## Optional
 
-### Direnv + Lorri
+### Direnv
 
-`.envrc`
+`.envrc`:
 
 ```
-eval "$(lorri direnv)"
-
-# Use system PKI
-unset SSL_CERT_FILE
-unset NIX_SSL_CERT_FILE
-
-# Install pre-commit hooks
-eval "$shellHook"
+use nix
 ```
 
 # Hooks
