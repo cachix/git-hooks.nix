@@ -464,6 +464,13 @@ in
           entry = "${tools.purty}/bin/purty";
           files = "\\.purs$";
         };
+      purs-tidy =
+        {
+          name = "purs-tidy";
+          description = "Format purescript files";
+          entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
+          files = "\\.purs$";
+        };
       prettier =
         {
           name = "prettier";

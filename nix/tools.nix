@@ -48,7 +48,7 @@
   # TODO: these two should be statically compiled
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier;
+  inherit (nodePackages) eslint markdownlint-cli prettier purs-tidy;
   inherit (python39Packages) ansible-lint yamllint;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
