@@ -12,15 +12,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-22.05",
+        "branch": "nixpkgs-unstable",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "478f3cbc8448b5852539d785fbfe9a53304133be",
-        "sha256": "1xdr33l7hg7v81dm4m5a8hysa33z6gqisq0hyrdkds3yrnnxfp2w",
+        "rev": "ef2f213d9659a274985778bff4ca322f3ef3ac68",
+        "sha256": "06mis36j5g1lz9ahzy7pcbdlnhw45l6gn2zj605ab3ssim88x17c",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/478f3cbc8448b5852539d785fbfe9a53304133be.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/ef2f213d9659a274985778bff4ca322f3ef3ac68.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
