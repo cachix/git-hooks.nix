@@ -132,6 +132,19 @@ in
               default = "\\.js$";
             };
         };
+
+      revive =
+        {
+          configPath =
+            mkOption {
+              type = types.str;
+              description = "path to the configuration TOML file";
+              # an empty string translates to use default configuration of the
+              # underlying revive binary
+              default = "";
+            };
+
+        };
     };
 
   config.hooks =
@@ -518,24 +531,64 @@ in
         };
 
       govet =
-        let
-          script = pkgs.writeShellScript "precommit-govet" ''
-            for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${tools.go}/bin/go vet ./"$dir"
-            done
-          '';
-        in
         {
           name = "govet";
           description = "Checks correctness of Go programs";
-          entry = builtins.toString script;
+          entry =
+            let
+              # go vet requires package (directory) names as inputs.
+              script = pkgs.writeShellScript "precommit-govet" ''
+                set -e
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${tools.go}/bin/go vet ./"$dir"
+                done
+              '';
+            in
+            builtins.toString script;
           raw = {
-            # go vet requires package (directory) names as inputs. To avoid
-            # calculating the same directory more than once, we want to have all
-            # filenames in a single entry invocation.
+            # to avoid multiple invocations of the same directory input, provide
+            # all file names in a single run.
             require_serial = true;
           };
           files = "\\.go$";
         };
+
+      revive =
+        {
+          name = "revive";
+          description = "A linter for Go source code";
+          entry =
+            let
+              cmdArgs =
+                lib.concatStringsSep
+                  " "
+                  (builtins.concatLists [
+                    [ "-set_exit_status" ]
+                    (if settings.revive.configPath != "" then
+                      [ "-config ${settings.revive.configPath}" ]
+                    else
+                      [ ])
+                  ]
+                  );
+              # revive works with both files and directories; however some lints
+              # may fail (e.g. package-comment) if they run on an individual file
+              # rather than a package/directory scope; given this let's get the
+              # directories from each individual file.
+              script = pkgs.writeShellScript "precommit-revive" ''
+                set -e
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${tools.revive}/bin/revive ${cmdArgs} ./"$dir"
+                done
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+          raw = {
+            # to avoid multiple invocations of the same directory input, provide
+            # all file names in a single run.
+            require_serial = true;
+          };
+        };
+
     };
 }

@@ -37,6 +37,11 @@ The goal is to **manage commit hooks with Nix** and solve the following:
           ormolu.enable = true;
           shellcheck.enable = true;
         };
+
+        # Some hooks offer custom settings that affect how they execute
+        settings = {
+          ormolu.defaultExtensions = [ "lhs" "hs" ];
+        };
       };
     }
    ```
@@ -113,6 +118,11 @@ use nix
 - [rustfmt](https://github.com/rust-lang/rustfmt)
 - [clippy](https://github.com/rust-lang/rust-clippy)
 - cargo-check: Runs `cargo check`
+
+## Golang
+
+- [govet](https://pkg.go.dev/cmd/vet)
+- [revive](https://github.com/mgechev/revive)
 
 ## Shell
 

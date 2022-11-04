@@ -40,10 +40,11 @@
 , writeScript
 , writeText
 , go
+, revive
 }:
 
 {
-  inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua go mdsh;
+  inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua go mdsh revive;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) brittany fourmolu;
