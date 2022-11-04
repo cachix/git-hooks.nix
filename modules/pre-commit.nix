@@ -329,7 +329,7 @@ in
 
       installationScript =
         ''
-          export PATH=$PATH:${cfg.package}/bin
+          export PATH=${cfg.package}/bin:$PATH
           if ! type -t git >/dev/null; then
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; skipping installation."
