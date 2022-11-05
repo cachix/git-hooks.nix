@@ -12,7 +12,17 @@
         "x86_64-linux"
       ];
     in
-    flake-utils.lib.eachSystem defaultSystems (system:
+    {
+      flakeModule = ./flake-module.nix;
+
+      defaultTemplate = {
+        path = ./template;
+        description = ''
+          A template with flake-parts and nixpkgs-fmt.
+        '';
+      };
+    }
+    // flake-utils.lib.eachSystem defaultSystems (system:
       let
         exposed = import ./nix { nixpkgs = nixpkgs; inherit system; gitignore-nix-src = null; isFlakes = true; };
       in

@@ -11,7 +11,7 @@ in
           silent =
             mkOption {
               type = types.bool;
-              description = "Should generation should be silent";
+              description = lib.mdDoc "Whether generation should be silent.";
               default = false;
             };
         };
@@ -20,13 +20,13 @@ in
           defaultExtensions =
             mkOption {
               type = types.listOf types.str;
-              description = "Haskell language extensions to enable";
+              description = lib.mdDoc "Haskell language extensions to enable.";
               default = [ ];
             };
           cabalDefaultExtensions =
             mkOption {
               type = types.bool;
-              description = "Use default-extensions from .cabal files";
+              description = lib.mdDoc "Use `default-extensions` from `.cabal` files.";
               default = false;
             };
         };
@@ -35,7 +35,7 @@ in
           exclude =
             mkOption {
               type = types.listOf types.str;
-              description = "Files or directories to exclude from formatting";
+              description = lib.mdDoc "Files or directories to exclude from formatting.";
               default = [ ];
               example = [ "flake.nix" "./templates" ];
             };
@@ -45,35 +45,35 @@ in
           fix =
             mkOption {
               type = types.bool;
-              description = "Remove unused code and write to source file";
+              description = lib.mdDoc "Remove unused code and write to source file.";
               default = false;
             };
 
           noLambdaArg =
             mkOption {
               type = types.bool;
-              description = "Don't check lambda parameter arguments";
+              description = lib.mdDoc "Don't check lambda parameter arguments.";
               default = false;
             };
 
           noLambdaPatternNames =
             mkOption {
               type = types.bool;
-              description = "Don't check lambda pattern names (don't break nixpkgs callPackage)";
+              description = lib.mdDoc "Don't check lambda pattern names (don't break nixpkgs `callPackage`).";
               default = false;
             };
 
           noUnderscore =
             mkOption {
               type = types.bool;
-              description = "Don't check any bindings that start with a _";
+              description = lib.mdDoc "Don't check any bindings that start with a `_`.";
               default = false;
             };
 
           quiet =
             mkOption {
               type = types.bool;
-              description = "Don't print dead code report";
+              description = lib.mdDoc "Don't print a dead code report.";
               default = false;
             };
         };
@@ -82,14 +82,14 @@ in
           format =
             mkOption {
               type = types.enum [ "stderr" "errfmt" "json" ];
-              description = "Error Output format";
+              description = lib.mdDoc "Error Output format.";
               default = "errfmt";
             };
 
           ignore =
             mkOption {
               type = types.listOf types.str;
-              description = "Globs of file patterns to skip";
+              description = lib.mdDoc "Globs of file patterns to skip.";
               default = [ ];
               example = [ "flake.nix" "_*" ];
             };
@@ -99,8 +99,8 @@ in
           checks =
             mkOption {
               type = types.listOf types.str;
-              description =
-                "Available checks (See `nix-linter --help-for [CHECK]` for more details)";
+              description = lib.mdDoc
+                "Available checks. See `nix-linter --help-for [CHECK]` for more details.";
               default = [ ];
             };
         };
@@ -109,9 +109,12 @@ in
           binPath =
             mkOption {
               type = types.path;
-              description =
-                "Prettier binary path. E.g. if you want to use the prettier in node_modules, use ./node_modules/.bin/prettier";
+              description = lib.mdDoc
+                "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
               default = "${tools.prettier}/bin/prettier";
+              defaultText = lib.literalExpression ''
+                "''${tools.prettier}/bin/prettier"
+              '';
             };
         };
       eslint =
@@ -119,16 +122,17 @@ in
           binPath =
             mkOption {
               type = types.path;
-              description =
-                "Eslint binary path. E.g. if you want to use the eslint in node_modules, use ./node_modules/.bin/eslint";
+              description = lib.mdDoc
+                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
               default = "${tools.eslint}/bin/eslint";
+              defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
             };
 
           extensions =
             mkOption {
               type = types.str;
-              description =
-                "The pattern of files to run on, see https://pre-commit.com/#hooks-files";
+              description = lib.mdDoc
+                "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
               default = "\\.js$";
             };
         };
@@ -138,7 +142,7 @@ in
           configPath =
             mkOption {
               type = types.str;
-              description = "path to the configuration TOML file";
+              description = lib.mdDoc "Path to the configuration TOML file.";
               # an empty string translates to use default configuration of the
               # underlying revive binary
               default = "";
@@ -152,7 +156,7 @@ in
       actionlint =
         {
           name = "actionlint";
-          description = "Static checker for GitHub Actions workflow files";
+          description = "Static checker for GitHub Actions workflow files.";
           files = "^.github/workflows/";
           types = [ "yaml" ];
           entry = "${tools.actionlint}/bin/actionlint";
@@ -161,27 +165,27 @@ in
         {
           name = "ansible-lint";
           description =
-            "Ansible linter";
+            "Ansible linter.";
           entry = "${tools.ansible-lint}/bin/ansible-lint";
         };
       black =
         {
           name = "black";
-          description = "The uncompromising Python code formatter";
+          description = "The uncompromising Python code formatter.";
           entry = "${pkgs.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
       cabal2nix =
         {
           name = "cabal2nix";
-          description = "Run cabal2nix on all *.cabal files to generate corresponding default.nix files.";
+          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files.";
           files = "\\.cabal$";
           entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir";
         };
       clang-format =
         {
           name = "clang-format";
-          description = "Format your code using clang-format";
+          description = "Format your code using `clang-format`.";
           entry = "${tools.clang-tools}/bin/clang-format -style=file -i";
           types = [ "file" ];
         };
@@ -194,7 +198,7 @@ in
         };
       dhall-format = {
         name = "dhall-format";
-        description = "Dhall code formatter";
+        description = "Dhall code formatter.";
         entry = "${tools.dhall}/bin/dhall format";
         files = "\\.dhall$";
       };
@@ -210,7 +214,7 @@ in
         {
           name = "hpack";
           description =
-            "hpack converts package definitions in the hpack format (package.yaml) to Cabal files.";
+            "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
           entry = "${tools.hpack-dir}/bin/hpack-dir --${if settings.hpack.silent then "silent" else "verbose"}";
           files = "(\\.l?hs$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
         };
@@ -224,14 +228,14 @@ in
       latexindent =
         {
           name = "latexindent";
-          description = "Perl script to add indentation to LaTeX files";
+          description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
           entry = "${tools.latexindent}/bin/latexindent --local --silent --modifyIfDifferent";
         };
       luacheck =
         {
           name = "luacheck";
-          description = "A tool for linting and static analysis of Lua code";
+          description = "A tool for linting and static analysis of Lua code.";
           types = [ "file" "lua" ];
           entry = "${tools.luacheck}/bin/luacheck";
         };
@@ -290,7 +294,7 @@ in
       alejandra =
         {
           name = "alejandra";
-          description = "The Uncompromising Nix Code Formatter";
+          description = "The Uncompromising Nix Code Formatter.";
           entry = with settings.alejandra;
             "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
           files = "\\.nix$";
@@ -358,7 +362,7 @@ in
       elm-format =
         {
           name = "elm-format";
-          description = "Format Elm files";
+          description = "Format Elm files.";
           entry =
             "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
           files = "\\.elm$";
@@ -374,7 +378,7 @@ in
       elm-test =
         {
           name = "elm-test";
-          description = "Run unit and fuzz tests for Elm code.";
+          description = "Run unit tests and fuzz tests for Elm code.";
           entry = "${tools.elm-test}/bin/elm-test";
           files = "\\.elm$";
           pass_filenames = false;
@@ -382,7 +386,7 @@ in
       shellcheck =
         {
           name = "shellcheck";
-          description = "Format shell files";
+          description = "Format shell files.";
           types = [ "shell" ];
           types_or =
             # based on `goodShells` in https://github.com/koalaman/shellcheck/blob/master/src/ShellCheck/Parser.hs
@@ -399,28 +403,28 @@ in
       stylua =
         {
           name = "stylua";
-          description = "An Opinionated Lua Code Formatter";
+          description = "An Opinionated Lua Code Formatter.";
           types = [ "file" "lua" ];
           entry = "${tools.stylua}/bin/stylua";
         };
       shfmt =
         {
           name = "shfmt";
-          description = "Format shell files";
+          description = "Format shell files.";
           types = [ "shell" ];
           entry = "${tools.shfmt}/bin/shfmt -w -s -l";
         };
       terraform-format =
         {
           name = "terraform-format";
-          description = "Format terraform (.tf) files";
+          description = "Format terraform (`.tf`) files.";
           entry = "${tools.terraform-fmt}/bin/terraform-fmt";
           files = "\\.tf$";
         };
       yamllint =
         {
           name = "yamllint";
-          description = "Yaml linter";
+          description = "Yaml linter.";
           types = [ "file" "yaml" ];
           entry = "${tools.yamllint}/bin/yamllint";
         };
@@ -465,7 +469,7 @@ in
       cargo-check =
         {
           name = "cargo-check";
-          description = "Check the cargo package for errors";
+          description = "Check the cargo package for errors.";
           entry = "${tools.cargo}/bin/cargo check";
           files = "\\.rs$";
           pass_filenames = false;
@@ -473,35 +477,35 @@ in
       purty =
         {
           name = "purty";
-          description = "Format purescript files";
+          description = "Format purescript files.";
           entry = "${tools.purty}/bin/purty";
           files = "\\.purs$";
         };
       purs-tidy =
         {
           name = "purs-tidy";
-          description = "Format purescript files";
+          description = "Format purescript files.";
           entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
           files = "\\.purs$";
         };
       prettier =
         {
           name = "prettier";
-          description = "Opinionated multi-language code formatter";
+          description = "Opinionated multi-language code formatter.";
           entry = "${settings.prettier.binPath} --write --list-different --ignore-unknown";
           types = [ "text" ];
         };
       hunspell =
         {
           name = "hunspell";
-          description = "Spell checker and morphological analyzer";
+          description = "Spell checker and morphological analyzer.";
           entry = "${tools.hunspell}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
         };
       html-tidy =
         {
           name = "html-tidy";
-          description = "HTML linter";
+          description = "HTML linter.";
           entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
           files = "\\.html$";
         };
@@ -509,7 +513,7 @@ in
       eslint =
         {
           name = "eslint";
-          description = "Find and fix problems in your JavaScript code";
+          description = "Find and fix problems in your JavaScript code.";
           entry = "${settings.eslint.binPath} --fix";
           files = "${settings.eslint.extensions}";
         };
@@ -517,7 +521,7 @@ in
       hadolint =
         {
           name = "hadolint";
-          description = "Dockerfile linter, validate inline bash";
+          description = "Dockerfile linter, validate inline bash.";
           entry = "${tools.hadolint}/bin/hadolint";
           files = "Dockerfile$";
         };
@@ -525,7 +529,7 @@ in
       markdownlint =
         {
           name = "markdownlint";
-          description = "Style checker and linter for markdown files";
+          description = "Style checker and linter for markdown files.";
           entry = "${tools.markdownlint-cli}/bin/markdownlint";
           files = "\\.md$";
         };
@@ -533,7 +537,7 @@ in
       govet =
         {
           name = "govet";
-          description = "Checks correctness of Go programs";
+          description = "Checks correctness of Go programs.";
           entry =
             let
               # go vet requires package (directory) names as inputs.
@@ -556,7 +560,7 @@ in
       revive =
         {
           name = "revive";
-          description = "A linter for Go source code";
+          description = "A linter for Go source code.";
           entry =
             let
               cmdArgs =
