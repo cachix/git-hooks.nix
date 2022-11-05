@@ -20,10 +20,11 @@ in
         options = {
           pre-commit = {
             check.enable = mkOption {
-              description = ''
-                Whether to add a derivation to the flake <literal>checks</literal>.
+              description = lib.mdDoc ''
+                Whether to add a derivation to the flake `checks`.
+                It will perform the pre-commit checks in `nix flake check`.
 
-                You can disable this if one of your hooks does not run properly in
+                You can disable this if one of your hooks do not run properly in
                 the Nix sandbox; for example because it needs network access.
               '';
               type = types.bool;
@@ -31,8 +32,8 @@ in
             };
             pkgs = mkOption {
               type = types.uniq (types.lazyAttrsOf (types.raw or types.unspecified));
-              description = ''
-                Nixpkgs to use for pre-commit checking.
+              description = lib.mdDoc ''
+                Nixpkgs to use in the pre-commit [`settings`](#opt-perSystem.pre-commit.settings).
               '';
               default = pkgs;
               defaultText = lib.literalDocBook "<literal>pkgs</literal> (module argument)";
@@ -43,10 +44,13 @@ in
                 specialArgs = { inherit (cfg) pkgs; };
               };
               default = { };
+              description = lib.mdDoc ''
+                The pre-commit-hooks.nix configuration.
+              '';
             };
             installationScript = mkOption {
               type = types.str;
-              description = "A bash fragment that sets up pre-commit.";
+              description = lib.mdDoc "A bash fragment that sets up [pre-commit](https://pre-commit.com/).";
               default = cfg.settings.installationScript;
               defaultText = lib.literalDocBook "bash statements";
               readOnly = true;

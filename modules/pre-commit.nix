@@ -26,13 +26,13 @@ let
             enable =
               mkOption {
                 type = types.bool;
-                description = "Whether to enable this pre-commit hook.";
+                description = lib.mdDoc "Whether to enable this pre-commit hook.";
                 default = false;
               };
             raw =
               mkOption {
                 type = types.attrsOf types.unspecified;
-                description =
+                description = lib.mdDoc
                   ''
                     Raw fields of a pre-commit hook. This is mostly for internal use but
                     exposed in case you need to work around something.
@@ -45,7 +45,7 @@ let
                 type = types.str;
                 default = name;
                 defaultText = lib.literalDocBook or literalExample "internal name, same as id";
-                description =
+                description = lib.mdDoc
                   ''
                     The name of the hook - shown during hook execution.
                   '';
@@ -53,15 +53,15 @@ let
             entry =
               mkOption {
                 type = types.str;
-                description =
+                description = lib.mdDoc
                   ''
-                    The entry point - the executable to run. entry can also contain arguments that will not be overridden such as entry: autopep8 -i.
+                    The entry point - the executable to run. {option}`entry` can also contain arguments that will not be overridden, such as `entry = "autopep8 -i";`.
                   '';
               };
             language =
               mkOption {
                 type = types.str;
-                description =
+                description = lib.mdDoc
                   ''
                     The language of the hook - tells pre-commit how to install the hook.
                   '';
@@ -70,7 +70,7 @@ let
             files =
               mkOption {
                 type = types.str;
-                description =
+                description = lib.mdDoc
                   ''
                     The pattern of files to run on.
                   '';
@@ -79,16 +79,16 @@ let
             types =
               mkOption {
                 type = types.listOf types.str;
-                description =
+                description = lib.mdDoc
                   ''
-                    List of file types to run on. See Filtering files with types (https://pre-commit.com/#plugins).
+                    List of file types to run on. See [Filtering files with types](https://pre-commit.com/#plugins).
                   '';
                 default = [ "file" ];
               };
             types_or =
               mkOption {
                 type = types.listOf types.str;
-                description =
+                description = lib.mdDoc
                   ''
                     List of file types to run on, where only a single type needs to match.
                   '';
@@ -97,7 +97,7 @@ let
             description =
               mkOption {
                 type = types.str;
-                description =
+                description = lib.mdDoc
                   ''
                     Description of the hook. used for metadata purposes only.
                   '';
@@ -106,7 +106,7 @@ let
             excludes =
               mkOption {
                 type = types.listOf types.str;
-                description =
+                description = lib.mdDoc
                   ''
                     Exclude files that were matched by these patterns.
                   '';
@@ -115,13 +115,17 @@ let
             pass_filenames =
               mkOption {
                 type = types.bool;
-                description = "Whether to pass filenames as arguments to the entry point.";
+                description = lib.mdDoc ''
+                  Whether to pass filenames as arguments to the entry point.
+                '';
                 default = true;
               };
             stages =
               mkOption {
                 type = types.listOf types.str;
-                description = "Confines the hook to run at a particular stage.";
+                description = lib.mdDoc ''
+                  Confines the hook to run at a particular stage.
+                '';
                 default = cfg.default_stages;
                 defaultText = (lib.literalExpression or lib.literalExample) "default_stages";
               };
@@ -197,9 +201,9 @@ in
       package =
         mkOption {
           type = types.package;
-          description =
+          description = lib.mdDoc
             ''
-              The pre-commit package to use.
+              The `pre-commit` package to use.
             '';
           defaultText =
             lib.literalExpression or literalExample ''
@@ -210,11 +214,11 @@ in
       tools =
         mkOption {
           type = types.lazyAttrsOf types.package;
-          description =
+          description = lib.mdDoc
             ''
-              Tool set from which nix-pre-commit will pick binaries.
+              Tool set from which `nix-pre-commit-hooks` will pick binaries.
 
-              nix-pre-commit comes with its own set of packages for this purpose.
+              `nix-pre-commit-hooks` comes with its own set of packages for this purpose.
             '';
           defaultText =
             lib.literalExpression or literalExample ''pre-commit-hooks.nix-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
@@ -223,9 +227,31 @@ in
       hooks =
         mkOption {
           type = types.attrsOf hookType;
-          description =
+          description = lib.mdDoc
             ''
               The hook definitions.
+
+              Pre-defined hooks can be enabled by, for example:
+
+              ```nix
+              hooks.nixpkgs-fmt.enable = true;
+              ```
+
+              The pre-defined hooks are:
+
+              ${
+                lib.concatStringsSep
+                  "\n" 
+                  (lib.mapAttrsToList
+                    (hookName: hookConf:
+                      ''
+                        **`${hookName}`**
+
+                        ${hookConf.description}
+
+                      '')
+                    config.hooks)
+              }
             '';
           default = { };
         };
@@ -233,7 +259,7 @@ in
       run =
         mkOption {
           type = types.package;
-          description =
+          description = lib.mdDoc
             ''
               A derivation that tests whether the pre-commit hooks run cleanly on
               the entire project.
@@ -246,18 +272,21 @@ in
       installationScript =
         mkOption {
           type = types.str;
-          description =
+          description = lib.mdDoc
             ''
-              A bash snippet that installs nix-pre-commit in the current directory
+              A bash snippet that installs nix-pre-commit-hooks in the current directory
             '';
           readOnly = true;
         };
 
       src =
         lib.mkOption {
-          description = ''
-            Root of the project. By default this will be filtered with the gitignoreSource
-            function later, unless rootSrc is specified.
+          description = lib.mdDoc ''
+            Root of the project. By default this will be filtered with the `gitignoreSource`
+            function later, unless `rootSrc` is specified.
+
+            If you use the `flakeModule`, the default is `self.outPath`; the whole flake
+            sources.
           '';
           type = lib.types.path;
         };
@@ -265,11 +294,14 @@ in
       rootSrc =
         mkOption {
           type = types.path;
-          description =
+          description = lib.mdDoc
             ''
               The source of the project to be checked.
 
               This is used in the derivation that performs the check.
+
+              If you use the `flakeModule`, the default is `self.outPath`; the whole flake
+              sources.
             '';
           defaultText = lib.literalExpression or literalExample ''gitignoreSource config.src'';
         };
@@ -277,7 +309,7 @@ in
       excludes =
         mkOption {
           type = types.listOf types.str;
-          description =
+          description = lib.mdDoc
             ''
               Exclude files that were matched by these patterns.
             '';
@@ -287,11 +319,11 @@ in
       default_stages =
         mkOption {
           type = types.listOf types.str;
-          description =
+          description = lib.mdDoc
             ''
               A configuration wide option for the stages property.
               Installs hooks to the defined stages.
-              See https://pre-commit.com/#confining-hooks-to-run-at-certain-stages
+              See [https://pre-commit.com/#confining-hooks-to-run-at-certain-stages](https://pre-commit.com/#confining-hooks-to-run-at-certain-stages).
             '';
           default = [ "commit" ];
         };
@@ -299,7 +331,7 @@ in
       rawConfig =
         mkOption {
           type = types.attrs;
-          description =
+          description = lib.mdDoc
             ''
               The raw configuration before writing to file.
 
