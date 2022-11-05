@@ -94,6 +94,15 @@ in
               example = [ "flake.nix" "_*" ];
             };
         };
+      markdownlint = {
+        config =
+          mkOption {
+            type = types.attrs;
+            description = lib.mdDoc
+              "See https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc";
+            default = { };
+          };
+      };
       nix-linter =
         {
           checks =
@@ -530,7 +539,7 @@ in
         {
           name = "markdownlint";
           description = "Style checker and linter for markdown files.";
-          entry = "${tools.markdownlint-cli}/bin/markdownlint";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
           files = "\\.md$";
         };
 
