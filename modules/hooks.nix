@@ -113,6 +113,15 @@ in
               default = [ ];
             };
         };
+      nixfmt =
+        {
+          width =
+            mkOption {
+              type = types.nullOr types.int;
+              description = lib.mdDoc "Line width.";
+              default = null;
+            };
+        };
       prettier =
         {
           binPath =
@@ -339,7 +348,7 @@ in
         {
           name = "nixfmt";
           description = "Nix code prettifier.";
-          entry = "${tools.nixfmt}/bin/nixfmt";
+          entry = "${tools.nixfmt}/bin/nixfmt ${lib.optionalString (settings.nixfmt.width != null) "--width=${toString settings.nixfmt.width}"}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
