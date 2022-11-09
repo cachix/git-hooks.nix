@@ -334,7 +334,7 @@ in
         let
           script = pkgs.writeShellScript "precommit-mdsh" ''
             for file in $(echo "$@"); do
-                ${tools.mdsh}/bin/mdsh -i $file"
+                ${tools.mdsh}/bin/mdsh -i "$file"
             done
           '';
         in
