@@ -7,6 +7,16 @@ let
     lib.optionalString
       (settings.rust.cargoManifestPath != null)
       "--manifest-path ${lib.escapeShellArg settings.rust.cargoManifestPath}";
+
+  mkCmdArgs = predActionList:
+    lib.concatStringsSep
+      " "
+      (builtins.foldl'
+        (acc: entry:
+          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
+        [ ]
+        predActionList);
+
 in
 {
   options.settings =
@@ -837,16 +847,10 @@ in
           entry =
             let
               cmdArgs =
-                lib.concatStringsSep
-                  " "
-                  (builtins.concatLists [
-                    [ "-set_exit_status" ]
-                    (if settings.revive.configPath != "" then
-                      [ "-config ${settings.revive.configPath}" ]
-                    else
-                      [ ])
-                  ]
-                  );
+                mkCmdArgs [
+                  [ true "-set_exit_status" ]
+                  [ (settings.revive.configPath != "") "-config ${settings.revive.configPath}" ]
+                ];
               # revive works with both files and directories; however some lints
               # may fail (e.g. package-comment) if they run on an individual file
               # rather than a package/directory scope; given this let's get the
