@@ -761,6 +761,75 @@ in
           files = "\\.go$";
         };
 
+      gotest = {
+        enable = true;
+        name = "gotest";
+        description = "Run go tests";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-gotest" ''
+              set -e
+              # find all directories that contain tests
+              dirs=()
+              for file in "$@"; do
+                # either the file is a test
+                if [[ "$file" = *_test.go ]]; then
+                  dirs+=("$(dirname "$file")")
+                  continue
+                fi
+
+                # or the file has an associated test
+                filename="''${file%.go}"
+                test_file="''${filename}_test.go"
+                if [[ -f "$test_file"  ]]; then
+                  dirs+=("$(dirname "$test_file")")
+                  continue
+                fi
+              done
+
+              # ensure we are not duplicating dir entries
+              IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
+
+              # test each directory one by one
+              for dir in "''${sorted_dirs[@]}"; do
+                  ${tools.go}/bin/go test "./$dir"
+              done
+            '';
+          in
+          builtins.toString script;
+        files = "\\.go$";
+        raw = {
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
+        };
+      };
+
+      gofmt =
+        {
+          name = "gofmt";
+          description = "A tool that automatically formats Go source code";
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-gofmt" ''
+                set -e
+                failed=false
+                for file in "$@"; do
+                    # redirect stderr so that violations and summaries are properly interleaved.
+                    if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
+                    then
+                        failed=true
+                    fi
+                done
+                if [[ $failed == "true" ]]; then
+                    exit 1
+                fi
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+        };
+
       revive =
         {
           name = "revive";
@@ -787,6 +856,35 @@ in
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
                   ${tools.revive}/bin/revive ${cmdArgs} ./"$dir"
                 done
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+          raw = {
+            # to avoid multiple invocations of the same directory input, provide
+            # all file names in a single run.
+            require_serial = true;
+          };
+        };
+
+      staticcheck =
+        {
+          enable = true;
+          name = "staticcheck";
+          description = "State of the art linter for the Go programming language";
+          # staticheck works with directories.
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-staticcheck" ''
+                err=0
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${tools.go-tools}/bin/staticcheck ./"$dir"
+                  code="$?"
+                  if [[ "$err" -eq 0 ]]; then
+                     err="$code"
+                  fi
+                done
+                exit $err
               '';
             in
             builtins.toString script;
