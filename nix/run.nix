@@ -24,7 +24,7 @@ let
               } // (if isFlakes
               then { rootSrc = src; }
               else {
-                rootSrc = (import gitignore-nix-src { inherit (pkgs) lib; }).gitignoreSource src;
+                rootSrc = gitignore-nix-src.lib.gitignoreSource src;
               });
           }
         ];

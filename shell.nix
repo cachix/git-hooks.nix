@@ -1,6 +1,10 @@
-with { pkgs = import ./nix { }; };
-
-pkgs.mkShell {
-  buildInputs = [ pkgs.niv ];
-  inherit ((import ./.).pre-commit-check) shellHook;
-}
+(import
+  (
+    let lock = builtins.fromJSON (builtins.readFile ./flake.lock); in
+    fetchTarball {
+      url = "https://github.com/edolstra/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+      sha256 = lock.nodes.flake-compat.locked.narHash;
+    }
+  )
+  { src = ./.; }
+).shellNix
