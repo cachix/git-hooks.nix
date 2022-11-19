@@ -42,7 +42,7 @@ in
         };
       deadnix =
         {
-          fix =
+          edit =
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Remove unused code and write to source file.";
