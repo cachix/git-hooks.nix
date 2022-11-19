@@ -324,7 +324,7 @@ in
           description = "Scan Nix files for dead code (unused variable bindings).";
           entry =
             let
-              toArg = string: "--" + (lib.concatMapStringsSep "-" lib.toLower (lib.filter (x: x != "") (lib.flatten (lib.split "([[:upper:]]+[[:lower:]]+)" string))));
+              toArg = string: "--" + (lib.concatMapStringsSep "-" lib.toLower (lib.filter (x: x != "") (lib.flatten (builtins.split "([[:upper:]]+[[:lower:]]+)" string))));
               args = lib.concatMapStringsSep " " toArg (lib.filter (attr: settings.deadnix."${attr}") (lib.attrNames settings.deadnix));
             in
             "${tools.deadnix}/bin/deadnix ${args} --fail --";
