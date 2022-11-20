@@ -366,7 +366,7 @@ in
           if ! type -t git >/dev/null; then
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; skipping installation."
-          elif [[ ! -f .git ]]; then
+          elif [[ ! -e .git ]]; then
             echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
           else
             # These update procedures compare before they write, to avoid
