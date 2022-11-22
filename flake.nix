@@ -8,7 +8,10 @@
     url = "github:edolstra/flake-compat";
     flake = false;
   };
-  inputs.gitignore.url = "github:hercules-ci/gitignore.nix";
+  inputs.gitignore = {
+    url = "github:hercules-ci/gitignore.nix";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs = { self, nixpkgs, flake-utils, gitignore, nixpkgs-stable, ... }:
     let
