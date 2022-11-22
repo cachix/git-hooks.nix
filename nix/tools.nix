@@ -21,7 +21,6 @@
 , html-tidy
 , hunspell
 , luaPackages
-, niv
 , mdsh
 , nix-linter
 , nixfmt
@@ -40,7 +39,7 @@
 , writeScript
 , writeText
 , go
-, revive
+, revive ? null
 }:
 
 {
@@ -49,8 +48,9 @@
   # TODO: these two should be statically compiled
   inherit (haskellPackages) brittany fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier purs-tidy;
+  inherit (nodePackages) eslint markdownlint-cli prettier;
   inherit (python39Packages) ansible-lint yamllint;
+  purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
