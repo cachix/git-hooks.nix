@@ -154,6 +154,29 @@ in
               default = "\\.js$";
             };
         };
+      typos =
+        {
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to write fixes out.";
+              default = false;
+            };
+
+          diff =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Wheter to print a diff of what would change.";
+              default = false;
+            };
+
+          format =
+            mkOption {
+              type = types.enum [ "silent" "brief" "long" "json" ];
+              description = lib.mdDoc "Output format.";
+              default = "long";
+            };
+        };
 
       revive =
         {
@@ -528,6 +551,13 @@ in
           description = "Spell checker and morphological analyzer.";
           entry = "${tools.hunspell}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
+        };
+      typos =
+        {
+          name = "typos";
+          description = "Source code spell checker";
+          entry = with settings.typos;
+            "${tools.typos}/bin/typos --format ${format} ${lib.optionalString write "-w"} ${lib.optionalString diff "--diff"}";
         };
       html-tidy =
         {
