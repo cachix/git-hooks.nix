@@ -149,6 +149,7 @@ use nix
 ## Spell checkers
 
 - [hunspell](https://github.com/hunspell/hunspell)
+- [typos](https://github.com/crate-ci/typos)
 
 ## Other Formatters
 
