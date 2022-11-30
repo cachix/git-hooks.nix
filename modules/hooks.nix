@@ -134,6 +134,20 @@ in
                 "''${tools.prettier}/bin/prettier"
               '';
             };
+
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to edit files inplace.";
+              default = true;
+            };
+
+          output =
+            mkOption {
+              description = lib.mdDoc "Output format.";
+              types = types.nullOr types.enum [ "check" "list-diffrent" ];
+              default = "list-different";
+            };
         };
       eslint =
         {
@@ -542,7 +556,8 @@ in
         {
           name = "prettier";
           description = "Opinionated multi-language code formatter.";
-          entry = "${settings.prettier.binPath} --write --list-different --ignore-unknown";
+          entry = with settings.prettier;
+            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
         };
       hunspell =
