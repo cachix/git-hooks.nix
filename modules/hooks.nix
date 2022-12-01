@@ -138,7 +138,7 @@ in
           write =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to edit files inplace.";
+              description = lib.mdDoc "Whether to edit files in place.";
               default = true;
             };
 
