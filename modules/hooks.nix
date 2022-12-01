@@ -145,7 +145,7 @@ in
           output =
             mkOption {
               description = lib.mdDoc "Output format.";
-              type = types.nullOr types.enum [ "check" "list-diffrent" ];
+              type = types.nullOr types.enum [ "check" "list-different" ];
               default = "list-different";
             };
         };
