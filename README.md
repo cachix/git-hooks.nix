@@ -157,6 +157,7 @@ use nix
 - `dhall format`: built-in formatter
 - [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
 - [hadolint](https://github.com/hadolint/hadolint)
+- [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:
