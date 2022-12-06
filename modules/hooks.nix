@@ -204,6 +204,31 @@ in
             };
 
         };
+
+      pylint =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+              default = "${pkgs.python39Packages.pylint}/bin/pylint";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python39Packages.pylint}/bin/pylint"
+              '';
+            };
+          reports =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to display a full report.";
+              default = false;
+            };
+          score =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to activate the evaluation score.";
+              default = true;
+            };
+        };
     };
 
   config.hooks =
@@ -674,5 +699,13 @@ in
           types = [ "file" ];
         };
 
+      pylint =
+        {
+          name = "pylint";
+          description = "Lint Python files.";
+          entry = with settings.pylint;
+            "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
+          types = [ "python" ];
+        };
     };
 }
