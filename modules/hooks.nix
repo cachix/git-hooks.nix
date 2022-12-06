@@ -216,12 +216,14 @@ in
                 "''${pkgs.python39Packages.pylint}/bin/pylint"
               '';
             };
+
           reports =
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Whether to display a full report.";
               default = false;
             };
+
           score =
             mkOption {
               type = types.bool;
@@ -229,6 +231,27 @@ in
               default = true;
             };
         };
+
+      flake8 =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+              default = "${pkgs.python39Packages.flake8}/bin/flake8";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python39Packages.pylint}/bin/flake8"
+              '';
+            };
+
+          format =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Output format.";
+              default = "default";
+            };
+        };
+
     };
 
   config.hooks =
@@ -707,5 +730,14 @@ in
             "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
           types = [ "python" ];
         };
+
+      flake8 =
+        {
+          name = "flake8";
+          description = "Check the style and quality of Python files.";
+          entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
+          types = [ "python" ];
+        };
+
     };
 }

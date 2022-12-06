@@ -113,6 +113,7 @@ use nix
 - [black](https://github.com/psf/black)
 - [isort](https://github.com/PyCQA/isort)
 - [pylint](https://github.com/PyCQA/pylint)
+- [flake8](https://github.com/PyCQA/flake8)
 
 ## Rust
 
