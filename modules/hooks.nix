@@ -278,7 +278,7 @@ in
           # 2. Below which there are haskell files, or
           # 3. In which there is a package.yaml that references haskell files
           #    that have been changed at arbitrary locations specified in that
-          #    file. 
+          #    file.
           # In other words: We have no choice but to always run `hpack` on every `package.yaml` directory.
           pass_filenames = false;
         };
@@ -664,6 +664,14 @@ in
             # all file names in a single run.
             require_serial = true;
           };
+        };
+
+      editorconfig-checker =
+        {
+          name = "editorconfig-checker";
+          description = "Verify that the files are in harmony with the `.editorconfig`.";
+          entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
+          types = [ "file" ];
         };
 
     };
