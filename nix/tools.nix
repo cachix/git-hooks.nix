@@ -46,7 +46,7 @@
 }:
 
 {
-  inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy commitizen deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive;
+  inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) brittany fourmolu;
@@ -61,4 +61,5 @@
   terraform-fmt = callPackage ./terraform-fmt { };
   latexindent = texlive.combined.scheme-medium;
   chktex = texlive.combined.scheme-medium;
+  commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
 }
