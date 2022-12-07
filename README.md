@@ -171,6 +171,10 @@ clang-format = {
 };
 ```
 
+## Git
+
+- [commitizen](https://github.com/commitizen-tools/commitizen)
+
 ## Custom hooks
 
 Sometimes it is useful to add a project specific command as an extra check that

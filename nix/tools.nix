@@ -7,6 +7,7 @@
 , cargo
 , clang-tools
 , clippy
+, commitizen
 , deadnix
 , dhall
 , editorconfig-checker
@@ -60,4 +61,5 @@
   terraform-fmt = callPackage ./terraform-fmt { };
   latexindent = texlive.combined.scheme-medium;
   chktex = texlive.combined.scheme-medium;
+  commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
 }

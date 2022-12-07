@@ -739,5 +739,14 @@ in
           types = [ "python" ];
         };
 
+      commitizen =
+        {
+          name = "commitizen check";
+          description = ''
+            Check whether the current commit message follows commiting rules.
+          '';
+          entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
+          stages = [ "commit-msg" ];
+        };
     };
 }
