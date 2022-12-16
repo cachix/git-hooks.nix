@@ -309,7 +309,7 @@ in
           name = "brittany";
           description = "Haskell source code formatter.";
           entry = "${tools.brittany}/bin/brittany --write-mode=inplace";
-          files = "\\.l?hs$";
+          files = "\\.l?hs(-boot)?$";
         };
       dhall-format = {
         name = "dhall-format";
@@ -323,7 +323,7 @@ in
           description =
             "HLint gives suggestions on how to improve your source code.";
           entry = "${tools.hlint}/bin/hlint";
-          files = "\\.l?hs$";
+          files = "\\.l?hs(-boot)?$";
         };
       hpack =
         {
@@ -331,7 +331,7 @@ in
           description =
             "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
           entry = "${tools.hpack-dir}/bin/hpack-dir --${if settings.hpack.silent then "silent" else "verbose"}";
-          files = "(\\.l?hs$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
+          files = "(\\.l?hs(-boot)?$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
           # We don't pass filenames because they can only be misleading.
           # Indeed, we need to rerun `hpack` in every directory:
           # 1. In which there is a *.cabal file, or
@@ -375,7 +375,7 @@ in
                 if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
             in
             "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
-          files = "\\.l?hs$";
+          files = "\\.l?hs(-boot)?$";
         };
       fourmolu =
         {
@@ -385,14 +385,14 @@ in
             "${tools.fourmolu}/bin/fourmolu --mode inplace ${
             lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
             }";
-          files = "\\.l?hs$";
+          files = "\\.l?hs(-boot)?$";
         };
       hindent =
         {
           name = "hindent";
           description = "Haskell code prettifier.";
           entry = "${tools.hindent}/bin/hindent";
-          files = "\\.l?hs$";
+          files = "\\.l?hs(-boot)?$";
         };
       cabal-fmt =
         {
@@ -413,7 +413,7 @@ in
           name = "stylish-haskell";
           description = "A simple Haskell code prettifier";
           entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
-          files = "\\.l?hs$";
+          files = "\\.l?hs(-boot)?$";
         };
       alejandra =
         {
