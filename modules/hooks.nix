@@ -1016,6 +1016,13 @@ in
             "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
         };
+      pre-commit-hook-ensure-sops = {
+        name = "pre-commit-hook-ensure-sops";
+        entry = ''
+          ${tools.pre-commit-hook-ensure-sops}/bin/pre-commit-hook-ensure-sops
+        '';
+        files = lib.mkDefault "^secrets";
+      };
       hunspell =
         {
           name = "hunspell";

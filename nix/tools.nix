@@ -41,6 +41,7 @@
 , opam
 , ormolu
 , pkgsBuildBuild
+, pre-commit-hook-ensure-sops
 , python39Packages
 , ruff ? null
 , runCommand
@@ -100,6 +101,7 @@ in
     nixpkgs-fmt
     opam
     ormolu
+    pre-commit-hook-ensure-sops
     revive
     ruff
     rustfmt
