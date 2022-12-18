@@ -205,6 +205,19 @@ in
 
         };
 
+      php-cs-fixer =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP-CS-Fixer binary path.";
+              default = "${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
+              '';
+            };
+        };
+
       pylint =
         {
           binPath =
@@ -733,6 +746,16 @@ in
           entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
           types = [ "file" ];
         };
+
+      php-cs-fixer =
+        {
+          name = "php-cs-fixer";
+          description = "Lint PHP files.";
+          entry = with settings.php-cs-fixer;
+            "${binPath} fix";
+          types = [ "php" ];
+        };
+
 
       pylint =
         {
