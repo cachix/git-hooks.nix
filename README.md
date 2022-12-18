@@ -115,6 +115,10 @@ use nix
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 
+## PHP
+
+- [php-cs-fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
+
 ## Rust
 
 - [rustfmt](https://github.com/rust-lang/rustfmt)
