@@ -45,6 +45,12 @@
 , revive ? null
 }:
 
+
+let
+  tex = texlive.combine {
+    inherit (texlive) latexindent chktex scheme-basic;
+  };
+in
 {
   inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive;
   inherit (elmPackages) elm-format elm-review elm-test;
@@ -59,7 +65,7 @@
   hunspell = callPackage ./hunspell { };
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
-  latexindent = texlive.combined.scheme-medium;
-  chktex = texlive.combined.scheme-medium;
+  latexindent = tex;
+  chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
 }
