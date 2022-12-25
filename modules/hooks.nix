@@ -205,6 +205,32 @@ in
 
         };
 
+      phpcs =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP_CodeSniffer binary path.";
+              default = "${pkgs.php80Packages.phpcs}/bin/phpcs";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php80Packages.phpcs}/bin/phpcs"
+              '';
+            };
+        };
+
+      phpcbf =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP_CodeSniffer binary path.";
+              default = "${pkgs.php80Packages.phpcbf}/bin/phpcbf";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
+              '';
+            };
+        };
+
       php-cs-fixer =
         {
           binPath =
@@ -745,6 +771,25 @@ in
           description = "Verify that the files are in harmony with the `.editorconfig`.";
           entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
           types = [ "file" ];
+        };
+
+
+      phpcs =
+        {
+          name = "phpcs";
+          description = "Lint PHP files.";
+          entry = with settings.phpcs;
+            "${binPath}";
+          types = [ "php" ];
+        };
+
+      phpcbf =
+        {
+          name = "phpcbf";
+          description = "Lint PHP files.";
+          entry = with settings.phpcbf;
+            "${binPath}";
+          types = [ "php" ];
         };
 
       php-cs-fixer =
