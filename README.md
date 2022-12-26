@@ -120,6 +120,8 @@ use nix
 - [php-cs-fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
 - [phpcbf](https://github.com/squizlabs/PHP_CodeSniffer)
 - [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
+- [phpstan](https://phpstan.org/)
+- [psalm](https://psalm.dev/)
 
 ## Rust
 
