@@ -832,7 +832,7 @@ in
           name = "phpstan";
           description = "Static analyzer for PHP files.";
           entry = with settings.phpstan;
-            "${binPath} analyse -- ";
+            "${binPath} analyse --";
           types = [ "php" ];
         };
 
@@ -841,7 +841,7 @@ in
           name = "psalm";
           description = "Static analyzer for PHP files.";
           entry = with settings.psalm;
-            "${binPath}";
+            "${binPath} --no-cache";
           types = [ "php" ];
         };
 
