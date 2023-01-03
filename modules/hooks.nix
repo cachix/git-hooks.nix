@@ -2,6 +2,11 @@
 let
   inherit (config) tools settings;
   inherit (lib) mkOption types;
+
+  cargoManifestPathArg =
+    lib.optionalString
+      (settings.rust.cargoManifestPath != null)
+      "--manifest-path ${lib.escapeShellArg settings.rust.cargoManifestPath}";
 in
 {
   options.settings =
@@ -289,6 +294,15 @@ in
               description = lib.mdDoc "Output format.";
               default = "default";
             };
+        };
+
+      rust =
+        {
+          cargoManifestPath = mkOption {
+            type = types.nullOr types.str;
+            description = lib.mdDoc "Path to Cargo.toml";
+            default = null;
+          };
         };
 
     };
@@ -606,7 +620,7 @@ in
         {
           name = "rustfmt";
           description = "Format Rust code.";
-          entry = "${wrapper}/bin/cargo-fmt fmt -- --check --color always";
+          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --check --color always";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -625,7 +639,7 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -633,7 +647,7 @@ in
         {
           name = "cargo-check";
           description = "Check the cargo package for errors.";
-          entry = "${tools.cargo}/bin/cargo check";
+          entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
           files = "\\.rs$";
           pass_filenames = false;
         };
