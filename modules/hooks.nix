@@ -313,6 +313,16 @@ in
             default = false;
           };
         };
+
+      clippy =
+        {
+          denyWarnings = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Fail when warnings are present";
+            default = false;
+          };
+        };
+
     };
 
   config.hooks =
@@ -648,7 +658,7 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg}";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
