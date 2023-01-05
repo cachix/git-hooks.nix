@@ -305,6 +305,14 @@ in
           };
         };
 
+      yamllint =
+        {
+          relaxed = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Use the relaxed configuration";
+            default = false;
+          };
+        };
     };
 
   config.hooks =
@@ -603,7 +611,8 @@ in
           name = "yamllint";
           description = "Yaml linter.";
           types = [ "file" "yaml" ];
-          entry = "${tools.yamllint}/bin/yamllint";
+          entry = with settings.yamllint;
+            "${tools.yamllint}/bin/yamllint ${lib.optionalString relaxed "-d relaxed"}";
         };
       rustfmt =
         let
