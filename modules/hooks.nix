@@ -772,7 +772,6 @@ in
         };
 
       gotest = {
-        enable = true;
         name = "gotest";
         description = "Run go tests";
         entry =
@@ -873,7 +872,6 @@ in
 
       staticcheck =
         {
-          enable = true;
           name = "staticcheck";
           description = "State of the art linter for the Go programming language";
           # staticheck works with directories.
