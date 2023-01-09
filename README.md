@@ -129,8 +129,11 @@ use nix
 
 ## Golang
 
+- gofmt: Runs `go fmt`
+- gotest: Runs `go test`
 - [govet](https://pkg.go.dev/cmd/vet)
 - [revive](https://github.com/mgechev/revive)
+- [staticcheck](https://github.com/dominikh/go-tools)
 
 ## Shell
 
