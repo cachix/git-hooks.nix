@@ -115,6 +115,7 @@ use nix
 ## Python
 
 - [black](https://github.com/psf/black)
+- [ruff](https://github.com/charliermarsh/ruff)
 - [isort](https://github.com/PyCQA/isort)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
