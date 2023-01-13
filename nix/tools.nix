@@ -44,6 +44,7 @@
 , writeText
 , go
 , go-tools
+, ruff
 , revive ? null
 }:
 
