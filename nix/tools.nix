@@ -29,6 +29,7 @@
 , nodePackages
 , ormolu
 , python39Packages
+, ruff
 , runCommand
 , rustfmt
 , shellcheck
@@ -44,7 +45,6 @@
 , writeText
 , go
 , go-tools
-, ruff
 , revive ? null
 }:
 
