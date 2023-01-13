@@ -354,7 +354,7 @@ in
           name = "ruff";
           description = " An extremely fast Python linter, written in Rust.";
           entry = "${pkgs.python3Packages.black}/bin/ruff";
-          types = [ "file" "python" ];
+          types = [ "python" ];
         };
       cabal2nix =
         {
