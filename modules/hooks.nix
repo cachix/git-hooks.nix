@@ -240,7 +240,7 @@ in
               description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
               default = "${pkgs.python39Packages.flake8}/bin/flake8";
               defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.pylint}/bin/flake8"
+                "''${pkgs.python39Packages.flake8}/bin/flake8"
               '';
             };
 
