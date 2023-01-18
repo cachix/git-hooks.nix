@@ -95,7 +95,6 @@ use nix
 - [stylish-haskell](https://github.com/jaspervdj/stylish-haskell)
 - [hlint](https://github.com/ndmitchell/hlint)
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
-- [brittany](https://github.com/lspitzner/brittany)
 - [hpack](https://github.com/sol/hpack)
 
 ## Elm

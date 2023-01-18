@@ -385,13 +385,6 @@ in
             "proto"
           ];
         };
-      brittany =
-        {
-          name = "brittany";
-          description = "Haskell source code formatter.";
-          entry = "${tools.brittany}/bin/brittany --write-mode=inplace";
-          files = "\\.l?hs(-boot)?$";
-        };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
