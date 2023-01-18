@@ -84,7 +84,6 @@ use nix
 - [deadnix](https://github.com/astro/deadnix)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [nixfmt](https://github.com/serokell/nixfmt/)
-- [nix-linter](https://github.com/Synthetica9/nix-linter)
 - [statix](https://github.com/nerdypepper/statix)
 
 ## Haskell
@@ -95,7 +94,6 @@ use nix
 - [stylish-haskell](https://github.com/jaspervdj/stylish-haskell)
 - [hlint](https://github.com/ndmitchell/hlint)
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
-- [brittany](https://github.com/lspitzner/brittany)
 - [hpack](https://github.com/sol/hpack)
 
 ## Elm

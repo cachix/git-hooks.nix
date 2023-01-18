@@ -118,16 +118,6 @@ in
             default = { };
           };
       };
-      nix-linter =
-        {
-          checks =
-            mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc
-                "Available checks. See `nix-linter --help-for [CHECK]` for more details.";
-              default = [ ];
-            };
-        };
       nixfmt =
         {
           width =
@@ -385,13 +375,6 @@ in
             "proto"
           ];
         };
-      brittany =
-        {
-          name = "brittany";
-          description = "Haskell source code formatter.";
-          entry = "${tools.brittany}/bin/brittany --write-mode=inplace";
-          files = "\\.l?hs(-boot)?$";
-        };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
@@ -553,16 +536,6 @@ in
             "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
           files = "\\.nix$";
           pass_filenames = false;
-        };
-      nix-linter =
-        {
-          name = "nix-linter";
-          description = "Linter for the Nix expression language.";
-          entry =
-            "${tools.nix-linter}/bin/nix-linter ${
-            lib.escapeShellArgs (lib.concatMap (check: [ "-W" "${check}" ]) settings.nix-linter.checks)
-            }";
-          files = "\\.nix$";
         };
       elm-format =
         {

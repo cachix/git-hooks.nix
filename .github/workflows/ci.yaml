@@ -15,7 +15,7 @@ jobs:
       with:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - run: nix-build
+    - run: nix-build --keep-going
   tests-flakes:
     strategy:
       matrix:

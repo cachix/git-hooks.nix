@@ -24,7 +24,6 @@
 , hunspell
 , luaPackages
 , mdsh
-, nix-linter
 , nixfmt
 , nixpkgs-fmt
 , nodePackages
@@ -40,6 +39,7 @@
 , stylua
 , texlive
 , typos
+, yamllint
 , writeScript
 , writeText
 , go
@@ -54,13 +54,12 @@ let
   };
 in
 {
-  inherit actionlint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nix-linter nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools;
+  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools yamllint;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
-  inherit (haskellPackages) brittany fourmolu;
+  inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier;
-  inherit (python39Packages) ansible-lint yamllint;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
