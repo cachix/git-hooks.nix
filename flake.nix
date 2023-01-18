@@ -46,7 +46,7 @@
           inherit (exposed.checks.pre-commit-check) shellHook;
         };
 
-        checks = exposed.checks // (builtins.removeAttrs exposed-stable.checks [ "revive" "purs-tidy" ]);
+        checks = exposed.checks // exposed-stable.checks;
 
         lib = { inherit (exposed) run; };
       }
