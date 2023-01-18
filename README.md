@@ -15,6 +15,12 @@ The goal is to **manage commit hooks with Nix** and solve the following:
 
 # Getting started
 
+## devenv.sh
+
+https://devenv.sh/pre-commit-hooks/
+
+## Nix
+
 1. (optional) Use binary caches to avoid compilation:
 
    ```bash
