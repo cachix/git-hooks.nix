@@ -33,6 +33,7 @@
 , runCommand
 , rustfmt
 , shellcheck
+, bats
 , shfmt
 , statix
 , stylish-haskell
@@ -69,4 +70,5 @@ in
   latexindent = tex;
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
+  bats = if bats ? withLibraries then (bats.withLibraries (p: [ p.bats-support p.bats-assert p.bats-file ])) else bats;
 }

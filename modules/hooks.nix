@@ -605,6 +605,14 @@ in
             ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
+      bats =
+        {
+          name = "bats";
+          description = "Run bash unit tests.";
+          types = [ "shell" ];
+          types_or = [ "bats" "bash" ];
+          entry = "${tools.bats}/bin/bats -p";
+        };
       stylua =
         {
           name = "stylua";

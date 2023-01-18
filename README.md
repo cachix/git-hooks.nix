@@ -139,6 +139,7 @@ use nix
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
 - [shfmt](https://github.com/mvdan/sh)
+- [bats](https://github.com/bats-core/bats-core)
 
 ## Lua
 
