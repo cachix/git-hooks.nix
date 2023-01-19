@@ -349,6 +349,13 @@ in
           entry = "${pkgs.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
+      ruff =
+        {
+          name = "ruff";
+          description = " An extremely fast Python linter, written in Rust.";
+          entry = "${pkgs.ruff}/bin/ruff";
+          types = [ "python" ];
+        };
       cabal2nix =
         {
           name = "cabal2nix";
