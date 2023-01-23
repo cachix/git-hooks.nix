@@ -29,7 +29,7 @@
 , nodePackages
 , ormolu
 , python39Packages
-, ruff
+, ruff ? null
 , runCommand
 , rustfmt
 , shellcheck
