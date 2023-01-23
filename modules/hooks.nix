@@ -306,6 +306,26 @@ in
             };
         };
 
+      autoflake =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to autoflake binary.";
+              default = "${pkgs.autoflake}/bin/autoflake";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.autoflake}/bin/autoflake"
+              '';
+            };
+
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to autoflake.";
+              default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
+            };
+        };
+
       rust =
         {
           cargoManifestPath = mkOption {
@@ -949,6 +969,14 @@ in
           name = "flake8";
           description = "Check the style and quality of Python files.";
           entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
+          types = [ "python" ];
+        };
+
+      autoflake =
+        {
+          name = "autoflake";
+          description = "Remove unused imports and variables from Python code.";
+          entry = "${settings.autoflake.binPath} ${settings.autoflake.flags}";
           types = [ "python" ];
         };
 

@@ -110,6 +110,7 @@ use nix
 
 ## Python
 
+- [autoflake](https://github.com/PyCQA/autoflake)
 - [black](https://github.com/psf/black)
 - [isort](https://github.com/PyCQA/isort)
 - [pylint](https://github.com/PyCQA/pylint)
