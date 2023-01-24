@@ -114,6 +114,7 @@ use nix
 
 ## Python
 
+- [autoflake](https://github.com/PyCQA/autoflake)
 - [black](https://github.com/psf/black)
 - [ruff](https://github.com/charliermarsh/ruff)
 - [isort](https://github.com/PyCQA/isort)
