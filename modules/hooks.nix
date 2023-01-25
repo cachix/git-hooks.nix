@@ -332,6 +332,14 @@ in
             description = lib.mdDoc "Use the relaxed configuration";
             default = false;
           };
+
+          configPath = mkOption {
+            type = types.str;
+            description = "path to the configuration YAML file";
+            # an empty string translates to use default configuration of the
+            # underlying yamllint binary
+            default = "";
+          };
         };
 
       clippy =
@@ -639,8 +647,15 @@ in
           name = "yamllint";
           description = "Yaml linter.";
           types = [ "file" "yaml" ];
-          entry = with settings.yamllint;
-            "${tools.yamllint}/bin/yamllint ${lib.optionalString relaxed "-d relaxed"}";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.yamllint.relaxed) "-d relaxed" ]
+                  [ (settings.yamllint.configPath != "") "-c ${settings.yamllint.configPath}" ]
+                ];
+            in
+            "${tools.yamllint}/bin/yamllint ${cmdArgs}";
         };
       rustfmt =
         let
