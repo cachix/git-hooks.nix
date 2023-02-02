@@ -430,7 +430,7 @@ in
           description =
             "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
           entry = "${tools.hpack-dir}/bin/hpack-dir --${if settings.hpack.silent then "silent" else "verbose"}";
-          files = "(\\.l?hs(-boot)?$)|(^[^/]+\\.cabal$)|(^package\\.yaml$)";
+          files = "(\\.l?hs(-boot)?$)|(\\.cabal$)|((^|/)package\\.yaml$)";
           # We don't pass filenames because they can only be misleading.
           # Indeed, we need to rerun `hpack` in every directory:
           # 1. In which there is a *.cabal file, or
