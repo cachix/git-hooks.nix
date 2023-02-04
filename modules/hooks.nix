@@ -462,6 +462,13 @@ in
           types = [ "file" "lua" ];
           entry = "${tools.luacheck}/bin/luacheck";
         };
+      opam-lint =
+        {
+          name = "opam lint";
+          description = "OCaml package manager configuration checker.";
+          entry = "${tools.opam}/bin/opam lint";
+          files = "\\.opam$";
+        };
       ormolu =
         {
           name = "ormolu";

@@ -27,6 +27,7 @@
 , nixfmt
 , nixpkgs-fmt
 , nodePackages
+, opam
 , ormolu
 , python39Packages
 , ruff ? null
@@ -55,7 +56,7 @@ let
   };
 in
 {
-  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools yamllint ruff;
+  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools yamllint ruff;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
