@@ -27,6 +27,7 @@
 , nixfmt
 , nixpkgs-fmt
 , nodePackages
+, ocamlPackages
 , opam
 , ormolu
 , python39Packages
@@ -62,6 +63,7 @@ in
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier;
+  inherit (ocamlPackages) ocp-indent;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };

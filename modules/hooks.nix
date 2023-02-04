@@ -462,6 +462,13 @@ in
           types = [ "file" "lua" ];
           entry = "${tools.luacheck}/bin/luacheck";
         };
+      ocp-indent =
+        {
+          name = "ocp-indent";
+          description = "A tool to indent OCaml code.";
+          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
+          files = "\\.mli?$";
+        };
       opam-lint =
         {
           name = "opam lint";

@@ -111,6 +111,7 @@ use nix
 ## OCaml
 
 - [opam-lint](https://opam.ocaml.org/)
+- [ocp-indent](http://www.typerex.org/ocp-indent.html)
 
 ## Purescript
 
