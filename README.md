@@ -110,6 +110,7 @@ use nix
 
 ## OCaml
 
+- [dune-opam-sync](https://dune.build/)
 - [opam-lint](https://opam.ocaml.org/)
 - [ocp-indent](http://www.typerex.org/ocp-indent.html)
 
