@@ -108,6 +108,10 @@ use nix
 - [elm-review](https://github.com/jfmengels/elm-review)
 - [elm-test](https://github.com/rtfeldman/node-test-runner)
 
+## OCaml
+
+- [opam-lint](https://opam.ocaml.org/)
+
 ## Purescript
 
 - [purty](https://gitlab.com/joneshf/purty)
