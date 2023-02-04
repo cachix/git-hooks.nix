@@ -418,7 +418,7 @@ in
       };
       dune-opam-sync = {
         name = "dune/opam sync";
-        decription = "Check that Dune-generated OPAM files are in sync.";
+        description = "Check that Dune-generated OPAM files are in sync.";
         entry = "${tools.dune-build-opam-files}/bin/dune-build-opam-files";
         files = "(\\.opam$)|((^|/)dune-project$)";
         ## We don't pass filenames because they can only be misleading. Indeed,
