@@ -155,6 +155,7 @@ use nix
 
 ## Lua
 
+- [luacheck](https://github.com/mpeterv/luacheck)
 - [stylua](https://github.com/JohnnyMorganz/StyLua)
 
 ## HTML
