@@ -108,6 +108,12 @@ use nix
 - [elm-review](https://github.com/jfmengels/elm-review)
 - [elm-test](https://github.com/rtfeldman/node-test-runner)
 
+## OCaml
+
+- [dune-opam-sync](https://dune.build/)
+- [opam-lint](https://opam.ocaml.org/)
+- [ocp-indent](http://www.typerex.org/ocp-indent.html)
+
 ## Purescript
 
 - [purty](https://gitlab.com/joneshf/purty)

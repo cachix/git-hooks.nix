@@ -416,6 +416,16 @@ in
         entry = "${tools.dhall}/bin/dhall format";
         files = "\\.dhall$";
       };
+      dune-opam-sync = {
+        name = "dune/opam sync";
+        description = "Check that Dune-generated OPAM files are in sync.";
+        entry = "${tools.dune-build-opam-files}/bin/dune-build-opam-files";
+        files = "(\\.opam$)|((^|/)dune-project$)";
+        ## We don't pass filenames because they can only be misleading. Indeed,
+        ## we need to re-run `dune build` for every `*.opam` file, but also when
+        ## the `dune-project` file has changed.
+        pass_filenames = false;
+      };
       hlint =
         {
           name = "hlint";
@@ -461,6 +471,20 @@ in
           description = "A tool for linting and static analysis of Lua code.";
           types = [ "file" "lua" ];
           entry = "${tools.luacheck}/bin/luacheck";
+        };
+      ocp-indent =
+        {
+          name = "ocp-indent";
+          description = "A tool to indent OCaml code.";
+          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
+          files = "\\.mli?$";
+        };
+      opam-lint =
+        {
+          name = "opam lint";
+          description = "OCaml package manager configuration checker.";
+          entry = "${tools.opam}/bin/opam lint";
+          files = "\\.opam$";
         };
       ormolu =
         {

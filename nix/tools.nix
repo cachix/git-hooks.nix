@@ -10,6 +10,7 @@
 , commitizen
 , deadnix
 , dhall
+, dune_3
 , editorconfig-checker
 , elmPackages
 , git
@@ -27,7 +28,10 @@
 , nixfmt
 , nixpkgs-fmt
 , nodePackages
+, ocamlPackages
+, opam
 , ormolu
+, pkgsBuildBuild
 , python39Packages
 , ruff ? null
 , runCommand
@@ -55,18 +59,20 @@ let
   };
 in
 {
-  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools yamllint ruff;
+  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools yamllint ruff;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier;
+  inherit (ocamlPackages) ocp-indent;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
+  dune-build-opam-files = callPackage ./dune-build-opam-files { dune = dune_3; inherit (pkgsBuildBuild) ocaml; };
   latexindent = tex;
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
