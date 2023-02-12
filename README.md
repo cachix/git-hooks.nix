@@ -170,6 +170,10 @@ use nix
 
 - `terraform-format`: built-in formatter
 
+## TOML
+
+- [taplo fmt](https://github.com/tamasfe/taplo) 
+
 ## Spell checkers
 
 - [hunspell](https://github.com/hunspell/hunspell)
