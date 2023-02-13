@@ -1007,6 +1007,14 @@ in
           types = [ "python" ];
         };
 
+      taplo =
+        {
+          name = "taplo";
+          description = "Format TOML files with taplo fmt";
+          entry = "${pkgs.taplo}/bin/taplo fmt";
+          types = [ "toml" ];
+        };
+
       commitizen =
         {
           name = "commitizen check";
