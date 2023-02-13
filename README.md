@@ -153,8 +153,14 @@ use nix
 - [shfmt](https://github.com/mvdan/sh)
 - [bats](https://github.com/bats-core/bats-core)
 
+## LaTeX
+
+- [chktex](https://www.nongnu.org/chktex/)
+- [latexindent](https://github.com/cmhughes/latexindent.pl)
+
 ## Lua
 
+- [luacheck](https://github.com/mpeterv/luacheck)
 - [stylua](https://github.com/JohnnyMorganz/StyLua)
 
 ## HTML
