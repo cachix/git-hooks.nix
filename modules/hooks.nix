@@ -463,7 +463,7 @@ in
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
-          entry = "${tools.latexindent}/bin/latexindent --local --silent --modifyIfDifferent";
+          entry = "${tools.latexindent}/bin/latexindent --local --silent --overwriteIfDifferent";
         };
       luacheck =
         {
