@@ -102,6 +102,10 @@ use nix
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
 - [hpack](https://github.com/sol/hpack)
 
+## Clojure
+
+- [zprint](https://github.com/kkinnear/zprint)
+
 ## Elm
 
 - [elm-format](https://github.com/avh4/elm-format)

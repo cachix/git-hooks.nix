@@ -1015,6 +1015,14 @@ in
           types = [ "toml" ];
         };
 
+      zprint =
+        {
+          name = "zprint";
+          description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
+          entry = "${pkgs.zprint}/bin/zprint '{:search-config? true}' -w";
+          types_or = [ "clojure" "clojurescript" "edn" ];
+        };
+
       commitizen =
         {
           name = "commitizen check";
