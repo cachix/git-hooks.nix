@@ -120,6 +120,18 @@ let
                 '';
                 default = true;
               };
+            fail_fast = mkOption {
+              type = types.bool;
+              description = lib.mdDoc ''
+                if true pre-commit will stop running hooks if this hook fails.
+              '';
+            };
+            require_serial = mkOption {
+              type = types.bool;
+              description = lib.mdDoc ''
+                if true this hook will execute using a single process instead of in parallel.
+              '';
+            };
             stages =
               mkOption {
                 type = types.listOf types.str;
