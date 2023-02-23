@@ -815,11 +815,9 @@ in
               '';
             in
             builtins.toString script;
-          raw = {
-            # to avoid multiple invocations of the same directory input, provide
-            # all file names in a single run.
-            require_serial = true;
-          };
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
           files = "\\.go$";
         };
 
@@ -859,11 +857,9 @@ in
           in
           builtins.toString script;
         files = "\\.go$";
-        raw = {
-          # to avoid multiple invocations of the same directory input, provide
-          # all file names in a single run.
-          require_serial = true;
-        };
+        # to avoid multiple invocations of the same directory input, provide
+        # all file names in a single run.
+        require_serial = true;
       };
 
       gofmt =
@@ -915,11 +911,9 @@ in
             in
             builtins.toString script;
           files = "\\.go$";
-          raw = {
-            # to avoid multiple invocations of the same directory input, provide
-            # all file names in a single run.
-            require_serial = true;
-          };
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
         };
 
       staticcheck =
@@ -943,11 +937,9 @@ in
             in
             builtins.toString script;
           files = "\\.go$";
-          raw = {
-            # to avoid multiple invocations of the same directory input, provide
-            # all file names in a single run.
-            require_serial = true;
-          };
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
         };
 
       editorconfig-checker =
