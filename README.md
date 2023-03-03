@@ -128,6 +128,7 @@ use nix
 - [black](https://github.com/psf/black)
 - [ruff](https://github.com/charliermarsh/ruff)
 - [isort](https://github.com/PyCQA/isort)
+- [mypy](https://github.com/python/mypy)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 

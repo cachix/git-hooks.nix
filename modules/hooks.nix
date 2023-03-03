@@ -118,6 +118,18 @@ in
             default = { };
           };
       };
+      mypy =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
+              default = "${pkgs.mypy}/bin/mypy";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.mypy}/bin/mypy"
+              '';
+            };
+        };
       nixfmt =
         {
           width =
@@ -577,6 +589,13 @@ in
           description = "Markdown shell pre-processor.";
           entry = toString script;
           files = "\\.md$";
+        };
+      mypy =
+        {
+          name = "mypy";
+          description = "Static type checker for Python";
+          entry = settings.mypy.binPath;
+          files = "\\.py$";
         };
       nixfmt =
         {
