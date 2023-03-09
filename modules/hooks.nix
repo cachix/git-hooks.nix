@@ -1048,5 +1048,16 @@ in
           entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
           stages = [ "commit-msg" ];
         };
+
+      tagref =
+        {
+          name = "tagref";
+          description = ''
+            Have tagref check all references and tags.
+          '';
+          entry = "${tools.tagref}/bin/tagref";
+          types = [ "text" ];
+          pass_filenames = false;
+        };
     };
 }
