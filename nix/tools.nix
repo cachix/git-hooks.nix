@@ -42,6 +42,7 @@
 , statix
 , stylish-haskell
 , stylua
+, tagref
 , texlive
 , typos
 , yamllint
@@ -59,7 +60,7 @@ let
   };
 in
 {
-  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua typos go mdsh revive go-tools yamllint ruff;
+  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools clippy deadnix dhall editorconfig-checker hadolint hindent hlint hpack html-tidy nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua tagref typos go mdsh revive go-tools yamllint ruff;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
