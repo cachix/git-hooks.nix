@@ -88,6 +88,7 @@ use nix
 
 - [alejandra](https://github.com/kamadorueda/alejandra)
 - [deadnix](https://github.com/astro/deadnix)
+- [nil](https://github.com/oxalica/nil)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [nixfmt](https://github.com/serokell/nixfmt/)
 - [statix](https://github.com/nerdypepper/statix)

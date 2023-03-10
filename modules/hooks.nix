@@ -597,6 +597,13 @@ in
           entry = settings.mypy.binPath;
           files = "\\.py$";
         };
+      nil =
+        {
+          name = "nil";
+          description = "Incremental analysis assistant for writing in Nix.";
+          entry = "${tools.nil}/bin/nil diagnostics";
+          files = "\\.nix$";
+        };
       nixfmt =
         {
           name = "nixfmt";
