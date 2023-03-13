@@ -861,6 +861,13 @@ in
           entry = "${tools.hunspell}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
         };
+      topiary =
+        {
+          name = "topiary";
+          description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
+          entry = "${tools.topiary-inplace}/bin/topiary-inplace";
+          files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
+        };
       typos =
         {
           name = "typos";

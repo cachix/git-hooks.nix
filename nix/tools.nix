@@ -46,6 +46,7 @@
 , stylua
 , tagref
 , texlive
+, topiary
 , typos
 , yamllint
 , writeScript
@@ -80,4 +81,5 @@ in
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
   bats = if bats ? withLibraries then (bats.withLibraries (p: [ p.bats-support p.bats-assert p.bats-file ])) else bats;
+  topiary-inplace = callPackage ./topiary-inplace { };
 }
