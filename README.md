@@ -198,6 +198,7 @@ use nix
 - [hadolint](https://github.com/hadolint/hadolint)
 - [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 - [actionlint](https://github.com/rhysd/actionlint)
+- [tagref](https://github.com/stepchowfun/tagref)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:
