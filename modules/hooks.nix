@@ -732,7 +732,7 @@ in
         {
           name = "markdownlint";
           description = "Style checker and linter for markdown files.";
-          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint --fix -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
           files = "\\.md$";
         };
 
