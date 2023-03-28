@@ -30,6 +30,11 @@ in
             # underlying ansible-lint binary
             default = "";
           };
+          subdir = mkOption {
+            type = types.str;
+            description = "path to Ansible subdir";
+            default = "";
+          };
         };
       hpack =
         {
@@ -403,6 +408,7 @@ in
                 ];
             in
             "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
+            files = if settings.ansible-lint.subdir != "" then "${settings.ansible-lint.subdir}/" else "";
         };
       black =
         {
