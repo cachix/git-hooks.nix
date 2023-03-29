@@ -464,6 +464,22 @@ in
               default = [ ];
             };
         };
+
+      lua-ls =
+        {
+          checklevel = mkOption {
+            type = types.enum [ "Error" "Warning" "Information" "Hint" ];
+            description = lib.mdDoc
+              "The diagnostic check level";
+            default = "Warning";
+          };
+          config = mkOption {
+            type = types.attrs;
+            description = lib.mdDoc
+              "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
+            default = { };
+          };
+        };
     };
 
   config.hooks =
@@ -607,6 +623,37 @@ in
           description = "A tool for linting and static analysis of Lua code.";
           types = [ "file" "lua" ];
           entry = "${tools.luacheck}/bin/luacheck";
+        };
+      lua-ls =
+        let
+          luarc = pkgs.writeText ".luarc.json" (builtins.toJSON settings.lua-ls.config);
+          script = pkgs.writeShellApplication {
+            name = "lua-ls-lint";
+            runtimeInputs = [ tools.lua-language-server ];
+            checkPhase = ""; # The default checkPhase depends on GHC
+            text = ''
+              set -e
+              export logpath="$(mktemp -d)"
+              # For some reason, lua-language-server hangs if the nix store path to the file is passed in directly
+              cp "${luarc}" .
+              lua-language-server --check $(realpath .) \
+                --checklevel="${settings.lua-ls.checklevel}" \
+                --configpath=$(realpath .luarc.json) \
+                --logpath="$logpath"
+              if [[ -f $logpath/check.json ]]; then
+                echo "+++++++++++++++ lua-language-server diagnostics +++++++++++++++"
+                cat $logdir/check.json
+                exit 1
+              fi
+            '';
+          };
+        in
+        {
+          name = "lua-ls";
+          description = "Uses the lua-language-server CLI to statically type-check and lint Lua code.";
+          entry = "${script}/bin/lua-ls-lint";
+          files = "\\.lua$";
+          pass_filenames = false;
         };
       ocp-indent =
         {
