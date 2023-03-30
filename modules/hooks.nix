@@ -629,7 +629,15 @@ in
         {
           name = "nil";
           description = "Incremental analysis assistant for writing in Nix.";
-          entry = "${tools.nil}/bin/nil diagnostics";
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-nil" ''
+                for file in $(echo "$@"); do
+                  ${tools.nil}/bin/nil diagnostics "$file"
+                done
+              '';
+            in
+            builtins.toString script;
           files = "\\.nix$";
         };
       nixfmt =
