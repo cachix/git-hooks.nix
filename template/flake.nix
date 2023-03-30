@@ -25,6 +25,7 @@
           # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
           packages.hello = pkgs.hello;
           pre-commit.settings.hooks.nixpkgs-fmt.enable = true;
+          # NOTE: You can also use `config.pre-commit.devShell`
           devShells.default = pkgs.mkShell {
             shellHook = ''
               ${config.pre-commit.installationScript}
