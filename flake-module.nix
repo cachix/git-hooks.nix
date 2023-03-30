@@ -13,7 +13,7 @@ let
 in
 {
   options = {
-    perSystem = flake-parts-lib.mkPerSystemOption ({ config, pkgs, ... }:
+    perSystem = flake-parts-lib.mkPerSystemOption ({ config, options, pkgs, ... }:
       let cfg = config.pre-commit;
       in
       {
@@ -63,6 +63,7 @@ in
             rootSrc = self.outPath;
             package = lib.mkDefault pkgs.pre-commit;
             tools = import ./nix/call-tools.nix pkgs;
+            settings.treefmt.package = lib.mkIf (options?treefmt) (lib.mkDefault config.treefmt.build.wrapper);
           };
         };
       });

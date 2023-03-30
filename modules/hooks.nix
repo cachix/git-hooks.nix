@@ -368,6 +368,34 @@ in
           };
         };
 
+      treefmt =
+        {
+          package = mkOption {
+            type = types.package;
+            description = lib.mdDoc
+              ''
+                The `treefmt` package to use.
+
+                Should include all the formatters configured by treefmt.
+
+                For example:
+                ```nix
+                pkgs.writeShellApplication {
+                  name = "treefmt";
+                  runtimeInputs = [
+                    pkgs.treefmt
+                    pkgs.nixpkgs-fmt
+                    pkgs.black
+                  ];
+                  text =
+                    '''
+                      exec treefmt "$@"
+                    ''';
+                }
+                ```
+              '';
+          };
+        };
     };
 
   config.hooks =
@@ -1065,6 +1093,15 @@ in
           entry = "${tools.tagref}/bin/tagref";
           types = [ "text" ];
           pass_filenames = false;
+        };
+
+      treefmt =
+        {
+          name = "treefmt";
+          description = "One CLI to format the code tree.";
+          types = [ "file" ];
+          pass_filenames = true;
+          entry = "${settings.treefmt.package}/bin/treefmt --fail-on-change";
         };
     };
 }
