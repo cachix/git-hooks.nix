@@ -387,22 +387,22 @@ in
 
             YAML_PATH="''${FLAKE_ROOT:-.}"/.pre-commit-config.yaml
 
-            if readlink ''$YAML_PATH >/dev/null \
-              && [[ $(readlink ''$YAML_PATH) == ${configFile} ]]; then
+            if readlink "''$YAML_PATH" >/dev/null \
+              && [[ $(readlink "''$YAML_PATH") == ${configFile} ]]; then
               echo 1>&2 "pre-commit-hooks.nix: hooks up to date"
             else
               echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
 
-              [ -L ''$YAML_PATH ] && unlink ''$YAML_PATH
+              [ -L "''$YAML_PATH" ] && unlink "''$YAML_PATH"
 
-              if [ -e ''$YAML_PATH ]; then
+              if [ -e "''$YAML_PATH" ]; then
                 echo 1>&2 "pre-commit-hooks.nix: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
                 echo 1>&2 "    1. Translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
                 echo 1>&2 "        see https://github.com/cachix/pre-commit-hooks.nix#getting-started"
                 echo 1>&2 "    2. remove .pre-commit-config.yaml"
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
-                ln -s ${configFile} ''$YAML_PATH
+                ln -s ${configFile} "''$YAML_PATH"
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
                 for hook in $hooks; do
