@@ -763,7 +763,7 @@ in
         {
           name = "rustfmt";
           description = "Format Rust code.";
-          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --check --color always";
+          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
           files = "\\.rs$";
           pass_filenames = false;
         };
