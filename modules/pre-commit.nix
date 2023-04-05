@@ -225,7 +225,7 @@ in
 
       tools =
         mkOption {
-          type = types.lazyAttrsOf types.package;
+          type = types.lazyAttrsOf (types.nullOr types.package);
           description = lib.mdDoc
             ''
               Tool set from which `nix-pre-commit-hooks` will pick binaries.

@@ -471,6 +471,19 @@ in
         ## the `dune-project` file has changed.
         pass_filenames = false;
       };
+      gptcommit = lib.optionalAttrs (tools.gptcommit != null) {
+        name = "gptcommit";
+        description = "Generate a commit message using GPT3.";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-gptcomit" ''
+              ${tools.gptcommit}/bin/gptcommit prepare-commit-msg --commit-source \
+                "$PRE_COMMIT_COMMIT_MSG_SOURCE" --commit-msg-file "$1"
+            '';
+          in
+          toString script;
+        stages = [ "prepare-commit-msg" ];
+      };
       hlint =
         {
           name = "hlint";
