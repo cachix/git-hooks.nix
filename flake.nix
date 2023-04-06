@@ -15,6 +15,7 @@
 
   outputs = { self, nixpkgs, flake-utils, gitignore, nixpkgs-stable, ... }:
     let
+      lib = nixpkgs.lib;
       defaultSystems = [
         "aarch64-linux"
         "aarch64-darwin"
@@ -46,7 +47,8 @@
           inherit (exposed.checks.pre-commit-check) shellHook;
         };
 
-        checks = exposed.checks // exposed-stable.checks;
+        checks = lib.filterAttrs (k: v: v != null)
+          (exposed.checks // exposed-stable.checks);
 
         lib = { inherit (exposed) run; };
       }
