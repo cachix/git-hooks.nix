@@ -471,7 +471,7 @@ in
         ## the `dune-project` file has changed.
         pass_filenames = false;
       };
-      gptcommit = lib.optionalAttrs (tools.gptcommit != null) {
+      gptcommit = {
         name = "gptcommit";
         description = "Generate a commit message using GPT3.";
         entry =
