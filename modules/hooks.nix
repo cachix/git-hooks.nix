@@ -426,7 +426,7 @@ in
         {
           name = "ruff";
           description = " An extremely fast Python linter, written in Rust.";
-          entry = "${pkgs.ruff}/bin/ruff";
+          entry = "${pkgs.ruff}/bin/ruff --fix";
           types = [ "python" ];
         };
       cabal2nix =
