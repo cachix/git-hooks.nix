@@ -21,6 +21,21 @@ in
 {
   options.settings =
     {
+      ansible-lint =
+        {
+          configPath = mkOption {
+            type = types.str;
+            description = "path to the configuration YAML file";
+            # an empty string translates to use default configuration of the
+            # underlying ansible-lint binary
+            default = "";
+          };
+          subdir = mkOption {
+            type = types.str;
+            description = "path to Ansible subdir";
+            default = "";
+          };
+        };
       hpack =
         {
           silent =
@@ -413,7 +428,15 @@ in
           name = "ansible-lint";
           description =
             "Ansible linter.";
-          entry = "${tools.ansible-lint}/bin/ansible-lint";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.ansible-lint.configPath != "") "-c ${settings.ansible-lint.configPath}" ]
+                ];
+            in
+            "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
+          files = if settings.ansible-lint.subdir != "" then "${settings.ansible-lint.subdir}/" else "";
         };
       black =
         {
