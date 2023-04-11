@@ -393,7 +393,7 @@ in
             else
               echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
 
-              [ -L "''${GIT_WC}/.pre-commit-config.yaml" ] && unlink "''${GIT_WC}/.pre-commit-config.yaml"
+              [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
 
               if [ -e "''${GIT_WC}/.pre-commit-config.yaml" ]; then
                 echo 1>&2 "pre-commit-hooks.nix: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
