@@ -402,7 +402,7 @@ in
                 echo 1>&2 "    2. remove .pre-commit-config.yaml"
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
-                ln -s ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
+                ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
                 for hook in $hooks; do
