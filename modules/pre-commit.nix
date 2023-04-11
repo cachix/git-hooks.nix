@@ -381,7 +381,7 @@ in
           elif ! ${git}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
           else
-            GIT_WC=`${git}/bin/git rev-parse --git-dir`/..
+            GIT_WC=`${git}/bin/git rev-parse --show-toplevel`
 
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
