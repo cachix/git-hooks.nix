@@ -381,26 +381,28 @@ in
           elif ! ${git}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
           else
+            GIT_WC=`${git}/bin/git rev-parse --show-toplevel`
+
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
             # and prevents installation loops by via lorri.
 
-            if readlink .pre-commit-config.yaml >/dev/null \
-              && [[ $(readlink .pre-commit-config.yaml) == ${configFile} ]]; then
+            if readlink "''${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
+              && [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") == ${configFile} ]]; then
               echo 1>&2 "pre-commit-hooks.nix: hooks up to date"
             else
               echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
 
               [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
 
-              if [ -e .pre-commit-config.yaml ]; then
+              if [ -e "''${GIT_WC}/.pre-commit-config.yaml" ]; then
                 echo 1>&2 "pre-commit-hooks.nix: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
                 echo 1>&2 "    1. Translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
                 echo 1>&2 "        see https://github.com/cachix/pre-commit-hooks.nix#getting-started"
                 echo 1>&2 "    2. remove .pre-commit-config.yaml"
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
-                ln -s ${configFile} .pre-commit-config.yaml
+                ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
                 for hook in $hooks; do
