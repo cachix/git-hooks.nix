@@ -202,6 +202,7 @@ use nix
 - [tagref](https://github.com/stepchowfun/tagref)
 - [treefmt](https://github.com/numtide/treefmt)
 - [topiary](https://github.com/tweag/topiary)
+- [checkmake](https://github.com/mrtazz/checkmake)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:

@@ -1167,5 +1167,18 @@ in
           pass_filenames = true;
           entry = "${settings.treefmt.package}/bin/treefmt --fail-on-change";
         };
+
+      checkmake = {
+        name = "checkmake";
+        description = "Experimental linter/analyzer for Makefiles.";
+        types = [ "makefile" ];
+        entry =
+          ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
+          ## this gets into a NixOS release, the following code will be useless.
+          lib.throwIf
+            (tools.checkmake == null)
+            "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
+            "${tools.checkmake}/bin/checkmake";
+      };
     };
 }

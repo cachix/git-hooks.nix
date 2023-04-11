@@ -1,10 +1,13 @@
-{ actionlint
+{ stdenv
+
+, actionlint
 , alejandra
 , ansible-lint
 , cabal-fmt
 , cabal2nix
 , callPackage
 , cargo
+, checkmake
 , clang-tools
 , clippy
 , commitizen
@@ -81,4 +84,8 @@ in
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
   bats = if bats ? withLibraries then (bats.withLibraries (p: [ p.bats-support p.bats-assert p.bats-file ])) else bats;
+
+  ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once this gets
+  ## into a NixOS release, the following code will be useless.
+  checkmake = if stdenv.isLinux || checkmake.version >= "0.2.2" then checkmake else null;
 }
