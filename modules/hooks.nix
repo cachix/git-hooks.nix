@@ -421,6 +421,15 @@ in
               default = "true";
             };
         };
+
+      headache =
+        {
+          header-file = mkOption {
+            type = types.string;
+            description = lib.mdDoc "Path to the header file.";
+            default = ".header";
+          };
+        };
     };
 
   config.hooks =
@@ -1223,5 +1232,21 @@ in
           in "${pkgs.dune_3}/bin/dune build @fmt ${auto-promote}";
         pass_filenames = false;
       };
+
+      headache =
+        {
+          name = "headache";
+          description = "Lightweight tool for managing headers in source code files.";
+          ## NOTE: Supported `files` are taken from
+          ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
+          files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
+          entry =
+            ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
+            ## next NixOS release, the following code will become irrelevant.
+            lib.throwIf
+              (tools.headache == null)
+              "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
+              "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
+        };
     };
 }

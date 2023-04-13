@@ -209,6 +209,7 @@ use nix
 - [treefmt](https://github.com/numtide/treefmt)
 - [topiary](https://github.com/tweag/topiary)
 - [checkmake](https://github.com/mrtazz/checkmake)
+- [headache](https://github.com/frama-c/headache)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:

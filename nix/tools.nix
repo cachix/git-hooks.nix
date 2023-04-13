@@ -90,4 +90,9 @@ in
   ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once this gets
   ## into a NixOS release, the following code will be useless.
   checkmake = if stdenv.isLinux || checkmake.version >= "0.2.2" then checkmake else null;
+
+  headache =
+    ## NOTE: `headache` made it into nixpkgs on 12 April 2023. At the next NixOS
+    ## release, the following code will become irrelevant.
+    if ocamlPackages ? headache then ocamlPackages.headache else null;
 }
