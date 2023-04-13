@@ -861,24 +861,34 @@ in
           entry = "${tools.hunspell}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
         };
+
       topiary =
         {
           name = "topiary";
           description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
           entry =
-            let
-              topiary-inplace = pkgs.writeShellApplication {
-                name = "topiary-inplace";
-                text = ''
-                  for file; do
-                    ${tools.topiary}/bin/topiary --in-place --input-file "$file"
-                  done
-                '';
-              };
-            in
-            "${topiary-inplace}/bin/topiary-inplace";
+            ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
+            ## release of NixOS, the `throwIf` piece of code below will become
+            ## useless.
+            lib.throwIf
+              (tools.topiary == null)
+              "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
+              (
+                let
+                  topiary-inplace = pkgs.writeShellApplication {
+                    name = "topiary-inplace";
+                    text = ''
+                      for file; do
+                        ${tools.topiary}/bin/topiary --in-place --input-file "$file"
+                      done
+                    '';
+                  };
+                in
+                "${topiary-inplace}/bin/topiary-inplace"
+              );
           files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
         };
+
       typos =
         {
           name = "typos";
