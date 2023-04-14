@@ -4,24 +4,25 @@
 # to avoid polluting the command tab completion.
 
 _pre_commit_hooks_nix_install_main() {
-  if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel)/.pre-commit-config.yaml"; then
+  if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel "skipping installation.")/.pre-commit-config.yaml"; then
     _pre_commit_hooks_nix_ensure_config_file_up_to_date && _pre_commit_hooks_nix_install_stages
   fi
 }
 
 _pre_commit_hooks_nix_install_config_file_only() {
-  if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel)/.pre-commit-config.yaml"; then
+  if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel "not updating local config file link.")/.pre-commit-config.yaml"; then
     _pre_commit_hooks_nix_ensure_config_file_up_to_date
   fi
 }
 
 _pre_commit_hooks_nix_find_git_toplevel() {
+  local msg="$1"
   if ! type -t git >/dev/null; then
     # This happens in pure shells, including lorri
-    echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; skipping installation."
+    echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; $msg"
     return 1
   elif ! $_pre_commit_hooks_nix_git rev-parse --git-dir &> /dev/null; then
-    echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
+    echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; $msg"
     return 1
   else
     $_pre_commit_hooks_nix_git rev-parse --show-toplevel
