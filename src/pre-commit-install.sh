@@ -23,8 +23,8 @@ _pre_commit_hooks_nix_find_git_toplevel() {
 }
 
 _pre_commit_hooks_nix_is_config_up_to_date() {
-  readlink "${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
-      && [[ $(readlink "${GIT_WC}/.pre-commit-config.yaml") == "$_pre_commit_hooks_nix_config" ]]
+  readlink "${_pre_commit_hooks_nix_local_config_file}" >/dev/null \
+      && [[ $(readlink "${_pre_commit_hooks_nix_local_config_file}") == "$_pre_commit_hooks_nix_config" ]]
 }
 
 _pre_commit_hooks_nix_ensure_config_file_up_to_date() {
@@ -40,7 +40,7 @@ _pre_commit_hooks_nix_ensure_config_file_up_to_date() {
 
   [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
 
-  if [ -e "${GIT_WC}/.pre-commit-config.yaml" ]; then
+  if [ -e "${_pre_commit_hooks_nix_local_config_file}" ]; then
     echo 1>&2 "pre-commit-hooks.nix: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
     echo 1>&2 "    1. Translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
     echo 1>&2 "        see https://github.com/cachix/pre-commit-hooks.nix#getting-started"
@@ -49,7 +49,7 @@ _pre_commit_hooks_nix_ensure_config_file_up_to_date() {
     return 1;
   fi
 
-  ln -fs "$_pre_commit_hooks_nix_config" "${GIT_WC}/.pre-commit-config.yaml"
+  ln -fs "$_pre_commit_hooks_nix_config" "${_pre_commit_hooks_nix_local_config_file}"
 }
 
 _pre_commit_hooks_nix_install_stages() {
