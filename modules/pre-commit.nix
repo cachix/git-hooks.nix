@@ -375,20 +375,24 @@ in
       installationScript =
         ''
           export PATH=${cfg.package}/bin:$PATH
+          _pre_commit_hooks_nix_git=${git}/bin/git
+          _pre_commit_hooks_nix_config=${configFile}
+          _pre_commit_hooks_nix_install_stages='${concatStringsSep " " install_stages}'
+
           if ! type -t git >/dev/null; then
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; skipping installation."
-          elif ! ${git}/bin/git rev-parse --git-dir &> /dev/null; then
+          elif ! $_pre_commit_hooks_nix_git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
           else
-            GIT_WC=`${git}/bin/git rev-parse --show-toplevel`
+            GIT_WC=`$_pre_commit_hooks_nix_git rev-parse --show-toplevel`
 
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
             # and prevents installation loops by via lorri.
 
             if readlink "''${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
-              && [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") == ${configFile} ]]; then
+              && [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") == "$_pre_commit_hooks_nix_config" ]]; then
               echo 1>&2 "pre-commit-hooks.nix: hooks up to date"
             else
               echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
@@ -402,15 +406,15 @@ in
                 echo 1>&2 "    2. remove .pre-commit-config.yaml"
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
-                ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
+                ln -fs "$_pre_commit_hooks_nix_config" "''${GIT_WC}/.pre-commit-config.yaml"
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
                 for hook in $hooks; do
                   pre-commit uninstall -t $hook
                 done
                 # Add hooks for configured stages (only) ...
-                if [ ! -z "${concatStringsSep " " install_stages}" ]; then
-                  for stage in ${concatStringsSep " " install_stages}; do
+                if [ ! -z "$_pre_commit_hooks_nix_install_stages" ]; then
+                  for stage in $_pre_commit_hooks_nix_install_stages; do
                     if [[ "$stage" == "manual" ]]; then
                       continue
                     fi
