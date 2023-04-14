@@ -24,7 +24,7 @@ _pre_commit_hooks_nix_find_git_toplevel() {
 
 _pre_commit_hooks_nix_is_config_up_to_date() {
   readlink "${_pre_commit_hooks_nix_local_config_file}" >/dev/null \
-      && [[ $(readlink "${_pre_commit_hooks_nix_local_config_file}") == "$_pre_commit_hooks_nix_config" ]]
+      && [[ "$(readlink "${_pre_commit_hooks_nix_local_config_file}")" == "$_pre_commit_hooks_nix_config" ]]
 }
 
 _pre_commit_hooks_nix_ensure_config_file_up_to_date() {
