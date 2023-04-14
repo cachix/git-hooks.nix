@@ -10,15 +10,14 @@
 # Functions marked (private) are not guaranteed to be stable for reasons including:
 #  - dependency on global variables that are not part of the public API
 #  - likely to be changed in the future to improve behavior or implementation details
-if ! ${_pre_commit_hooks_nix_git:?}; then
-  echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_git is not set. It must be set before loading pre-commit-install.sh."
-fi
-if ! ${_pre_commit_hooks_nix_config:?}; then
-  echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_config is not set. It must be set before loading pre-commit-install.sh."
-fi
-if ! ${_pre_commit_hooks_nix_install_stages:?}; then
-  echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_install_stages is not set. It must be set before loading pre-commit-install.sh."
-fi
+# The public API uses the following global variables, which are checked here:
+(
+  : "${_pre_commit_hooks_nix_git:?}"
+  : "${_pre_commit_hooks_nix_config:?}"
+  : "${_pre_commit_hooks_nix_install_stages:?}"
+) || {
+  echo >&2 "ERROR: pre-commit-hooks.nix: missing global variables. Please initialize them in your shellHook."
+}
 
 # (public)
 #
