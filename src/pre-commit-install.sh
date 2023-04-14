@@ -9,8 +9,7 @@ _pre_commit_hooks_nix_install_main() {
     # filesystem churn. This improves performance with watch tools like lorri
     # and prevents installation loops by via lorri.
 
-    if readlink "${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
-      && [[ $(readlink "${GIT_WC}/.pre-commit-config.yaml") == "$_pre_commit_hooks_nix_config" ]]; then
+    if _pre_commit_hooks_nix_is_config_up_to_date; then
       echo 1>&2 "pre-commit-hooks.nix: hooks up to date"
     else
       echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
@@ -43,6 +42,11 @@ _pre_commit_hooks_nix_find_git_toplevel() {
   else
     $_pre_commit_hooks_nix_git rev-parse --show-toplevel
   fi
+}
+
+_pre_commit_hooks_nix_is_config_up_to_date() {
+  readlink "${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
+      && [[ $(readlink "${GIT_WC}/.pre-commit-config.yaml") == "$_pre_commit_hooks_nix_config" ]]
 }
 
 _pre_commit_hooks_nix_install_stages() {
