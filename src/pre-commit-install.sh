@@ -1,7 +1,19 @@
+# shellcheck shell=bash
 
 # This file provides utilities that are used by the `shellHook` among other things.
 # They are meant to be loaded into interactive shells, so use an underscore prefix
 # to avoid polluting the command tab completion.
+
+if ! ${_pre_commit_hooks_nix_git:?}; then
+  echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_git is not set. It must be set before loading pre-commit-install.sh."
+fi
+if ! ${_pre_commit_hooks_nix_config:?}; then
+  echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_config is not set. It must be set before loading pre-commit-install.sh."
+fi
+if ! ${_pre_commit_hooks_nix_install_stages:?}; then
+  echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_install_stages is not set. It must be set before loading pre-commit-install.sh."
+fi
+
 
 _pre_commit_hooks_nix_install_main() {
   if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel "skipping installation.")/.pre-commit-config.yaml"; then
@@ -63,10 +75,10 @@ _pre_commit_hooks_nix_install_stages() {
   # Remove any previously installed hooks (since pre-commit itself has no convergent design)
   hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
   for hook in $hooks; do
-    pre-commit uninstall -t $hook
+    pre-commit uninstall -t "$hook"
   done
   # Add hooks for configured stages (only) ...
-  if [ ! -z "$_pre_commit_hooks_nix_install_stages" ]; then
+  if [ -n "$_pre_commit_hooks_nix_install_stages" ]; then
     for stage in $_pre_commit_hooks_nix_install_stages; do
       if [[ "$stage" == "manual" ]]; then
         continue
@@ -74,11 +86,11 @@ _pre_commit_hooks_nix_install_stages() {
       case $stage in
         # if you amend these switches please also review $hooks above
         commit | merge-commit | push)
-          stage="pre-"$stage
-          pre-commit install -t $stage
+          stage="pre-$stage"
+          pre-commit install -t "$stage"
           ;;
         prepare-commit-msg | commit-msg | post-checkout | post-commit)
-          pre-commit install -t $stage
+          pre-commit install -t "$stage"
           ;;
         *)
           echo 1>&2 "ERROR: pre-commit-hooks.nix: either $stage is not a valid stage or pre-commit-hooks.nix doesn't yet support it."
