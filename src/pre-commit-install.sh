@@ -9,6 +9,12 @@ _pre_commit_hooks_nix_install_main() {
   fi
 }
 
+_pre_commit_hooks_nix_install_config_file_only() {
+  if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel)/.pre-commit-config.yaml"; then
+    _pre_commit_hooks_nix_ensure_config_file_up_to_date
+  fi
+}
+
 _pre_commit_hooks_nix_find_git_toplevel() {
   if ! type -t git >/dev/null; then
     # This happens in pure shells, including lorri
