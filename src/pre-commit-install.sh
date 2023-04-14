@@ -25,36 +25,8 @@ _pre_commit_hooks_nix_install_main() {
         echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
       else
         ln -fs "$_pre_commit_hooks_nix_config" "${GIT_WC}/.pre-commit-config.yaml"
-        # Remove any previously installed hooks (since pre-commit itself has no convergent design)
-        hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
-        for hook in $hooks; do
-          pre-commit uninstall -t $hook
-        done
-        # Add hooks for configured stages (only) ...
-        if [ ! -z "$_pre_commit_hooks_nix_install_stages" ]; then
-          for stage in $_pre_commit_hooks_nix_install_stages; do
-            if [[ "$stage" == "manual" ]]; then
-              continue
-            fi
-            case $stage in
-              # if you amend these switches please also review $hooks above
-              commit | merge-commit | push)
-                stage="pre-"$stage
-                pre-commit install -t $stage
-                ;;
-              prepare-commit-msg | commit-msg | post-checkout | post-commit)
-                pre-commit install -t $stage
-                ;;
-              *)
-                echo 1>&2 "ERROR: pre-commit-hooks.nix: either $stage is not a valid stage or pre-commit-hooks.nix doesn't yet support it."
-                exit 1
-                ;;
-            esac
-          done
-        # ... or default 'pre-commit' hook
-        else
-          pre-commit install
-        fi
+
+        _pre_commit_hooks_nix_install_stages
       fi
     fi
   fi
@@ -70,5 +42,38 @@ _pre_commit_hooks_nix_find_git_toplevel() {
     return 1
   else
     $_pre_commit_hooks_nix_git rev-parse --show-toplevel
+  fi
+}
+
+_pre_commit_hooks_nix_install_stages() {
+  # Remove any previously installed hooks (since pre-commit itself has no convergent design)
+  hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
+  for hook in $hooks; do
+    pre-commit uninstall -t $hook
+  done
+  # Add hooks for configured stages (only) ...
+  if [ ! -z "$_pre_commit_hooks_nix_install_stages" ]; then
+    for stage in $_pre_commit_hooks_nix_install_stages; do
+      if [[ "$stage" == "manual" ]]; then
+        continue
+      fi
+      case $stage in
+        # if you amend these switches please also review $hooks above
+        commit | merge-commit | push)
+          stage="pre-"$stage
+          pre-commit install -t $stage
+          ;;
+        prepare-commit-msg | commit-msg | post-checkout | post-commit)
+          pre-commit install -t $stage
+          ;;
+        *)
+          echo 1>&2 "ERROR: pre-commit-hooks.nix: either $stage is not a valid stage or pre-commit-hooks.nix doesn't yet support it."
+          exit 1
+          ;;
+      esac
+    done
+  # ... or default 'pre-commit' hook
+  else
+    pre-commit install
   fi
 }
