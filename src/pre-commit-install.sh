@@ -4,14 +4,7 @@
 # to avoid polluting the command tab completion.
 
 _pre_commit_hooks_nix_install_main() {
-  if ! type -t git >/dev/null; then
-    # This happens in pure shells, including lorri
-    echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; skipping installation."
-  elif ! $_pre_commit_hooks_nix_git rev-parse --git-dir &> /dev/null; then
-    echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
-  else
-    GIT_WC=`$_pre_commit_hooks_nix_git rev-parse --show-toplevel`
-
+  if GIT_WC="$(_pre_commit_hooks_nix_find_git_toplevel)"; then
     # These update procedures compare before they write, to avoid
     # filesystem churn. This improves performance with watch tools like lorri
     # and prevents installation loops by via lorri.
@@ -64,5 +57,18 @@ _pre_commit_hooks_nix_install_main() {
         fi
       fi
     fi
+  fi
+}
+
+_pre_commit_hooks_nix_find_git_toplevel() {
+  if ! type -t git >/dev/null; then
+    # This happens in pure shells, including lorri
+    echo 1>&2 "WARNING: pre-commit-hooks.nix: git command not found; skipping installation."
+    return 1
+  elif ! $_pre_commit_hooks_nix_git rev-parse --git-dir &> /dev/null; then
+    echo 1>&2 "WARNING: pre-commit-hooks.nix: .git not found; skipping installation."
+    return 1
+  else
+    $_pre_commit_hooks_nix_git rev-parse --show-toplevel
   fi
 }
