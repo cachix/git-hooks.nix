@@ -4,6 +4,12 @@
 # They are meant to be loaded into interactive shells, so use an underscore prefix
 # to avoid polluting the command tab completion.
 
+# PUBLIC API
+#
+# We make a reasonable effort to keep the functions marked (public) stable.
+# Functions marked (private) are not guaranteed to be stable for reasons including:
+#  - dependency on global variables that are not part of the public API
+#  - likely to be changed in the future to improve behavior or implementation details
 if ! ${_pre_commit_hooks_nix_git:?}; then
   echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_git is not set. It must be set before loading pre-commit-install.sh."
 fi
@@ -14,19 +20,27 @@ if ! ${_pre_commit_hooks_nix_install_stages:?}; then
   echo 1>&2 "ERROR: pre-commit-hooks.nix: _pre_commit_hooks_nix_install_stages is not set. It must be set before loading pre-commit-install.sh."
 fi
 
-
+# (public)
+#
+# Install the hooks and the config file.
 _pre_commit_hooks_nix_install_main() {
   if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel "skipping installation.")/.pre-commit-config.yaml"; then
     _pre_commit_hooks_nix_ensure_config_file_up_to_date && _pre_commit_hooks_nix_install_stages
   fi
 }
 
+# (public)
+#
+# Only update the config file.
 _pre_commit_hooks_nix_install_config_file_only() {
   if _pre_commit_hooks_nix_local_config_file="$(_pre_commit_hooks_nix_find_git_toplevel "not updating local config file link.")/.pre-commit-config.yaml"; then
     _pre_commit_hooks_nix_ensure_config_file_up_to_date
   fi
 }
 
+# (private)
+#
+# Find the root of the worktree.
 _pre_commit_hooks_nix_find_git_toplevel() {
   local msg="$1"
   if ! type -t git >/dev/null; then
@@ -41,11 +55,13 @@ _pre_commit_hooks_nix_find_git_toplevel() {
   fi
 }
 
+# (private)
 _pre_commit_hooks_nix_is_config_up_to_date() {
   readlink "${_pre_commit_hooks_nix_local_config_file}" >/dev/null \
       && [[ "$(readlink "${_pre_commit_hooks_nix_local_config_file}")" == "$_pre_commit_hooks_nix_config" ]]
 }
 
+# (private)
 _pre_commit_hooks_nix_ensure_config_file_up_to_date() {
   # These update procedures compare before they write, to avoid
   # filesystem churn. This improves performance with watch tools like lorri
@@ -71,6 +87,9 @@ _pre_commit_hooks_nix_ensure_config_file_up_to_date() {
   ln -fs "$_pre_commit_hooks_nix_config" "${_pre_commit_hooks_nix_local_config_file}"
 }
 
+# (private)
+#
+# Perform the installation of the hooks. Relies on some global variables.
 _pre_commit_hooks_nix_install_stages() {
   # Remove any previously installed hooks (since pre-commit itself has no convergent design)
   hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
