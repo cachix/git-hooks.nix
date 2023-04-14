@@ -281,12 +281,22 @@ in
           defaultText = "<derivation>";
         };
 
+      environmentSetupScript =
+        mkOption {
+          type = types.str;
+          description = lib.mdDoc
+            ''
+              A bash snippet that provides functions for updating the config file and installing the hook scripts.
+            '';
+          readOnly = true;
+        };
+
       installationScript =
         mkOption {
           type = types.str;
           description = lib.mdDoc
             ''
-              A bash snippet that installs nix-pre-commit-hooks in the current directory
+              A bash snippet that installs nix-pre-commit-hooks in the current directory.
             '';
           readOnly = true;
         };
@@ -372,7 +382,7 @@ in
           default_stages = cfg.default_stages;
         };
 
-      installationScript =
+      environmentSetupScript =
         ''
           export PATH=${cfg.package}/bin:$PATH
           _pre_commit_hooks_nix_git=${git}/bin/git
@@ -380,6 +390,11 @@ in
           _pre_commit_hooks_nix_install_stages='${concatStringsSep " " install_stages}'
 
           source ${../src/pre-commit-install.sh}
+        '';
+
+      installationScript =
+        ''
+          ${cfg.environmentSetupScript}
 
           _pre_commit_hooks_nix_install_main
         '';
