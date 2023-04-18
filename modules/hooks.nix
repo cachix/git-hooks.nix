@@ -1190,5 +1190,12 @@ in
             "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
             "${tools.checkmake}/bin/checkmake";
       };
+
+      fprettify = {
+        name = "fprettify";
+        description = "Auto-formatter for modern Fortran code.";
+        types = [ "fortran " ];
+        entry = "${tools.fprettify}/bin/fprettify";
+      };
     };
 }
