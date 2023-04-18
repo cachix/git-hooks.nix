@@ -184,7 +184,11 @@ use nix
 
 ## TOML
 
-- [taplo fmt](https://github.com/tamasfe/taplo) 
+- [taplo fmt](https://github.com/tamasfe/taplo)
+
+## Fortran
+
+- [fprettify](https://github.com/pseewald/fprettify)
 
 ## Spell checkers
 
