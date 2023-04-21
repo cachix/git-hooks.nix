@@ -181,6 +181,7 @@ use nix
 ## Terraform
 
 - `terraform-format`: built-in formatter
+- [tflint](https://github.com/terraform-linters/tflint)
 
 ## TOML
 
