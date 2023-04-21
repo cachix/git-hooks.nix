@@ -703,7 +703,7 @@ in
             name = "nix-flake-lock";
             text = ''
               echo "Checking that flake.lock is up to date"
-              if nix flake lock --no-update-lock-file; then
+              if ${lib.getExe pkgs.nix} flake lock --no-update-lock-file; then
                 echo "flake.lock is up to date"
               else
                 echo "flake.lock is not up to date. Run 'nix flake lock' to update it." 
