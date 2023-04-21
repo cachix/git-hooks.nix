@@ -774,7 +774,7 @@ in
       tflint =
         {
           name = "tflint";
-          description = "Terraform linter.";
+          description = "A Pluggable Terraform Linter.";
           entry = "${tools.tflint}/bin/tflint";
           files = "\\.tf$";
         };
