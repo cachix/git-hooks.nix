@@ -50,6 +50,7 @@
 , stylua
 , tagref
 , texlive
+, tflint
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , typos
 , yamllint
@@ -67,7 +68,7 @@ let
   };
 in
 {
-  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools gptcommit clippy deadnix dhall editorconfig-checker fprettify hadolint hindent hlint hpack html-tidy nil nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua tagref typos go mdsh revive go-tools yamllint ruff topiary;
+  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools gptcommit clippy deadnix dhall editorconfig-checker fprettify hadolint hindent hlint hpack html-tidy nil nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua tagref typos go mdsh revive go-tools yamllint ruff topiary tflint;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
