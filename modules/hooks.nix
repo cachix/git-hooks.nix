@@ -411,6 +411,16 @@ in
               '';
           };
         };
+
+      dune-fmt =
+        {
+          auto-promote =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to auto-promote the changes.";
+              default = "true";
+            };
+        };
     };
 
   config.hooks =
@@ -1196,6 +1206,15 @@ in
         description = "Auto-formatter for modern Fortran code.";
         types = [ "fortran " ];
         entry = "${tools.fprettify}/bin/fprettify";
+      };
+
+      dune-fmt = {
+        name = "dune-fmt";
+        description = "Runs Dune's formatters on the code tree.";
+        entry =
+          let auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
+          in "${pkgs.dune_3}/bin/dune build @fmt ${auto-promote}";
+        pass_filenames = false;
       };
     };
 }
