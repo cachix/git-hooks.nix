@@ -781,6 +781,13 @@ in
           entry = "${tools.terraform-fmt}/bin/terraform-fmt";
           files = "\\.tf$";
         };
+      tflint =
+        {
+          name = "tflint";
+          description = "A Pluggable Terraform Linter.";
+          entry = "${tools.tflint}/bin/tflint";
+          files = "\\.tf$";
+        };
       yamllint =
         {
           name = "yamllint";
