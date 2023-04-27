@@ -418,7 +418,7 @@ in
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Whether to auto-promote the changes.";
-              default = "true";
+              default = true;
             };
         };
     };
