@@ -421,6 +421,16 @@ in
               default = true;
             };
         };
+
+      credo = {
+        strict =
+          mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Whether to auto-promote the changes.";
+            default = true;
+          };
+      };
+
     };
 
   config.hooks =
@@ -1222,6 +1232,36 @@ in
           let auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
           in "${pkgs.dune_3}/bin/dune build @fmt ${auto-promote}";
         pass_filenames = false;
+      };
+
+      mix-format = {
+        name = "mix-format";
+        descriptiion = "Runs the built-in Elixir syntax formatter";
+        entry = "${pkgs.elixir}/bin/mix format";
+        types = [ "elixir" ];
+      };
+
+      mix-test = {
+        name = "mix-test";
+        descriptiion = "Runs the built-in Elixir test framework";
+        entry = "${pkgs.elixir}/bin/mix test";
+        types = [ "elixir" ];
+      };
+
+      credo = {
+        name = "credo";
+        descriptiion = "Runs a static code analysis using Credo";
+        entry =
+          let strict = if settings.credo.strict then "--strict" else "";
+          in "${pkgs.elixir}/bin/mix credo";
+        types = [ "elixir" ];
+      };
+
+      dialyzer = {
+        name = "dialyzer";
+        descriptiion = "Runs a static code analysis using Dialyzer";
+        entry = "${pkgs.elixir}/bin/mix dialyzer";
+        types = [ "elixir" ];
       };
     };
 }
