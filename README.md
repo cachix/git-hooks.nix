@@ -131,6 +131,7 @@ use nix
 - [ruff](https://github.com/charliermarsh/ruff)
 - [isort](https://github.com/PyCQA/isort)
 - [mypy](https://github.com/python/mypy)
+- [pyright](https://github.com/microsoft/pyright)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 
