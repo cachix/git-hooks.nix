@@ -420,6 +420,13 @@ in
               description = lib.mdDoc "Whether to auto-promote the changes.";
               default = true;
             };
+
+          extraRuntimeInputs =
+            mkOption {
+              type = types.listOf types.package;
+              description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
+              default = [ ];
+            };
         };
     };
 
@@ -1219,8 +1226,15 @@ in
         name = "dune-fmt";
         description = "Runs Dune's formatters on the code tree.";
         entry =
-          let auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
-          in "${pkgs.dune_3}/bin/dune build @fmt ${auto-promote}";
+          let
+            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
+            run-dune-fmt = pkgs.writeShellApplication {
+              name = "run-dune-fmt";
+              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
+              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
+            };
+          in
+          "${run-dune-fmt}/bin/run-dune-fmt";
         pass_filenames = false;
       };
     };
