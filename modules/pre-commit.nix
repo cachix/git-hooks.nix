@@ -259,7 +259,7 @@ in
                 name = "my-tool";
                 description = "Run MyTool on all files in the project";
                 files = "\\.mtl$";
-                entry = "${pkgs.my-tool}/bin/mytoolctl";
+                entry = "''${pkgs.my-tool}/bin/mytoolctl";
               };
               ```
 
