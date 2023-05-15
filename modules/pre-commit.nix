@@ -243,13 +243,27 @@ in
             ''
               The hook definitions.
 
-              Pre-defined hooks can be enabled by, for example:
+              You can both specify your own hooks here and you can enable predefined hooks.
+
+              Example of enabling a predefined hook:
 
               ```nix
               hooks.nixpkgs-fmt.enable = true;
               ```
 
-              The pre-defined hooks are:
+              Example of a custom hook:
+
+              ```nix
+              hooks.my-tool = {
+                enable = true;
+                name = "my-tool";
+                description = "Run MyTool on all files in the project";
+                files = "\\.mtl$";
+                entry = "${pkgs.my-tool}/bin/mytoolctl";
+              };
+              ```
+
+              The predefined hooks are:
 
               ${
                 lib.concatStringsSep
