@@ -45,6 +45,15 @@ in
               default = false;
             };
         };
+      hlint =
+        {
+          hintFile =
+            mkOption {
+              type = types.nullOr types.path;
+              description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
+              default = null;
+            };
+        };
       ormolu =
         {
           defaultExtensions =
@@ -524,7 +533,7 @@ in
           name = "hlint";
           description =
             "HLint gives suggestions on how to improve your source code.";
-          entry = "${tools.hlint}/bin/hlint";
+          entry = "${tools.hlint}/bin/hlint${if settings.hlint.hintFile == null then "" else " --hint=${settings.hlint.hintFile}"}";
           files = "\\.l?hs(-boot)?$";
         };
       hpack =
