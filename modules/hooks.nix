@@ -64,6 +64,20 @@ in
               default = false;
             };
 
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Files to exclude from analysis.";
+              default = [ ];
+            };
+
+          hidden =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Recurse into hidden subdirectories and process hidden .*.nix files.";
+              default = false;
+            };
+
           noLambdaArg =
             mkOption {
               type = types.bool;
@@ -553,10 +567,18 @@ in
           description = "Scan Nix files for dead code (unused variable bindings).";
           entry =
             let
-              toArg = string: "--" + (lib.concatMapStringsSep "-" lib.toLower (lib.filter (x: x != "") (lib.flatten (builtins.split "([[:upper:]]+[[:lower:]]+)" string))));
-              args = lib.concatMapStringsSep " " toArg (lib.filter (attr: settings.deadnix."${attr}") (lib.attrNames settings.deadnix));
+              cmdArgs =
+                mkCmdArgs (with settings.deadnix; [
+                  [ noLambdaArg "--no-lamda-arg" ]
+                  [ noLambdaPatternNames "--no-lambda-pattern-names" ]
+                  [ noUnderscore "--no-underscore" ]
+                  [ quiet "--quiet" ]
+                  [ hidden "--hidden" ]
+                  [ edit "--edit" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                ]);
             in
-            "${tools.deadnix}/bin/deadnix ${args} --fail --";
+            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
           files = "\\.nix$";
         };
       mdsh =
