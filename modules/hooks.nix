@@ -212,7 +212,7 @@ in
           diff =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Wheter to print a diff of what would change.";
+              description = lib.mdDoc "Whether to print a diff of what would change.";
               default = false;
             };
 
