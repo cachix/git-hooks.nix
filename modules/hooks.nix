@@ -317,6 +317,19 @@ in
             };
         };
 
+      pyright =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
+              default = "${pkgs.pyright}/bin/pyright";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyright}/bin/pyright"
+              '';
+            };
+        };
+
       flake8 =
         {
           binPath =
@@ -1153,6 +1166,14 @@ in
           entry = with settings.pylint;
             "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
           types = [ "python" ];
+        };
+
+      pyright =
+        {
+          name = "pyright";
+          description = "Static type checker for Python";
+          entry = settings.pyright.binPath;
+          files = "\\.py$";
         };
 
       flake8 =
