@@ -197,6 +197,7 @@ use nix
 
 - [hunspell](https://github.com/hunspell/hunspell)
 - [typos](https://github.com/crate-ci/typos)
+- [cspell](https://cspell.org/)
 
 ## Other Formatters
 

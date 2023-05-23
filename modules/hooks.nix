@@ -964,6 +964,14 @@ in
           entry = with settings.typos;
             "${tools.typos}/bin/typos --format ${format} ${lib.optionalString write "-w"} ${lib.optionalString diff "--diff"}";
         };
+
+      cspell =
+        {
+          name = "cspell";
+          description = "A Spell Checker for Code";
+          entry = "${tools.cspell}/bin/cspell";
+        };
+
       html-tidy =
         {
           name = "html-tidy";
