@@ -11,6 +11,7 @@
 , clang-tools
 , clippy
 , commitizen
+, convco
 , deadnix
 , dhall
 , dune_3
@@ -68,7 +69,48 @@ let
   };
 in
 {
-  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools gptcommit clippy deadnix dhall editorconfig-checker fprettify hadolint hindent hlint hpack html-tidy nil nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua tagref typos go mdsh revive go-tools yamllint ruff topiary tflint;
+  inherit
+    actionlint
+    alejandra
+    ansible-lint
+    cabal2nix
+    cabal-fmt
+    cargo
+    clang-tools
+    clippy
+    convco
+    deadnix
+    dhall
+    editorconfig-checker
+    fprettify
+    go
+    go-tools
+    gptcommit
+    hadolint
+    hindent
+    hlint
+    hpack
+    html-tidy
+    mdsh
+    nil
+    nixfmt
+    nixpkgs-fmt
+    opam
+    ormolu
+    revive
+    ruff
+    rustfmt
+    shellcheck
+    shfmt
+    statix
+    stylish-haskell
+    stylua
+    tagref
+    tflint
+    topiary
+    typos
+    yamllint
+    ;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
