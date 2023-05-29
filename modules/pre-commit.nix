@@ -141,12 +141,19 @@ let
                 default = cfg.default_stages;
                 defaultText = (lib.literalExpression or lib.literalExample) "default_stages";
               };
+            verbose = mkOption {
+              type = types.bool;
+              default = false;
+              description = lib.mdDoc ''
+                forces the output of the hook to be printed even when the hook passes.
+              '';
+            };
           };
         config =
           {
             raw =
               {
-                inherit (config) name entry language files stages types types_or pass_filenames;
+                inherit (config) name entry language files stages types types_or pass_filenames verbose;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
