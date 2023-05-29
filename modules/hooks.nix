@@ -731,9 +731,20 @@ in
           entry =
             let
               script = pkgs.writeShellScript "precommit-nil" ''
+                errors=false
+                echo Checking: $@
                 for file in $(echo "$@"); do
                   ${tools.nil}/bin/nil diagnostics "$file"
+                  exit_code=$?
+
+                  if [[ $exit_code -ne 0 ]]; then
+                    echo \"$file\" failed with exit code: $exit_code
+                    errors=true
+                  fi
                 done
+                if [[ $errors == true ]]; then
+                  exit 1
+                fi
               '';
             in
             builtins.toString script;
