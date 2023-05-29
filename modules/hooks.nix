@@ -417,6 +417,11 @@ in
             description = lib.mdDoc "Run clippy offline";
             default = true;
           };
+          allFeatures = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy with --all-features";
+            default = false;
+          };
         };
 
       treefmt =
@@ -899,7 +904,7 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
