@@ -1297,5 +1297,21 @@ in
           "${run-dune-fmt}/bin/run-dune-fmt";
         pass_filenames = false;
       };
+
+      convco = {
+        name = "convco";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-convco" ''
+              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
+            '';
+            # need version >= 0.4.0 for the --from-stdin flag
+            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
+          in
+          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+            builtins.toString
+            script;
+        stages = [ "commit-msg" ];
+      };
     };
 }

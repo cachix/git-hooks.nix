@@ -226,6 +226,7 @@ clang-format = {
 
 - [commitizen](https://github.com/commitizen-tools/commitizen)
 - [gptcommit](https://github.com/zurawiki/gptcommit)
+- [convco](https://github.com/convco/convco)
 
 ## Custom hooks
 
