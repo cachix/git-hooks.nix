@@ -691,7 +691,7 @@ in
             let
               cmdArgs =
                 mkCmdArgs (with settings.deadnix; [
-                  [ noLambdaArg "--no-lamda-arg" ]
+                  [ noLambdaArg "--no-lambda-arg" ]
                   [ noLambdaPatternNames "--no-lambda-pattern-names" ]
                   [ noUnderscore "--no-underscore" ]
                   [ quiet "--quiet" ]
