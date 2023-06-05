@@ -170,6 +170,7 @@ use nix
 
 - [luacheck](https://github.com/mpeterv/luacheck)
 - [stylua](https://github.com/JohnnyMorganz/StyLua)
+- [lua-ls](https://github.com/LuaLS/lua-language-server)
 
 ## HTML
 
