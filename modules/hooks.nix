@@ -642,7 +642,7 @@ in
                 --logpath="$logpath"
               if [[ -f $logpath/check.json ]]; then
                 echo "+++++++++++++++ lua-language-server diagnostics +++++++++++++++"
-                cat $logdir/check.json
+                cat $logpath/check.json
                 exit 1
               fi
             '';
