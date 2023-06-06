@@ -635,14 +635,14 @@ in
               set -e
               export logpath="$(mktemp -d)"
               # For some reason, lua-language-server hangs if the nix store path to the file is passed in directly
-              cp "${luarc}" .
+              cp "${luarc}" .luarc.json
               lua-language-server --check $(realpath .) \
                 --checklevel="${settings.lua-ls.checklevel}" \
                 --configpath=$(realpath .luarc.json) \
                 --logpath="$logpath"
               if [[ -f $logpath/check.json ]]; then
                 echo "+++++++++++++++ lua-language-server diagnostics +++++++++++++++"
-                cat $logdir/check.json
+                cat $logpath/check.json
                 exit 1
               fi
             '';
