@@ -326,6 +326,19 @@ in
             };
         };
 
+      pyupgrade =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+              default = "${pkgs.pyupgrade}/bin/pyupgrade";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyupgrade}/bin/pyupgrade"
+              '';
+            };
+        };
+
       pyright =
         {
           binPath =
@@ -1247,6 +1260,15 @@ in
           description = "Lint Python files.";
           entry = with settings.pylint;
             "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
+          types = [ "python" ];
+        };
+
+      pyupgrade =
+        {
+          name = "pyupgrade";
+          description = "Automatically upgrade syntax for newer versions.";
+          entry = with settings.pyupgrade;
+            "${binPath}";
           types = [ "python" ];
         };
 
