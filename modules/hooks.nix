@@ -1383,21 +1383,21 @@ in
 
       mix-format = {
         name = "mix-format";
-        descriptiion = "Runs the built-in Elixir syntax formatter";
+        description = "Runs the built-in Elixir syntax formatter";
         entry = "${pkgs.elixir}/bin/mix format";
         types = [ "elixir" ];
       };
 
       mix-test = {
         name = "mix-test";
-        descriptiion = "Runs the built-in Elixir test framework";
+        description = "Runs the built-in Elixir test framework";
         entry = "${pkgs.elixir}/bin/mix test";
         types = [ "elixir" ];
       };
 
       credo = {
         name = "credo";
-        descriptiion = "Runs a static code analysis using Credo";
+        description = "Runs a static code analysis using Credo";
         entry =
           let strict = if settings.credo.strict then "--strict" else "";
           in "${pkgs.elixir}/bin/mix credo";
@@ -1406,7 +1406,7 @@ in
 
       dialyzer = {
         name = "dialyzer";
-        descriptiion = "Runs a static code analysis using Dialyzer";
+        description = "Runs a static code analysis using Dialyzer";
         entry = "${pkgs.elixir}/bin/mix dialyzer";
         types = [ "elixir" ];
       };
