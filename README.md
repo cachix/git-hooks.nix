@@ -132,6 +132,7 @@ use nix
 - [isort](https://github.com/PyCQA/isort)
 - [mypy](https://github.com/python/mypy)
 - [pyright](https://github.com/microsoft/pyright)
+- [pyupgrade](https://github.com/asottile/pyupgrade)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 
