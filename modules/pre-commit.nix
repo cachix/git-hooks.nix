@@ -141,12 +141,19 @@ let
                 default = cfg.default_stages;
                 defaultText = (lib.literalExpression or lib.literalExample) "default_stages";
               };
+            verbose = mkOption {
+              type = types.bool;
+              default = false;
+              description = lib.mdDoc ''
+                forces the output of the hook to be printed even when the hook passes.
+              '';
+            };
           };
         config =
           {
             raw =
               {
-                inherit (config) name entry language files stages types types_or pass_filenames;
+                inherit (config) name entry language files stages types types_or pass_filenames verbose;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
@@ -243,17 +250,31 @@ in
             ''
               The hook definitions.
 
-              Pre-defined hooks can be enabled by, for example:
+              You can both specify your own hooks here and you can enable predefined hooks.
+
+              Example of enabling a predefined hook:
 
               ```nix
               hooks.nixpkgs-fmt.enable = true;
               ```
 
-              The pre-defined hooks are:
+              Example of a custom hook:
+
+              ```nix
+              hooks.my-tool = {
+                enable = true;
+                name = "my-tool";
+                description = "Run MyTool on all files in the project";
+                files = "\\.mtl$";
+                entry = "''${pkgs.my-tool}/bin/mytoolctl";
+              };
+              ```
+
+              The predefined hooks are:
 
               ${
                 lib.concatStringsSep
-                  "\n" 
+                  "\n"
                   (lib.mapAttrsToList
                     (hookName: hookConf:
                       ''
@@ -408,6 +429,7 @@ in
                 for hook in $hooks; do
                   pre-commit uninstall -t $hook
                 done
+                ${git}/bin/git config --local core.hooksPath ""
                 # Add hooks for configured stages (only) ...
                 if [ ! -z "${concatStringsSep " " install_stages}" ]; then
                   for stage in ${concatStringsSep " " install_stages}; do
@@ -433,6 +455,7 @@ in
                 else
                   pre-commit install
                 fi
+                ${git}/bin/git config --local core.hooksPath "$(${git}/bin/git rev-parse --git-common-dir)/hooks"
               fi
             fi
           fi

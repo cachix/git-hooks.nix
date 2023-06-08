@@ -138,6 +138,7 @@ use nix
 - [ruff](https://github.com/charliermarsh/ruff)
 - [isort](https://github.com/PyCQA/isort)
 - [mypy](https://github.com/python/mypy)
+- [pyright](https://github.com/microsoft/pyright)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 
@@ -176,6 +177,7 @@ use nix
 
 - [luacheck](https://github.com/mpeterv/luacheck)
 - [stylua](https://github.com/JohnnyMorganz/StyLua)
+- [lua-ls](https://github.com/LuaLS/lua-language-server)
 
 ## HTML
 
@@ -203,6 +205,7 @@ use nix
 
 - [hunspell](https://github.com/hunspell/hunspell)
 - [typos](https://github.com/crate-ci/typos)
+- [cspell](https://cspell.org/)
 
 ## Other Formatters
 
@@ -231,6 +234,7 @@ clang-format = {
 
 - [commitizen](https://github.com/commitizen-tools/commitizen)
 - [gptcommit](https://github.com/zurawiki/gptcommit)
+- [convco](https://github.com/convco/convco)
 
 ## Custom hooks
 

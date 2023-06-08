@@ -11,6 +11,7 @@
 , clang-tools
 , clippy
 , commitizen
+, convco
 , deadnix
 , dhall
 , dune_3
@@ -29,6 +30,7 @@
 , html-tidy
 , hunspell
 , luaPackages
+, sumneko-lua-language-server
 , mdsh
 , nil
 , nixfmt
@@ -68,13 +70,55 @@ let
   };
 in
 {
-  inherit actionlint ansible-lint alejandra cabal-fmt cabal2nix cargo clang-tools gptcommit clippy deadnix dhall editorconfig-checker fprettify hadolint hindent hlint hpack html-tidy nil nixfmt nixpkgs-fmt opam ormolu rustfmt shellcheck shfmt statix stylish-haskell stylua tagref typos go mdsh revive go-tools yamllint ruff topiary tflint;
+  inherit
+    actionlint
+    alejandra
+    ansible-lint
+    cabal2nix
+    cabal-fmt
+    cargo
+    clang-tools
+    clippy
+    convco
+    deadnix
+    dhall
+    editorconfig-checker
+    fprettify
+    go
+    go-tools
+    gptcommit
+    hadolint
+    hindent
+    hlint
+    hpack
+    html-tidy
+    mdsh
+    nil
+    nixfmt
+    nixpkgs-fmt
+    opam
+    ormolu
+    revive
+    ruff
+    rustfmt
+    shellcheck
+    shfmt
+    statix
+    stylish-haskell
+    stylua
+    tagref
+    tflint
+    topiary
+    typos
+    yamllint
+    ;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
-  inherit (haskellPackages) fourmolu;
+  fourmolu = haskellPackages.fourmolu_0_12_0_0;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier;
+  inherit (nodePackages) eslint markdownlint-cli prettier cspell;
   inherit (ocamlPackages) ocp-indent;
+  lua-language-server = sumneko-lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
@@ -82,6 +126,7 @@ in
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-fmt = callPackage ./terraform-fmt { };
   dune-build-opam-files = callPackage ./dune-build-opam-files { dune = dune_3; inherit (pkgsBuildBuild) ocaml; };
+  dune-fmt = callPackage ./dune-fmt { dune = dune_3; inherit (pkgsBuildBuild) ocaml; };
   latexindent = tex;
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
