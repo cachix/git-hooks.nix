@@ -1380,6 +1380,7 @@ in
             builtins.toString
             script;
         stages = [ "commit-msg" ];
+      };
 
       mix-format = {
         name = "mix-format";
