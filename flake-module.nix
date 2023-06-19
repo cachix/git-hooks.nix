@@ -36,7 +36,7 @@ in
                 Nixpkgs to use in the pre-commit [`settings`](#opt-perSystem.pre-commit.settings).
               '';
               default = pkgs;
-              defaultText = lib.literalDocBook "<literal>pkgs</literal> (module argument)";
+              defaultText = lib.literalMD "`pkgs` (module argument)";
             };
             settings = mkOption {
               type = types.submoduleWith {
@@ -52,7 +52,7 @@ in
               type = types.str;
               description = lib.mdDoc "A bash fragment that sets up [pre-commit](https://pre-commit.com/).";
               default = cfg.settings.installationScript;
-              defaultText = lib.literalDocBook "bash statements";
+              defaultText = lib.literalMD "bash statements";
               readOnly = true;
             };
             devShell = mkOption {
