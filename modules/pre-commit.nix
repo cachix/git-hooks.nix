@@ -44,7 +44,7 @@ let
               mkOption {
                 type = types.str;
                 default = name;
-                defaultText = lib.literalDocBook or literalExample "internal name, same as id";
+                defaultText = lib.literalMD "internal name, same as `id`";
                 description = lib.mdDoc
                   ''
                     The name of the hook - shown during hook execution.
