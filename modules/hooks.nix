@@ -1398,5 +1398,12 @@ in
             script;
         stages = [ "commit-msg" ];
       };
+
+      crystal = {
+        name = "crystal";
+        description = "A tool that automatically formats Crystal source code";
+        entry = "${tools.crystal}/bin/crystal tool format";
+        files = "\\.cr$";
+      };
     };
 }
