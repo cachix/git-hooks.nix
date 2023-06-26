@@ -1384,33 +1384,21 @@ in
 
       mix-format = {
         name = "mix-format";
-<<<<<<< HEAD
         description = "Runs the built-in Elixir syntax formatter";
-=======
-        descriptiion = "Runs the built-in Elixir syntax formatter";
->>>>>>> a89a749 (Adding support for Elixir pre-commits)
         entry = "${pkgs.elixir}/bin/mix format";
         types = [ "elixir" ];
       };
 
       mix-test = {
         name = "mix-test";
-<<<<<<< HEAD
         description = "Runs the built-in Elixir test framework";
-=======
-        descriptiion = "Runs the built-in Elixir test framework";
->>>>>>> a89a749 (Adding support for Elixir pre-commits)
         entry = "${pkgs.elixir}/bin/mix test";
         types = [ "elixir" ];
       };
 
       credo = {
         name = "credo";
-<<<<<<< HEAD
         description = "Runs a static code analysis using Credo";
-=======
-        descriptiion = "Runs a static code analysis using Credo";
->>>>>>> a89a749 (Adding support for Elixir pre-commits)
         entry =
           let strict = if settings.credo.strict then "--strict" else "";
           in "${pkgs.elixir}/bin/mix credo";
@@ -1419,11 +1407,7 @@ in
 
       dialyzer = {
         name = "dialyzer";
-<<<<<<< HEAD
         description = "Runs a static code analysis using Dialyzer";
-=======
-        descriptiion = "Runs a static code analysis using Dialyzer";
->>>>>>> a89a749 (Adding support for Elixir pre-commits)
         entry = "${pkgs.elixir}/bin/mix dialyzer";
         types = [ "elixir" ];
       };
