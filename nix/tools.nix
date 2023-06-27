@@ -12,6 +12,7 @@
 , clippy
 , commitizen
 , convco
+, crystal
 , deadnix
 , dhall
 , dune_3
@@ -80,6 +81,7 @@ in
     clang-tools
     clippy
     convco
+    crystal
     deadnix
     dhall
     editorconfig-checker

@@ -326,6 +326,19 @@ in
             };
         };
 
+      pyupgrade =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+              default = "${pkgs.pyupgrade}/bin/pyupgrade";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyupgrade}/bin/pyupgrade"
+              '';
+            };
+        };
+
       pyright =
         {
           binPath =
@@ -416,6 +429,11 @@ in
             type = types.bool;
             description = lib.mdDoc "Run clippy offline";
             default = true;
+          };
+          allFeatures = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy with --all-features";
+            default = false;
           };
         };
 
@@ -567,7 +585,7 @@ in
         name = "dune/opam sync";
         description = "Check that Dune-generated OPAM files are in sync.";
         entry = "${tools.dune-build-opam-files}/bin/dune-build-opam-files";
-        files = "(\\.opam$)|((^|/)dune-project$)";
+        files = "(\\.opam$)|(\\.opam.template$)|((^|/)dune-project$)";
         ## We don't pass filenames because they can only be misleading. Indeed,
         ## we need to re-run `dune build` for every `*.opam` file, but also when
         ## the `dune-project` file has changed.
@@ -956,7 +974,7 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -1260,6 +1278,15 @@ in
           types = [ "python" ];
         };
 
+      pyupgrade =
+        {
+          name = "pyupgrade";
+          description = "Automatically upgrade syntax for newer versions.";
+          entry = with settings.pyupgrade;
+            "${binPath}";
+          types = [ "python" ];
+        };
+
       pyright =
         {
           name = "pyright";
@@ -1410,6 +1437,13 @@ in
         description = "Runs a static code analysis using Dialyzer";
         entry = "${pkgs.elixir}/bin/mix dialyzer";
         types = [ "elixir" ];
+      };
+
+      crystal = {
+        name = "crystal";
+        description = "A tool that automatically formats Crystal source code";
+        entry = "${tools.crystal}/bin/crystal tool format";
+        files = "\\.cr$";
       };
     };
 }

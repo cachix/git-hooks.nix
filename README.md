@@ -139,6 +139,7 @@ use nix
 - [isort](https://github.com/PyCQA/isort)
 - [mypy](https://github.com/python/mypy)
 - [pyright](https://github.com/microsoft/pyright)
+- [pyupgrade](https://github.com/asottile/pyupgrade)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 
@@ -219,6 +220,7 @@ use nix
 - [treefmt](https://github.com/numtide/treefmt)
 - [topiary](https://github.com/tweag/topiary)
 - [checkmake](https://github.com/mrtazz/checkmake)
+- [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:
