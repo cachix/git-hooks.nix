@@ -498,6 +498,16 @@ in
             default = { };
           };
         };
+
+      credo = {
+        strict =
+          mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Whether to auto-promote the changes.";
+            default = true;
+          };
+      };
+
     };
 
   config.hooks =
@@ -1397,6 +1407,36 @@ in
             builtins.toString
             script;
         stages = [ "commit-msg" ];
+      };
+
+      mix-format = {
+        name = "mix-format";
+        description = "Runs the built-in Elixir syntax formatter";
+        entry = "${pkgs.elixir}/bin/mix format";
+        types = [ "elixir" ];
+      };
+
+      mix-test = {
+        name = "mix-test";
+        description = "Runs the built-in Elixir test framework";
+        entry = "${pkgs.elixir}/bin/mix test";
+        types = [ "elixir" ];
+      };
+
+      credo = {
+        name = "credo";
+        description = "Runs a static code analysis using Credo";
+        entry =
+          let strict = if settings.credo.strict then "--strict" else "";
+          in "${pkgs.elixir}/bin/mix credo";
+        types = [ "elixir" ];
+      };
+
+      dialyzer = {
+        name = "dialyzer";
+        description = "Runs a static code analysis using Dialyzer";
+        entry = "${pkgs.elixir}/bin/mix dialyzer";
+        types = [ "elixir" ];
       };
 
       crystal = {

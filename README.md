@@ -113,6 +113,13 @@ use nix
 - [elm-review](https://github.com/jfmengels/elm-review)
 - [elm-test](https://github.com/rtfeldman/node-test-runner)
 
+## Elixir
+
+- [mix-format](https://hexdocs.pm/mix/main/Mix.Tasks.Format.html)
+- [mix-test](https://hexdocs.pm/mix/1.13/Mix.Tasks.Test.html)
+- [credo](https://github.com/rrrene/credo)
+- [dialyzer](https://github.com/jeremyjh/dialyxir)
+
 ## OCaml
 
 - [dune-fmt](https://dune.build/)
