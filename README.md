@@ -113,6 +113,13 @@ use nix
 - [elm-review](https://github.com/jfmengels/elm-review)
 - [elm-test](https://github.com/rtfeldman/node-test-runner)
 
+## Elixir
+
+- [mix-format](https://hexdocs.pm/mix/main/Mix.Tasks.Format.html)
+- [mix-test](https://hexdocs.pm/mix/1.13/Mix.Tasks.Test.html)
+- [credo](https://github.com/rrrene/credo)
+- [dialyzer](https://github.com/jeremyjh/dialyxir)
+
 ## OCaml
 
 - [dune-fmt](https://dune.build/)
@@ -131,6 +138,8 @@ use nix
 - [ruff](https://github.com/charliermarsh/ruff)
 - [isort](https://github.com/PyCQA/isort)
 - [mypy](https://github.com/python/mypy)
+- [pyright](https://github.com/microsoft/pyright)
+- [pyupgrade](https://github.com/asottile/pyupgrade)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
 
@@ -169,6 +178,7 @@ use nix
 
 - [luacheck](https://github.com/mpeterv/luacheck)
 - [stylua](https://github.com/JohnnyMorganz/StyLua)
+- [lua-ls](https://github.com/LuaLS/lua-language-server)
 
 ## HTML
 
@@ -196,6 +206,7 @@ use nix
 
 - [hunspell](https://github.com/hunspell/hunspell)
 - [typos](https://github.com/crate-ci/typos)
+- [cspell](https://cspell.org/)
 
 ## Other Formatters
 
@@ -210,6 +221,7 @@ use nix
 - [topiary](https://github.com/tweag/topiary)
 - [checkmake](https://github.com/mrtazz/checkmake)
 - [headache](https://github.com/frama-c/headache)
+- [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:
@@ -225,6 +237,7 @@ clang-format = {
 
 - [commitizen](https://github.com/commitizen-tools/commitizen)
 - [gptcommit](https://github.com/zurawiki/gptcommit)
+- [convco](https://github.com/convco/convco)
 
 ## Custom hooks
 

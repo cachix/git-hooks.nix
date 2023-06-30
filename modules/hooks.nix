@@ -45,6 +45,15 @@ in
               default = false;
             };
         };
+      hlint =
+        {
+          hintFile =
+            mkOption {
+              type = types.nullOr types.path;
+              description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
+              default = null;
+            };
+        };
       ormolu =
         {
           defaultExtensions =
@@ -76,6 +85,20 @@ in
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Remove unused code and write to source file.";
+              default = false;
+            };
+
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Files to exclude from analysis.";
+              default = [ ];
+            };
+
+          hidden =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Recurse into hidden subdirectories and process hidden .*.nix files.";
               default = false;
             };
 
@@ -212,7 +235,7 @@ in
           diff =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Wheter to print a diff of what would change.";
+              description = lib.mdDoc "Whether to print a diff of what would change.";
               default = false;
             };
 
@@ -303,6 +326,32 @@ in
             };
         };
 
+      pyupgrade =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+              default = "${pkgs.pyupgrade}/bin/pyupgrade";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyupgrade}/bin/pyupgrade"
+              '';
+            };
+        };
+
+      pyright =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
+              default = "${pkgs.pyright}/bin/pyright";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyright}/bin/pyright"
+              '';
+            };
+        };
+
       flake8 =
         {
           binPath =
@@ -381,6 +430,11 @@ in
             description = lib.mdDoc "Run clippy offline";
             default = true;
           };
+          allFeatures = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy with --all-features";
+            default = false;
+          };
         };
 
       treefmt =
@@ -418,7 +472,14 @@ in
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Whether to auto-promote the changes.";
-              default = "true";
+              default = true;
+            };
+
+          extraRuntimeInputs =
+            mkOption {
+              type = types.listOf types.package;
+              description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
+              default = [ ];
             };
         };
 
@@ -430,6 +491,31 @@ in
             default = ".header";
           };
         };
+
+      lua-ls =
+        {
+          checklevel = mkOption {
+            type = types.enum [ "Error" "Warning" "Information" "Hint" ];
+            description = lib.mdDoc
+              "The diagnostic check level";
+            default = "Warning";
+          };
+          config = mkOption {
+            type = types.attrs;
+            description = lib.mdDoc
+              "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
+            default = { };
+          };
+        };
+
+      credo = {
+        strict =
+          mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Whether to auto-promote the changes.";
+            default = true;
+          };
+      };
     };
 
   config.hooks =
@@ -507,7 +593,7 @@ in
         name = "dune/opam sync";
         description = "Check that Dune-generated OPAM files are in sync.";
         entry = "${tools.dune-build-opam-files}/bin/dune-build-opam-files";
-        files = "(\\.opam$)|((^|/)dune-project$)";
+        files = "(\\.opam$)|(\\.opam.template$)|((^|/)dune-project$)";
         ## We don't pass filenames because they can only be misleading. Indeed,
         ## we need to re-run `dune build` for every `*.opam` file, but also when
         ## the `dune-project` file has changed.
@@ -533,7 +619,7 @@ in
           name = "hlint";
           description =
             "HLint gives suggestions on how to improve your source code.";
-          entry = "${tools.hlint}/bin/hlint";
+          entry = "${tools.hlint}/bin/hlint${if settings.hlint.hintFile == null then "" else " --hint=${settings.hlint.hintFile}"}";
           files = "\\.l?hs(-boot)?$";
         };
       hpack =
@@ -573,6 +659,37 @@ in
           description = "A tool for linting and static analysis of Lua code.";
           types = [ "file" "lua" ];
           entry = "${tools.luacheck}/bin/luacheck";
+        };
+      lua-ls =
+        let
+          luarc = pkgs.writeText ".luarc.json" (builtins.toJSON settings.lua-ls.config);
+          script = pkgs.writeShellApplication {
+            name = "lua-ls-lint";
+            runtimeInputs = [ tools.lua-language-server ];
+            checkPhase = ""; # The default checkPhase depends on GHC
+            text = ''
+              set -e
+              export logpath="$(mktemp -d)"
+              # For some reason, lua-language-server hangs if the nix store path to the file is passed in directly
+              cp "${luarc}" .luarc.json
+              lua-language-server --check $(realpath .) \
+                --checklevel="${settings.lua-ls.checklevel}" \
+                --configpath=$(realpath .luarc.json) \
+                --logpath="$logpath"
+              if [[ -f $logpath/check.json ]]; then
+                echo "+++++++++++++++ lua-language-server diagnostics +++++++++++++++"
+                cat $logpath/check.json
+                exit 1
+              fi
+            '';
+          };
+        in
+        {
+          name = "lua-ls";
+          description = "Uses the lua-language-server CLI to statically type-check and lint Lua code.";
+          entry = "${script}/bin/lua-ls-lint";
+          files = "\\.lua$";
+          pass_filenames = false;
         };
       ocp-indent =
         {
@@ -655,10 +772,18 @@ in
           description = "Scan Nix files for dead code (unused variable bindings).";
           entry =
             let
-              toArg = string: "--" + (lib.concatMapStringsSep "-" lib.toLower (lib.filter (x: x != "") (lib.flatten (builtins.split "([[:upper:]]+[[:lower:]]+)" string))));
-              args = lib.concatMapStringsSep " " toArg (lib.filter (attr: settings.deadnix."${attr}") (lib.attrNames settings.deadnix));
+              cmdArgs =
+                mkCmdArgs (with settings.deadnix; [
+                  [ noLambdaArg "--no-lambda-arg" ]
+                  [ noLambdaPatternNames "--no-lambda-pattern-names" ]
+                  [ noUnderscore "--no-underscore" ]
+                  [ quiet "--quiet" ]
+                  [ hidden "--hidden" ]
+                  [ edit "--edit" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                ]);
             in
-            "${tools.deadnix}/bin/deadnix ${args} --fail --";
+            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
           files = "\\.nix$";
         };
       mdsh =
@@ -689,9 +814,20 @@ in
           entry =
             let
               script = pkgs.writeShellScript "precommit-nil" ''
+                errors=false
+                echo Checking: $@
                 for file in $(echo "$@"); do
                   ${tools.nil}/bin/nil diagnostics "$file"
+                  exit_code=$?
+
+                  if [[ $exit_code -ne 0 ]]; then
+                    echo \"$file\" failed with exit code: $exit_code
+                    errors=true
+                  fi
                 done
+                if [[ $errors == true ]]; then
+                  exit 1
+                fi
               '';
             in
             builtins.toString script;
@@ -846,7 +982,7 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -922,6 +1058,14 @@ in
           entry = with settings.typos;
             "${tools.typos}/bin/typos --format ${format} ${lib.optionalString write "-w"} ${lib.optionalString diff "--diff"}";
         };
+
+      cspell =
+        {
+          name = "cspell";
+          description = "A Spell Checker for Code";
+          entry = "${tools.cspell}/bin/cspell";
+        };
+
       html-tidy =
         {
           name = "html-tidy";
@@ -1142,6 +1286,23 @@ in
           types = [ "python" ];
         };
 
+      pyupgrade =
+        {
+          name = "pyupgrade";
+          description = "Automatically upgrade syntax for newer versions.";
+          entry = with settings.pyupgrade;
+            "${binPath}";
+          types = [ "python" ];
+        };
+
+      pyright =
+        {
+          name = "pyright";
+          description = "Static type checker for Python";
+          entry = settings.pyright.binPath;
+          files = "\\.py$";
+        };
+
       flake8 =
         {
           name = "flake8";
@@ -1228,8 +1389,15 @@ in
         name = "dune-fmt";
         description = "Runs Dune's formatters on the code tree.";
         entry =
-          let auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
-          in "${pkgs.dune_3}/bin/dune build @fmt ${auto-promote}";
+          let
+            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
+            run-dune-fmt = pkgs.writeShellApplication {
+              name = "run-dune-fmt";
+              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
+              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
+            };
+          in
+          "${run-dune-fmt}/bin/run-dune-fmt";
         pass_filenames = false;
       };
 
@@ -1248,5 +1416,58 @@ in
               "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
               "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
         };
+
+      convco = {
+        name = "convco";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-convco" ''
+              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
+            '';
+            # need version >= 0.4.0 for the --from-stdin flag
+            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
+          in
+          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+            builtins.toString
+            script;
+        stages = [ "commit-msg" ];
+      };
+
+      mix-format = {
+        name = "mix-format";
+        description = "Runs the built-in Elixir syntax formatter";
+        entry = "${pkgs.elixir}/bin/mix format";
+        types = [ "elixir" ];
+      };
+
+      mix-test = {
+        name = "mix-test";
+        description = "Runs the built-in Elixir test framework";
+        entry = "${pkgs.elixir}/bin/mix test";
+        types = [ "elixir" ];
+      };
+
+      credo = {
+        name = "credo";
+        description = "Runs a static code analysis using Credo";
+        entry =
+          let strict = if settings.credo.strict then "--strict" else "";
+          in "${pkgs.elixir}/bin/mix credo";
+        types = [ "elixir" ];
+      };
+
+      dialyzer = {
+        name = "dialyzer";
+        description = "Runs a static code analysis using Dialyzer";
+        entry = "${pkgs.elixir}/bin/mix dialyzer";
+        types = [ "elixir" ];
+      };
+
+      crystal = {
+        name = "crystal";
+        description = "A tool that automatically formats Crystal source code";
+        entry = "${tools.crystal}/bin/crystal tool format";
+        files = "\\.cr$";
+      };
     };
 }
