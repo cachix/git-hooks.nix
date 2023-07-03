@@ -486,7 +486,7 @@ in
       headache =
         {
           header-file = mkOption {
-            type = types.string;
+            type = types.str;
             description = lib.mdDoc "Path to the header file.";
             default = ".header";
           };
