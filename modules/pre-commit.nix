@@ -408,10 +408,8 @@ in
             # filesystem churn. This improves performance with watch tools like lorri
             # and prevents installation loops by via lorri.
 
-            if readlink "''${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
-              && [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") == ${configFile} ]]; then
-              echo 1>&2 "pre-commit-hooks.nix: hooks up to date"
-            else
+            if ! readlink "''${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
+              || [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") != ${configFile} ]]; then
               echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
 
               [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
