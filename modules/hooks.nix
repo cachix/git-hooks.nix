@@ -1057,6 +1057,7 @@ in
           description = "Source code spell checker";
           entry = with settings.typos;
             "${tools.typos}/bin/typos --format ${format} ${lib.optionalString write "-w"} ${lib.optionalString diff "--diff"}";
+          types = [ "text" ];
         };
 
       cspell =
