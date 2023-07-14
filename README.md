@@ -220,6 +220,7 @@ use nix
 - [treefmt](https://github.com/numtide/treefmt)
 - [topiary](https://github.com/tweag/topiary)
 - [checkmake](https://github.com/mrtazz/checkmake)
+- [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [headache](https://github.com/frama-c/headache)
 - [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
 

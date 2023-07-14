@@ -466,6 +466,62 @@ in
           };
         };
 
+      mkdocs-linkcheck =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+              default = "${pkgs.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+              '';
+            };
+
+          path =
+            mkOption {
+              type = types.nullOr types.path;
+              description = lib.mdDoc "Path to check";
+              default = null;
+            };
+
+          local-only =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to only check local links.";
+              default = false;
+            };
+
+          recurse =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to recurse directories under path.";
+              default = true;
+            };
+
+          extension =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "File extension to scan for.";
+              default = ".md";
+            };
+
+          method =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "HTTP method to use when checking external links.";
+              default = "get";
+            };
+
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Pattern for files or paths to exclude";
+              default = [ ];
+              example = [ "do-not-check.md" "./archive" ];
+            };
+        };
+
       dune-fmt =
         {
           auto-promote =
@@ -1365,6 +1421,18 @@ in
           pass_filenames = true;
           entry = "${settings.treefmt.package}/bin/treefmt --fail-on-change";
         };
+
+      mkdocs-linkcheck = {
+        name = "mkdocs-linkcheck";
+        description = "Validate links associated with markdown-based, statically generated websites.";
+        types = [ "text" "markdown" ];
+        entry =
+          let
+            local-only = if settings.mkdocs-linkcheck.local-only then "--local" else "";
+            recurse = if settings.mkdocs-linkcheck.recurse then "--recurse" else "";
+          in
+          "${pkgs.mkdocs-linkcheck}/bin/mkdocs-linkcheck ${local-only} ${recurse} --ext ${settings.mkdocs-linkcheck.extension} --method ${settings.mkdocs-linkcheck.method} --exclude ${settings.mkdocs-linkcheck.exclude} ${settings.mkdocs-linkcheck.path}";
+      };
 
       checkmake = {
         name = "checkmake";
