@@ -194,6 +194,10 @@ use nix
 - `terraform-format`: built-in formatter
 - [tflint](https://github.com/terraform-linters/tflint)
 
+## YAML
+
+- [yamllint](https://github.com/adrienverge/yamllint)
+
 ## TOML
 
 - [taplo fmt](https://github.com/tamasfe/taplo)
