@@ -1018,9 +1018,16 @@ in
         };
       pre-commit-hook-ensure-sops = {
         name = "pre-commit-hook-ensure-sops";
-        entry = ''
-          ${tools.pre-commit-hook-ensure-sops}/bin/pre-commit-hook-ensure-sops
-        '';
+        entry =
+          ## NOTE: pre-commit-hook-ensure-sops landed in nixpkgs on 8 July 2022. Once it reaches a
+          ## release of NixOS, the `throwIf` piece of code below will become
+          ## useless.
+          lib.throwIf
+            (tools.pre-commit-hook-ensure-sops == null)
+            "The version of nixpkgs used by pre-commit-hooks.nix does not have the `pre-commit-hook-ensure-sops` package. Please use a more recent version of nixpkgs."
+            ''
+              ${tools.pre-commit-hook-ensure-sops}/bin/pre-commit-hook-ensure-sops
+            '';
         files = lib.mkDefault "^secrets";
       };
       hunspell =

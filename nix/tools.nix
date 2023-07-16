@@ -41,7 +41,7 @@
 , opam
 , ormolu
 , pkgsBuildBuild
-, pre-commit-hook-ensure-sops
+, pre-commit-hook-ensure-sops ? null
 , python39Packages
 , ruff ? null
 , runCommand
