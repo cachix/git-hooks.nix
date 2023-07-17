@@ -31,7 +31,7 @@
 , html-tidy
 , hunspell
 , luaPackages
-, sumneko-lua-language-server
+, lua-language-server
 , mdsh
 , nil
 , nixfmt
@@ -119,7 +119,7 @@ in
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier cspell;
   inherit (ocamlPackages) ocp-indent;
-  lua-language-server = sumneko-lua-language-server;
+  lua-language-server = lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };

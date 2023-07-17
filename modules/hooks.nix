@@ -662,7 +662,17 @@ in
         };
       lua-ls =
         let
+          # .luarc.json has to be in a directory,
+          # or lua-language-server will hang forever.
           luarc = pkgs.writeText ".luarc.json" (builtins.toJSON settings.lua-ls.config);
+          luarc-dir = pkgs.stdenv.mkDerivation {
+            name = "luarc";
+            unpackPhase = "true";
+            installPhase = ''
+              mkdir $out
+              cp ${luarc} $out/.luarc.json
+            '';
+          };
           script = pkgs.writeShellApplication {
             name = "lua-ls-lint";
             runtimeInputs = [ tools.lua-language-server ];
@@ -670,11 +680,9 @@ in
             text = ''
               set -e
               export logpath="$(mktemp -d)"
-              # For some reason, lua-language-server hangs if the nix store path to the file is passed in directly
-              cp "${luarc}" .luarc.json
               lua-language-server --check $(realpath .) \
                 --checklevel="${settings.lua-ls.checklevel}" \
-                --configpath=$(realpath .luarc.json) \
+                --configpath="${luarc-dir}/.luarc.json" \
                 --logpath="$logpath"
               if [[ -f $logpath/check.json ]]; then
                 echo "+++++++++++++++ lua-language-server diagnostics +++++++++++++++"
