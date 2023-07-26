@@ -14,6 +14,7 @@
 , convco
 , crystal
 , deadnix
+, deno
 , dhall
 , dune_3
 , editorconfig-checker
@@ -84,6 +85,7 @@ in
     convco
     crystal
     deadnix
+    deno
     dhall
     editorconfig-checker
     fprettify
