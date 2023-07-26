@@ -243,7 +243,7 @@ in
             type = types.str;
             description = "path to the configuration JSON file";
             # an empty string translates to use default configuration of the
-            # underlying yamllint binary
+            # underlying rome binary (i.e rome.json if exists)
             default = "";
           };
         };
