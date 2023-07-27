@@ -131,6 +131,11 @@ use nix
 
 - [purty](https://gitlab.com/joneshf/purty)
 
+## Javascript/Typescript
+
+- [eslint](https://github.com/eslint/eslint)
+- [rome](https://github.com/rome/tools)
+
 ## Python
 
 - [autoflake](https://github.com/PyCQA/autoflake)

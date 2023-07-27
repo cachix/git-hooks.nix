@@ -223,6 +223,30 @@ in
               default = "\\.js$";
             };
         };
+      rome =
+        {
+          binPath =
+            mkOption {
+              type = types.path;
+              description = lib.mdDoc "`rome` binary path. E.g. if you want to use the `rome` in `node_modules`, use `./node_modules/.bin/rome`.";
+              default = "${pkgs.rome}/bin/rome";
+            };
+
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to edit files inplace.";
+              default = true;
+            };
+
+          configPath = mkOption {
+            type = types.str;
+            description = "path to the configuration JSON file";
+            # an empty string translates to use default configuration of the
+            # underlying rome binary (i.e rome.json if exists)
+            default = "";
+          };
+        };
       typos =
         {
           write =
@@ -1159,6 +1183,22 @@ in
           description = "Find and fix problems in your JavaScript code.";
           entry = "${settings.eslint.binPath} --fix";
           files = "${settings.eslint.extensions}";
+        };
+
+      rome =
+        {
+          name = "rome";
+          description = "Unified developer tools for JavaScript, TypeScript, and the web";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.rome.write) "--apply" ]
+                  [ (settings.rome.configPath != "") "--config-path ${settings.rome.configPath}" ]
+                ];
+            in
+            "${settings.rome.binPath} check ${cmdArgs}";
         };
 
       hadolint =
