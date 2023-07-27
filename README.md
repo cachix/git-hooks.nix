@@ -133,6 +133,8 @@ use nix
 
 ## Javascript/Typescript
 
+- denofmt: Runs `deno fmt`
+- denolint: Runs `deno lint`
 - [eslint](https://github.com/eslint/eslint)
 - [rome](https://github.com/rome/tools)
 

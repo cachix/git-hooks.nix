@@ -156,6 +156,42 @@ in
             default = { };
           };
       };
+      denolint =
+        {
+          format =
+            mkOption {
+              type = types.enum [ "default" "compact" "json" ];
+              description = lib.mdDoc "Output format.";
+              default = "default";
+            };
+
+          configPath =
+            mkOption {
+              type = types.path;
+              description = lib.mdDoc "path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying deno binary (i.e deno.json or deno.jsonc)
+              default = "";
+            };
+        };
+      denofmt =
+        {
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to edit files inplace.";
+              default = true;
+            };
+
+          configPath =
+            mkOption {
+              type = types.path;
+              description = lib.mdDoc "path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying deno binary (i.e deno.json or deno.jsonc)
+              default = "";
+            };
+        };
       mypy =
         {
           binPath =
@@ -1215,6 +1251,39 @@ in
           description = "Style checker and linter for markdown files.";
           entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
           files = "\\.md$";
+        };
+
+      denolint =
+        {
+          name = "denolint";
+          description = "Lint JavaScript/TypeScript source code.";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.denolint.format == "compact") "--compact" ]
+                  [ (settings.denolint.format == "json") "--json" ]
+                  [ (settings.denolint.configPath != "") "-c ${settings.denolint.configPath}" ]
+                ];
+            in
+            "${tools.deno}/bin/deno lint ${cmdArgs}";
+        };
+
+      denofmt =
+        {
+          name = "denofmt";
+          description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (!settings.denofmt.write) "--check" ]
+                  [ (settings.denofmt.configPath != "") "-c ${settings.denofmt.configPath}" ]
+                ];
+            in
+            "${tools.deno}/bin/deno fmt ${cmdArgs}";
         };
 
       govet =
