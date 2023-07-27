@@ -172,7 +172,12 @@ let
   configFile =
     runCommand "pre-commit-config.json"
       {
-        buildInputs = [ pkgs.jq ];
+        buildInputs = [
+          pkgs.jq
+          # needs to be an input so we regenerate the config and reinstall the hooks
+          # when the package changes
+          cfg.package
+        ];
         passAsFile = [ "rawJSON" ];
         rawJSON = builtins.toJSON cfg.rawConfig;
       } ''
