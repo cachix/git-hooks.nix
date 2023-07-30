@@ -266,6 +266,7 @@ in
               type = types.path;
               description = lib.mdDoc "`rome` binary path. E.g. if you want to use the `rome` in `node_modules`, use `./node_modules/.bin/rome`.";
               default = "${pkgs.rome}/bin/rome";
+              defaultText = "\${pkgs.rome}/bin/rome";
             };
 
           write =

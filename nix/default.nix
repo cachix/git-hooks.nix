@@ -25,6 +25,61 @@ let
             nixpkgs-fmt.enable = true;
           };
         };
+        doc-check =
+          let
+            inherit (pkgs) lib;
+            # We might add that it keeps rendering fast and robust,
+            # and we want to teach `defaultText` which is more broadly applicable,
+            # but the message is long enough.
+            failPkgAttr = name: _v:
+              throw ''
+                While generating documentation, we found that `pkgs` was used. To avoid rendering store paths in the documentation, this is forbidden.
+
+                Usually when this happens, you need to add `defaultText` to an option declaration, or escape an example with `lib.literalExpression`.
+
+                The `pkgs` attribute that was accessed is
+
+                    pkgs.${lib.strings.escapeNixIdentifier name}
+
+                If necessary, you can also find the offending option by evaluating with `--show-trace` and then look for occurrences of `option`.
+              '';
+            pkgsStub = lib.mapAttrs failPkgAttr pkgs;
+            configuration = pkgs.lib.evalModules {
+              modules = [
+                ../modules/all-modules.nix
+                {
+                  _file = "doc-check";
+                  config = {
+                    _module.args.pkgs = pkgsStub // {
+                      _type = "pkgs";
+                      inherit lib;
+                      formats = lib.mapAttrs
+                        (formatName: formatFn:
+                          formatArgs:
+                          let
+                            result = formatFn formatArgs;
+                            stubs =
+                              lib.mapAttrs
+                                (name: _:
+                                  throw "The attribute `(pkgs.formats.${lib.strings.escapeNixIdentifier formatName} x).${lib.strings.escapeNixIdentifier name}` is not supported during documentation generation. Please check with `--show-trace` to see which option leads to this `${lib.strings.escapeNixIdentifier name}` reference. Often it can be cut short with a `defaultText` argument to `lib.mkOption`, or by escaping an option `example` using `lib.literalExpression`."
+                                )
+                                result;
+                          in
+                          stubs // {
+                            inherit (result) type;
+                          }
+                        )
+                        pkgs.formats;
+                    };
+                  };
+                }
+              ];
+            };
+            doc = pkgs.nixosOptionsDoc {
+              inherit (configuration) options;
+            };
+          in
+          doc.optionsCommonMark;
       };
     };
 in
