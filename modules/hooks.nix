@@ -1557,7 +1557,7 @@ in
         {
           name = "commitizen check";
           description = ''
-            Check whether the current commit message follows commiting rules.
+            Check whether the current commit message follows committing rules.
           '';
           entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
           stages = [ "commit-msg" ];
