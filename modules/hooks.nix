@@ -294,6 +294,30 @@ in
               default = "auto";
             };
 
+          config =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Multiline-string configuration passed as config file.";
+              default = "";
+              example = ''
+                [files]
+                ignore-dot = true
+
+                [default]
+                binary = false
+
+                [type.py]
+                extend-glob = []
+              '';
+            };
+
+          configPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to a custom config file.";
+              default = "";
+            };
+
           diff =
             mkOption {
               type = types.bool;
@@ -333,7 +357,7 @@ in
           write =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to write fixes out.";
+              description = lib.mdDoc "Whether to fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
               default = false;
             };
         };
@@ -1224,8 +1248,22 @@ in
         {
           name = "typos";
           description = "Source code spell checker";
-          entry = with settings.typos;
-            "${tools.typos}/bin/typos --color ${color} ${lib.optionalString diff "--diff"} --exclude ${exclude} --format ${format} {lib.optionalString hidden " - -hidden "} --locale ${locale} ${lib.optionalString write "-write-changes"}";
+          entry =
+            let
+              configFile = builtins.toFile "config.toml" "${settings.typos.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.typos; [
+                    [ (color != "") "--color ${color}" ]
+                    [ (configPath != "") "--config ${configPath}" ]
+                    [ (config != "" && configPath == "") "--config ${configFile}" ]
+                    [ (exclude != "") "--exclude ${exclude}" ]
+                    [ (format != "") "--format ${format}" ]
+                    [ (locale != "") "--locale ${locale}" ]
+                    [ (write && !diff) "--write-changes" ]
+                  ]);
+            in
+            "${tools.typos}/bin/typos ${cmdArgs}${lib.optionalString settings.typos.diff " --diff"}${lib.optionalString settings.typos.hidden " --hidden"}";
           types = [ "text" ];
         };
 
