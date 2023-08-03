@@ -25,14 +25,14 @@ in
         {
           configPath = mkOption {
             type = types.str;
-            description = "path to the configuration YAML file";
+            description = lib.mdDoc "Path to the YAML configuration file.";
             # an empty string translates to use default configuration of the
             # underlying ansible-lint binary
             default = "";
           };
           subdir = mkOption {
             type = types.str;
-            description = "path to Ansible subdir";
+            description = lib.mdDoc "Path to the Ansible subdirectory.";
             default = "";
           };
         };
@@ -278,12 +278,13 @@ in
 
           configPath = mkOption {
             type = types.str;
-            description = "path to the configuration JSON file";
+            description = lib.mdDoc "Path to the configuration JSON file";
             # an empty string translates to use default configuration of the
             # underlying rome binary (i.e rome.json if exists)
             default = "";
           };
         };
+
       typos =
         {
           color =
@@ -495,13 +496,13 @@ in
         {
           relaxed = mkOption {
             type = types.bool;
-            description = lib.mdDoc "Use the relaxed configuration";
+            description = lib.mdDoc "Whether to use the relaxed configuration.";
             default = false;
           };
 
           configPath = mkOption {
             type = types.str;
-            description = "path to the configuration YAML file";
+            description = lib.mdDoc "Path to the YAML configuration file.";
             # an empty string translates to use default configuration of the
             # underlying yamllint binary
             default = "";
