@@ -286,11 +286,11 @@ in
         };
       typos =
         {
-          write =
+          color =
             mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to write fixes out.";
-              default = false;
+              type = types.enum [ "auto" "always" "never" ];
+              description = lib.mdDoc "When to use generate output.";
+              default = "auto";
             };
 
           diff =
@@ -300,11 +300,40 @@ in
               default = false;
             };
 
+          exclude =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Which files & directories to exclude matching the glob.";
+              default = "";
+              example = "*.nix";
+            };
+
           format =
             mkOption {
               type = types.enum [ "silent" "brief" "long" "json" ];
-              description = lib.mdDoc "Output format.";
+              description = lib.mdDoc "Which output format to use.";
               default = "long";
+            };
+
+          hidden =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to search hidden files and directories.";
+              default = false;
+            };
+
+          locale =
+            mkOption {
+              type = types.enum [ "en" "en-us" "en-gb" "en-ca" "en-au" ];
+              description = lib.mdDoc "Which language to use for spell checking.";
+              default = "en";
+            };
+
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to write fixes out.";
+              default = false;
             };
         };
 
@@ -1195,7 +1224,7 @@ in
           name = "typos";
           description = "Source code spell checker";
           entry = with settings.typos;
-            "${tools.typos}/bin/typos --format ${format} ${lib.optionalString write "-w"} ${lib.optionalString diff "--diff"}";
+            "${tools.typos}/bin/typos --color ${color} ${lib.optionalString diff "--diff"} --exclude ${exclude} --format ${format} {lib.optionalString hidden " - -hidden "} --locale ${locale} ${lib.optionalString write "-write-changes"}";
           types = [ "text" ];
         };
 
@@ -1528,7 +1557,7 @@ in
         {
           name = "commitizen check";
           description = ''
-            Check whether the current commit message follows commiting rules.
+            Check whether the current commit message follows committing rules.
           '';
           entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
           stages = [ "commit-msg" ];
