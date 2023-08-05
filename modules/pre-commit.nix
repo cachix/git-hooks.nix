@@ -148,12 +148,19 @@ let
                 forces the output of the hook to be printed even when the hook passes.
               '';
             };
+            always_run = mkOption {
+              type = types.bool;
+              default = false;
+              description = lib.mdDoc ''
+                if true this hook will run even if there are no matching files.
+              '';
+            };
           };
         config =
           {
             raw =
               {
-                inherit (config) name entry language files stages types types_or pass_filenames verbose;
+                inherit (config) name entry language files stages types types_or pass_filenames verbose always_run;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
