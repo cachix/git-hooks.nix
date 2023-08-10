@@ -219,11 +219,19 @@ in
             mkOption {
               type = types.path;
               description = lib.mdDoc
-                "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
+                "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier` and enable `skipBinCopy`.";
               default = "${tools.prettier}/bin/prettier";
               defaultText = lib.literalExpression ''
                 "''${tools.prettier}/bin/prettier"
               '';
+            };
+
+          skipBinCopy =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc
+                "If set, prevents the binary from being copied to the nix store. This should only be set if the binary is already committed to your repo.";
+              default = false;
             };
 
           write =
@@ -246,9 +254,17 @@ in
             mkOption {
               type = types.path;
               description = lib.mdDoc
-                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint` and enable `skipBinCopy`.";
               default = "${tools.eslint}/bin/eslint";
               defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
+            };
+
+          skipBinCopy =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc
+                "If set, prevents the binary from being copied to the nix store. This should only be set if the binary is already committed to your repo.";
+              default = false;
             };
 
           extensions =
@@ -1178,7 +1194,7 @@ in
           name = "prettier";
           description = "Opinionated multi-language code formatter.";
           entry = with settings.prettier;
-            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
+            "${if skipBinCopy then toString binPath else binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
         };
       pre-commit-hook-ensure-sops = {
@@ -1272,7 +1288,8 @@ in
         {
           name = "eslint";
           description = "Find and fix problems in your JavaScript code.";
-          entry = "${settings.eslint.binPath} --fix";
+          entry = with settings.eslint;
+            "${if skipBinCopy then toString eslint.binPath else binPath} --fix";
           files = "${settings.eslint.extensions}";
         };
 
