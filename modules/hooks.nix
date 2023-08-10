@@ -1194,6 +1194,7 @@ in
           name = "prettier";
           description = "Opinionated multi-language code formatter.";
           entry = with settings.prettier;
+            # Casting `binPath` to a string will prevent the path from being copied to the nix store.
             "${if skipBinCopy then toString binPath else binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
         };
@@ -1289,6 +1290,7 @@ in
           name = "eslint";
           description = "Find and fix problems in your JavaScript code.";
           entry = with settings.eslint;
+            # Casting `binPath` to a string will prevent the path from being copied to the nix store.
             "${if skipBinCopy then toString eslint.binPath else binPath} --fix";
           files = "${settings.eslint.extensions}";
         };
