@@ -739,6 +739,12 @@ in
             "proto"
           ];
         };
+      clang-tidy = {
+        name = "clang-tidy";
+        description = "Static analyzer for C++ code.";
+        entry = "${tools.clang-tools}/bin/clang-tidy --fix";
+        types = [ "c" "c++" "c#" "objective-c" ];
+      };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
