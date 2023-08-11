@@ -103,6 +103,11 @@ use nix
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
 - [hpack](https://github.com/sol/hpack)
 
+#  C/C++/C#/ObjC
+
+- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+- [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
+
 ## Clojure
 
 - [zprint](https://github.com/kkinnear/zprint)
@@ -223,7 +228,6 @@ use nix
 
 - [prettier](https://prettier.io)
 - `dhall format`: built-in formatter
-- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
 - [hadolint](https://github.com/hadolint/hadolint)
 - [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 - [actionlint](https://github.com/rhysd/actionlint)
