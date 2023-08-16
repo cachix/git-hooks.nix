@@ -1055,16 +1055,6 @@ in
           name = "shellcheck";
           description = "Format shell files.";
           types = [ "shell" ];
-          types_or =
-            # based on `goodShells` in https://github.com/koalaman/shellcheck/blob/master/src/ShellCheck/Parser.hs
-            [
-              "sh"
-              "ash"
-              "bash"
-              "bats"
-              "dash"
-              "ksh"
-            ];
           entry = "${tools.shellcheck}/bin/shellcheck";
         };
       bats =
