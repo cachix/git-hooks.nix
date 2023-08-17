@@ -598,8 +598,15 @@ in
               description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
               default = "${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
               defaultText = lib.literalExpression ''
-                "''${pkgs.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+                "''${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
               '';
+            };
+
+          path =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to check";
+              default = "";
             };
 
           local-only =
@@ -1629,12 +1636,15 @@ in
             cmdArgs =
               mkCmdArgs
                 (with settings.mkdocs-linkcheck; [
-                  [ (extension != "") "--ext ${extension}" ]
-                  [ (method != "") "--method ${method}" ]
+                  [ local-only " --local" ]
+                  [ recurse " --recurse" ]
+                  [ (extension != "") " --ext ${extension}" ]
+                  [ (method != "") " --method ${method}" ]
+                  [ (path != "") " ${path}" ]
                 ]);
           in
-          "${settings.mkdocs-linkcheck.binPath} ${cmdArgs}${lib.optionalString settings.mkdocs-linkcheck.local-only " --local"}${lib.optionalString settings.mkdocs-linkcheck.recurse " --recurse"}";
-        types = [ "text" ];
+          "${settings.mkdocs-linkcheck.binPath}${cmdArgs}";
+        types = [ "text" "markdown" ];
       };
 
       checkmake = {
