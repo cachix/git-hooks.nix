@@ -54,6 +54,15 @@ in
               default = null;
             };
         };
+      isort =
+        {
+          profile =
+            mkOption {
+              type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
+              description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
+              default = "";
+            };
+        };
       ormolu =
         {
           defaultExtensions =
@@ -805,8 +814,16 @@ in
         {
           name = "isort";
           description = "A Python utility / library to sort imports.";
-          entry = "${pkgs.python3Packages.isort}/bin/isort";
           types = [ "file" "python" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.isort; [
+                    [ (profile != "") " --profile ${profile}" ]
+                  ]);
+            in
+            "${pkgs.python3Packages.isort}/bin/isort${cmdArgs}";
         };
       latexindent =
         {
