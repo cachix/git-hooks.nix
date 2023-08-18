@@ -61,6 +61,7 @@
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , typos
 , yamllint
+, yamlfmt
 , writeScript
 , writeText
 , go
@@ -120,6 +121,7 @@ in
     topiary
     typos
     yamllint
+    yamlfmt
     ;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
