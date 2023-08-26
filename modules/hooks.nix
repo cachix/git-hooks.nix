@@ -410,6 +410,19 @@ in
             };
         };
 
+      phpstan =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHPStan binary path.";
+              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
+              '';
+            };
+        };
+
       php-cs-fixer =
         {
           binPath =
@@ -1527,6 +1540,15 @@ in
           description = "Lint PHP files.";
           entry = with settings.phpcbf;
             "${binPath}";
+          types = [ "php" ];
+        };
+
+      phpstan =
+        {
+          name = "phpstan";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.phpstan;
+            "${binPath} analyse";
           types = [ "php" ];
         };
 
