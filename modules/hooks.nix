@@ -390,7 +390,7 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php80Packages.phpcs}/bin/phpcs";
+              default = "${pkgs.php82Packages.phpcs}/bin/phpcs";
               defaultText = lib.literalExpression ''
                 "''${pkgs.php80Packages.phpcs}/bin/phpcs"
               '';
@@ -403,7 +403,7 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php80Packages.phpcbf}/bin/phpcbf";
+              default = "${pkgs.php82Packages.phpcbf}/bin/phpcbf";
               defaultText = lib.literalExpression ''
                 "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
               '';
@@ -416,7 +416,7 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP-CS-Fixer binary path.";
-              default = "${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer";
+              default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
               defaultText = lib.literalExpression ''
                 "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
               '';
