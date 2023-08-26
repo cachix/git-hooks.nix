@@ -161,6 +161,7 @@ use nix
 - [phpcbf](https://github.com/squizlabs/PHP_CodeSniffer)
 - [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
 - [phpstan](https://github.com/phpstan/phpstan)
+- [psalm](https://github.com/vimeo/psalm)
 
 ## Rust
 

@@ -436,6 +436,19 @@ in
             };
         };
 
+      psalm =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Psalm binary path.";
+              default = "${pkgs.php82Packages.psalm}/bin/psalm";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/psalm"
+              '';
+            };
+        };
+
       pylint =
         {
           binPath =
@@ -1558,6 +1571,15 @@ in
           description = "Lint PHP files.";
           entry = with settings.php-cs-fixer;
             "${binPath} fix";
+          types = [ "php" ];
+        };
+
+      psalm =
+        {
+          name = "psalm";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.psalm;
+            "${binPath}";
           types = [ "php" ];
         };
 
