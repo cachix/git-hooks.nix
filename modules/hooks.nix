@@ -87,6 +87,18 @@ in
               default = [ ];
               example = [ "flake.nix" "./templates" ];
             };
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = "Hide informational messages. Redundant if used with `silent`.";
+              default = false;
+            };
+          silent =
+            mkOption {
+              type = types.bool;
+              description = "Hide error messages and informational messages. Implies `quiet`.";
+              default = false;
+            };
         };
       deadnix =
         {
@@ -955,8 +967,16 @@ in
         {
           name = "alejandra";
           description = "The Uncompromising Nix Code Formatter.";
-          entry = with settings.alejandra;
-            "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.alejandra; [
+                  [ (quiet && !slient) "--quiet" ]
+                  [ silent "--quiet --quiet" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
+                ]);
+            in
+            "${tools.alejandra}/bin/alejandra ${cmdArgs}";
           files = "\\.nix$";
         };
 
