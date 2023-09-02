@@ -1095,6 +1095,8 @@ in
           description = "An Opinionated Lua Code Formatter.";
           types = [ "file" "lua" ];
           entry = "${tools.stylua}/bin/stylua";
+          # stylua does not pick up .styluaignore if we pass in the file names.
+          pass_filenames = false;
         };
       shfmt =
         {
