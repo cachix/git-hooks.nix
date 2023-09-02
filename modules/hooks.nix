@@ -971,7 +971,7 @@ in
             let
               cmdArgs =
                 mkCmdArgs (with settings.alejandra; [
-                  [ (quiet && !slient) "--quiet" ]
+                  [ (quiet && !silent) "--quiet" ]
                   [ silent "--quiet --quiet" ]
                   [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
                 ]);
