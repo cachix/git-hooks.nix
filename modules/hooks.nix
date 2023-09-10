@@ -688,6 +688,34 @@ in
             default = true;
           };
       };
+
+      vale = {
+        config =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Multiline-string configuration passed as config file.";
+            default = "";
+            example = ''
+              MinAlertLevel = suggestion
+              [*]
+              BasedOnStyles = Vale
+            '';
+          };
+
+        configPath =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the config file.";
+            default = "";
+          };
+
+        flags =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Flags passed to vale.";
+            default = "";
+          };
+      };
     };
 
   config.hooks =
@@ -1736,6 +1764,23 @@ in
           let strict = if settings.credo.strict then "--strict" else "";
           in "${pkgs.elixir}/bin/mix credo";
         types = [ "elixir" ];
+      };
+
+      vale = {
+        name = "vale";
+        description = "A markup-aware linter for prose built with speed and extensibility in mind.";
+        entry =
+          let
+            configFile = builtins.toFile ".vale.ini" "${settings.vale.config}";
+            cmdArgs =
+              mkCmdArgs
+                (with settings.vale; [
+                  [ (configPath != "") " --config ${configPath}" ]
+                  [ (config != "" && configPath == "") " --config ${configFile}" ]
+                ]);
+          in
+          "${pkgs.vale}/bin/vale${cmdArgs} ${settings.vale.flags}";
+        types = [ "text" ];
       };
 
       dialyzer = {
