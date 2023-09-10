@@ -722,6 +722,22 @@ in
             default = "";
           };
       };
+
+      lychee = {
+        configPath =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the config file.";
+            default = "";
+          };
+
+        flags =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
+            default = "";
+          };
+      };
     };
 
   config.hooks =
@@ -1801,6 +1817,21 @@ in
         description = "A tool that automatically formats Crystal source code";
         entry = "${tools.crystal}/bin/crystal tool format";
         files = "\\.cr$";
+      };
+
+      lychee = {
+        name = "lychee";
+        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with settings.lychee; [
+                  [ (configPath != "") " --config ${configPath}" ]
+                ]);
+          in
+          "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
+        types = [ "text" ];
       };
     };
 }
