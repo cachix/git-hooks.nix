@@ -98,22 +98,9 @@ in
             mkOption {
               type = types.package;
               description = lib.mdDoc "The `alejandra` package to use.";
-              default = "${tools.alejandra}";
-              example = "pkgs.alejandra";
-            };
-          quiet =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Hide informational messages.";
-              default = false;
-              example = true;
-            };
-          silent =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Hide error messages.";
-              default = false;
-              example = true;
+              default = "${pkgs.alejandra}";
+              defaultText = "\${pkgs.alejandra}";
+              example = "\${pkgs.alejandra}";
             };
           threads =
             mkOption {
@@ -121,6 +108,13 @@ in
               description = lib.mdDoc "Number of formatting threads to spawn.";
               default = null;
               example = 8;
+            };
+          verbosity =
+            mkOption {
+              type = types.enum [ "normal" "quiet" "silent" ];
+              description = lib.mdDoc "Whether informational messages or all messages should be hidden or not.";
+              default = "normal";
+              example = "quiet";
             };
         };
       deadnix =
@@ -994,14 +988,14 @@ in
             let
               cmdArgs =
                 mkCmdArgs (with settings.alejandra; [
-                  [ check " --check" ]
-                  [ (exclude != [ ]) " --exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
-                  [ (quiet && ! silent) " --quiet" ]
-                  [ silent " -qq" ]
-                  [ (threads != null) " --threads ${toString threads}" ]
+                  [ check "--check" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
+                  [ (verbosity == "quiet") "-q" ]
+                  [ (verbosity == "silent") "-qq" ]
+                  [ (threads != null) "--threads ${toString threads}" ]
                 ]);
             in
-            "${settings.alejandra.package}/bin/alejandra${cmdArgs}";
+            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
           files = "\\.nix$";
         };
 
