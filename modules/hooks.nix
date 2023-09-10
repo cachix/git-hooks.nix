@@ -62,6 +62,12 @@ in
               description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
               default = "";
             };
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
+              default = "";
+            };
         };
       ormolu =
         {
@@ -858,7 +864,7 @@ in
                     [ (profile != "") " --profile ${profile}" ]
                   ]);
             in
-            "${pkgs.python3Packages.isort}/bin/isort${cmdArgs}";
+            "${pkgs.python3Packages.isort}/bin/isort${cmdArgs} ${settings.isort.flags}";
         };
       latexindent =
         {
