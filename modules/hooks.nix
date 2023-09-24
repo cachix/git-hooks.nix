@@ -197,11 +197,10 @@ in
               description = lib.mdDoc "Whether to edit files inplace.";
               default = true;
             };
-
           configPath =
             mkOption {
               type = types.path;
-              description = lib.mdDoc "path to the configuration JSON file";
+              description = lib.mdDoc "Path to the configuration JSON file";
               # an empty string translates to use default configuration of the
               # underlying deno binary (i.e deno.json or deno.jsonc)
               default = "";
@@ -388,6 +387,85 @@ in
               default = "";
             };
 
+        };
+
+      flynt =
+        {
+          aggressive =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Include conversions with potentially changed behavior.";
+              default = false;
+            };
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
+              default = "${settings.flynt.package}/bin/flynt";
+              defaultText = "\${settings.flynt.package}/bin/flynt";
+            };
+          dry-run =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Do not change files in-place and print diff instead.";
+              default = false;
+            };
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Ignore files with given strings in their absolute path.";
+              default = [ ];
+            };
+          fail-on-change =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Fail when diff is not empty (for linting purposes).";
+              default = true;
+            };
+          line-length =
+            mkOption {
+              type = types.nullOr types.int;
+              description = lib.mdDoc "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
+              default = null;
+            };
+          no-multiline =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Convert only single line expressions.";
+              default = false;
+            };
+          package =
+            mkOption {
+              type = types.package;
+              description = lib.mdDoc "The `flynt` package to use.";
+              default = "${pkgs.python311Packages.flynt}";
+              defaultText = "\${pkgs.python311Packages.flynt}";
+              example = "\${pkgs.python310Packages.flynt}";
+            };
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Run without output.";
+              default = false;
+            };
+          string =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Interpret the input as a Python code snippet and print the converted version.";
+              default = false;
+            };
+          transform-concats =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Replace string concatenations with f-strings.";
+              default = false;
+            };
+          verbose =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Run with verbose output.";
+              default = false;
+            };
         };
 
       phpcs =
@@ -1009,7 +1087,6 @@ in
             "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
           files = "\\.nix$";
         };
-
       deadnix =
         {
           name = "deadnix";
@@ -1029,6 +1106,29 @@ in
             in
             "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
           files = "\\.nix$";
+        };
+      flynt =
+        {
+          name = "flynt";
+          description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.flynt; [
+                  [ aggressive "--aggressive" ]
+                  [ dry-run "--dry-run" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                  [ fail-on-change "--fail-on-change" ]
+                  [ (line-length != null) "--line-length ${toString line-length}" ]
+                  [ no-multiline "--no-multiline" ]
+                  [ quiet "--quiet" ]
+                  [ string "--string" ]
+                  [ transform-concats "--transform-concats" ]
+                  [ verbose "--verbose" ]
+                ]);
+            in
+            "${settings.flynt.binPath} ${cmdArgs}";
+          types = [ "python" ];
         };
       mdsh =
         let
