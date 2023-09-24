@@ -86,12 +86,41 @@ in
         };
       alejandra =
         {
+          check =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Check if the input is already formatted and disable writing in-place the modified content";
+              default = false;
+              example = true;
+            };
           exclude =
             mkOption {
               type = types.listOf types.str;
               description = lib.mdDoc "Files or directories to exclude from formatting.";
               default = [ ];
               example = [ "flake.nix" "./templates" ];
+            };
+          package =
+            mkOption {
+              type = types.package;
+              description = lib.mdDoc "The `alejandra` package to use.";
+              default = "${pkgs.alejandra}";
+              defaultText = "\${pkgs.alejandra}";
+              example = "\${pkgs.alejandra}";
+            };
+          threads =
+            mkOption {
+              type = types.nullOr types.int;
+              description = lib.mdDoc "Number of formatting threads to spawn.";
+              default = null;
+              example = 8;
+            };
+          verbosity =
+            mkOption {
+              type = types.enum [ "normal" "quiet" "silent" ];
+              description = lib.mdDoc "Whether informational messages or all messages should be hidden or not.";
+              default = "normal";
+              example = "quiet";
             };
         };
       deadnix =
@@ -1083,8 +1112,18 @@ in
         {
           name = "alejandra";
           description = "The Uncompromising Nix Code Formatter.";
-          entry = with settings.alejandra;
-            "${tools.alejandra}/bin/alejandra ${if (exclude != [ ]) then "-e ${lib.escapeShellArgs (lib.unique exclude)}" else ""}";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.alejandra; [
+                  [ check "--check" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
+                  [ (verbosity == "quiet") "-q" ]
+                  [ (verbosity == "silent") "-qq" ]
+                  [ (threads != null) "--threads ${toString threads}" ]
+                ]);
+            in
+            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
           files = "\\.nix$";
         };
       deadnix =
