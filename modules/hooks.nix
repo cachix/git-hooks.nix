@@ -302,6 +302,17 @@ in
               default = "\\.js$";
             };
         };
+      eclint =
+        {
+          binPath =
+            mkOption {
+              type = types.path;
+              description = lib.mdDoc
+                "EditorConfig linter and formatter.";
+              default = "${tools.eclint}/bin/eclint";
+              defaultText = lib.literalExpression "\${tools.eclint}/bin/eclint";
+            };
+        };
       rome =
         {
           binPath =
@@ -1483,6 +1494,13 @@ in
           description = "Find and fix problems in your JavaScript code.";
           entry = "${settings.eslint.binPath} --fix";
           files = "${settings.eslint.extensions}";
+        };
+
+      eclint =
+        {
+          name = "eclint";
+          description = "Find and fix problems according to .editorconfig.";
+          entry = "${settings.eclint.binPath} --fix";
         };
 
       rome =
