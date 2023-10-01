@@ -121,7 +121,7 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier cspell;
+  inherit (nodePackages) eslint markdownlint-cli prettier cspell eclint;
   inherit (ocamlPackages) ocp-indent;
   lua-language-server = lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
