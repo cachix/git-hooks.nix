@@ -34,6 +34,7 @@
 , hunspell
 , luaPackages
 , lua-language-server
+, mdl
 , mdsh
 , nil
 , nixfmt
@@ -99,6 +100,7 @@ in
     hlint
     hpack
     html-tidy
+    mdl
     mdsh
     nil
     nixfmt
