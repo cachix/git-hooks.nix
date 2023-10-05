@@ -534,6 +534,19 @@ in
             };
         };
 
+      phpstan =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHPStan binary path.";
+              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
+              '';
+            };
+        };
+
       php-cs-fixer =
         {
           binPath =
@@ -543,6 +556,19 @@ in
               default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
               defaultText = lib.literalExpression ''
                 "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
+              '';
+            };
+        };
+
+      psalm =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Psalm binary path.";
+              default = "${pkgs.php82Packages.psalm}/bin/psalm";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/psalm"
               '';
             };
         };
@@ -1737,12 +1763,30 @@ in
           types = [ "php" ];
         };
 
+      phpstan =
+        {
+          name = "phpstan";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.phpstan;
+            "${binPath} analyse";
+          types = [ "php" ];
+        };
+
       php-cs-fixer =
         {
           name = "php-cs-fixer";
           description = "Lint PHP files.";
           entry = with settings.php-cs-fixer;
             "${binPath} fix";
+          types = [ "php" ];
+        };
+
+      psalm =
+        {
+          name = "psalm";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.psalm;
+            "${binPath}";
           types = [ "php" ];
         };
 
