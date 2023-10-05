@@ -304,13 +304,13 @@ in
         };
       eclint =
         {
-          binPath =
+          package =
             mkOption {
-              type = types.path;
-              description = lib.mdDoc
-                "EditorConfig linter and formatter.";
-              default = "${tools.eclint}/bin/eclint";
-              defaultText = lib.literalExpression "\${tools.eclint}/bin/eclint";
+              type = types.package;
+              description = lib.mdDoc "The `eclint` package to use.";
+              default = "${tools.eclint}";
+              defaultText = "\${tools.eclint}";
+              example = "\${pkgs.eclint}";
             };
         };
       rome =
@@ -1499,8 +1499,8 @@ in
       eclint =
         {
           name = "eclint";
-          description = "Find and fix problems according to .editorconfig.";
-          entry = "${settings.eclint.binPath} --fix";
+          description = "EditorConfig linter written in Go.";
+          entry = "${settings.eclint.package}/bin/eclint --fix";
         };
 
       rome =

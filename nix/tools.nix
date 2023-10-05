@@ -17,6 +17,7 @@
 , deno
 , dhall
 , dune_3
+, eclint
 , editorconfig-checker
 , elmPackages
 , fprettify
@@ -87,6 +88,7 @@ in
     deadnix
     deno
     dhall
+    eclint
     editorconfig-checker
     fprettify
     go
@@ -121,7 +123,7 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier cspell eclint;
+  inherit (nodePackages) eslint markdownlint-cli prettier cspell;
   inherit (ocamlPackages) ocp-indent;
   lua-language-server = lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
