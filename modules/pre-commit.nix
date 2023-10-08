@@ -205,7 +205,7 @@ let
       chmod -R +w src
       ln -fs ${configFile} src/.pre-commit-config.yaml
       cd src
-      rm -rf src/.git
+      rm -rf .git
       git init
       git add .
       git config --global user.email "you@example.com"
