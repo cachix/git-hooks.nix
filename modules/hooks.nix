@@ -391,8 +391,38 @@ in
               type = types.package;
               description = lib.mdDoc "The `eclint` package to use.";
               default = "${tools.eclint}";
-              defaultText = "\${tools.eclint}";
-              example = "\${pkgs.eclint}";
+              defaultText = lib.literalExpression "\${tools.eclint}";
+              example = lib.literalExpression "\${pkgs.eclint}";
+            };
+          fix =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Modify files in place rather than showing the errors.";
+              default = false;
+            };
+          summary =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Only show number of errors per file.";
+              default = false;
+            };
+          color =
+            mkOption {
+              type = types.enum [ "auto" "always" "never" ];
+              description = lib.mdDoc "When to generate colored output.";
+              default = "auto";
+            };
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Filter to exclude files.";
+              default = [ ];
+            };
+          verbosity =
+            mkOption {
+              type = types.enum [ 0 1 2 3 4 ];
+              description = lib.mdDoc "Log level verbosity";
+              default = 0;
             };
         };
       rome =
@@ -1615,7 +1645,20 @@ in
         {
           name = "eclint";
           description = "EditorConfig linter written in Go.";
-          entry = "${settings.eclint.package}/bin/eclint --fix";
+          types = [ "file" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.eclint; [
+                    [ fix "-fix" ]
+                    [ summary "-summary" ]
+                    [ (color != "auto") "-color ${color}" ]
+                    [ (exclude != [ ]) "-exclude ${lib.escapeShellArgs exclude}" ]
+                    [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
+                  ]);
+            in
+            "${settings.eclint.package}/bin/eclint ${cmdArgs}";
         };
 
       rome =
