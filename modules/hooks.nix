@@ -1411,6 +1411,13 @@ in
           types = [ "shell" ];
           entry = "${tools.shfmt}/bin/shfmt -w -s -l";
         };
+      beautysh =
+        {
+          name = "beautysh";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.beautysh}/bin/beautysh";
+        };
       terraform-format =
         {
           name = "terraform-format";

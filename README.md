@@ -181,6 +181,7 @@ use nix
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
 - [shfmt](https://github.com/mvdan/sh)
+- [beautysh](https://github.com/lovesegfault/beautysh)
 - [bats](https://github.com/bats-core/bats-core)
 
 ## LaTeX
