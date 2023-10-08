@@ -52,6 +52,7 @@
 , shellcheck
 , bats
 , shfmt
+, beautysh
 , statix
 , stylish-haskell
 , stylua
@@ -79,6 +80,7 @@ in
     actionlint
     alejandra
     ansible-lint
+    beautysh
     cabal2nix
     cabal-fmt
     cargo
