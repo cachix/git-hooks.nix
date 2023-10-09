@@ -2129,14 +2129,14 @@ in
         name = "mix-format";
         description = "Runs the built-in Elixir syntax formatter";
         entry = "${pkgs.elixir}/bin/mix format";
-        types = [ "elixir" ];
+        types = [ "file" ];
       };
 
       mix-test = {
         name = "mix-test";
         description = "Runs the built-in Elixir test framework";
         entry = "${pkgs.elixir}/bin/mix test";
-        types = [ "elixir" ];
+        types = [ "file" ];
       };
 
       credo = {
@@ -2145,7 +2145,7 @@ in
         entry =
           let strict = if settings.credo.strict then "--strict" else "";
           in "${pkgs.elixir}/bin/mix credo";
-        types = [ "elixir" ];
+        types = [ "file" ];
       };
 
       vale = {
@@ -2169,7 +2169,7 @@ in
         name = "dialyzer";
         description = "Runs a static code analysis using Dialyzer";
         entry = "${pkgs.elixir}/bin/mix dialyzer";
-        types = [ "elixir" ];
+        types = [ "file" ];
       };
 
       crystal = {
