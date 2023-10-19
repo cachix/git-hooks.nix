@@ -3,20 +3,19 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    pre-commit-hooks-nix.url = "github:hercules-ci/pre-commit-hooks.nix/flakeModule";
+    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
     pre-commit-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake
-      { inherit self; }
+      { inherit inputs; }
       {
         imports = [
           inputs.pre-commit-hooks-nix.flakeModule
         ];
-        systems = [ "x86_64-linux" "aarch64-darwin" ];
+        systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
         perSystem = { config, self', inputs', pkgs, ... }: {
           # Per-system attributes can be defined here. The self' and inputs'
           # module parameters provide easy access to attributes of the same
