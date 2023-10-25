@@ -69,6 +69,15 @@ in
               default = "";
             };
         };
+      latexindent =
+        {
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
+              default = "--local --silent --overwriteIfDifferent";
+            };
+        };
       ormolu =
         {
           defaultExtensions =
@@ -1143,7 +1152,7 @@ in
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
-          entry = "${tools.latexindent}/bin/latexindent --local --silent --overwriteIfDifferent";
+          entry = "${tools.latexindent}/bin/latexindent ${settings.latexindent.flags}";
         };
       luacheck =
         {
