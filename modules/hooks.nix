@@ -2202,5 +2202,11 @@ in
           "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
         types = [ "text" ];
       };
+
+      annex = {
+        name = "annex";
+        description = "Runs the git-annex hook for large file support";
+        entry = "${tools.git-annex}/bin/git-annex pre-commit";
+      };
     };
 }

@@ -22,6 +22,7 @@
 , elmPackages
 , fprettify
 , git
+, git-annex
 , gitAndTools
 , gptcommit ? null
 , hadolint
@@ -94,6 +95,7 @@ in
     eclint
     editorconfig-checker
     fprettify
+    git-annex
     go
     go-tools
     gptcommit
