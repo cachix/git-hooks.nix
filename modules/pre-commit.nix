@@ -465,7 +465,14 @@ in
                 else
                   pre-commit install
                 fi
-                ${git}/bin/git config --local core.hooksPath "$(${git}/bin/git rev-parse --git-common-dir)/hooks"
+
+                # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
+                common_dir=''$(${git}/bin/git rev-parse --path-format=absolute --git-common-dir)
+
+                # Convert the absolute path to a path relative to the toplevel working directory.
+                common_dir=''${common_dir#''$GIT_WC/}
+
+                ${git}/bin/git config --local core.hooksPath "''$common_dir/hooks"
               fi
             fi
           fi
