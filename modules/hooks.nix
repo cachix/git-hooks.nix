@@ -1617,7 +1617,7 @@ in
                     [ (color != "") "--color ${color}" ]
                     [ (configPath != "") "--config ${configPath}" ]
                     [ (config != "" && configPath == "") "--config ${configFile}" ]
-                    [ (exclude != "") "--exclude ${exclude}" ]
+                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
                     [ (format != "") "--format ${format}" ]
                     [ (locale != "") "--locale ${locale}" ]
                     [ (write && !diff) "--write-changes" ]
