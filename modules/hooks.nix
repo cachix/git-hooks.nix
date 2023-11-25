@@ -2208,5 +2208,24 @@ in
         description = "Runs the git-annex hook for large file support";
         entry = "${tools.git-annex}/bin/git-annex pre-commit";
       };
+
+      golangci-lint = {
+        name = "golangci-lint";
+        description = "Fast linters runner for Go.";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-golangci-lint" ''
+              set -e
+              for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
+              done
+            '';
+          in
+          builtins.toString script;
+        files = "\\.go$";
+        # to avoid multiple invocations of the same directory input, provide
+        # all file names in a single run.
+        require_serial = true;
+      };
     };
 }

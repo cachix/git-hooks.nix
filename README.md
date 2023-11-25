@@ -173,6 +173,7 @@ use nix
 
 - gofmt: Runs `go fmt`
 - gotest: Runs `go test`
+- [golangci-lint](https://golangci-lint.run/)
 - [govet](https://pkg.go.dev/cmd/vet)
 - [revive](https://github.com/mgechev/revive)
 - [staticcheck](https://github.com/dominikh/go-tools)
