@@ -67,6 +67,7 @@
 , writeText
 , go
 , go-tools
+, golangci-lint
 , revive ? null
 }:
 
@@ -98,6 +99,7 @@ in
     git-annex
     go
     go-tools
+    golangci-lint
     gptcommit
     hadolint
     hindent
