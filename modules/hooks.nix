@@ -302,8 +302,8 @@ in
 
           configPath =
             mkOption {
-              type = types.path;
-              description = lib.mdDoc "path to the configuration JSON file";
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration JSON file";
               # an empty string translates to use default configuration of the
               # underlying deno binary (i.e deno.json or deno.jsonc)
               default = "";
@@ -319,7 +319,7 @@ in
             };
           configPath =
             mkOption {
-              type = types.path;
+              type = types.str;
               description = lib.mdDoc "Path to the configuration JSON file";
               # an empty string translates to use default configuration of the
               # underlying deno binary (i.e deno.json or deno.jsonc)
