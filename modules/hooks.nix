@@ -2227,5 +2227,12 @@ in
         # all file names in a single run.
         require_serial = true;
       };
+
+      conform = {
+        name = "conform enforce";
+        description = "Policy enforcement for commits.";
+        entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
+        stages = [ "commit-msg" ];
+      };
     };
 }

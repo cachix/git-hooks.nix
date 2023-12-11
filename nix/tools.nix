@@ -11,6 +11,7 @@
 , clang-tools
 , clippy
 , commitizen
+, conform
 , convco
 , crystal
 , deadnix
@@ -88,6 +89,7 @@ in
     cargo
     clang-tools
     clippy
+    conform
     convco
     crystal
     deadnix
