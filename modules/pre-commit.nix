@@ -132,6 +132,7 @@ let
               description = lib.mdDoc ''
                 if true this hook will execute using a single process instead of in parallel.
               '';
+              default = false;
             };
             stages =
               mkOption {
@@ -161,7 +162,7 @@ let
           {
             raw =
               {
-                inherit (config) name entry language files types types_or pass_filenames fail_fast stages verbose always_run;
+                inherit (config) name entry language files types types_or pass_filenames fail_fast require_serial stages verbose always_run;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
