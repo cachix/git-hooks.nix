@@ -160,7 +160,7 @@ let
           {
             raw =
               {
-                inherit (config) name entry language files stages types types_or pass_filenames verbose always_run;
+                inherit (config) name entry language files types types_or pass_filenames stages verbose always_run;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
