@@ -125,6 +125,7 @@ let
               description = lib.mdDoc ''
                 if true pre-commit will stop running hooks if this hook fails.
               '';
+              default = false;
             };
             require_serial = mkOption {
               type = types.bool;
@@ -160,7 +161,7 @@ let
           {
             raw =
               {
-                inherit (config) name entry language files types types_or pass_filenames stages verbose always_run;
+                inherit (config) name entry language files types types_or pass_filenames fail_fast stages verbose always_run;
                 id = name;
                 exclude = mergeExcludes config.excludes;
               };
