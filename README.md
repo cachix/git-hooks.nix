@@ -218,6 +218,10 @@ use nix
 
 - [taplo fmt](https://github.com/tamasfe/taplo)
 
+## Typst
+
+- [typstfmt](https://github.com/astrale-sharp/typstfmt)
+
 ## Fortran
 
 - [fprettify](https://github.com/pseewald/fprettify)

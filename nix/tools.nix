@@ -63,6 +63,7 @@
 , tflint
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , typos
+, typst-fmt
 , yamllint
 , writeScript
 , writeText
@@ -127,6 +128,7 @@ in
     tagref
     topiary
     typos
+    typst-fmt
     yamllint
     ;
   inherit (elmPackages) elm-format elm-review elm-test;

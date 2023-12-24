@@ -2234,5 +2234,12 @@ in
         entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
         stages = [ "commit-msg" ];
       };
+
+      typstfmt = {
+        name = "typstfmt";
+        description = "format typst";
+        entry = "${tools.typst-fmt}/bin/typst-fmt";
+        files = "\\.typ$";
+      };
     };
 }
