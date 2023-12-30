@@ -178,6 +178,10 @@ use nix
 - [revive](https://github.com/mgechev/revive)
 - [staticcheck](https://github.com/dominikh/go-tools)
 
+## Julia
+
+- [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
+
 ## Shell
 
 - [shellcheck](https://github.com/koalaman/shellcheck)
