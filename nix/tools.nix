@@ -36,6 +36,7 @@
 , hunspell
 , luaPackages
 , lua-language-server
+, julia-bin
 , mdl
 , mdsh
 , nil
@@ -109,6 +110,7 @@ in
     hlint
     hpack
     html-tidy
+    julia-bin
     mdl
     mdsh
     nil
