@@ -2009,6 +2009,14 @@ in
           types = [ "toml" ];
         };
 
+      cljfmt =
+        {
+          name = "cljfmt";
+          description = "A tool for formatting Clojure code.";
+          entry = "${pkgs.cljfmt}/bin/cljfmt fix";
+          types_or = [ "clojure" "clojurescript" "edn" ];
+        };
+
       zprint =
         {
           name = "zprint";

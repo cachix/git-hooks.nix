@@ -110,6 +110,7 @@ use nix
 
 ## Clojure
 
+- [cljfmt](https://github.com/weavejester/cljfmt)
 - [zprint](https://github.com/kkinnear/zprint)
 
 ## Elm
