@@ -34,6 +34,7 @@ https://devenv.sh/pre-commit-hooks/
     let
       nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
     in {
+      # Configured with the module options defined in `modules/pre-commit.nix`:
       pre-commit-check = nix-pre-commit-hooks.run {
         src = ./.;
         # If your hooks are intrusive, avoid running on each commit with a default_states like this:
@@ -43,6 +44,9 @@ https://devenv.sh/pre-commit-hooks/
           ormolu.enable = true;
           shellcheck.enable = true;
         };
+    
+        # Set the pkgs to get the tools for the hooks from. 
+        # tools = pkgs; 
 
         # Some hooks offer custom settings that affect how they execute
         settings = {
