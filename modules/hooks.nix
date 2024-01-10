@@ -985,6 +985,30 @@ in
           types = [ "yaml" ];
           entry = "${tools.actionlint}/bin/actionlint";
         };
+      alejandra =
+        {
+          name = "alejandra";
+          description = "The Uncompromising Nix Code Formatter.";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.alejandra; [
+                  [ check "--check" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
+                  [ (verbosity == "quiet") "-q" ]
+                  [ (verbosity == "silent") "-qq" ]
+                  [ (threads != null) "--threads ${toString threads}" ]
+                ]);
+            in
+            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
+          files = "\\.nix$";
+        };
+      annex =
+        {
+          name = "annex";
+          description = "Runs the git-annex hook for large file support";
+          entry = "${tools.git-annex}/bin/git-annex pre-commit";
+        };
       ansible-lint =
         {
           name = "ansible-lint";
@@ -1000,6 +1024,28 @@ in
             "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
           files = if settings.ansible-lint.subdir != "" then "${settings.ansible-lint.subdir}/" else "";
         };
+      autoflake =
+        {
+          name = "autoflake";
+          description = "Remove unused imports and variables from Python code.";
+          entry = "${settings.autoflake.binPath} ${settings.autoflake.flags}";
+          types = [ "python" ];
+        };
+      bats =
+        {
+          name = "bats";
+          description = "Run bash unit tests.";
+          types = [ "shell" ];
+          types_or = [ "bats" "bash" ];
+          entry = "${tools.bats}/bin/bats -p";
+        };
+      beautysh =
+        {
+          name = "beautysh";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.beautysh}/bin/beautysh";
+        };
       black =
         {
           name = "black";
@@ -1007,12 +1053,12 @@ in
           entry = "${pkgs.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
-      ruff =
+      cabal-fmt =
         {
-          name = "ruff";
-          description = " An extremely fast Python linter, written in Rust.";
-          entry = "${pkgs.ruff}/bin/ruff --fix";
-          types = [ "python" ];
+          name = "cabal-fmt";
+          description = "Format Cabal files";
+          entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
+          files = "\\.cabal$";
         };
       cabal2nix =
         {
@@ -1020,6 +1066,33 @@ in
           description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files.";
           files = "\\.cabal$";
           entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir";
+        };
+      cargo-check =
+        {
+          name = "cargo-check";
+          description = "Check the cargo package for errors.";
+          entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      checkmake = {
+        name = "checkmake";
+        description = "Experimental linter/analyzer for Makefiles.";
+        types = [ "makefile" ];
+        entry =
+          ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
+          ## this gets into a NixOS release, the following code will be useless.
+          lib.throwIf
+            (tools.checkmake == null)
+            "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
+            "${tools.checkmake}/bin/checkmake";
+      };
+      chktex =
+        {
+          name = "chktex";
+          description = "LaTeX semantic checker";
+          types = [ "file" "tex" ];
+          entry = "${tools.chktex}/bin/chktex";
         };
       clang-format =
         {
@@ -1046,11 +1119,159 @@ in
         entry = "${tools.clang-tools}/bin/clang-tidy --fix";
         types = [ "c" "c++" "c#" "objective-c" ];
       };
+      clippy =
+        let
+          wrapper = pkgs.symlinkJoin {
+            name = "clippy-wrapped";
+            paths = [ tools.clippy ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/cargo-clippy \
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
+            '';
+          };
+        in
+        {
+          name = "clippy";
+          description = "Lint Rust code.";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      cljfmt =
+        {
+          name = "cljfmt";
+          description = "A tool for formatting Clojure code.";
+          entry = "${pkgs.cljfmt}/bin/cljfmt fix";
+          types_or = [ "clojure" "clojurescript" "edn" ];
+        };
+      commitizen =
+        {
+          name = "commitizen check";
+          description = ''
+            Check whether the current commit message follows committing rules.
+          '';
+          entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
+          stages = [ "commit-msg" ];
+        };
+      conform = {
+        name = "conform enforce";
+        description = "Policy enforcement for commits.";
+        entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
+        stages = [ "commit-msg" ];
+      };
+      convco = {
+        name = "convco";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-convco" ''
+              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
+            '';
+            # need version >= 0.4.0 for the --from-stdin flag
+            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
+          in
+          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+            builtins.toString
+            script;
+        stages = [ "commit-msg" ];
+      };
+      credo = {
+        name = "credo";
+        description = "Runs a static code analysis using Credo";
+        entry =
+          let strict = if settings.credo.strict then "--strict" else "";
+          in "${pkgs.elixir}/bin/mix credo";
+        files = "\\.exs?$";
+      };
+      crystal = {
+        name = "crystal";
+        description = "A tool that automatically formats Crystal source code";
+        entry = "${tools.crystal}/bin/crystal tool format";
+        files = "\\.cr$";
+      };
+      cspell =
+        {
+          name = "cspell";
+          description = "A Spell Checker for Code";
+          entry = "${tools.cspell}/bin/cspell";
+        };
+      deadnix =
+        {
+          name = "deadnix";
+          description = "Scan Nix files for dead code (unused variable bindings).";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.deadnix; [
+                  [ noLambdaArg "--no-lambda-arg" ]
+                  [ noLambdaPatternNames "--no-lambda-pattern-names" ]
+                  [ noUnderscore "--no-underscore" ]
+                  [ quiet "--quiet" ]
+                  [ hidden "--hidden" ]
+                  [ edit "--edit" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                ]);
+            in
+            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
+          files = "\\.nix$";
+        };
+      denofmt =
+        {
+          name = "denofmt";
+          description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (!settings.denofmt.write) "--check" ]
+                  [ (settings.denofmt.configPath != "") "-c ${settings.denofmt.configPath}" ]
+                ];
+            in
+            "${tools.deno}/bin/deno fmt ${cmdArgs}";
+        };
+      denolint =
+        {
+          name = "denolint";
+          description = "Lint JavaScript/TypeScript source code.";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.denolint.format == "compact") "--compact" ]
+                  [ (settings.denolint.format == "json") "--json" ]
+                  [ (settings.denolint.configPath != "") "-c ${settings.denolint.configPath}" ]
+                ];
+            in
+            "${tools.deno}/bin/deno lint ${cmdArgs}";
+        };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
         entry = "${tools.dhall}/bin/dhall format";
         files = "\\.dhall$";
+      };
+      dialyzer = {
+        name = "dialyzer";
+        description = "Runs a static code analysis using Dialyzer";
+        entry = "${pkgs.elixir}/bin/mix dialyzer";
+        files = "\\.exs?$";
+      };
+      dune-fmt = {
+        name = "dune-fmt";
+        description = "Runs Dune's formatters on the code tree.";
+        entry =
+          let
+            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
+            run-dune-fmt = pkgs.writeShellApplication {
+              name = "run-dune-fmt";
+              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
+              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
+            };
+          in
+          "${run-dune-fmt}/bin/run-dune-fmt";
+        pass_filenames = false;
       };
       dune-opam-sync = {
         name = "dune/opam sync";
@@ -1062,6 +1283,211 @@ in
         ## the `dune-project` file has changed.
         pass_filenames = false;
       };
+      eclint =
+        {
+          name = "eclint";
+          description = "EditorConfig linter written in Go.";
+          types = [ "file" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.eclint; [
+                    [ fix "-fix" ]
+                    [ summary "-summary" ]
+                    [ (color != "auto") "-color ${color}" ]
+                    [ (exclude != [ ]) "-exclude ${lib.escapeShellArgs exclude}" ]
+                    [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
+                  ]);
+            in
+            "${settings.eclint.package}/bin/eclint ${cmdArgs}";
+        };
+      editorconfig-checker =
+        {
+          name = "editorconfig-checker";
+          description = "Verify that the files are in harmony with the `.editorconfig`.";
+          entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
+          types = [ "file" ];
+        };
+      elm-format =
+        {
+          name = "elm-format";
+          description = "Format Elm files.";
+          entry =
+            "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
+          files = "\\.elm$";
+        };
+      elm-review =
+        {
+          name = "elm-review";
+          description = "Analyzes Elm projects, to help find mistakes before your users find them.";
+          entry = "${tools.elm-review}/bin/elm-review";
+          files = "\\.elm$";
+          pass_filenames = false;
+        };
+      elm-test =
+        {
+          name = "elm-test";
+          description = "Run unit tests and fuzz tests for Elm code.";
+          entry = "${tools.elm-test}/bin/elm-test";
+          files = "\\.elm$";
+          pass_filenames = false;
+        };
+      eslint =
+        {
+          name = "eslint";
+          description = "Find and fix problems in your JavaScript code.";
+          entry = "${settings.eslint.binPath} --fix";
+          files = "${settings.eslint.extensions}";
+        };
+      flake8 =
+        {
+          name = "flake8";
+          description = "Check the style and quality of Python files.";
+          entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
+          types = [ "python" ];
+        };
+      flynt =
+        {
+          name = "flynt";
+          description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.flynt; [
+                  [ aggressive "--aggressive" ]
+                  [ dry-run "--dry-run" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                  [ fail-on-change "--fail-on-change" ]
+                  [ (line-length != null) "--line-length ${toString line-length}" ]
+                  [ no-multiline "--no-multiline" ]
+                  [ quiet "--quiet" ]
+                  [ string "--string" ]
+                  [ transform-concats "--transform-concats" ]
+                  [ verbose "--verbose" ]
+                ]);
+            in
+            "${settings.flynt.binPath} ${cmdArgs}";
+          types = [ "python" ];
+        };
+      fourmolu =
+        {
+          name = "fourmolu";
+          description = "Haskell code prettifier.";
+          entry =
+            "${tools.fourmolu}/bin/fourmolu --mode inplace ${
+            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
+            }";
+          files = "\\.l?hs(-boot)?$";
+        };
+      fprettify = {
+        name = "fprettify";
+        description = "Auto-formatter for modern Fortran code.";
+        types = [ "fortran " ];
+        entry = "${tools.fprettify}/bin/fprettify";
+      };
+      gofmt =
+        {
+          name = "gofmt";
+          description = "A tool that automatically formats Go source code";
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-gofmt" ''
+                set -e
+                failed=false
+                for file in "$@"; do
+                    # redirect stderr so that violations and summaries are properly interleaved.
+                    if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
+                    then
+                        failed=true
+                    fi
+                done
+                if [[ $failed == "true" ]]; then
+                    exit 1
+                fi
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+        };
+      golangci-lint = {
+        name = "golangci-lint";
+        description = "Fast linters runner for Go.";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-golangci-lint" ''
+              set -e
+              for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
+              done
+            '';
+          in
+          builtins.toString script;
+        files = "\\.go$";
+        # to avoid multiple invocations of the same directory input, provide
+        # all file names in a single run.
+        require_serial = true;
+      };
+      gotest = {
+        name = "gotest";
+        description = "Run go tests";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-gotest" ''
+              set -e
+              # find all directories that contain tests
+              dirs=()
+              for file in "$@"; do
+                # either the file is a test
+                if [[ "$file" = *_test.go ]]; then
+                  dirs+=("$(dirname "$file")")
+                  continue
+                fi
+
+                # or the file has an associated test
+                filename="''${file%.go}"
+                test_file="''${filename}_test.go"
+                if [[ -f "$test_file"  ]]; then
+                  dirs+=("$(dirname "$test_file")")
+                  continue
+                fi
+              done
+
+              # ensure we are not duplicating dir entries
+              IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
+
+              # test each directory one by one
+              for dir in "''${sorted_dirs[@]}"; do
+                  ${tools.go}/bin/go test "./$dir"
+              done
+            '';
+          in
+          builtins.toString script;
+        files = "\\.go$";
+        # to avoid multiple invocations of the same directory input, provide
+        # all file names in a single run.
+        require_serial = true;
+      };
+      govet =
+        {
+          name = "govet";
+          description = "Checks correctness of Go programs.";
+          entry =
+            let
+              # go vet requires package (directory) names as inputs.
+              script = pkgs.writeShellScript "precommit-govet" ''
+                set -e
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${tools.go}/bin/go vet ./"$dir"
+                done
+              '';
+            in
+            builtins.toString script;
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
+          files = "\\.go$";
+        };
       gptcommit = {
         name = "gptcommit";
         description = "Generate a commit message using GPT3.";
@@ -1077,6 +1503,35 @@ in
             script;
         stages = [ "prepare-commit-msg" ];
       };
+      hadolint =
+        {
+          name = "hadolint";
+          description = "Dockerfile linter, validate inline bash.";
+          entry = "${tools.hadolint}/bin/hadolint";
+          files = "Dockerfile$";
+        };
+      headache =
+        {
+          name = "headache";
+          description = "Lightweight tool for managing headers in source code files.";
+          ## NOTE: Supported `files` are taken from
+          ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
+          files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
+          entry =
+            ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
+            ## next NixOS release, the following code will become irrelevant.
+            lib.throwIf
+              (tools.headache == null)
+              "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
+              "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
+        };
+      hindent =
+        {
+          name = "hindent";
+          description = "Haskell code prettifier.";
+          entry = "${tools.hindent}/bin/hindent";
+          files = "\\.l?hs(-boot)?$";
+        };
       hlint =
         {
           name = "hlint";
@@ -1102,6 +1557,20 @@ in
           # In other words: We have no choice but to always run `hpack` on every `package.yaml` directory.
           pass_filenames = false;
         };
+      html-tidy =
+        {
+          name = "html-tidy";
+          description = "HTML linter.";
+          entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
+          files = "\\.html$";
+        };
+      hunspell =
+        {
+          name = "hunspell";
+          description = "Spell checker and morphological analyzer.";
+          entry = "${tools.hunspell}/bin/hunspell -l";
+          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
+        };
       isort =
         {
           name = "isort";
@@ -1117,19 +1586,32 @@ in
             in
             "${pkgs.python3Packages.isort}/bin/isort${cmdArgs} ${settings.isort.flags}";
         };
+      juliaformatter =
+        {
+          description = "Run JuliaFormatter.jl against Julia source files";
+          files = "\\.jl$";
+          entry = ''
+            ${tools.julia-bin}/bin/julia -e '
+            using Pkg
+            Pkg.activate(".")
+            using JuliaFormatter
+            format(ARGS)
+            out = Cmd(`git diff --name-only`) |> read |> String
+            if out == ""
+                exit(0)
+            else
+                @error "Some files have been formatted !!!"
+                write(stdout, out)
+                exit(1)
+            end'
+          '';
+        };
       latexindent =
         {
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
           entry = "${tools.latexindent}/bin/latexindent ${settings.latexindent.flags}";
-        };
-      luacheck =
-        {
-          name = "luacheck";
-          description = "A tool for linting and static analysis of Lua code.";
-          types = [ "file" "lua" ];
-          entry = "${tools.luacheck}/bin/luacheck";
         };
       lua-ls =
         let
@@ -1170,132 +1652,59 @@ in
           files = "\\.lua$";
           pass_filenames = false;
         };
-      ocp-indent =
+      luacheck =
         {
-          name = "ocp-indent";
-          description = "A tool to indent OCaml code.";
-          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
-          files = "\\.mli?$";
+          name = "luacheck";
+          description = "A tool for linting and static analysis of Lua code.";
+          types = [ "file" "lua" ];
+          entry = "${tools.luacheck}/bin/luacheck";
         };
-      opam-lint =
+      lychee = {
+        name = "lychee";
+        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with settings.lychee; [
+                  [ (configPath != "") " --config ${configPath}" ]
+                ]);
+          in
+          "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
+        types = [ "text" ];
+      };
+      markdownlint =
         {
-          name = "opam lint";
-          description = "OCaml package manager configuration checker.";
-          entry = "${tools.opam}/bin/opam lint";
-          files = "\\.opam$";
+          name = "markdownlint";
+          description = "Style checker and linter for markdown files.";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
+          files = "\\.md$";
         };
-      ormolu =
+      mdl =
         {
-          name = "ormolu";
-          description = "Haskell code prettifier.";
-          entry =
-            let
-              extensions =
-                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions);
-              cabalExtensions =
-                if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
-            in
-            "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
-          files = "\\.l?hs(-boot)?$";
-        };
-      fourmolu =
-        {
-          name = "fourmolu";
-          description = "Haskell code prettifier.";
-          entry =
-            "${tools.fourmolu}/bin/fourmolu --mode inplace ${
-            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
-            }";
-          files = "\\.l?hs(-boot)?$";
-        };
-      hindent =
-        {
-          name = "hindent";
-          description = "Haskell code prettifier.";
-          entry = "${tools.hindent}/bin/hindent";
-          files = "\\.l?hs(-boot)?$";
-        };
-      cabal-fmt =
-        {
-          name = "cabal-fmt";
-          description = "Format Cabal files";
-          entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
-          files = "\\.cabal$";
-        };
-      chktex =
-        {
-          name = "chktex";
-          description = "LaTeX semantic checker";
-          types = [ "file" "tex" ];
-          entry = "${tools.chktex}/bin/chktex";
-        };
-      stylish-haskell =
-        {
-          name = "stylish-haskell";
-          description = "A simple Haskell code prettifier";
-          entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
-          files = "\\.l?hs(-boot)?$";
-        };
-      alejandra =
-        {
-          name = "alejandra";
-          description = "The Uncompromising Nix Code Formatter.";
+          name = "mdl";
+          description = "A tool to check markdown files and flag style issues.";
           entry =
             let
               cmdArgs =
-                mkCmdArgs (with settings.alejandra; [
-                  [ check "--check" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
-                  [ (verbosity == "quiet") "-q" ]
-                  [ (verbosity == "silent") "-qq" ]
-                  [ (threads != null) "--threads ${toString threads}" ]
-                ]);
+                mkCmdArgs
+                  (with settings.mdl; [
+                    [ (configPath != "") "--config ${configPath}" ]
+                    [ git-recurse "--git-recurse" ]
+                    [ ignore-front-matter "--ignore-front-matter" ]
+                    [ json "--json" ]
+                    [ (rules != [ ]) "--rules ${lib.strings.concatStringsSep "," rules}" ]
+                    [ (rulesets != [ ]) "--rulesets ${lib.strings.concatStringsSep "," rulesets}" ]
+                    [ show-aliases "--show-aliases" ]
+                    [ warnings "--warnings" ]
+                    [ skip-default-ruleset "--skip-default-ruleset" ]
+                    [ (style != "") "--style ${style}" ]
+                    [ (tags != [ ]) "--tags ${lib.strings.concatStringsSep "," tags}" ]
+                    [ verbose "--verbose" ]
+                  ]);
             in
-            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
-          files = "\\.nix$";
-        };
-      deadnix =
-        {
-          name = "deadnix";
-          description = "Scan Nix files for dead code (unused variable bindings).";
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs (with settings.deadnix; [
-                  [ noLambdaArg "--no-lambda-arg" ]
-                  [ noLambdaPatternNames "--no-lambda-pattern-names" ]
-                  [ noUnderscore "--no-underscore" ]
-                  [ quiet "--quiet" ]
-                  [ hidden "--hidden" ]
-                  [ edit "--edit" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
-                ]);
-            in
-            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
-          files = "\\.nix$";
-        };
-      flynt =
-        {
-          name = "flynt";
-          description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs (with settings.flynt; [
-                  [ aggressive "--aggressive" ]
-                  [ dry-run "--dry-run" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
-                  [ fail-on-change "--fail-on-change" ]
-                  [ (line-length != null) "--line-length ${toString line-length}" ]
-                  [ no-multiline "--no-multiline" ]
-                  [ quiet "--quiet" ]
-                  [ string "--string" ]
-                  [ transform-concats "--transform-concats" ]
-                  [ verbose "--verbose" ]
-                ]);
-            in
-            "${settings.flynt.binPath} ${cmdArgs}";
-          types = [ "python" ];
+            "${settings.mdl.package}/bin/mdl ${cmdArgs}";
+          files = "\\.md$";
         };
       mdsh =
         let
@@ -1311,6 +1720,36 @@ in
           entry = toString script;
           files = "\\.md$";
         };
+      mix-format = {
+        name = "mix-format";
+        description = "Runs the built-in Elixir syntax formatter";
+        entry = "${pkgs.elixir}/bin/mix format";
+        files = "\\.exs?$";
+      };
+      mix-test = {
+        name = "mix-test";
+        description = "Runs the built-in Elixir test framework";
+        entry = "${pkgs.elixir}/bin/mix test";
+        files = "\\.exs?$";
+      };
+      mkdocs-linkcheck = {
+        name = "mkdocs-linkcheck";
+        description = "Validate links associated with markdown-based, statically generated websites.";
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with settings.mkdocs-linkcheck; [
+                  [ local-only " --local" ]
+                  [ recurse " --recurse" ]
+                  [ (extension != "") " --ext ${extension}" ]
+                  [ (method != "") " --method ${method}" ]
+                  [ (path != "") " ${path}" ]
+                ]);
+          in
+          "${settings.mkdocs-linkcheck.binPath}${cmdArgs}";
+        types = [ "text" "markdown" ];
+      };
       mypy =
         {
           name = "mypy";
@@ -1358,172 +1797,65 @@ in
           entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
           files = "\\.nix$";
         };
-      statix =
+      ocp-indent =
         {
-          name = "statix";
-          description = "Lints and suggestions for the Nix programming language.";
-          entry = with settings.statix;
-            "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
-          files = "\\.nix$";
-          pass_filenames = false;
+          name = "ocp-indent";
+          description = "A tool to indent OCaml code.";
+          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
+          files = "\\.mli?$";
         };
-      elm-format =
+      opam-lint =
         {
-          name = "elm-format";
-          description = "Format Elm files.";
-          entry =
-            "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
-          files = "\\.elm$";
+          name = "opam lint";
+          description = "OCaml package manager configuration checker.";
+          entry = "${tools.opam}/bin/opam lint";
+          files = "\\.opam$";
         };
-      elm-review =
+      ormolu =
         {
-          name = "elm-review";
-          description = "Analyzes Elm projects, to help find mistakes before your users find them.";
-          entry = "${tools.elm-review}/bin/elm-review";
-          files = "\\.elm$";
-          pass_filenames = false;
-        };
-      elm-test =
-        {
-          name = "elm-test";
-          description = "Run unit tests and fuzz tests for Elm code.";
-          entry = "${tools.elm-test}/bin/elm-test";
-          files = "\\.elm$";
-          pass_filenames = false;
-        };
-      shellcheck =
-        {
-          name = "shellcheck";
-          description = "Format shell files.";
-          types = [ "shell" ];
-          entry = "${tools.shellcheck}/bin/shellcheck";
-        };
-      bats =
-        {
-          name = "bats";
-          description = "Run bash unit tests.";
-          types = [ "shell" ];
-          types_or = [ "bats" "bash" ];
-          entry = "${tools.bats}/bin/bats -p";
-        };
-      stylua =
-        {
-          name = "stylua";
-          description = "An Opinionated Lua Code Formatter.";
-          types = [ "file" "lua" ];
-          entry = "${tools.stylua}/bin/stylua";
-        };
-      shfmt =
-        {
-          name = "shfmt";
-          description = "Format shell files.";
-          types = [ "shell" ];
-          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
-        };
-      beautysh =
-        {
-          name = "beautysh";
-          description = "Format shell files.";
-          types = [ "shell" ];
-          entry = "${tools.beautysh}/bin/beautysh";
-        };
-      terraform-format =
-        {
-          name = "terraform-format";
-          description = "Format terraform (`.tf`) files.";
-          entry = "${tools.terraform-fmt}/bin/terraform-fmt";
-          files = "\\.tf$";
-        };
-      tflint =
-        {
-          name = "tflint";
-          description = "A Pluggable Terraform Linter.";
-          entry = "${tools.tflint}/bin/tflint";
-          files = "\\.tf$";
-        };
-      yamllint =
-        {
-          name = "yamllint";
-          description = "Yaml linter.";
-          types = [ "file" "yaml" ];
+          name = "ormolu";
+          description = "Haskell code prettifier.";
           entry =
             let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (settings.yamllint.relaxed) "-d relaxed" ]
-                  [ (settings.yamllint.configPath != "") "-c ${settings.yamllint.configPath}" ]
-                ];
+              extensions =
+                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions);
+              cabalExtensions =
+                if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
             in
-            "${tools.yamllint}/bin/yamllint ${cmdArgs}";
+            "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
+          files = "\\.l?hs(-boot)?$";
         };
-      rustfmt =
-        let
-          wrapper = pkgs.symlinkJoin {
-            name = "rustfmt-wrapped";
-            paths = [ tools.rustfmt ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/cargo-fmt \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo tools.rustfmt ]}
-            '';
-          };
-        in
+      php-cs-fixer =
         {
-          name = "rustfmt";
-          description = "Format Rust code.";
-          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
-          files = "\\.rs$";
-          pass_filenames = false;
+          name = "php-cs-fixer";
+          description = "Lint PHP files.";
+          entry = with settings.php-cs-fixer;
+            "${binPath} fix";
+          types = [ "php" ];
         };
-      clippy =
-        let
-          wrapper = pkgs.symlinkJoin {
-            name = "clippy-wrapped";
-            paths = [ tools.clippy ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/cargo-clippy \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
-            '';
-          };
-        in
+      phpcbf =
         {
-          name = "clippy";
-          description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
-          files = "\\.rs$";
-          pass_filenames = false;
+          name = "phpcbf";
+          description = "Lint PHP files.";
+          entry = with settings.phpcbf;
+            "${binPath}";
+          types = [ "php" ];
         };
-      cargo-check =
+      phpcs =
         {
-          name = "cargo-check";
-          description = "Check the cargo package for errors.";
-          entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
-          files = "\\.rs$";
-          pass_filenames = false;
+          name = "phpcs";
+          description = "Lint PHP files.";
+          entry = with settings.phpcs;
+            "${binPath}";
+          types = [ "php" ];
         };
-      purty =
+      phpstan =
         {
-          name = "purty";
-          description = "Format purescript files.";
-          entry = "${tools.purty}/bin/purty";
-          files = "\\.purs$";
-        };
-      purs-tidy =
-        {
-          name = "purs-tidy";
-          description = "Format purescript files.";
-          entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
-          files = "\\.purs$";
-        };
-
-      prettier =
-        {
-          name = "prettier";
-          description = "Opinionated multi-language code formatter.";
-          entry = with settings.prettier;
-            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
-          types = [ "text" ];
+          name = "phpstan";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.phpstan;
+            "${binPath} analyse";
+          types = [ "php" ];
         };
       pre-commit-hook-ensure-sops = {
         name = "pre-commit-hook-ensure-sops";
@@ -1539,286 +1871,59 @@ in
             '';
         files = lib.mkDefault "^secrets";
       };
-      hunspell =
+      prettier =
         {
-          name = "hunspell";
-          description = "Spell checker and morphological analyzer.";
-          entry = "${tools.hunspell}/bin/hunspell -l";
-          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
-        };
-
-      topiary =
-        {
-          name = "topiary";
-          description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
-          entry =
-            ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
-            ## release of NixOS, the `throwIf` piece of code below will become
-            ## useless.
-            lib.throwIf
-              (tools.topiary == null)
-              "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
-              (
-                let
-                  topiary-inplace = pkgs.writeShellApplication {
-                    name = "topiary-inplace";
-                    text = ''
-                      for file; do
-                        ${tools.topiary}/bin/topiary --in-place --input-file "$file"
-                      done
-                    '';
-                  };
-                in
-                "${topiary-inplace}/bin/topiary-inplace"
-              );
-          files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
-        };
-
-      typos =
-        {
-          name = "typos";
-          description = "Source code spell checker";
-          entry =
-            let
-              configFile = builtins.toFile "config.toml" "${settings.typos.config}";
-              cmdArgs =
-                mkCmdArgs
-                  (with settings.typos; [
-                    [ (color != "") "--color ${color}" ]
-                    [ (configPath != "") "--config ${configPath}" ]
-                    [ (config != "" && configPath == "") "--config ${configFile}" ]
-                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
-                    [ (format != "") "--format ${format}" ]
-                    [ (locale != "") "--locale ${locale}" ]
-                    [ (write && !diff) "--write-changes" ]
-                  ]);
-            in
-            "${tools.typos}/bin/typos ${cmdArgs}${lib.optionalString settings.typos.diff " --diff"}${lib.optionalString settings.typos.hidden " --hidden"}";
+          name = "prettier";
+          description = "Opinionated multi-language code formatter.";
+          entry = with settings.prettier;
+            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
         };
-
-      cspell =
+      psalm =
         {
-          name = "cspell";
-          description = "A Spell Checker for Code";
-          entry = "${tools.cspell}/bin/cspell";
+          name = "psalm";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.psalm;
+            "${binPath}";
+          types = [ "php" ];
         };
-
-      html-tidy =
+      purs-tidy =
         {
-          name = "html-tidy";
-          description = "HTML linter.";
-          entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
-          files = "\\.html$";
+          name = "purs-tidy";
+          description = "Format purescript files.";
+          entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
+          files = "\\.purs$";
         };
-
-      eslint =
+      purty =
         {
-          name = "eslint";
-          description = "Find and fix problems in your JavaScript code.";
-          entry = "${settings.eslint.binPath} --fix";
-          files = "${settings.eslint.extensions}";
+          name = "purty";
+          description = "Format purescript files.";
+          entry = "${tools.purty}/bin/purty";
+          files = "\\.purs$";
         };
-
-      eclint =
+      pylint =
         {
-          name = "eclint";
-          description = "EditorConfig linter written in Go.";
-          types = [ "file" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs
-                  (with settings.eclint; [
-                    [ fix "-fix" ]
-                    [ summary "-summary" ]
-                    [ (color != "auto") "-color ${color}" ]
-                    [ (exclude != [ ]) "-exclude ${lib.escapeShellArgs exclude}" ]
-                    [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
-                  ]);
-            in
-            "${settings.eclint.package}/bin/eclint ${cmdArgs}";
+          name = "pylint";
+          description = "Lint Python files.";
+          entry = with settings.pylint;
+            "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
+          types = [ "python" ];
         };
-
-      rome =
+      pyright =
         {
-          name = "rome";
-          description = "Unified developer tools for JavaScript, TypeScript, and the web";
-          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (settings.rome.write) "--apply" ]
-                  [ (settings.rome.configPath != "") "--config-path ${settings.rome.configPath}" ]
-                ];
-            in
-            "${settings.rome.binPath} check ${cmdArgs}";
+          name = "pyright";
+          description = "Static type checker for Python";
+          entry = settings.pyright.binPath;
+          files = "\\.py$";
         };
-
-      hadolint =
+      pyupgrade =
         {
-          name = "hadolint";
-          description = "Dockerfile linter, validate inline bash.";
-          entry = "${tools.hadolint}/bin/hadolint";
-          files = "Dockerfile$";
+          name = "pyupgrade";
+          description = "Automatically upgrade syntax for newer versions.";
+          entry = with settings.pyupgrade;
+            "${binPath}";
+          types = [ "python" ];
         };
-
-      markdownlint =
-        {
-          name = "markdownlint";
-          description = "Style checker and linter for markdown files.";
-          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
-          files = "\\.md$";
-        };
-
-      mdl =
-        {
-          name = "mdl";
-          description = "A tool to check markdown files and flag style issues.";
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs
-                  (with settings.mdl; [
-                    [ (configPath != "") "--config ${configPath}" ]
-                    [ git-recurse "--git-recurse" ]
-                    [ ignore-front-matter "--ignore-front-matter" ]
-                    [ json "--json" ]
-                    [ (rules != [ ]) "--rules ${lib.strings.concatStringsSep "," rules}" ]
-                    [ (rulesets != [ ]) "--rulesets ${lib.strings.concatStringsSep "," rulesets}" ]
-                    [ show-aliases "--show-aliases" ]
-                    [ warnings "--warnings" ]
-                    [ skip-default-ruleset "--skip-default-ruleset" ]
-                    [ (style != "") "--style ${style}" ]
-                    [ (tags != [ ]) "--tags ${lib.strings.concatStringsSep "," tags}" ]
-                    [ verbose "--verbose" ]
-                  ]);
-            in
-            "${settings.mdl.package}/bin/mdl ${cmdArgs}";
-          files = "\\.md$";
-        };
-
-      denolint =
-        {
-          name = "denolint";
-          description = "Lint JavaScript/TypeScript source code.";
-          types_or = [ "javascript" "jsx" "ts" "tsx" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (settings.denolint.format == "compact") "--compact" ]
-                  [ (settings.denolint.format == "json") "--json" ]
-                  [ (settings.denolint.configPath != "") "-c ${settings.denolint.configPath}" ]
-                ];
-            in
-            "${tools.deno}/bin/deno lint ${cmdArgs}";
-        };
-
-      denofmt =
-        {
-          name = "denofmt";
-          description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
-          types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (!settings.denofmt.write) "--check" ]
-                  [ (settings.denofmt.configPath != "") "-c ${settings.denofmt.configPath}" ]
-                ];
-            in
-            "${tools.deno}/bin/deno fmt ${cmdArgs}";
-        };
-
-      govet =
-        {
-          name = "govet";
-          description = "Checks correctness of Go programs.";
-          entry =
-            let
-              # go vet requires package (directory) names as inputs.
-              script = pkgs.writeShellScript "precommit-govet" ''
-                set -e
-                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${tools.go}/bin/go vet ./"$dir"
-                done
-              '';
-            in
-            builtins.toString script;
-          # to avoid multiple invocations of the same directory input, provide
-          # all file names in a single run.
-          require_serial = true;
-          files = "\\.go$";
-        };
-
-      gotest = {
-        name = "gotest";
-        description = "Run go tests";
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-gotest" ''
-              set -e
-              # find all directories that contain tests
-              dirs=()
-              for file in "$@"; do
-                # either the file is a test
-                if [[ "$file" = *_test.go ]]; then
-                  dirs+=("$(dirname "$file")")
-                  continue
-                fi
-
-                # or the file has an associated test
-                filename="''${file%.go}"
-                test_file="''${filename}_test.go"
-                if [[ -f "$test_file"  ]]; then
-                  dirs+=("$(dirname "$test_file")")
-                  continue
-                fi
-              done
-
-              # ensure we are not duplicating dir entries
-              IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
-
-              # test each directory one by one
-              for dir in "''${sorted_dirs[@]}"; do
-                  ${tools.go}/bin/go test "./$dir"
-              done
-            '';
-          in
-          builtins.toString script;
-        files = "\\.go$";
-        # to avoid multiple invocations of the same directory input, provide
-        # all file names in a single run.
-        require_serial = true;
-      };
-
-      gofmt =
-        {
-          name = "gofmt";
-          description = "A tool that automatically formats Go source code";
-          entry =
-            let
-              script = pkgs.writeShellScript "precommit-gofmt" ''
-                set -e
-                failed=false
-                for file in "$@"; do
-                    # redirect stderr so that violations and summaries are properly interleaved.
-                    if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
-                    then
-                        failed=true
-                    fi
-                done
-                if [[ $failed == "true" ]]; then
-                    exit 1
-                fi
-              '';
-            in
-            builtins.toString script;
-          files = "\\.go$";
-        };
-
       revive =
         {
           name = "revive";
@@ -1847,7 +1952,61 @@ in
           # all file names in a single run.
           require_serial = true;
         };
-
+      rome =
+        {
+          name = "rome";
+          description = "Unified developer tools for JavaScript, TypeScript, and the web";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.rome.write) "--apply" ]
+                  [ (settings.rome.configPath != "") "--config-path ${settings.rome.configPath}" ]
+                ];
+            in
+            "${settings.rome.binPath} check ${cmdArgs}";
+        };
+      ruff =
+        {
+          name = "ruff";
+          description = " An extremely fast Python linter, written in Rust.";
+          entry = "${pkgs.ruff}/bin/ruff --fix";
+          types = [ "python" ];
+        };
+      rustfmt =
+        let
+          wrapper = pkgs.symlinkJoin {
+            name = "rustfmt-wrapped";
+            paths = [ tools.rustfmt ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/cargo-fmt \
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo tools.rustfmt ]}
+            '';
+          };
+        in
+        {
+          name = "rustfmt";
+          description = "Format Rust code.";
+          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      shellcheck =
+        {
+          name = "shellcheck";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.shellcheck}/bin/shellcheck";
+        };
+      shfmt =
+        {
+          name = "shfmt";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
+        };
       staticcheck =
         {
           name = "staticcheck";
@@ -1873,138 +2032,29 @@ in
           # all file names in a single run.
           require_serial = true;
         };
-
-      editorconfig-checker =
+      statix =
         {
-          name = "editorconfig-checker";
-          description = "Verify that the files are in harmony with the `.editorconfig`.";
-          entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
-          types = [ "file" ];
+          name = "statix";
+          description = "Lints and suggestions for the Nix programming language.";
+          entry = with settings.statix;
+            "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
+          files = "\\.nix$";
+          pass_filenames = false;
         };
-
-
-      phpcs =
+      stylish-haskell =
         {
-          name = "phpcs";
-          description = "Lint PHP files.";
-          entry = with settings.phpcs;
-            "${binPath}";
-          types = [ "php" ];
+          name = "stylish-haskell";
+          description = "A simple Haskell code prettifier";
+          entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
+          files = "\\.l?hs(-boot)?$";
         };
-
-      phpcbf =
+      stylua =
         {
-          name = "phpcbf";
-          description = "Lint PHP files.";
-          entry = with settings.phpcbf;
-            "${binPath}";
-          types = [ "php" ];
+          name = "stylua";
+          description = "An Opinionated Lua Code Formatter.";
+          types = [ "file" "lua" ];
+          entry = "${tools.stylua}/bin/stylua";
         };
-
-      phpstan =
-        {
-          name = "phpstan";
-          description = "Static Analysis of PHP files.";
-          entry = with settings.phpstan;
-            "${binPath} analyse";
-          types = [ "php" ];
-        };
-
-      php-cs-fixer =
-        {
-          name = "php-cs-fixer";
-          description = "Lint PHP files.";
-          entry = with settings.php-cs-fixer;
-            "${binPath} fix";
-          types = [ "php" ];
-        };
-
-      psalm =
-        {
-          name = "psalm";
-          description = "Static Analysis of PHP files.";
-          entry = with settings.psalm;
-            "${binPath}";
-          types = [ "php" ];
-        };
-
-
-      pylint =
-        {
-          name = "pylint";
-          description = "Lint Python files.";
-          entry = with settings.pylint;
-            "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
-          types = [ "python" ];
-        };
-
-      pyupgrade =
-        {
-          name = "pyupgrade";
-          description = "Automatically upgrade syntax for newer versions.";
-          entry = with settings.pyupgrade;
-            "${binPath}";
-          types = [ "python" ];
-        };
-
-      pyright =
-        {
-          name = "pyright";
-          description = "Static type checker for Python";
-          entry = settings.pyright.binPath;
-          files = "\\.py$";
-        };
-
-      flake8 =
-        {
-          name = "flake8";
-          description = "Check the style and quality of Python files.";
-          entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
-          types = [ "python" ];
-        };
-
-      autoflake =
-        {
-          name = "autoflake";
-          description = "Remove unused imports and variables from Python code.";
-          entry = "${settings.autoflake.binPath} ${settings.autoflake.flags}";
-          types = [ "python" ];
-        };
-
-      taplo =
-        {
-          name = "taplo";
-          description = "Format TOML files with taplo fmt";
-          entry = "${pkgs.taplo}/bin/taplo fmt";
-          types = [ "toml" ];
-        };
-
-      cljfmt =
-        {
-          name = "cljfmt";
-          description = "A tool for formatting Clojure code.";
-          entry = "${pkgs.cljfmt}/bin/cljfmt fix";
-          types_or = [ "clojure" "clojurescript" "edn" ];
-        };
-
-      zprint =
-        {
-          name = "zprint";
-          description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
-          entry = "${pkgs.zprint}/bin/zprint '{:search-config? true}' -w";
-          types_or = [ "clojure" "clojurescript" "edn" ];
-        };
-
-      commitizen =
-        {
-          name = "commitizen check";
-          description = ''
-            Check whether the current commit message follows committing rules.
-          '';
-          entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
-          stages = [ "commit-msg" ];
-        };
-
       tagref =
         {
           name = "tagref";
@@ -2015,7 +2065,53 @@ in
           types = [ "text" ];
           pass_filenames = false;
         };
-
+      taplo =
+        {
+          name = "taplo";
+          description = "Format TOML files with taplo fmt";
+          entry = "${pkgs.taplo}/bin/taplo fmt";
+          types = [ "toml" ];
+        };
+      terraform-format =
+        {
+          name = "terraform-format";
+          description = "Format terraform (`.tf`) files.";
+          entry = "${tools.terraform-fmt}/bin/terraform-fmt";
+          files = "\\.tf$";
+        };
+      tflint =
+        {
+          name = "tflint";
+          description = "A Pluggable Terraform Linter.";
+          entry = "${tools.tflint}/bin/tflint";
+          files = "\\.tf$";
+        };
+      topiary =
+        {
+          name = "topiary";
+          description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
+          entry =
+            ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
+            ## release of NixOS, the `throwIf` piece of code below will become
+            ## useless.
+            lib.throwIf
+              (tools.topiary == null)
+              "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
+              (
+                let
+                  topiary-inplace = pkgs.writeShellApplication {
+                    name = "topiary-inplace";
+                    text = ''
+                      for file; do
+                        ${tools.topiary}/bin/topiary --in-place --input-file "$file"
+                      done
+                    '';
+                  };
+                in
+                "${topiary-inplace}/bin/topiary-inplace"
+              );
+          files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
+        };
       treefmt =
         {
           name = "treefmt";
@@ -2024,117 +2120,34 @@ in
           pass_filenames = true;
           entry = "${settings.treefmt.package}/bin/treefmt --fail-on-change";
         };
-
-      mkdocs-linkcheck = {
-        name = "mkdocs-linkcheck";
-        description = "Validate links associated with markdown-based, statically generated websites.";
-        entry =
-          let
-            cmdArgs =
-              mkCmdArgs
-                (with settings.mkdocs-linkcheck; [
-                  [ local-only " --local" ]
-                  [ recurse " --recurse" ]
-                  [ (extension != "") " --ext ${extension}" ]
-                  [ (method != "") " --method ${method}" ]
-                  [ (path != "") " ${path}" ]
-                ]);
-          in
-          "${settings.mkdocs-linkcheck.binPath}${cmdArgs}";
-        types = [ "text" "markdown" ];
-      };
-
-      checkmake = {
-        name = "checkmake";
-        description = "Experimental linter/analyzer for Makefiles.";
-        types = [ "makefile" ];
-        entry =
-          ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
-          ## this gets into a NixOS release, the following code will be useless.
-          lib.throwIf
-            (tools.checkmake == null)
-            "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
-            "${tools.checkmake}/bin/checkmake";
-      };
-
-      fprettify = {
-        name = "fprettify";
-        description = "Auto-formatter for modern Fortran code.";
-        types = [ "fortran " ];
-        entry = "${tools.fprettify}/bin/fprettify";
-      };
-
-      dune-fmt = {
-        name = "dune-fmt";
-        description = "Runs Dune's formatters on the code tree.";
-        entry =
-          let
-            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
-            run-dune-fmt = pkgs.writeShellApplication {
-              name = "run-dune-fmt";
-              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
-              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
-            };
-          in
-          "${run-dune-fmt}/bin/run-dune-fmt";
-        pass_filenames = false;
-      };
-
-      headache =
+      typos =
         {
-          name = "headache";
-          description = "Lightweight tool for managing headers in source code files.";
-          ## NOTE: Supported `files` are taken from
-          ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
-          files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
+          name = "typos";
+          description = "Source code spell checker";
           entry =
-            ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
-            ## next NixOS release, the following code will become irrelevant.
-            lib.throwIf
-              (tools.headache == null)
-              "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
-              "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
+            let
+              configFile = builtins.toFile "config.toml" "${settings.typos.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.typos; [
+                    [ (color != "") "--color ${color}" ]
+                    [ (configPath != "") "--config ${configPath}" ]
+                    [ (config != "" && configPath == "") "--config ${configFile}" ]
+                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+                    [ (format != "") "--format ${format}" ]
+                    [ (locale != "") "--locale ${locale}" ]
+                    [ (write && !diff) "--write-changes" ]
+                  ]);
+            in
+            "${tools.typos}/bin/typos ${cmdArgs}${lib.optionalString settings.typos.diff " --diff"}${lib.optionalString settings.typos.hidden " --hidden"}";
+          types = [ "text" ];
         };
-
-      convco = {
-        name = "convco";
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-convco" ''
-              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
-            '';
-            # need version >= 0.4.0 for the --from-stdin flag
-            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
-          in
-          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
-            builtins.toString
-            script;
-        stages = [ "commit-msg" ];
+      typstfmt = {
+        name = "typstfmt";
+        description = "format typst";
+        entry = "${tools.typst-fmt}/bin/typst-fmt";
+        files = "\\.typ$";
       };
-
-      mix-format = {
-        name = "mix-format";
-        description = "Runs the built-in Elixir syntax formatter";
-        entry = "${pkgs.elixir}/bin/mix format";
-        files = "\\.exs?$";
-      };
-
-      mix-test = {
-        name = "mix-test";
-        description = "Runs the built-in Elixir test framework";
-        entry = "${pkgs.elixir}/bin/mix test";
-        files = "\\.exs?$";
-      };
-
-      credo = {
-        name = "credo";
-        description = "Runs a static code analysis using Credo";
-        entry =
-          let strict = if settings.credo.strict then "--strict" else "";
-          in "${pkgs.elixir}/bin/mix credo";
-        files = "\\.exs?$";
-      };
-
       vale = {
         name = "vale";
         description = "A markup-aware linter for prose built with speed and extensibility in mind.";
@@ -2151,93 +2164,28 @@ in
           "${pkgs.vale}/bin/vale${cmdArgs} ${settings.vale.flags}";
         types = [ "text" ];
       };
+      yamllint =
+        {
+          name = "yamllint";
+          description = "Yaml linter.";
+          types = [ "file" "yaml" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.yamllint.relaxed) "-d relaxed" ]
+                  [ (settings.yamllint.configPath != "") "-c ${settings.yamllint.configPath}" ]
+                ];
+            in
+            "${tools.yamllint}/bin/yamllint ${cmdArgs}";
+        };
+      zprint =
+        {
+          name = "zprint";
+          description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
+          entry = "${pkgs.zprint}/bin/zprint '{:search-config? true}' -w";
+          types_or = [ "clojure" "clojurescript" "edn" ];
+        };
 
-      dialyzer = {
-        name = "dialyzer";
-        description = "Runs a static code analysis using Dialyzer";
-        entry = "${pkgs.elixir}/bin/mix dialyzer";
-        files = "\\.exs?$";
-      };
-
-      crystal = {
-        name = "crystal";
-        description = "A tool that automatically formats Crystal source code";
-        entry = "${tools.crystal}/bin/crystal tool format";
-        files = "\\.cr$";
-      };
-
-      lychee = {
-        name = "lychee";
-        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
-        entry =
-          let
-            cmdArgs =
-              mkCmdArgs
-                (with settings.lychee; [
-                  [ (configPath != "") " --config ${configPath}" ]
-                ]);
-          in
-          "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
-        types = [ "text" ];
-      };
-
-      annex = {
-        name = "annex";
-        description = "Runs the git-annex hook for large file support";
-        entry = "${tools.git-annex}/bin/git-annex pre-commit";
-      };
-
-      golangci-lint = {
-        name = "golangci-lint";
-        description = "Fast linters runner for Go.";
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-golangci-lint" ''
-              set -e
-              for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
-              done
-            '';
-          in
-          builtins.toString script;
-        files = "\\.go$";
-        # to avoid multiple invocations of the same directory input, provide
-        # all file names in a single run.
-        require_serial = true;
-      };
-
-      conform = {
-        name = "conform enforce";
-        description = "Policy enforcement for commits.";
-        entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
-        stages = [ "commit-msg" ];
-      };
-
-      typstfmt = {
-        name = "typstfmt";
-        description = "format typst";
-        entry = "${tools.typst-fmt}/bin/typst-fmt";
-        files = "\\.typ$";
-      };
-
-      juliaformatter = {
-        description = "Run JuliaFormatter.jl against Julia source files";
-        files = "\\.jl$";
-        entry = ''
-          ${tools.julia-bin}/bin/julia -e '
-          using Pkg
-          Pkg.activate(".")
-          using JuliaFormatter
-          format(ARGS)
-          out = Cmd(`git diff --name-only`) |> read |> String
-          if out == ""
-              exit(0)
-          else
-              @error "Some files have been formatted !!!"
-              write(stdout, out)
-              exit(1)
-          end'
-        '';
-      };
     };
 }
