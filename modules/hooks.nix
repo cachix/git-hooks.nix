@@ -19,80 +19,9 @@ let
 
 in
 {
+  # PLEASE keep this sorted alphabetically.
   options.settings =
     {
-      ansible-lint =
-        {
-          configPath = mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the YAML configuration file.";
-            # an empty string translates to use default configuration of the
-            # underlying ansible-lint binary
-            default = "";
-          };
-          subdir = mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the Ansible subdirectory.";
-            default = "";
-          };
-        };
-      hpack =
-        {
-          silent =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether generation should be silent.";
-              default = false;
-            };
-        };
-      hlint =
-        {
-          hintFile =
-            mkOption {
-              type = types.nullOr types.path;
-              description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
-              default = null;
-            };
-        };
-      isort =
-        {
-          profile =
-            mkOption {
-              type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
-              description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
-              default = "";
-            };
-          flags =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
-              default = "";
-            };
-        };
-      latexindent =
-        {
-          flags =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
-              default = "--local --silent --overwriteIfDifferent";
-            };
-        };
-      ormolu =
-        {
-          defaultExtensions =
-            mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Haskell language extensions to enable.";
-              default = [ ];
-            };
-          cabalDefaultExtensions =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Use `default-extensions` from `.cabal` files.";
-              default = false;
-            };
-        };
       alejandra =
         {
           check =
@@ -132,6 +61,66 @@ in
               example = "quiet";
             };
         };
+      ansible-lint =
+        {
+          configPath = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the YAML configuration file.";
+            # an empty string translates to use default configuration of the
+            # underlying ansible-lint binary
+            default = "";
+          };
+          subdir = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the Ansible subdirectory.";
+            default = "";
+          };
+        };
+      autoflake =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to autoflake binary.";
+              default = "${pkgs.autoflake}/bin/autoflake";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.autoflake}/bin/autoflake"
+              '';
+            };
+
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to autoflake.";
+              default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
+            };
+        };
+      clippy =
+        {
+          denyWarnings = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Fail when warnings are present";
+            default = false;
+          };
+          offline = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy offline";
+            default = true;
+          };
+          allFeatures = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy with --all-features";
+            default = false;
+          };
+        };
+      credo = {
+        strict =
+          mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Whether to auto-promote the changes.";
+            default = true;
+          };
+      };
       deadnix =
         {
           edit =
@@ -183,23 +172,293 @@ in
               default = false;
             };
         };
-      statix =
+      denofmt =
+        {
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to edit files inplace.";
+              default = true;
+            };
+          configPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying deno binary (i.e deno.json or deno.jsonc)
+              default = "";
+            };
+        };
+      denolint =
         {
           format =
             mkOption {
-              type = types.enum [ "stderr" "errfmt" "json" ];
-              description = lib.mdDoc "Error Output format.";
-              default = "errfmt";
+              type = types.enum [ "default" "compact" "json" ];
+              description = lib.mdDoc "Output format.";
+              default = "default";
             };
 
-          ignore =
+          configPath =
             mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Globs of file patterns to skip.";
-              default = [ ];
-              example = [ "flake.nix" "_*" ];
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying deno binary (i.e deno.json or deno.jsonc)
+              default = "";
             };
         };
+      dune-fmt =
+        {
+          auto-promote =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to auto-promote the changes.";
+              default = true;
+            };
+
+          extraRuntimeInputs =
+            mkOption {
+              type = types.listOf types.package;
+              description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
+              default = [ ];
+            };
+        };
+      eclint =
+        {
+          package =
+            mkOption {
+              type = types.package;
+              description = lib.mdDoc "The `eclint` package to use.";
+              default = "${tools.eclint}";
+              defaultText = lib.literalExpression "\${tools.eclint}";
+              example = lib.literalExpression "\${pkgs.eclint}";
+            };
+          fix =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Modify files in place rather than showing the errors.";
+              default = false;
+            };
+          summary =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Only show number of errors per file.";
+              default = false;
+            };
+          color =
+            mkOption {
+              type = types.enum [ "auto" "always" "never" ];
+              description = lib.mdDoc "When to generate colored output.";
+              default = "auto";
+            };
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Filter to exclude files.";
+              default = [ ];
+            };
+          verbosity =
+            mkOption {
+              type = types.enum [ 0 1 2 3 4 ];
+              description = lib.mdDoc "Log level verbosity";
+              default = 0;
+            };
+        };
+      eslint =
+        {
+          binPath =
+            mkOption {
+              type = types.path;
+              description = lib.mdDoc
+                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+              default = "${tools.eslint}/bin/eslint";
+              defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
+            };
+
+          extensions =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc
+                "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
+              default = "\\.js$";
+            };
+        };
+      flake8 =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+              default = "${pkgs.python39Packages.flake8}/bin/flake8";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python39Packages.flake8}/bin/flake8"
+              '';
+            };
+
+          format =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Output format.";
+              default = "default";
+            };
+        };
+      flynt =
+        {
+          aggressive =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Include conversions with potentially changed behavior.";
+              default = false;
+            };
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
+              default = "${settings.flynt.package}/bin/flynt";
+              defaultText = "\${settings.flynt.package}/bin/flynt";
+            };
+          dry-run =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Do not change files in-place and print diff instead.";
+              default = false;
+            };
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Ignore files with given strings in their absolute path.";
+              default = [ ];
+            };
+          fail-on-change =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Fail when diff is not empty (for linting purposes).";
+              default = true;
+            };
+          line-length =
+            mkOption {
+              type = types.nullOr types.int;
+              description = lib.mdDoc "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
+              default = null;
+            };
+          no-multiline =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Convert only single line expressions.";
+              default = false;
+            };
+          package =
+            mkOption {
+              type = types.package;
+              description = lib.mdDoc "The `flynt` package to use.";
+              default = "${pkgs.python311Packages.flynt}";
+              defaultText = "\${pkgs.python311Packages.flynt}";
+              example = "\${pkgs.python310Packages.flynt}";
+            };
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Run without output.";
+              default = false;
+            };
+          string =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Interpret the input as a Python code snippet and print the converted version.";
+              default = false;
+            };
+          transform-concats =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Replace string concatenations with f-strings.";
+              default = false;
+            };
+          verbose =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Run with verbose output.";
+              default = false;
+            };
+        };
+      headache =
+        {
+          header-file = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the header file.";
+            default = ".header";
+          };
+        };
+      hlint =
+        {
+          hintFile =
+            mkOption {
+              type = types.nullOr types.path;
+              description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
+              default = null;
+            };
+        };
+      hpack =
+        {
+          silent =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether generation should be silent.";
+              default = false;
+            };
+        };
+      isort =
+        {
+          profile =
+            mkOption {
+              type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
+              description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
+              default = "";
+            };
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
+              default = "";
+            };
+        };
+      latexindent =
+        {
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
+              default = "--local --silent --overwriteIfDifferent";
+            };
+        };
+      lua-ls =
+        {
+          checklevel = mkOption {
+            type = types.enum [ "Error" "Warning" "Information" "Hint" ];
+            description = lib.mdDoc
+              "The diagnostic check level";
+            default = "Warning";
+          };
+          config = mkOption {
+            type = types.attrs;
+            description = lib.mdDoc
+              "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
+            default = { };
+          };
+        };
+      lychee = {
+        configPath =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the config file.";
+            default = "";
+          };
+        flags =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
+            default = "";
+          };
+      };
       markdownlint = {
         config =
           mkOption {
@@ -291,39 +550,51 @@ in
             default = false;
           };
       };
-      denolint =
+      mkdocs-linkcheck =
         {
-          format =
+          binPath =
             mkOption {
-              type = types.enum [ "default" "compact" "json" ];
-              description = lib.mdDoc "Output format.";
-              default = "default";
+              type = types.path;
+              description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+              default = "${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+              '';
             };
 
-          configPath =
+          path =
             mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying deno binary (i.e deno.json or deno.jsonc)
+              description = lib.mdDoc "Path to check";
               default = "";
             };
-        };
-      denofmt =
-        {
-          write =
+
+          local-only =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to edit files inplace.";
-              default = true;
+              description = lib.mdDoc "Whether to only check local links.";
+              default = false;
             };
-          configPath =
+
+          recurse =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to recurse directories under path.";
+              default = false;
+            };
+
+          extension =
             mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying deno binary (i.e deno.json or deno.jsonc)
+              description = lib.mdDoc "File extension to scan for.";
               default = "";
+            };
+
+          method =
+            mkOption {
+              type = types.enum [ "get" "head" ];
+              description = lib.mdDoc "HTTP method to use when checking external links.";
+              default = "get";
             };
         };
       mypy =
@@ -347,6 +618,69 @@ in
               default = null;
             };
         };
+      ormolu =
+        {
+          defaultExtensions =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Haskell language extensions to enable.";
+              default = [ ];
+            };
+          cabalDefaultExtensions =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Use `default-extensions` from `.cabal` files.";
+              default = false;
+            };
+        };
+      php-cs-fixer =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP-CS-Fixer binary path.";
+              default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
+              '';
+            };
+        };
+      phpcbf =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP_CodeSniffer binary path.";
+              default = "${pkgs.php82Packages.phpcbf}/bin/phpcbf";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
+              '';
+            };
+        };
+      phpcs =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP_CodeSniffer binary path.";
+              default = "${pkgs.php82Packages.phpcs}/bin/phpcs";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php80Packages.phpcs}/bin/phpcs"
+              '';
+            };
+        };
+      phpstan =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHPStan binary path.";
+              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
+              '';
+            };
+        };
       prettier =
         {
           binPath =
@@ -359,14 +693,12 @@ in
                 "''${tools.prettier}/bin/prettier"
               '';
             };
-
           write =
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Whether to edit files inplace.";
               default = true;
             };
-
           output =
             mkOption {
               description = lib.mdDoc "Output format.";
@@ -374,64 +706,75 @@ in
               default = "list-different";
             };
         };
-      eslint =
+      psalm =
         {
           binPath =
             mkOption {
-              type = types.path;
-              description = lib.mdDoc
-                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
-              default = "${tools.eslint}/bin/eslint";
-              defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
-            };
-
-          extensions =
-            mkOption {
               type = types.str;
-              description = lib.mdDoc
-                "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
-              default = "\\.js$";
+              description = lib.mdDoc "Psalm binary path.";
+              default = "${pkgs.php82Packages.psalm}/bin/psalm";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/psalm"
+              '';
             };
         };
-      eclint =
+      pylint =
         {
-          package =
+          binPath =
             mkOption {
-              type = types.package;
-              description = lib.mdDoc "The `eclint` package to use.";
-              default = "${tools.eclint}";
-              defaultText = lib.literalExpression "\${tools.eclint}";
-              example = lib.literalExpression "\${pkgs.eclint}";
+              type = types.str;
+              description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+              default = "${pkgs.python39Packages.pylint}/bin/pylint";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python39Packages.pylint}/bin/pylint"
+              '';
             };
-          fix =
+          reports =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Modify files in place rather than showing the errors.";
+              description = lib.mdDoc "Whether to display a full report.";
               default = false;
             };
-          summary =
+          score =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Only show number of errors per file.";
-              default = false;
+              description = lib.mdDoc "Whether to activate the evaluation score.";
+              default = true;
             };
-          color =
+        };
+      pyright =
+        {
+          binPath =
             mkOption {
-              type = types.enum [ "auto" "always" "never" ];
-              description = lib.mdDoc "When to generate colored output.";
-              default = "auto";
+              type = types.str;
+              description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
+              default = "${pkgs.pyright}/bin/pyright";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyright}/bin/pyright"
+              '';
             };
-          exclude =
+        };
+      pyupgrade =
+        {
+          binPath =
             mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Filter to exclude files.";
-              default = [ ];
+              type = types.str;
+              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+              default = "${pkgs.pyupgrade}/bin/pyupgrade";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyupgrade}/bin/pyupgrade"
+              '';
             };
-          verbosity =
+        };
+      revive =
+        {
+          configPath =
             mkOption {
-              type = types.enum [ 0 1 2 3 4 ];
-              description = lib.mdDoc "Log level verbosity";
-              default = 0;
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration TOML file.";
+              # an empty string translates to use default configuration of the
+              # underlying revive binary
+              default = "";
             };
         };
       rome =
@@ -459,7 +802,59 @@ in
             default = "";
           };
         };
+      rust =
+        {
+          cargoManifestPath = mkOption {
+            type = types.nullOr types.str;
+            description = lib.mdDoc "Path to Cargo.toml";
+            default = null;
+          };
+        };
+      statix =
+        {
+          format =
+            mkOption {
+              type = types.enum [ "stderr" "errfmt" "json" ];
+              description = lib.mdDoc "Error Output format.";
+              default = "errfmt";
+            };
 
+          ignore =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Globs of file patterns to skip.";
+              default = [ ];
+              example = [ "flake.nix" "_*" ];
+            };
+        };
+      treefmt =
+        {
+          package = mkOption {
+            type = types.package;
+            description = lib.mdDoc
+              ''
+                The `treefmt` package to use.
+
+                Should include all the formatters configured by treefmt.
+
+                For example:
+                ```nix
+                pkgs.writeShellApplication {
+                  name = "treefmt";
+                  runtimeInputs = [
+                    pkgs.treefmt
+                    pkgs.nixpkgs-fmt
+                    pkgs.black
+                  ];
+                  text =
+                    '''
+                      exec treefmt "$@"
+                    ''';
+                }
+                ```
+              '';
+          };
+        };
       typos =
         {
           color =
@@ -536,266 +931,31 @@ in
               default = false;
             };
         };
-
-      revive =
-        {
-          configPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to the configuration TOML file.";
-              # an empty string translates to use default configuration of the
-              # underlying revive binary
-              default = "";
-            };
-
-        };
-
-      flynt =
-        {
-          aggressive =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Include conversions with potentially changed behavior.";
-              default = false;
-            };
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
-              default = "${settings.flynt.package}/bin/flynt";
-              defaultText = "\${settings.flynt.package}/bin/flynt";
-            };
-          dry-run =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Do not change files in-place and print diff instead.";
-              default = false;
-            };
-          exclude =
-            mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Ignore files with given strings in their absolute path.";
-              default = [ ];
-            };
-          fail-on-change =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Fail when diff is not empty (for linting purposes).";
-              default = true;
-            };
-          line-length =
-            mkOption {
-              type = types.nullOr types.int;
-              description = lib.mdDoc "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
-              default = null;
-            };
-          no-multiline =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Convert only single line expressions.";
-              default = false;
-            };
-          package =
-            mkOption {
-              type = types.package;
-              description = lib.mdDoc "The `flynt` package to use.";
-              default = "${pkgs.python311Packages.flynt}";
-              defaultText = "\${pkgs.python311Packages.flynt}";
-              example = "\${pkgs.python310Packages.flynt}";
-            };
-          quiet =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Run without output.";
-              default = false;
-            };
-          string =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Interpret the input as a Python code snippet and print the converted version.";
-              default = false;
-            };
-          transform-concats =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Replace string concatenations with f-strings.";
-              default = false;
-            };
-          verbose =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Run with verbose output.";
-              default = false;
-            };
-        };
-
-      phpcs =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php82Packages.phpcs}/bin/phpcs";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php80Packages.phpcs}/bin/phpcs"
-              '';
-            };
-        };
-
-      phpcbf =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php82Packages.phpcbf}/bin/phpcbf";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
-              '';
-            };
-        };
-
-      phpstan =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHPStan binary path.";
-              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
-              '';
-            };
-        };
-
-      php-cs-fixer =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHP-CS-Fixer binary path.";
-              default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
-              '';
-            };
-        };
-
-      psalm =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Psalm binary path.";
-              default = "${pkgs.php82Packages.psalm}/bin/psalm";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.phpstan}/bin/psalm"
-              '';
-            };
-        };
-
-      pylint =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
-              default = "${pkgs.python39Packages.pylint}/bin/pylint";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.pylint}/bin/pylint"
-              '';
-            };
-
-          reports =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to display a full report.";
-              default = false;
-            };
-
-          score =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to activate the evaluation score.";
-              default = true;
-            };
-        };
-
-      pyupgrade =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
-              default = "${pkgs.pyupgrade}/bin/pyupgrade";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.pyupgrade}/bin/pyupgrade"
-              '';
-            };
-        };
-
-      pyright =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
-              default = "${pkgs.pyright}/bin/pyright";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.pyright}/bin/pyright"
-              '';
-            };
-        };
-
-      flake8 =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
-              default = "${pkgs.python39Packages.flake8}/bin/flake8";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.flake8}/bin/flake8"
-              '';
-            };
-
-          format =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Output format.";
-              default = "default";
-            };
-        };
-
-      autoflake =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to autoflake binary.";
-              default = "${pkgs.autoflake}/bin/autoflake";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.autoflake}/bin/autoflake"
-              '';
-            };
-
-          flags =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Flags passed to autoflake.";
-              default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
-            };
-        };
-
-      rust =
-        {
-          cargoManifestPath = mkOption {
-            type = types.nullOr types.str;
-            description = lib.mdDoc "Path to Cargo.toml";
-            default = null;
+      vale = {
+        config =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Multiline-string configuration passed as config file.";
+            default = "";
+            example = ''
+              MinAlertLevel = suggestion
+              [*]
+              BasedOnStyles = Vale
+            '';
           };
-        };
-
+        configPath =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the config file.";
+            default = "";
+          };
+        flags =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Flags passed to vale.";
+            default = "";
+          };
+      };
       yamllint =
         {
           relaxed = mkOption {
@@ -812,199 +972,9 @@ in
             default = "";
           };
         };
-
-      clippy =
-        {
-          denyWarnings = mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Fail when warnings are present";
-            default = false;
-          };
-          offline = mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Run clippy offline";
-            default = true;
-          };
-          allFeatures = mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Run clippy with --all-features";
-            default = false;
-          };
-        };
-
-      treefmt =
-        {
-          package = mkOption {
-            type = types.package;
-            description = lib.mdDoc
-              ''
-                The `treefmt` package to use.
-
-                Should include all the formatters configured by treefmt.
-
-                For example:
-                ```nix
-                pkgs.writeShellApplication {
-                  name = "treefmt";
-                  runtimeInputs = [
-                    pkgs.treefmt
-                    pkgs.nixpkgs-fmt
-                    pkgs.black
-                  ];
-                  text =
-                    '''
-                      exec treefmt "$@"
-                    ''';
-                }
-                ```
-              '';
-          };
-        };
-
-      mkdocs-linkcheck =
-        {
-          binPath =
-            mkOption {
-              type = types.path;
-              description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
-              default = "${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
-              '';
-            };
-
-          path =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to check";
-              default = "";
-            };
-
-          local-only =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to only check local links.";
-              default = false;
-            };
-
-          recurse =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to recurse directories under path.";
-              default = false;
-            };
-
-          extension =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "File extension to scan for.";
-              default = "";
-            };
-
-          method =
-            mkOption {
-              type = types.enum [ "get" "head" ];
-              description = lib.mdDoc "HTTP method to use when checking external links.";
-              default = "get";
-            };
-        };
-
-      dune-fmt =
-        {
-          auto-promote =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to auto-promote the changes.";
-              default = true;
-            };
-
-          extraRuntimeInputs =
-            mkOption {
-              type = types.listOf types.package;
-              description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
-              default = [ ];
-            };
-        };
-
-      headache =
-        {
-          header-file = mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the header file.";
-            default = ".header";
-          };
-        };
-
-      lua-ls =
-        {
-          checklevel = mkOption {
-            type = types.enum [ "Error" "Warning" "Information" "Hint" ];
-            description = lib.mdDoc
-              "The diagnostic check level";
-            default = "Warning";
-          };
-          config = mkOption {
-            type = types.attrs;
-            description = lib.mdDoc
-              "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
-            default = { };
-          };
-        };
-
-      credo = {
-        strict =
-          mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Whether to auto-promote the changes.";
-            default = true;
-          };
-      };
-
-      vale = {
-        config =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Multiline-string configuration passed as config file.";
-            default = "";
-            example = ''
-              MinAlertLevel = suggestion
-              [*]
-              BasedOnStyles = Vale
-            '';
-          };
-
-        configPath =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the config file.";
-            default = "";
-          };
-
-        flags =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Flags passed to vale.";
-            default = "";
-          };
-      };
-
-      lychee = {
-        configPath =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the config file.";
-            default = "";
-          };
-
-        flags =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
-            default = "";
-          };
-      };
     };
 
+  # PLEASE keep this sorted alphabetically.
   config.hooks =
     {
       actionlint =
@@ -1014,6 +984,30 @@ in
           files = "^.github/workflows/";
           types = [ "yaml" ];
           entry = "${tools.actionlint}/bin/actionlint";
+        };
+      alejandra =
+        {
+          name = "alejandra";
+          description = "The Uncompromising Nix Code Formatter.";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.alejandra; [
+                  [ check "--check" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
+                  [ (verbosity == "quiet") "-q" ]
+                  [ (verbosity == "silent") "-qq" ]
+                  [ (threads != null) "--threads ${toString threads}" ]
+                ]);
+            in
+            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
+          files = "\\.nix$";
+        };
+      annex =
+        {
+          name = "annex";
+          description = "Runs the git-annex hook for large file support";
+          entry = "${tools.git-annex}/bin/git-annex pre-commit";
         };
       ansible-lint =
         {
@@ -1030,6 +1024,28 @@ in
             "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
           files = if settings.ansible-lint.subdir != "" then "${settings.ansible-lint.subdir}/" else "";
         };
+      autoflake =
+        {
+          name = "autoflake";
+          description = "Remove unused imports and variables from Python code.";
+          entry = "${settings.autoflake.binPath} ${settings.autoflake.flags}";
+          types = [ "python" ];
+        };
+      bats =
+        {
+          name = "bats";
+          description = "Run bash unit tests.";
+          types = [ "shell" ];
+          types_or = [ "bats" "bash" ];
+          entry = "${tools.bats}/bin/bats -p";
+        };
+      beautysh =
+        {
+          name = "beautysh";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.beautysh}/bin/beautysh";
+        };
       black =
         {
           name = "black";
@@ -1037,12 +1053,12 @@ in
           entry = "${pkgs.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
-      ruff =
+      cabal-fmt =
         {
-          name = "ruff";
-          description = " An extremely fast Python linter, written in Rust.";
-          entry = "${pkgs.ruff}/bin/ruff --fix";
-          types = [ "python" ];
+          name = "cabal-fmt";
+          description = "Format Cabal files";
+          entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
+          files = "\\.cabal$";
         };
       cabal2nix =
         {
@@ -1050,6 +1066,33 @@ in
           description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files.";
           files = "\\.cabal$";
           entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir";
+        };
+      cargo-check =
+        {
+          name = "cargo-check";
+          description = "Check the cargo package for errors.";
+          entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      checkmake = {
+        name = "checkmake";
+        description = "Experimental linter/analyzer for Makefiles.";
+        types = [ "makefile" ];
+        entry =
+          ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
+          ## this gets into a NixOS release, the following code will be useless.
+          lib.throwIf
+            (tools.checkmake == null)
+            "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
+            "${tools.checkmake}/bin/checkmake";
+      };
+      chktex =
+        {
+          name = "chktex";
+          description = "LaTeX semantic checker";
+          types = [ "file" "tex" ];
+          entry = "${tools.chktex}/bin/chktex";
         };
       clang-format =
         {
@@ -1076,11 +1119,159 @@ in
         entry = "${tools.clang-tools}/bin/clang-tidy --fix";
         types = [ "c" "c++" "c#" "objective-c" ];
       };
+      clippy =
+        let
+          wrapper = pkgs.symlinkJoin {
+            name = "clippy-wrapped";
+            paths = [ tools.clippy ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/cargo-clippy \
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
+            '';
+          };
+        in
+        {
+          name = "clippy";
+          description = "Lint Rust code.";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      cljfmt =
+        {
+          name = "cljfmt";
+          description = "A tool for formatting Clojure code.";
+          entry = "${pkgs.cljfmt}/bin/cljfmt fix";
+          types_or = [ "clojure" "clojurescript" "edn" ];
+        };
+      commitizen =
+        {
+          name = "commitizen check";
+          description = ''
+            Check whether the current commit message follows committing rules.
+          '';
+          entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
+          stages = [ "commit-msg" ];
+        };
+      conform = {
+        name = "conform enforce";
+        description = "Policy enforcement for commits.";
+        entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
+        stages = [ "commit-msg" ];
+      };
+      convco = {
+        name = "convco";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-convco" ''
+              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
+            '';
+            # need version >= 0.4.0 for the --from-stdin flag
+            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
+          in
+          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+            builtins.toString
+            script;
+        stages = [ "commit-msg" ];
+      };
+      credo = {
+        name = "credo";
+        description = "Runs a static code analysis using Credo";
+        entry =
+          let strict = if settings.credo.strict then "--strict" else "";
+          in "${pkgs.elixir}/bin/mix credo";
+        files = "\\.exs?$";
+      };
+      crystal = {
+        name = "crystal";
+        description = "A tool that automatically formats Crystal source code";
+        entry = "${tools.crystal}/bin/crystal tool format";
+        files = "\\.cr$";
+      };
+      cspell =
+        {
+          name = "cspell";
+          description = "A Spell Checker for Code";
+          entry = "${tools.cspell}/bin/cspell";
+        };
+      deadnix =
+        {
+          name = "deadnix";
+          description = "Scan Nix files for dead code (unused variable bindings).";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.deadnix; [
+                  [ noLambdaArg "--no-lambda-arg" ]
+                  [ noLambdaPatternNames "--no-lambda-pattern-names" ]
+                  [ noUnderscore "--no-underscore" ]
+                  [ quiet "--quiet" ]
+                  [ hidden "--hidden" ]
+                  [ edit "--edit" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                ]);
+            in
+            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
+          files = "\\.nix$";
+        };
+      denofmt =
+        {
+          name = "denofmt";
+          description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (!settings.denofmt.write) "--check" ]
+                  [ (settings.denofmt.configPath != "") "-c ${settings.denofmt.configPath}" ]
+                ];
+            in
+            "${tools.deno}/bin/deno fmt ${cmdArgs}";
+        };
+      denolint =
+        {
+          name = "denolint";
+          description = "Lint JavaScript/TypeScript source code.";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.denolint.format == "compact") "--compact" ]
+                  [ (settings.denolint.format == "json") "--json" ]
+                  [ (settings.denolint.configPath != "") "-c ${settings.denolint.configPath}" ]
+                ];
+            in
+            "${tools.deno}/bin/deno lint ${cmdArgs}";
+        };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
         entry = "${tools.dhall}/bin/dhall format";
         files = "\\.dhall$";
+      };
+      dialyzer = {
+        name = "dialyzer";
+        description = "Runs a static code analysis using Dialyzer";
+        entry = "${pkgs.elixir}/bin/mix dialyzer";
+        files = "\\.exs?$";
+      };
+      dune-fmt = {
+        name = "dune-fmt";
+        description = "Runs Dune's formatters on the code tree.";
+        entry =
+          let
+            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
+            run-dune-fmt = pkgs.writeShellApplication {
+              name = "run-dune-fmt";
+              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
+              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
+            };
+          in
+          "${run-dune-fmt}/bin/run-dune-fmt";
+        pass_filenames = false;
       };
       dune-opam-sync = {
         name = "dune/opam sync";
@@ -1092,6 +1283,211 @@ in
         ## the `dune-project` file has changed.
         pass_filenames = false;
       };
+      eclint =
+        {
+          name = "eclint";
+          description = "EditorConfig linter written in Go.";
+          types = [ "file" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.eclint; [
+                    [ fix "-fix" ]
+                    [ summary "-summary" ]
+                    [ (color != "auto") "-color ${color}" ]
+                    [ (exclude != [ ]) "-exclude ${lib.escapeShellArgs exclude}" ]
+                    [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
+                  ]);
+            in
+            "${settings.eclint.package}/bin/eclint ${cmdArgs}";
+        };
+      editorconfig-checker =
+        {
+          name = "editorconfig-checker";
+          description = "Verify that the files are in harmony with the `.editorconfig`.";
+          entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
+          types = [ "file" ];
+        };
+      elm-format =
+        {
+          name = "elm-format";
+          description = "Format Elm files.";
+          entry =
+            "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
+          files = "\\.elm$";
+        };
+      elm-review =
+        {
+          name = "elm-review";
+          description = "Analyzes Elm projects, to help find mistakes before your users find them.";
+          entry = "${tools.elm-review}/bin/elm-review";
+          files = "\\.elm$";
+          pass_filenames = false;
+        };
+      elm-test =
+        {
+          name = "elm-test";
+          description = "Run unit tests and fuzz tests for Elm code.";
+          entry = "${tools.elm-test}/bin/elm-test";
+          files = "\\.elm$";
+          pass_filenames = false;
+        };
+      eslint =
+        {
+          name = "eslint";
+          description = "Find and fix problems in your JavaScript code.";
+          entry = "${settings.eslint.binPath} --fix";
+          files = "${settings.eslint.extensions}";
+        };
+      flake8 =
+        {
+          name = "flake8";
+          description = "Check the style and quality of Python files.";
+          entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
+          types = [ "python" ];
+        };
+      flynt =
+        {
+          name = "flynt";
+          description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs (with settings.flynt; [
+                  [ aggressive "--aggressive" ]
+                  [ dry-run "--dry-run" ]
+                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+                  [ fail-on-change "--fail-on-change" ]
+                  [ (line-length != null) "--line-length ${toString line-length}" ]
+                  [ no-multiline "--no-multiline" ]
+                  [ quiet "--quiet" ]
+                  [ string "--string" ]
+                  [ transform-concats "--transform-concats" ]
+                  [ verbose "--verbose" ]
+                ]);
+            in
+            "${settings.flynt.binPath} ${cmdArgs}";
+          types = [ "python" ];
+        };
+      fourmolu =
+        {
+          name = "fourmolu";
+          description = "Haskell code prettifier.";
+          entry =
+            "${tools.fourmolu}/bin/fourmolu --mode inplace ${
+            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
+            }";
+          files = "\\.l?hs(-boot)?$";
+        };
+      fprettify = {
+        name = "fprettify";
+        description = "Auto-formatter for modern Fortran code.";
+        types = [ "fortran " ];
+        entry = "${tools.fprettify}/bin/fprettify";
+      };
+      gofmt =
+        {
+          name = "gofmt";
+          description = "A tool that automatically formats Go source code";
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-gofmt" ''
+                set -e
+                failed=false
+                for file in "$@"; do
+                    # redirect stderr so that violations and summaries are properly interleaved.
+                    if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
+                    then
+                        failed=true
+                    fi
+                done
+                if [[ $failed == "true" ]]; then
+                    exit 1
+                fi
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+        };
+      golangci-lint = {
+        name = "golangci-lint";
+        description = "Fast linters runner for Go.";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-golangci-lint" ''
+              set -e
+              for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
+              done
+            '';
+          in
+          builtins.toString script;
+        files = "\\.go$";
+        # to avoid multiple invocations of the same directory input, provide
+        # all file names in a single run.
+        require_serial = true;
+      };
+      gotest = {
+        name = "gotest";
+        description = "Run go tests";
+        entry =
+          let
+            script = pkgs.writeShellScript "precommit-gotest" ''
+              set -e
+              # find all directories that contain tests
+              dirs=()
+              for file in "$@"; do
+                # either the file is a test
+                if [[ "$file" = *_test.go ]]; then
+                  dirs+=("$(dirname "$file")")
+                  continue
+                fi
+
+                # or the file has an associated test
+                filename="''${file%.go}"
+                test_file="''${filename}_test.go"
+                if [[ -f "$test_file"  ]]; then
+                  dirs+=("$(dirname "$test_file")")
+                  continue
+                fi
+              done
+
+              # ensure we are not duplicating dir entries
+              IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
+
+              # test each directory one by one
+              for dir in "''${sorted_dirs[@]}"; do
+                  ${tools.go}/bin/go test "./$dir"
+              done
+            '';
+          in
+          builtins.toString script;
+        files = "\\.go$";
+        # to avoid multiple invocations of the same directory input, provide
+        # all file names in a single run.
+        require_serial = true;
+      };
+      govet =
+        {
+          name = "govet";
+          description = "Checks correctness of Go programs.";
+          entry =
+            let
+              # go vet requires package (directory) names as inputs.
+              script = pkgs.writeShellScript "precommit-govet" ''
+                set -e
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${tools.go}/bin/go vet ./"$dir"
+                done
+              '';
+            in
+            builtins.toString script;
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
+          files = "\\.go$";
+        };
       gptcommit = {
         name = "gptcommit";
         description = "Generate a commit message using GPT3.";
@@ -1107,6 +1503,35 @@ in
             script;
         stages = [ "prepare-commit-msg" ];
       };
+      hadolint =
+        {
+          name = "hadolint";
+          description = "Dockerfile linter, validate inline bash.";
+          entry = "${tools.hadolint}/bin/hadolint";
+          files = "Dockerfile$";
+        };
+      headache =
+        {
+          name = "headache";
+          description = "Lightweight tool for managing headers in source code files.";
+          ## NOTE: Supported `files` are taken from
+          ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
+          files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
+          entry =
+            ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
+            ## next NixOS release, the following code will become irrelevant.
+            lib.throwIf
+              (tools.headache == null)
+              "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
+              "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
+        };
+      hindent =
+        {
+          name = "hindent";
+          description = "Haskell code prettifier.";
+          entry = "${tools.hindent}/bin/hindent";
+          files = "\\.l?hs(-boot)?$";
+        };
       hlint =
         {
           name = "hlint";
@@ -1132,6 +1557,20 @@ in
           # In other words: We have no choice but to always run `hpack` on every `package.yaml` directory.
           pass_filenames = false;
         };
+      html-tidy =
+        {
+          name = "html-tidy";
+          description = "HTML linter.";
+          entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
+          files = "\\.html$";
+        };
+      hunspell =
+        {
+          name = "hunspell";
+          description = "Spell checker and morphological analyzer.";
+          entry = "${tools.hunspell}/bin/hunspell -l";
+          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
+        };
       isort =
         {
           name = "isort";
@@ -1147,19 +1586,32 @@ in
             in
             "${pkgs.python3Packages.isort}/bin/isort${cmdArgs} ${settings.isort.flags}";
         };
+      juliaformatter =
+        {
+          description = "Run JuliaFormatter.jl against Julia source files";
+          files = "\\.jl$";
+          entry = ''
+            ${tools.julia-bin}/bin/julia -e '
+            using Pkg
+            Pkg.activate(".")
+            using JuliaFormatter
+            format(ARGS)
+            out = Cmd(`git diff --name-only`) |> read |> String
+            if out == ""
+                exit(0)
+            else
+                @error "Some files have been formatted !!!"
+                write(stdout, out)
+                exit(1)
+            end'
+          '';
+        };
       latexindent =
         {
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
           entry = "${tools.latexindent}/bin/latexindent ${settings.latexindent.flags}";
-        };
-      luacheck =
-        {
-          name = "luacheck";
-          description = "A tool for linting and static analysis of Lua code.";
-          types = [ "file" "lua" ];
-          entry = "${tools.luacheck}/bin/luacheck";
         };
       lua-ls =
         let
@@ -1200,132 +1652,59 @@ in
           files = "\\.lua$";
           pass_filenames = false;
         };
-      ocp-indent =
+      luacheck =
         {
-          name = "ocp-indent";
-          description = "A tool to indent OCaml code.";
-          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
-          files = "\\.mli?$";
+          name = "luacheck";
+          description = "A tool for linting and static analysis of Lua code.";
+          types = [ "file" "lua" ];
+          entry = "${tools.luacheck}/bin/luacheck";
         };
-      opam-lint =
+      lychee = {
+        name = "lychee";
+        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with settings.lychee; [
+                  [ (configPath != "") " --config ${configPath}" ]
+                ]);
+          in
+          "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
+        types = [ "text" ];
+      };
+      markdownlint =
         {
-          name = "opam lint";
-          description = "OCaml package manager configuration checker.";
-          entry = "${tools.opam}/bin/opam lint";
-          files = "\\.opam$";
+          name = "markdownlint";
+          description = "Style checker and linter for markdown files.";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
+          files = "\\.md$";
         };
-      ormolu =
+      mdl =
         {
-          name = "ormolu";
-          description = "Haskell code prettifier.";
-          entry =
-            let
-              extensions =
-                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions);
-              cabalExtensions =
-                if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
-            in
-            "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
-          files = "\\.l?hs(-boot)?$";
-        };
-      fourmolu =
-        {
-          name = "fourmolu";
-          description = "Haskell code prettifier.";
-          entry =
-            "${tools.fourmolu}/bin/fourmolu --mode inplace ${
-            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
-            }";
-          files = "\\.l?hs(-boot)?$";
-        };
-      hindent =
-        {
-          name = "hindent";
-          description = "Haskell code prettifier.";
-          entry = "${tools.hindent}/bin/hindent";
-          files = "\\.l?hs(-boot)?$";
-        };
-      cabal-fmt =
-        {
-          name = "cabal-fmt";
-          description = "Format Cabal files";
-          entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
-          files = "\\.cabal$";
-        };
-      chktex =
-        {
-          name = "chktex";
-          description = "LaTeX semantic checker";
-          types = [ "file" "tex" ];
-          entry = "${tools.chktex}/bin/chktex";
-        };
-      stylish-haskell =
-        {
-          name = "stylish-haskell";
-          description = "A simple Haskell code prettifier";
-          entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
-          files = "\\.l?hs(-boot)?$";
-        };
-      alejandra =
-        {
-          name = "alejandra";
-          description = "The Uncompromising Nix Code Formatter.";
+          name = "mdl";
+          description = "A tool to check markdown files and flag style issues.";
           entry =
             let
               cmdArgs =
-                mkCmdArgs (with settings.alejandra; [
-                  [ check "--check" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
-                  [ (verbosity == "quiet") "-q" ]
-                  [ (verbosity == "silent") "-qq" ]
-                  [ (threads != null) "--threads ${toString threads}" ]
-                ]);
+                mkCmdArgs
+                  (with settings.mdl; [
+                    [ (configPath != "") "--config ${configPath}" ]
+                    [ git-recurse "--git-recurse" ]
+                    [ ignore-front-matter "--ignore-front-matter" ]
+                    [ json "--json" ]
+                    [ (rules != [ ]) "--rules ${lib.strings.concatStringsSep "," rules}" ]
+                    [ (rulesets != [ ]) "--rulesets ${lib.strings.concatStringsSep "," rulesets}" ]
+                    [ show-aliases "--show-aliases" ]
+                    [ warnings "--warnings" ]
+                    [ skip-default-ruleset "--skip-default-ruleset" ]
+                    [ (style != "") "--style ${style}" ]
+                    [ (tags != [ ]) "--tags ${lib.strings.concatStringsSep "," tags}" ]
+                    [ verbose "--verbose" ]
+                  ]);
             in
-            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
-          files = "\\.nix$";
-        };
-      deadnix =
-        {
-          name = "deadnix";
-          description = "Scan Nix files for dead code (unused variable bindings).";
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs (with settings.deadnix; [
-                  [ noLambdaArg "--no-lambda-arg" ]
-                  [ noLambdaPatternNames "--no-lambda-pattern-names" ]
-                  [ noUnderscore "--no-underscore" ]
-                  [ quiet "--quiet" ]
-                  [ hidden "--hidden" ]
-                  [ edit "--edit" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
-                ]);
-            in
-            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
-          files = "\\.nix$";
-        };
-      flynt =
-        {
-          name = "flynt";
-          description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs (with settings.flynt; [
-                  [ aggressive "--aggressive" ]
-                  [ dry-run "--dry-run" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
-                  [ fail-on-change "--fail-on-change" ]
-                  [ (line-length != null) "--line-length ${toString line-length}" ]
-                  [ no-multiline "--no-multiline" ]
-                  [ quiet "--quiet" ]
-                  [ string "--string" ]
-                  [ transform-concats "--transform-concats" ]
-                  [ verbose "--verbose" ]
-                ]);
-            in
-            "${settings.flynt.binPath} ${cmdArgs}";
-          types = [ "python" ];
+            "${settings.mdl.package}/bin/mdl ${cmdArgs}";
+          files = "\\.md$";
         };
       mdsh =
         let
@@ -1341,6 +1720,36 @@ in
           entry = toString script;
           files = "\\.md$";
         };
+      mix-format = {
+        name = "mix-format";
+        description = "Runs the built-in Elixir syntax formatter";
+        entry = "${pkgs.elixir}/bin/mix format";
+        files = "\\.exs?$";
+      };
+      mix-test = {
+        name = "mix-test";
+        description = "Runs the built-in Elixir test framework";
+        entry = "${pkgs.elixir}/bin/mix test";
+        files = "\\.exs?$";
+      };
+      mkdocs-linkcheck = {
+        name = "mkdocs-linkcheck";
+        description = "Validate links associated with markdown-based, statically generated websites.";
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with settings.mkdocs-linkcheck; [
+                  [ local-only " --local" ]
+                  [ recurse " --recurse" ]
+                  [ (extension != "") " --ext ${extension}" ]
+                  [ (method != "") " --method ${method}" ]
+                  [ (path != "") " ${path}" ]
+                ]);
+          in
+          "${settings.mkdocs-linkcheck.binPath}${cmdArgs}";
+        types = [ "text" "markdown" ];
+      };
       mypy =
         {
           name = "mypy";
@@ -1388,172 +1797,65 @@ in
           entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
           files = "\\.nix$";
         };
-      statix =
+      ocp-indent =
         {
-          name = "statix";
-          description = "Lints and suggestions for the Nix programming language.";
-          entry = with settings.statix;
-            "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
-          files = "\\.nix$";
-          pass_filenames = false;
+          name = "ocp-indent";
+          description = "A tool to indent OCaml code.";
+          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
+          files = "\\.mli?$";
         };
-      elm-format =
+      opam-lint =
         {
-          name = "elm-format";
-          description = "Format Elm files.";
-          entry =
-            "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
-          files = "\\.elm$";
+          name = "opam lint";
+          description = "OCaml package manager configuration checker.";
+          entry = "${tools.opam}/bin/opam lint";
+          files = "\\.opam$";
         };
-      elm-review =
+      ormolu =
         {
-          name = "elm-review";
-          description = "Analyzes Elm projects, to help find mistakes before your users find them.";
-          entry = "${tools.elm-review}/bin/elm-review";
-          files = "\\.elm$";
-          pass_filenames = false;
-        };
-      elm-test =
-        {
-          name = "elm-test";
-          description = "Run unit tests and fuzz tests for Elm code.";
-          entry = "${tools.elm-test}/bin/elm-test";
-          files = "\\.elm$";
-          pass_filenames = false;
-        };
-      shellcheck =
-        {
-          name = "shellcheck";
-          description = "Format shell files.";
-          types = [ "shell" ];
-          entry = "${tools.shellcheck}/bin/shellcheck";
-        };
-      bats =
-        {
-          name = "bats";
-          description = "Run bash unit tests.";
-          types = [ "shell" ];
-          types_or = [ "bats" "bash" ];
-          entry = "${tools.bats}/bin/bats -p";
-        };
-      stylua =
-        {
-          name = "stylua";
-          description = "An Opinionated Lua Code Formatter.";
-          types = [ "file" "lua" ];
-          entry = "${tools.stylua}/bin/stylua";
-        };
-      shfmt =
-        {
-          name = "shfmt";
-          description = "Format shell files.";
-          types = [ "shell" ];
-          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
-        };
-      beautysh =
-        {
-          name = "beautysh";
-          description = "Format shell files.";
-          types = [ "shell" ];
-          entry = "${tools.beautysh}/bin/beautysh";
-        };
-      terraform-format =
-        {
-          name = "terraform-format";
-          description = "Format terraform (`.tf`) files.";
-          entry = "${tools.terraform-fmt}/bin/terraform-fmt";
-          files = "\\.tf$";
-        };
-      tflint =
-        {
-          name = "tflint";
-          description = "A Pluggable Terraform Linter.";
-          entry = "${tools.tflint}/bin/tflint";
-          files = "\\.tf$";
-        };
-      yamllint =
-        {
-          name = "yamllint";
-          description = "Yaml linter.";
-          types = [ "file" "yaml" ];
+          name = "ormolu";
+          description = "Haskell code prettifier.";
           entry =
             let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (settings.yamllint.relaxed) "-d relaxed" ]
-                  [ (settings.yamllint.configPath != "") "-c ${settings.yamllint.configPath}" ]
-                ];
+              extensions =
+                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions);
+              cabalExtensions =
+                if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
             in
-            "${tools.yamllint}/bin/yamllint ${cmdArgs}";
+            "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
+          files = "\\.l?hs(-boot)?$";
         };
-      rustfmt =
-        let
-          wrapper = pkgs.symlinkJoin {
-            name = "rustfmt-wrapped";
-            paths = [ tools.rustfmt ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/cargo-fmt \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo tools.rustfmt ]}
-            '';
-          };
-        in
+      php-cs-fixer =
         {
-          name = "rustfmt";
-          description = "Format Rust code.";
-          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
-          files = "\\.rs$";
-          pass_filenames = false;
+          name = "php-cs-fixer";
+          description = "Lint PHP files.";
+          entry = with settings.php-cs-fixer;
+            "${binPath} fix";
+          types = [ "php" ];
         };
-      clippy =
-        let
-          wrapper = pkgs.symlinkJoin {
-            name = "clippy-wrapped";
-            paths = [ tools.clippy ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/cargo-clippy \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
-            '';
-          };
-        in
+      phpcbf =
         {
-          name = "clippy";
-          description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
-          files = "\\.rs$";
-          pass_filenames = false;
+          name = "phpcbf";
+          description = "Lint PHP files.";
+          entry = with settings.phpcbf;
+            "${binPath}";
+          types = [ "php" ];
         };
-      cargo-check =
+      phpcs =
         {
-          name = "cargo-check";
-          description = "Check the cargo package for errors.";
-          entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
-          files = "\\.rs$";
-          pass_filenames = false;
+          name = "phpcs";
+          description = "Lint PHP files.";
+          entry = with settings.phpcs;
+            "${binPath}";
+          types = [ "php" ];
         };
-      purty =
+      phpstan =
         {
-          name = "purty";
-          description = "Format purescript files.";
-          entry = "${tools.purty}/bin/purty";
-          files = "\\.purs$";
-        };
-      purs-tidy =
-        {
-          name = "purs-tidy";
-          description = "Format purescript files.";
-          entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
-          files = "\\.purs$";
-        };
-
-      prettier =
-        {
-          name = "prettier";
-          description = "Opinionated multi-language code formatter.";
-          entry = with settings.prettier;
-            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
-          types = [ "text" ];
+          name = "phpstan";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.phpstan;
+            "${binPath} analyse";
+          types = [ "php" ];
         };
       pre-commit-hook-ensure-sops = {
         name = "pre-commit-hook-ensure-sops";
@@ -1569,286 +1871,59 @@ in
             '';
         files = lib.mkDefault "^secrets";
       };
-      hunspell =
+      prettier =
         {
-          name = "hunspell";
-          description = "Spell checker and morphological analyzer.";
-          entry = "${tools.hunspell}/bin/hunspell -l";
-          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
-        };
-
-      topiary =
-        {
-          name = "topiary";
-          description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
-          entry =
-            ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
-            ## release of NixOS, the `throwIf` piece of code below will become
-            ## useless.
-            lib.throwIf
-              (tools.topiary == null)
-              "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
-              (
-                let
-                  topiary-inplace = pkgs.writeShellApplication {
-                    name = "topiary-inplace";
-                    text = ''
-                      for file; do
-                        ${tools.topiary}/bin/topiary --in-place --input-file "$file"
-                      done
-                    '';
-                  };
-                in
-                "${topiary-inplace}/bin/topiary-inplace"
-              );
-          files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
-        };
-
-      typos =
-        {
-          name = "typos";
-          description = "Source code spell checker";
-          entry =
-            let
-              configFile = builtins.toFile "config.toml" "${settings.typos.config}";
-              cmdArgs =
-                mkCmdArgs
-                  (with settings.typos; [
-                    [ (color != "") "--color ${color}" ]
-                    [ (configPath != "") "--config ${configPath}" ]
-                    [ (config != "" && configPath == "") "--config ${configFile}" ]
-                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
-                    [ (format != "") "--format ${format}" ]
-                    [ (locale != "") "--locale ${locale}" ]
-                    [ (write && !diff) "--write-changes" ]
-                  ]);
-            in
-            "${tools.typos}/bin/typos ${cmdArgs}${lib.optionalString settings.typos.diff " --diff"}${lib.optionalString settings.typos.hidden " --hidden"}";
+          name = "prettier";
+          description = "Opinionated multi-language code formatter.";
+          entry = with settings.prettier;
+            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
         };
-
-      cspell =
+      psalm =
         {
-          name = "cspell";
-          description = "A Spell Checker for Code";
-          entry = "${tools.cspell}/bin/cspell";
+          name = "psalm";
+          description = "Static Analysis of PHP files.";
+          entry = with settings.psalm;
+            "${binPath}";
+          types = [ "php" ];
         };
-
-      html-tidy =
+      purs-tidy =
         {
-          name = "html-tidy";
-          description = "HTML linter.";
-          entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
-          files = "\\.html$";
+          name = "purs-tidy";
+          description = "Format purescript files.";
+          entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
+          files = "\\.purs$";
         };
-
-      eslint =
+      purty =
         {
-          name = "eslint";
-          description = "Find and fix problems in your JavaScript code.";
-          entry = "${settings.eslint.binPath} --fix";
-          files = "${settings.eslint.extensions}";
+          name = "purty";
+          description = "Format purescript files.";
+          entry = "${tools.purty}/bin/purty";
+          files = "\\.purs$";
         };
-
-      eclint =
+      pylint =
         {
-          name = "eclint";
-          description = "EditorConfig linter written in Go.";
-          types = [ "file" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs
-                  (with settings.eclint; [
-                    [ fix "-fix" ]
-                    [ summary "-summary" ]
-                    [ (color != "auto") "-color ${color}" ]
-                    [ (exclude != [ ]) "-exclude ${lib.escapeShellArgs exclude}" ]
-                    [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
-                  ]);
-            in
-            "${settings.eclint.package}/bin/eclint ${cmdArgs}";
+          name = "pylint";
+          description = "Lint Python files.";
+          entry = with settings.pylint;
+            "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
+          types = [ "python" ];
         };
-
-      rome =
+      pyright =
         {
-          name = "rome";
-          description = "Unified developer tools for JavaScript, TypeScript, and the web";
-          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (settings.rome.write) "--apply" ]
-                  [ (settings.rome.configPath != "") "--config-path ${settings.rome.configPath}" ]
-                ];
-            in
-            "${settings.rome.binPath} check ${cmdArgs}";
+          name = "pyright";
+          description = "Static type checker for Python";
+          entry = settings.pyright.binPath;
+          files = "\\.py$";
         };
-
-      hadolint =
+      pyupgrade =
         {
-          name = "hadolint";
-          description = "Dockerfile linter, validate inline bash.";
-          entry = "${tools.hadolint}/bin/hadolint";
-          files = "Dockerfile$";
+          name = "pyupgrade";
+          description = "Automatically upgrade syntax for newer versions.";
+          entry = with settings.pyupgrade;
+            "${binPath}";
+          types = [ "python" ];
         };
-
-      markdownlint =
-        {
-          name = "markdownlint";
-          description = "Style checker and linter for markdown files.";
-          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
-          files = "\\.md$";
-        };
-
-      mdl =
-        {
-          name = "mdl";
-          description = "A tool to check markdown files and flag style issues.";
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs
-                  (with settings.mdl; [
-                    [ (configPath != "") "--config ${configPath}" ]
-                    [ git-recurse "--git-recurse" ]
-                    [ ignore-front-matter "--ignore-front-matter" ]
-                    [ json "--json" ]
-                    [ (rules != [ ]) "--rules ${lib.strings.concatStringsSep "," rules}" ]
-                    [ (rulesets != [ ]) "--rulesets ${lib.strings.concatStringsSep "," rulesets}" ]
-                    [ show-aliases "--show-aliases" ]
-                    [ warnings "--warnings" ]
-                    [ skip-default-ruleset "--skip-default-ruleset" ]
-                    [ (style != "") "--style ${style}" ]
-                    [ (tags != [ ]) "--tags ${lib.strings.concatStringsSep "," tags}" ]
-                    [ verbose "--verbose" ]
-                  ]);
-            in
-            "${settings.mdl.package}/bin/mdl ${cmdArgs}";
-          files = "\\.md$";
-        };
-
-      denolint =
-        {
-          name = "denolint";
-          description = "Lint JavaScript/TypeScript source code.";
-          types_or = [ "javascript" "jsx" "ts" "tsx" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (settings.denolint.format == "compact") "--compact" ]
-                  [ (settings.denolint.format == "json") "--json" ]
-                  [ (settings.denolint.configPath != "") "-c ${settings.denolint.configPath}" ]
-                ];
-            in
-            "${tools.deno}/bin/deno lint ${cmdArgs}";
-        };
-
-      denofmt =
-        {
-          name = "denofmt";
-          description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
-          types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
-          entry =
-            let
-              cmdArgs =
-                mkCmdArgs [
-                  [ (!settings.denofmt.write) "--check" ]
-                  [ (settings.denofmt.configPath != "") "-c ${settings.denofmt.configPath}" ]
-                ];
-            in
-            "${tools.deno}/bin/deno fmt ${cmdArgs}";
-        };
-
-      govet =
-        {
-          name = "govet";
-          description = "Checks correctness of Go programs.";
-          entry =
-            let
-              # go vet requires package (directory) names as inputs.
-              script = pkgs.writeShellScript "precommit-govet" ''
-                set -e
-                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${tools.go}/bin/go vet ./"$dir"
-                done
-              '';
-            in
-            builtins.toString script;
-          # to avoid multiple invocations of the same directory input, provide
-          # all file names in a single run.
-          require_serial = true;
-          files = "\\.go$";
-        };
-
-      gotest = {
-        name = "gotest";
-        description = "Run go tests";
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-gotest" ''
-              set -e
-              # find all directories that contain tests
-              dirs=()
-              for file in "$@"; do
-                # either the file is a test
-                if [[ "$file" = *_test.go ]]; then
-                  dirs+=("$(dirname "$file")")
-                  continue
-                fi
-
-                # or the file has an associated test
-                filename="''${file%.go}"
-                test_file="''${filename}_test.go"
-                if [[ -f "$test_file"  ]]; then
-                  dirs+=("$(dirname "$test_file")")
-                  continue
-                fi
-              done
-
-              # ensure we are not duplicating dir entries
-              IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
-
-              # test each directory one by one
-              for dir in "''${sorted_dirs[@]}"; do
-                  ${tools.go}/bin/go test "./$dir"
-              done
-            '';
-          in
-          builtins.toString script;
-        files = "\\.go$";
-        # to avoid multiple invocations of the same directory input, provide
-        # all file names in a single run.
-        require_serial = true;
-      };
-
-      gofmt =
-        {
-          name = "gofmt";
-          description = "A tool that automatically formats Go source code";
-          entry =
-            let
-              script = pkgs.writeShellScript "precommit-gofmt" ''
-                set -e
-                failed=false
-                for file in "$@"; do
-                    # redirect stderr so that violations and summaries are properly interleaved.
-                    if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
-                    then
-                        failed=true
-                    fi
-                done
-                if [[ $failed == "true" ]]; then
-                    exit 1
-                fi
-              '';
-            in
-            builtins.toString script;
-          files = "\\.go$";
-        };
-
       revive =
         {
           name = "revive";
@@ -1877,7 +1952,61 @@ in
           # all file names in a single run.
           require_serial = true;
         };
-
+      rome =
+        {
+          name = "rome";
+          description = "Unified developer tools for JavaScript, TypeScript, and the web";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.rome.write) "--apply" ]
+                  [ (settings.rome.configPath != "") "--config-path ${settings.rome.configPath}" ]
+                ];
+            in
+            "${settings.rome.binPath} check ${cmdArgs}";
+        };
+      ruff =
+        {
+          name = "ruff";
+          description = " An extremely fast Python linter, written in Rust.";
+          entry = "${pkgs.ruff}/bin/ruff --fix";
+          types = [ "python" ];
+        };
+      rustfmt =
+        let
+          wrapper = pkgs.symlinkJoin {
+            name = "rustfmt-wrapped";
+            paths = [ tools.rustfmt ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/cargo-fmt \
+                --prefix PATH : ${lib.makeBinPath [ tools.cargo tools.rustfmt ]}
+            '';
+          };
+        in
+        {
+          name = "rustfmt";
+          description = "Format Rust code.";
+          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
+          files = "\\.rs$";
+          pass_filenames = false;
+        };
+      shellcheck =
+        {
+          name = "shellcheck";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.shellcheck}/bin/shellcheck";
+        };
+      shfmt =
+        {
+          name = "shfmt";
+          description = "Format shell files.";
+          types = [ "shell" ];
+          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
+        };
       staticcheck =
         {
           name = "staticcheck";
@@ -1903,138 +2032,29 @@ in
           # all file names in a single run.
           require_serial = true;
         };
-
-      editorconfig-checker =
+      statix =
         {
-          name = "editorconfig-checker";
-          description = "Verify that the files are in harmony with the `.editorconfig`.";
-          entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
-          types = [ "file" ];
+          name = "statix";
+          description = "Lints and suggestions for the Nix programming language.";
+          entry = with settings.statix;
+            "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
+          files = "\\.nix$";
+          pass_filenames = false;
         };
-
-
-      phpcs =
+      stylish-haskell =
         {
-          name = "phpcs";
-          description = "Lint PHP files.";
-          entry = with settings.phpcs;
-            "${binPath}";
-          types = [ "php" ];
+          name = "stylish-haskell";
+          description = "A simple Haskell code prettifier";
+          entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
+          files = "\\.l?hs(-boot)?$";
         };
-
-      phpcbf =
+      stylua =
         {
-          name = "phpcbf";
-          description = "Lint PHP files.";
-          entry = with settings.phpcbf;
-            "${binPath}";
-          types = [ "php" ];
+          name = "stylua";
+          description = "An Opinionated Lua Code Formatter.";
+          types = [ "file" "lua" ];
+          entry = "${tools.stylua}/bin/stylua";
         };
-
-      phpstan =
-        {
-          name = "phpstan";
-          description = "Static Analysis of PHP files.";
-          entry = with settings.phpstan;
-            "${binPath} analyse";
-          types = [ "php" ];
-        };
-
-      php-cs-fixer =
-        {
-          name = "php-cs-fixer";
-          description = "Lint PHP files.";
-          entry = with settings.php-cs-fixer;
-            "${binPath} fix";
-          types = [ "php" ];
-        };
-
-      psalm =
-        {
-          name = "psalm";
-          description = "Static Analysis of PHP files.";
-          entry = with settings.psalm;
-            "${binPath}";
-          types = [ "php" ];
-        };
-
-
-      pylint =
-        {
-          name = "pylint";
-          description = "Lint Python files.";
-          entry = with settings.pylint;
-            "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
-          types = [ "python" ];
-        };
-
-      pyupgrade =
-        {
-          name = "pyupgrade";
-          description = "Automatically upgrade syntax for newer versions.";
-          entry = with settings.pyupgrade;
-            "${binPath}";
-          types = [ "python" ];
-        };
-
-      pyright =
-        {
-          name = "pyright";
-          description = "Static type checker for Python";
-          entry = settings.pyright.binPath;
-          files = "\\.py$";
-        };
-
-      flake8 =
-        {
-          name = "flake8";
-          description = "Check the style and quality of Python files.";
-          entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
-          types = [ "python" ];
-        };
-
-      autoflake =
-        {
-          name = "autoflake";
-          description = "Remove unused imports and variables from Python code.";
-          entry = "${settings.autoflake.binPath} ${settings.autoflake.flags}";
-          types = [ "python" ];
-        };
-
-      taplo =
-        {
-          name = "taplo";
-          description = "Format TOML files with taplo fmt";
-          entry = "${pkgs.taplo}/bin/taplo fmt";
-          types = [ "toml" ];
-        };
-
-      cljfmt =
-        {
-          name = "cljfmt";
-          description = "A tool for formatting Clojure code.";
-          entry = "${pkgs.cljfmt}/bin/cljfmt fix";
-          types_or = [ "clojure" "clojurescript" "edn" ];
-        };
-
-      zprint =
-        {
-          name = "zprint";
-          description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
-          entry = "${pkgs.zprint}/bin/zprint '{:search-config? true}' -w";
-          types_or = [ "clojure" "clojurescript" "edn" ];
-        };
-
-      commitizen =
-        {
-          name = "commitizen check";
-          description = ''
-            Check whether the current commit message follows committing rules.
-          '';
-          entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
-          stages = [ "commit-msg" ];
-        };
-
       tagref =
         {
           name = "tagref";
@@ -2045,7 +2065,53 @@ in
           types = [ "text" ];
           pass_filenames = false;
         };
-
+      taplo =
+        {
+          name = "taplo";
+          description = "Format TOML files with taplo fmt";
+          entry = "${pkgs.taplo}/bin/taplo fmt";
+          types = [ "toml" ];
+        };
+      terraform-format =
+        {
+          name = "terraform-format";
+          description = "Format terraform (`.tf`) files.";
+          entry = "${tools.terraform-fmt}/bin/terraform-fmt";
+          files = "\\.tf$";
+        };
+      tflint =
+        {
+          name = "tflint";
+          description = "A Pluggable Terraform Linter.";
+          entry = "${tools.tflint}/bin/tflint";
+          files = "\\.tf$";
+        };
+      topiary =
+        {
+          name = "topiary";
+          description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
+          entry =
+            ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
+            ## release of NixOS, the `throwIf` piece of code below will become
+            ## useless.
+            lib.throwIf
+              (tools.topiary == null)
+              "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
+              (
+                let
+                  topiary-inplace = pkgs.writeShellApplication {
+                    name = "topiary-inplace";
+                    text = ''
+                      for file; do
+                        ${tools.topiary}/bin/topiary --in-place --input-file "$file"
+                      done
+                    '';
+                  };
+                in
+                "${topiary-inplace}/bin/topiary-inplace"
+              );
+          files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
+        };
       treefmt =
         {
           name = "treefmt";
@@ -2054,117 +2120,34 @@ in
           pass_filenames = true;
           entry = "${settings.treefmt.package}/bin/treefmt --fail-on-change";
         };
-
-      mkdocs-linkcheck = {
-        name = "mkdocs-linkcheck";
-        description = "Validate links associated with markdown-based, statically generated websites.";
-        entry =
-          let
-            cmdArgs =
-              mkCmdArgs
-                (with settings.mkdocs-linkcheck; [
-                  [ local-only " --local" ]
-                  [ recurse " --recurse" ]
-                  [ (extension != "") " --ext ${extension}" ]
-                  [ (method != "") " --method ${method}" ]
-                  [ (path != "") " ${path}" ]
-                ]);
-          in
-          "${settings.mkdocs-linkcheck.binPath}${cmdArgs}";
-        types = [ "text" "markdown" ];
-      };
-
-      checkmake = {
-        name = "checkmake";
-        description = "Experimental linter/analyzer for Makefiles.";
-        types = [ "makefile" ];
-        entry =
-          ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
-          ## this gets into a NixOS release, the following code will be useless.
-          lib.throwIf
-            (tools.checkmake == null)
-            "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
-            "${tools.checkmake}/bin/checkmake";
-      };
-
-      fprettify = {
-        name = "fprettify";
-        description = "Auto-formatter for modern Fortran code.";
-        types = [ "fortran " ];
-        entry = "${tools.fprettify}/bin/fprettify";
-      };
-
-      dune-fmt = {
-        name = "dune-fmt";
-        description = "Runs Dune's formatters on the code tree.";
-        entry =
-          let
-            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
-            run-dune-fmt = pkgs.writeShellApplication {
-              name = "run-dune-fmt";
-              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
-              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
-            };
-          in
-          "${run-dune-fmt}/bin/run-dune-fmt";
-        pass_filenames = false;
-      };
-
-      headache =
+      typos =
         {
-          name = "headache";
-          description = "Lightweight tool for managing headers in source code files.";
-          ## NOTE: Supported `files` are taken from
-          ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
-          files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
+          name = "typos";
+          description = "Source code spell checker";
           entry =
-            ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
-            ## next NixOS release, the following code will become irrelevant.
-            lib.throwIf
-              (tools.headache == null)
-              "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
-              "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
+            let
+              configFile = builtins.toFile "config.toml" "${settings.typos.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.typos; [
+                    [ (color != "") "--color ${color}" ]
+                    [ (configPath != "") "--config ${configPath}" ]
+                    [ (config != "" && configPath == "") "--config ${configFile}" ]
+                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+                    [ (format != "") "--format ${format}" ]
+                    [ (locale != "") "--locale ${locale}" ]
+                    [ (write && !diff) "--write-changes" ]
+                  ]);
+            in
+            "${tools.typos}/bin/typos ${cmdArgs}${lib.optionalString settings.typos.diff " --diff"}${lib.optionalString settings.typos.hidden " --hidden"}";
+          types = [ "text" ];
         };
-
-      convco = {
-        name = "convco";
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-convco" ''
-              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
-            '';
-            # need version >= 0.4.0 for the --from-stdin flag
-            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
-          in
-          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
-            builtins.toString
-            script;
-        stages = [ "commit-msg" ];
+      typstfmt = {
+        name = "typstfmt";
+        description = "format typst";
+        entry = "${tools.typst-fmt}/bin/typst-fmt";
+        files = "\\.typ$";
       };
-
-      mix-format = {
-        name = "mix-format";
-        description = "Runs the built-in Elixir syntax formatter";
-        entry = "${pkgs.elixir}/bin/mix format";
-        files = "\\.exs?$";
-      };
-
-      mix-test = {
-        name = "mix-test";
-        description = "Runs the built-in Elixir test framework";
-        entry = "${pkgs.elixir}/bin/mix test";
-        files = "\\.exs?$";
-      };
-
-      credo = {
-        name = "credo";
-        description = "Runs a static code analysis using Credo";
-        entry =
-          let strict = if settings.credo.strict then "--strict" else "";
-          in "${pkgs.elixir}/bin/mix credo";
-        files = "\\.exs?$";
-      };
-
       vale = {
         name = "vale";
         description = "A markup-aware linter for prose built with speed and extensibility in mind.";
@@ -2181,93 +2164,28 @@ in
           "${pkgs.vale}/bin/vale${cmdArgs} ${settings.vale.flags}";
         types = [ "text" ];
       };
+      yamllint =
+        {
+          name = "yamllint";
+          description = "Yaml linter.";
+          types = [ "file" "yaml" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs [
+                  [ (settings.yamllint.relaxed) "-d relaxed" ]
+                  [ (settings.yamllint.configPath != "") "-c ${settings.yamllint.configPath}" ]
+                ];
+            in
+            "${tools.yamllint}/bin/yamllint ${cmdArgs}";
+        };
+      zprint =
+        {
+          name = "zprint";
+          description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
+          entry = "${pkgs.zprint}/bin/zprint '{:search-config? true}' -w";
+          types_or = [ "clojure" "clojurescript" "edn" ];
+        };
 
-      dialyzer = {
-        name = "dialyzer";
-        description = "Runs a static code analysis using Dialyzer";
-        entry = "${pkgs.elixir}/bin/mix dialyzer";
-        files = "\\.exs?$";
-      };
-
-      crystal = {
-        name = "crystal";
-        description = "A tool that automatically formats Crystal source code";
-        entry = "${tools.crystal}/bin/crystal tool format";
-        files = "\\.cr$";
-      };
-
-      lychee = {
-        name = "lychee";
-        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
-        entry =
-          let
-            cmdArgs =
-              mkCmdArgs
-                (with settings.lychee; [
-                  [ (configPath != "") " --config ${configPath}" ]
-                ]);
-          in
-          "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
-        types = [ "text" ];
-      };
-
-      annex = {
-        name = "annex";
-        description = "Runs the git-annex hook for large file support";
-        entry = "${tools.git-annex}/bin/git-annex pre-commit";
-      };
-
-      golangci-lint = {
-        name = "golangci-lint";
-        description = "Fast linters runner for Go.";
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-golangci-lint" ''
-              set -e
-              for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
-              done
-            '';
-          in
-          builtins.toString script;
-        files = "\\.go$";
-        # to avoid multiple invocations of the same directory input, provide
-        # all file names in a single run.
-        require_serial = true;
-      };
-
-      conform = {
-        name = "conform enforce";
-        description = "Policy enforcement for commits.";
-        entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
-        stages = [ "commit-msg" ];
-      };
-
-      typstfmt = {
-        name = "typstfmt";
-        description = "format typst";
-        entry = "${tools.typst-fmt}/bin/typst-fmt";
-        files = "\\.typ$";
-      };
-
-      juliaformatter = {
-        description = "Run JuliaFormatter.jl against Julia source files";
-        files = "\\.jl$";
-        entry = ''
-          ${tools.julia-bin}/bin/julia -e '
-          using Pkg
-          Pkg.activate(".")
-          using JuliaFormatter
-          format(ARGS)
-          out = Cmd(`git diff --name-only`) |> read |> String
-          if out == ""
-              exit(0)
-          else
-              @error "Some files have been formatted !!!"
-              write(stdout, out)
-              exit(1)
-          end'
-        '';
-      };
     };
 }
