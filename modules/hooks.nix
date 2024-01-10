@@ -19,80 +19,9 @@ let
 
 in
 {
+  # PLEASE keep this sorted alphabetically.
   options.settings =
     {
-      ansible-lint =
-        {
-          configPath = mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the YAML configuration file.";
-            # an empty string translates to use default configuration of the
-            # underlying ansible-lint binary
-            default = "";
-          };
-          subdir = mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the Ansible subdirectory.";
-            default = "";
-          };
-        };
-      hpack =
-        {
-          silent =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether generation should be silent.";
-              default = false;
-            };
-        };
-      hlint =
-        {
-          hintFile =
-            mkOption {
-              type = types.nullOr types.path;
-              description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
-              default = null;
-            };
-        };
-      isort =
-        {
-          profile =
-            mkOption {
-              type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
-              description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
-              default = "";
-            };
-          flags =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
-              default = "";
-            };
-        };
-      latexindent =
-        {
-          flags =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
-              default = "--local --silent --overwriteIfDifferent";
-            };
-        };
-      ormolu =
-        {
-          defaultExtensions =
-            mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Haskell language extensions to enable.";
-              default = [ ];
-            };
-          cabalDefaultExtensions =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Use `default-extensions` from `.cabal` files.";
-              default = false;
-            };
-        };
       alejandra =
         {
           check =
@@ -132,6 +61,66 @@ in
               example = "quiet";
             };
         };
+      ansible-lint =
+        {
+          configPath = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the YAML configuration file.";
+            # an empty string translates to use default configuration of the
+            # underlying ansible-lint binary
+            default = "";
+          };
+          subdir = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the Ansible subdirectory.";
+            default = "";
+          };
+        };
+      autoflake =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to autoflake binary.";
+              default = "${pkgs.autoflake}/bin/autoflake";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.autoflake}/bin/autoflake"
+              '';
+            };
+
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to autoflake.";
+              default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
+            };
+        };
+      clippy =
+        {
+          denyWarnings = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Fail when warnings are present";
+            default = false;
+          };
+          offline = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy offline";
+            default = true;
+          };
+          allFeatures = mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Run clippy with --all-features";
+            default = false;
+          };
+        };
+      credo = {
+        strict =
+          mkOption {
+            type = types.bool;
+            description = lib.mdDoc "Whether to auto-promote the changes.";
+            default = true;
+          };
+      };
       deadnix =
         {
           edit =
@@ -183,23 +172,293 @@ in
               default = false;
             };
         };
-      statix =
+      denofmt =
+        {
+          write =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to edit files inplace.";
+              default = true;
+            };
+          configPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying deno binary (i.e deno.json or deno.jsonc)
+              default = "";
+            };
+        };
+      denolint =
         {
           format =
             mkOption {
-              type = types.enum [ "stderr" "errfmt" "json" ];
-              description = lib.mdDoc "Error Output format.";
-              default = "errfmt";
+              type = types.enum [ "default" "compact" "json" ];
+              description = lib.mdDoc "Output format.";
+              default = "default";
             };
 
-          ignore =
+          configPath =
             mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Globs of file patterns to skip.";
-              default = [ ];
-              example = [ "flake.nix" "_*" ];
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying deno binary (i.e deno.json or deno.jsonc)
+              default = "";
             };
         };
+      dune-fmt =
+        {
+          auto-promote =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to auto-promote the changes.";
+              default = true;
+            };
+
+          extraRuntimeInputs =
+            mkOption {
+              type = types.listOf types.package;
+              description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
+              default = [ ];
+            };
+        };
+      eclint =
+        {
+          package =
+            mkOption {
+              type = types.package;
+              description = lib.mdDoc "The `eclint` package to use.";
+              default = "${tools.eclint}";
+              defaultText = lib.literalExpression "\${tools.eclint}";
+              example = lib.literalExpression "\${pkgs.eclint}";
+            };
+          fix =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Modify files in place rather than showing the errors.";
+              default = false;
+            };
+          summary =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Only show number of errors per file.";
+              default = false;
+            };
+          color =
+            mkOption {
+              type = types.enum [ "auto" "always" "never" ];
+              description = lib.mdDoc "When to generate colored output.";
+              default = "auto";
+            };
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Filter to exclude files.";
+              default = [ ];
+            };
+          verbosity =
+            mkOption {
+              type = types.enum [ 0 1 2 3 4 ];
+              description = lib.mdDoc "Log level verbosity";
+              default = 0;
+            };
+        };
+      eslint =
+        {
+          binPath =
+            mkOption {
+              type = types.path;
+              description = lib.mdDoc
+                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+              default = "${tools.eslint}/bin/eslint";
+              defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
+            };
+
+          extensions =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc
+                "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
+              default = "\\.js$";
+            };
+        };
+      flake8 =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+              default = "${pkgs.python39Packages.flake8}/bin/flake8";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python39Packages.flake8}/bin/flake8"
+              '';
+            };
+
+          format =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Output format.";
+              default = "default";
+            };
+        };
+      flynt =
+        {
+          aggressive =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Include conversions with potentially changed behavior.";
+              default = false;
+            };
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
+              default = "${settings.flynt.package}/bin/flynt";
+              defaultText = "\${settings.flynt.package}/bin/flynt";
+            };
+          dry-run =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Do not change files in-place and print diff instead.";
+              default = false;
+            };
+          exclude =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Ignore files with given strings in their absolute path.";
+              default = [ ];
+            };
+          fail-on-change =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Fail when diff is not empty (for linting purposes).";
+              default = true;
+            };
+          line-length =
+            mkOption {
+              type = types.nullOr types.int;
+              description = lib.mdDoc "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
+              default = null;
+            };
+          no-multiline =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Convert only single line expressions.";
+              default = false;
+            };
+          package =
+            mkOption {
+              type = types.package;
+              description = lib.mdDoc "The `flynt` package to use.";
+              default = "${pkgs.python311Packages.flynt}";
+              defaultText = "\${pkgs.python311Packages.flynt}";
+              example = "\${pkgs.python310Packages.flynt}";
+            };
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Run without output.";
+              default = false;
+            };
+          string =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Interpret the input as a Python code snippet and print the converted version.";
+              default = false;
+            };
+          transform-concats =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Replace string concatenations with f-strings.";
+              default = false;
+            };
+          verbose =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Run with verbose output.";
+              default = false;
+            };
+        };
+      headache =
+        {
+          header-file = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the header file.";
+            default = ".header";
+          };
+        };
+      hlint =
+        {
+          hintFile =
+            mkOption {
+              type = types.nullOr types.path;
+              description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
+              default = null;
+            };
+        };
+      hpack =
+        {
+          silent =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether generation should be silent.";
+              default = false;
+            };
+        };
+      isort =
+        {
+          profile =
+            mkOption {
+              type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
+              description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
+              default = "";
+            };
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
+              default = "";
+            };
+        };
+      latexindent =
+        {
+          flags =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
+              default = "--local --silent --overwriteIfDifferent";
+            };
+        };
+      lua-ls =
+        {
+          checklevel = mkOption {
+            type = types.enum [ "Error" "Warning" "Information" "Hint" ];
+            description = lib.mdDoc
+              "The diagnostic check level";
+            default = "Warning";
+          };
+          config = mkOption {
+            type = types.attrs;
+            description = lib.mdDoc
+              "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
+            default = { };
+          };
+        };
+      lychee = {
+        configPath =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the config file.";
+            default = "";
+          };
+        flags =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
+            default = "";
+          };
+      };
       markdownlint = {
         config =
           mkOption {
@@ -291,39 +550,51 @@ in
             default = false;
           };
       };
-      denolint =
+      mkdocs-linkcheck =
         {
-          format =
+          binPath =
             mkOption {
-              type = types.enum [ "default" "compact" "json" ];
-              description = lib.mdDoc "Output format.";
-              default = "default";
+              type = types.path;
+              description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+              default = "${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+              '';
             };
 
-          configPath =
+          path =
             mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying deno binary (i.e deno.json or deno.jsonc)
+              description = lib.mdDoc "Path to check";
               default = "";
             };
-        };
-      denofmt =
-        {
-          write =
+
+          local-only =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to edit files inplace.";
-              default = true;
+              description = lib.mdDoc "Whether to only check local links.";
+              default = false;
             };
-          configPath =
+
+          recurse =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to recurse directories under path.";
+              default = false;
+            };
+
+          extension =
             mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying deno binary (i.e deno.json or deno.jsonc)
+              description = lib.mdDoc "File extension to scan for.";
               default = "";
+            };
+
+          method =
+            mkOption {
+              type = types.enum [ "get" "head" ];
+              description = lib.mdDoc "HTTP method to use when checking external links.";
+              default = "get";
             };
         };
       mypy =
@@ -347,6 +618,69 @@ in
               default = null;
             };
         };
+      ormolu =
+        {
+          defaultExtensions =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Haskell language extensions to enable.";
+              default = [ ];
+            };
+          cabalDefaultExtensions =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Use `default-extensions` from `.cabal` files.";
+              default = false;
+            };
+        };
+      php-cs-fixer =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP-CS-Fixer binary path.";
+              default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
+              '';
+            };
+        };
+      phpcbf =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP_CodeSniffer binary path.";
+              default = "${pkgs.php82Packages.phpcbf}/bin/phpcbf";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
+              '';
+            };
+        };
+      phpcs =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHP_CodeSniffer binary path.";
+              default = "${pkgs.php82Packages.phpcs}/bin/phpcs";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php80Packages.phpcs}/bin/phpcs"
+              '';
+            };
+        };
+      phpstan =
+        {
+          binPath =
+            mkOption {
+              type = types.str;
+              description = lib.mdDoc "PHPStan binary path.";
+              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
+              '';
+            };
+        };
       prettier =
         {
           binPath =
@@ -359,14 +693,12 @@ in
                 "''${tools.prettier}/bin/prettier"
               '';
             };
-
           write =
             mkOption {
               type = types.bool;
               description = lib.mdDoc "Whether to edit files inplace.";
               default = true;
             };
-
           output =
             mkOption {
               description = lib.mdDoc "Output format.";
@@ -374,64 +706,75 @@ in
               default = "list-different";
             };
         };
-      eslint =
+      psalm =
         {
           binPath =
             mkOption {
-              type = types.path;
-              description = lib.mdDoc
-                "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
-              default = "${tools.eslint}/bin/eslint";
-              defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
-            };
-
-          extensions =
-            mkOption {
               type = types.str;
-              description = lib.mdDoc
-                "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
-              default = "\\.js$";
+              description = lib.mdDoc "Psalm binary path.";
+              default = "${pkgs.php82Packages.psalm}/bin/psalm";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.php81Packages.phpstan}/bin/psalm"
+              '';
             };
         };
-      eclint =
+      pylint =
         {
-          package =
+          binPath =
             mkOption {
-              type = types.package;
-              description = lib.mdDoc "The `eclint` package to use.";
-              default = "${tools.eclint}";
-              defaultText = lib.literalExpression "\${tools.eclint}";
-              example = lib.literalExpression "\${pkgs.eclint}";
+              type = types.str;
+              description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+              default = "${pkgs.python39Packages.pylint}/bin/pylint";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.python39Packages.pylint}/bin/pylint"
+              '';
             };
-          fix =
+          reports =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Modify files in place rather than showing the errors.";
+              description = lib.mdDoc "Whether to display a full report.";
               default = false;
             };
-          summary =
+          score =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Only show number of errors per file.";
-              default = false;
+              description = lib.mdDoc "Whether to activate the evaluation score.";
+              default = true;
             };
-          color =
+        };
+      pyright =
+        {
+          binPath =
             mkOption {
-              type = types.enum [ "auto" "always" "never" ];
-              description = lib.mdDoc "When to generate colored output.";
-              default = "auto";
+              type = types.str;
+              description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
+              default = "${pkgs.pyright}/bin/pyright";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyright}/bin/pyright"
+              '';
             };
-          exclude =
+        };
+      pyupgrade =
+        {
+          binPath =
             mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Filter to exclude files.";
-              default = [ ];
+              type = types.str;
+              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+              default = "${pkgs.pyupgrade}/bin/pyupgrade";
+              defaultText = lib.literalExpression ''
+                "''${pkgs.pyupgrade}/bin/pyupgrade"
+              '';
             };
-          verbosity =
+        };
+      revive =
+        {
+          configPath =
             mkOption {
-              type = types.enum [ 0 1 2 3 4 ];
-              description = lib.mdDoc "Log level verbosity";
-              default = 0;
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration TOML file.";
+              # an empty string translates to use default configuration of the
+              # underlying revive binary
+              default = "";
             };
         };
       rome =
@@ -459,7 +802,59 @@ in
             default = "";
           };
         };
+      rust =
+        {
+          cargoManifestPath = mkOption {
+            type = types.nullOr types.str;
+            description = lib.mdDoc "Path to Cargo.toml";
+            default = null;
+          };
+        };
+      statix =
+        {
+          format =
+            mkOption {
+              type = types.enum [ "stderr" "errfmt" "json" ];
+              description = lib.mdDoc "Error Output format.";
+              default = "errfmt";
+            };
 
+          ignore =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Globs of file patterns to skip.";
+              default = [ ];
+              example = [ "flake.nix" "_*" ];
+            };
+        };
+      treefmt =
+        {
+          package = mkOption {
+            type = types.package;
+            description = lib.mdDoc
+              ''
+                The `treefmt` package to use.
+
+                Should include all the formatters configured by treefmt.
+
+                For example:
+                ```nix
+                pkgs.writeShellApplication {
+                  name = "treefmt";
+                  runtimeInputs = [
+                    pkgs.treefmt
+                    pkgs.nixpkgs-fmt
+                    pkgs.black
+                  ];
+                  text =
+                    '''
+                      exec treefmt "$@"
+                    ''';
+                }
+                ```
+              '';
+          };
+        };
       typos =
         {
           color =
@@ -536,266 +931,31 @@ in
               default = false;
             };
         };
-
-      revive =
-        {
-          configPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to the configuration TOML file.";
-              # an empty string translates to use default configuration of the
-              # underlying revive binary
-              default = "";
-            };
-
-        };
-
-      flynt =
-        {
-          aggressive =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Include conversions with potentially changed behavior.";
-              default = false;
-            };
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
-              default = "${settings.flynt.package}/bin/flynt";
-              defaultText = "\${settings.flynt.package}/bin/flynt";
-            };
-          dry-run =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Do not change files in-place and print diff instead.";
-              default = false;
-            };
-          exclude =
-            mkOption {
-              type = types.listOf types.str;
-              description = lib.mdDoc "Ignore files with given strings in their absolute path.";
-              default = [ ];
-            };
-          fail-on-change =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Fail when diff is not empty (for linting purposes).";
-              default = true;
-            };
-          line-length =
-            mkOption {
-              type = types.nullOr types.int;
-              description = lib.mdDoc "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
-              default = null;
-            };
-          no-multiline =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Convert only single line expressions.";
-              default = false;
-            };
-          package =
-            mkOption {
-              type = types.package;
-              description = lib.mdDoc "The `flynt` package to use.";
-              default = "${pkgs.python311Packages.flynt}";
-              defaultText = "\${pkgs.python311Packages.flynt}";
-              example = "\${pkgs.python310Packages.flynt}";
-            };
-          quiet =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Run without output.";
-              default = false;
-            };
-          string =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Interpret the input as a Python code snippet and print the converted version.";
-              default = false;
-            };
-          transform-concats =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Replace string concatenations with f-strings.";
-              default = false;
-            };
-          verbose =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Run with verbose output.";
-              default = false;
-            };
-        };
-
-      phpcs =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php82Packages.phpcs}/bin/phpcs";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php80Packages.phpcs}/bin/phpcs"
-              '';
-            };
-        };
-
-      phpcbf =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php82Packages.phpcbf}/bin/phpcbf";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
-              '';
-            };
-        };
-
-      phpstan =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHPStan binary path.";
-              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
-              '';
-            };
-        };
-
-      php-cs-fixer =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "PHP-CS-Fixer binary path.";
-              default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
-              '';
-            };
-        };
-
-      psalm =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Psalm binary path.";
-              default = "${pkgs.php82Packages.psalm}/bin/psalm";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.phpstan}/bin/psalm"
-              '';
-            };
-        };
-
-      pylint =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
-              default = "${pkgs.python39Packages.pylint}/bin/pylint";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.pylint}/bin/pylint"
-              '';
-            };
-
-          reports =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to display a full report.";
-              default = false;
-            };
-
-          score =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to activate the evaluation score.";
-              default = true;
-            };
-        };
-
-      pyupgrade =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
-              default = "${pkgs.pyupgrade}/bin/pyupgrade";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.pyupgrade}/bin/pyupgrade"
-              '';
-            };
-        };
-
-      pyright =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
-              default = "${pkgs.pyright}/bin/pyright";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.pyright}/bin/pyright"
-              '';
-            };
-        };
-
-      flake8 =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
-              default = "${pkgs.python39Packages.flake8}/bin/flake8";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.flake8}/bin/flake8"
-              '';
-            };
-
-          format =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Output format.";
-              default = "default";
-            };
-        };
-
-      autoflake =
-        {
-          binPath =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to autoflake binary.";
-              default = "${pkgs.autoflake}/bin/autoflake";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.autoflake}/bin/autoflake"
-              '';
-            };
-
-          flags =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Flags passed to autoflake.";
-              default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
-            };
-        };
-
-      rust =
-        {
-          cargoManifestPath = mkOption {
-            type = types.nullOr types.str;
-            description = lib.mdDoc "Path to Cargo.toml";
-            default = null;
+      vale = {
+        config =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Multiline-string configuration passed as config file.";
+            default = "";
+            example = ''
+              MinAlertLevel = suggestion
+              [*]
+              BasedOnStyles = Vale
+            '';
           };
-        };
-
+        configPath =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the config file.";
+            default = "";
+          };
+        flags =
+          mkOption {
+            type = types.str;
+            description = lib.mdDoc "Flags passed to vale.";
+            default = "";
+          };
+      };
       yamllint =
         {
           relaxed = mkOption {
@@ -812,199 +972,9 @@ in
             default = "";
           };
         };
-
-      clippy =
-        {
-          denyWarnings = mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Fail when warnings are present";
-            default = false;
-          };
-          offline = mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Run clippy offline";
-            default = true;
-          };
-          allFeatures = mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Run clippy with --all-features";
-            default = false;
-          };
-        };
-
-      treefmt =
-        {
-          package = mkOption {
-            type = types.package;
-            description = lib.mdDoc
-              ''
-                The `treefmt` package to use.
-
-                Should include all the formatters configured by treefmt.
-
-                For example:
-                ```nix
-                pkgs.writeShellApplication {
-                  name = "treefmt";
-                  runtimeInputs = [
-                    pkgs.treefmt
-                    pkgs.nixpkgs-fmt
-                    pkgs.black
-                  ];
-                  text =
-                    '''
-                      exec treefmt "$@"
-                    ''';
-                }
-                ```
-              '';
-          };
-        };
-
-      mkdocs-linkcheck =
-        {
-          binPath =
-            mkOption {
-              type = types.path;
-              description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
-              default = "${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
-              defaultText = lib.literalExpression ''
-                "''${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
-              '';
-            };
-
-          path =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to check";
-              default = "";
-            };
-
-          local-only =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to only check local links.";
-              default = false;
-            };
-
-          recurse =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to recurse directories under path.";
-              default = false;
-            };
-
-          extension =
-            mkOption {
-              type = types.str;
-              description = lib.mdDoc "File extension to scan for.";
-              default = "";
-            };
-
-          method =
-            mkOption {
-              type = types.enum [ "get" "head" ];
-              description = lib.mdDoc "HTTP method to use when checking external links.";
-              default = "get";
-            };
-        };
-
-      dune-fmt =
-        {
-          auto-promote =
-            mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Whether to auto-promote the changes.";
-              default = true;
-            };
-
-          extraRuntimeInputs =
-            mkOption {
-              type = types.listOf types.package;
-              description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
-              default = [ ];
-            };
-        };
-
-      headache =
-        {
-          header-file = mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the header file.";
-            default = ".header";
-          };
-        };
-
-      lua-ls =
-        {
-          checklevel = mkOption {
-            type = types.enum [ "Error" "Warning" "Information" "Hint" ];
-            description = lib.mdDoc
-              "The diagnostic check level";
-            default = "Warning";
-          };
-          config = mkOption {
-            type = types.attrs;
-            description = lib.mdDoc
-              "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
-            default = { };
-          };
-        };
-
-      credo = {
-        strict =
-          mkOption {
-            type = types.bool;
-            description = lib.mdDoc "Whether to auto-promote the changes.";
-            default = true;
-          };
-      };
-
-      vale = {
-        config =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Multiline-string configuration passed as config file.";
-            default = "";
-            example = ''
-              MinAlertLevel = suggestion
-              [*]
-              BasedOnStyles = Vale
-            '';
-          };
-
-        configPath =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the config file.";
-            default = "";
-          };
-
-        flags =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Flags passed to vale.";
-            default = "";
-          };
-      };
-
-      lychee = {
-        configPath =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Path to the config file.";
-            default = "";
-          };
-
-        flags =
-          mkOption {
-            type = types.str;
-            description = lib.mdDoc "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
-            default = "";
-          };
-      };
     };
 
+  # PLEASE keep this sorted alphabetically.
   config.hooks =
     {
       actionlint =
