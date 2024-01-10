@@ -294,7 +294,13 @@ in
                 "''${pkgs.python39Packages.flake8}/bin/flake8"
               '';
             };
-
+          extendIgnore =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "List of additional ignore codes";
+              default = [ ];
+              example = [ "E501" ];
+            };
           format =
             mkOption {
               type = types.str;
@@ -1341,10 +1347,16 @@ in
           files = "${settings.eslint.extensions}";
         };
       flake8 =
+        let
+          extendIgnoreStr =
+            if lib.lists.length settings.flake8.extendIgnore > 0
+            then "--extend-ignore " + builtins.concatStringsSep "," settings.flake8.extendIgnore
+            else "";
+        in
         {
           name = "flake8";
           description = "Check the style and quality of Python files.";
-          entry = "${settings.flake8.binPath} --format ${settings.flake8.format}";
+          entry = "${settings.flake8.binPath} --format ${settings.flake8.format} ${extendIgnoreStr}";
           types = [ "python" ];
         };
       flynt =
