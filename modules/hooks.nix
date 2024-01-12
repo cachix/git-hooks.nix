@@ -42,7 +42,7 @@ in
             mkOption {
               type = types.package;
               description = lib.mdDoc "The `alejandra` package to use.";
-              default = "${pkgs.alejandra}";
+              default = "${tools.alejandra}";
               defaultText = "\${pkgs.alejandra}";
               example = "\${pkgs.alejandra}";
             };
@@ -82,9 +82,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Path to autoflake binary.";
-              default = "${pkgs.autoflake}/bin/autoflake";
+              default = "${tools.autoflake}/bin/autoflake";
               defaultText = lib.literalExpression ''
-                "''${pkgs.autoflake}/bin/autoflake"
+                "''${tools.autoflake}/bin/autoflake"
               '';
             };
 
@@ -289,9 +289,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
-              default = "${pkgs.python39Packages.flake8}/bin/flake8";
+              default = "${tools.python39Packages.flake8}/bin/flake8";
               defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.flake8}/bin/flake8"
+                "''${tools.python39Packages.flake8}/bin/flake8"
               '';
             };
           extendIgnore =
@@ -357,7 +357,7 @@ in
             mkOption {
               type = types.package;
               description = lib.mdDoc "The `flynt` package to use.";
-              default = "${pkgs.python311Packages.flynt}";
+              default = "${tools.python311Packages.flynt}";
               defaultText = "\${pkgs.python311Packages.flynt}";
               example = "\${pkgs.python310Packages.flynt}";
             };
@@ -562,9 +562,9 @@ in
             mkOption {
               type = types.path;
               description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
-              default = "${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
+              default = "${tools.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
               defaultText = lib.literalExpression ''
-                "''${pkgs.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+                "''${tools.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
               '';
             };
 
@@ -609,9 +609,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
-              default = "${pkgs.mypy}/bin/mypy";
+              default = "${tools.mypy}/bin/mypy";
               defaultText = lib.literalExpression ''
-                "''${pkgs.mypy}/bin/mypy"
+                "''${tools.mypy}/bin/mypy"
               '';
             };
         };
@@ -645,9 +645,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP-CS-Fixer binary path.";
-              default = "${pkgs.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
+              default = "${tools.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
               defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
+                "''${tools.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
               '';
             };
         };
@@ -657,9 +657,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php82Packages.phpcbf}/bin/phpcbf";
+              default = "${tools.php82Packages.phpcbf}/bin/phpcbf";
               defaultText = lib.literalExpression ''
-                "''${pkgs.php80Packages.phpcbf}/bin/phpcbf"
+                "''${tools.php80Packages.phpcbf}/bin/phpcbf"
               '';
             };
         };
@@ -669,9 +669,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${pkgs.php82Packages.phpcs}/bin/phpcs";
+              default = "${tools.php82Packages.phpcs}/bin/phpcs";
               defaultText = lib.literalExpression ''
-                "''${pkgs.php80Packages.phpcs}/bin/phpcs"
+                "''${tools.php80Packages.phpcs}/bin/phpcs"
               '';
             };
         };
@@ -681,9 +681,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHPStan binary path.";
-              default = "${pkgs.php82Packages.phpstan}/bin/phpstan";
+              default = "${tools.php82Packages.phpstan}/bin/phpstan";
               defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.phpstan}/bin/phpstan"
+                "''${tools.php81Packages.phpstan}/bin/phpstan"
               '';
             };
         };
@@ -933,9 +933,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Psalm binary path.";
-              default = "${pkgs.php82Packages.psalm}/bin/psalm";
+              default = "${tools.php82Packages.psalm}/bin/psalm";
               defaultText = lib.literalExpression ''
-                "''${pkgs.php81Packages.phpstan}/bin/psalm"
+                "''${tools.php81Packages.phpstan}/bin/psalm"
               '';
             };
         };
@@ -945,9 +945,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
-              default = "${pkgs.python39Packages.pylint}/bin/pylint";
+              default = "${tools.python39Packages.pylint}/bin/pylint";
               defaultText = lib.literalExpression ''
-                "''${pkgs.python39Packages.pylint}/bin/pylint"
+                "''${tools.python39Packages.pylint}/bin/pylint"
               '';
             };
           reports =
@@ -969,9 +969,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
-              default = "${pkgs.pyright}/bin/pyright";
+              default = "${tools.pyright}/bin/pyright";
               defaultText = lib.literalExpression ''
-                "''${pkgs.pyright}/bin/pyright"
+                "''${tools.pyright}/bin/pyright"
               '';
             };
         };
@@ -981,9 +981,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
-              default = "${pkgs.pyupgrade}/bin/pyupgrade";
+              default = "${tools.pyupgrade}/bin/pyupgrade";
               defaultText = lib.literalExpression ''
-                "''${pkgs.pyupgrade}/bin/pyupgrade"
+                "''${tools.pyupgrade}/bin/pyupgrade"
               '';
             };
         };
@@ -1004,8 +1004,8 @@ in
             mkOption {
               type = types.path;
               description = lib.mdDoc "`rome` binary path. E.g. if you want to use the `rome` in `node_modules`, use `./node_modules/.bin/rome`.";
-              default = "${pkgs.rome}/bin/rome";
-              defaultText = "\${pkgs.rome}/bin/rome";
+              default = "${tools.rome}/bin/rome";
+              defaultText = "\${tools.rome}/bin/rome";
             };
 
           write =
@@ -1272,7 +1272,7 @@ in
         {
           name = "black";
           description = "The uncompromising Python code formatter.";
-          entry = "${pkgs.python3Packages.black}/bin/black";
+          entry = "${tools.python3Packages.black}/bin/black";
           types = [ "file" "python" ];
         };
       cabal-fmt =
@@ -1364,7 +1364,7 @@ in
         {
           name = "cljfmt";
           description = "A tool for formatting Clojure code.";
-          entry = "${pkgs.cljfmt}/bin/cljfmt fix";
+          entry = "${tools.cljfmt}/bin/cljfmt fix";
           types_or = [ "clojure" "clojurescript" "edn" ];
         };
       commitizen =
@@ -1477,7 +1477,7 @@ in
       dialyzer = {
         name = "dialyzer";
         description = "Runs a static code analysis using Dialyzer";
-        entry = "${pkgs.elixir}/bin/mix dialyzer";
+        entry = "${tools.elixir}/bin/mix dialyzer";
         files = "\\.exs?$";
       };
       dune-fmt = {
@@ -1951,13 +1951,13 @@ in
       mix-format = {
         name = "mix-format";
         description = "Runs the built-in Elixir syntax formatter";
-        entry = "${pkgs.elixir}/bin/mix format";
+        entry = "${tools.elixir}/bin/mix format";
         files = "\\.exs?$";
       };
       mix-test = {
         name = "mix-test";
         description = "Runs the built-in Elixir test framework";
-        entry = "${pkgs.elixir}/bin/mix test";
+        entry = "${tools.elixir}/bin/mix test";
         files = "\\.exs?$";
       };
       mkdocs-linkcheck = {
@@ -2244,7 +2244,7 @@ in
         {
           name = "ruff";
           description = " An extremely fast Python linter, written in Rust.";
-          entry = "${pkgs.ruff}/bin/ruff --fix";
+          entry = "${tools.ruff}/bin/ruff --fix";
           types = [ "python" ];
         };
       rustfmt =
@@ -2342,7 +2342,7 @@ in
         {
           name = "taplo";
           description = "Format TOML files with taplo fmt";
-          entry = "${pkgs.taplo}/bin/taplo fmt";
+          entry = "${tools.taplo}/bin/taplo fmt";
           types = [ "toml" ];
         };
       terraform-format =
@@ -2461,7 +2461,7 @@ in
         {
           name = "zprint";
           description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
-          entry = "${pkgs.zprint}/bin/zprint '{:search-config? true}' -w";
+          entry = "${tools.zprint}/bin/zprint '{:search-config? true}' -w";
           types_or = [ "clojure" "clojurescript" "edn" ];
         };
 
