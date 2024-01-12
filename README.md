@@ -255,6 +255,7 @@ use nix
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [headache](https://github.com/frama-c/headache)
 - [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
+- [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
 
 You must configure which languages should be formatted by `clang_format` using
 `clang-format.types_or`. For example to check both C and C++ files:
@@ -262,7 +263,7 @@ You must configure which languages should be formatted by `clang_format` using
 ```nix
 clang-format = {
   enable = true;
-  types_or = [ "c" "c++" ];
+  types_or = lib.mkForce [ "c" "cpp" ];
 };
 ```
 

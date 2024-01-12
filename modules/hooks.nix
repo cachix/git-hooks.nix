@@ -113,6 +113,15 @@ in
             default = false;
           };
         };
+      cmake-format =
+        {
+          configPath = mkOption {
+            type = types.str;
+            description = lib.mdDoc "Path to the configuration file (.json,.python,.yaml)";
+            default = "";
+            example = ".cmake-format.json";
+          };
+        };
       credo = {
         strict =
           mkOption {
@@ -1366,6 +1375,21 @@ in
           description = "A tool for formatting Clojure code.";
           entry = "${pkgs.cljfmt}/bin/cljfmt fix";
           types_or = [ "clojure" "clojurescript" "edn" ];
+        };
+      cmake-format =
+        {
+          name = "cmake-format";
+          description = "A tool for formatting CMake-files.";
+          entry =
+            let
+              maybeConfigPath =
+                if settings.cmake-format.configPath == ""
+                # Searches automatically for the config path.
+                then ""
+                else "-C ${settings.cmake-format.configPath}";
+            in
+            "${tools.cmake-format}/bin/cmake-format --check ${maybeConfigPath}";
+          files = "\\.cmake$|CMakeLists.txt";
         };
       commitizen =
         {
