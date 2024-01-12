@@ -257,15 +257,18 @@ use nix
 - [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
 - [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
 
-You must configure which languages should be formatted by `clang_format` using
-`clang-format.types_or`. For example to check both C and C++ files:
+You may restrict which languages should be formatted by `clang-format` using
+`clang-format.types_or`. For example to check only C and C++ files:
 
 ```nix
 clang-format = {
   enable = true;
-  types_or = lib.mkForce [ "c" "cpp" ];
+  types_or = lib.mkForce [ "c" "c++" ];
 };
 ```
+
+Otherwise, the default internal list is used which includes everything that 
+clang-format supports.
 
 ## Git
 
