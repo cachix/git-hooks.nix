@@ -687,29 +687,244 @@ in
               '';
             };
         };
+      # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
+      # See all options for prettier [here](https://prettier.io/docs/en/options.html).
       prettier =
         {
           binPath =
             mkOption {
-              type = types.path;
               description = lib.mdDoc
                 "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
+              type = types.path;
               default = "${tools.prettier}/bin/prettier";
               defaultText = lib.literalExpression ''
                 "''${tools.prettier}/bin/prettier"
               '';
             };
-          write =
+          allow-parens =
             mkOption {
+              description = lib.mdDoc "Include parentheses around a sole arrow function parameter.";
+              default = "always";
+              type = types.enum [ "always" "avoid" ];
+            };
+          bracket-same-line =
+            mkOption {
+              description = lib.mdDoc "Put > of opening tags on the last line instead of on a new line.";
               type = types.bool;
-              description = lib.mdDoc "Whether to edit files inplace.";
+              default = false;
+            };
+          cache =
+            mkOption {
+              description = lib.mdDoc "Only format changed files.";
+              type = types.bool;
+              default = false;
+            };
+          cache-location =
+            mkOption {
+              description = lib.mdDoc "Path to the cache file location used by `--cache` flag.";
+              type = types.str;
+              default = "./node_modules/.cache/prettier/.prettier-cache";
+            };
+          cache-strategy =
+            mkOption {
+              description = lib.mdDoc "Strategy for the cache to use for detecting changed files.";
+              type = types.nullOr (types.enum [ "metadata" "content" ]);
+              default = null;
+            };
+          check =
+            mkOption {
+              description = lib.mdDoc "Output a human-friendly message and a list of unformatted files, if any.";
+              type = types.bool;
               default = true;
             };
-          output =
+          list-different =
             mkOption {
-              description = lib.mdDoc "Output format.";
-              type = types.nullOr (types.enum [ "check" "list-different" ]);
-              default = "list-different";
+              description = lib.mdDoc "Print the filenames of files that are different from Prettier formatting.";
+              type = types.bool;
+              default = false;
+            };
+          color =
+            mkOption {
+              description = lib.mdDoc "Colorize error messages.";
+              type = types.bool;
+              default = true;
+            };
+          configPath =
+            mkOption {
+              description = lib.mdDoc "Path to a Prettier configuration file (.prettierrc, package.json, prettier.config.js).";
+              type = types.str;
+              default = "";
+            };
+          config-precedence =
+            mkOption {
+              description = lib.mdDoc "Defines how config file should be evaluated in combination of CLI options.";
+              type = types.enum [ "cli-override" "file-override" "prefer-file" ];
+              default = "cli-override";
+            };
+          embedded-language-formatting =
+            mkOption {
+              description = lib.mdDoc "Control how Prettier formats quoted code embedded in the file.";
+              type = types.enum [ "auto" "off" ];
+              default = "auto";
+            };
+          end-of-line =
+            mkOption {
+              description = lib.mdDoc "Which end of line characters to apply.";
+              type = types.enum [ "lf" "crlf" "cr" "auto" ];
+              default = "lf";
+            };
+          html-whitespace-sensitivity =
+            mkOption {
+              description = lib.mdDoc "How to handle whitespaces in HTML.";
+              type = types.enum [ "css" "strict" "ignore" ];
+              default = "css";
+            };
+          ignore-path =
+            mkOption {
+              description = lib.mdDoc "Path to a file containing patterns that describe files to ignore.
+              By default, prettier looks for `./.gitignore` and `./.prettierignore`.
+              Multiple values are accepted.";
+              type = types.listOf types.path;
+              default = [ ];
+            };
+          ignore-unknown =
+            mkOption {
+              description = lib.mdDoc "Ignore unknown files.";
+              type = types.bool;
+              default = false;
+            };
+          insert-pragma =
+            mkOption {
+              description = lib.mdDoc "Insert @format pragma into file's first docblock comment.";
+              type = types.bool;
+              default = false;
+            };
+          jsx-single-quote =
+            mkOption {
+              description = lib.mdDoc "Use single quotes in JSX.";
+              type = types.bool;
+              default = false;
+            };
+          log-level =
+            mkOption {
+              description = lib.mdDoc "What level of logs to report.";
+              type = types.enum [ "silent" "error" "warn" "log" "debug" ];
+              default = "log";
+              example = "debug";
+            };
+          no-bracket-spacing =
+            mkOption {
+              description = lib.mdDoc "Do not print spaces between brackets.";
+              type = types.bool;
+              default = false;
+            };
+          no-config =
+            mkOption {
+              description = lib.mdDoc "Do not look for a configuration file.";
+              type = types.bool;
+              default = false;
+            };
+          no-editorconfig =
+            mkOption {
+              description = lib.mdDoc "Don't take .editorconfig into account when parsing configuration.";
+              type = types.bool;
+              default = false;
+            };
+          no-error-on-unmatched-pattern =
+            mkOption {
+              description = lib.mdDoc "Prevent errors when pattern is unmatched.";
+              type = types.bool;
+              default = false;
+            };
+          no-semi =
+            mkOption {
+              description = lib.mdDoc "Do not print semicolons, except at the beginning of lines which may need them.";
+              type = types.bool;
+              default = false;
+            };
+          parser =
+            mkOption {
+              description = lib.mdDoc "Which parser to use.";
+              type = types.enum [ "" "flow" "babel" "babel-flow" "babel-ts" "typescript" "acorn" "espree" "meriyah" "css" "less" "scss" "json" "json5" "json-stringify" "graphql" "markdown" "mdx" "vue" "yaml" "glimmer" "html" "angular" "lwc" ];
+              default = "";
+            };
+          print-width =
+            mkOption {
+              type = types.int;
+              description = lib.mdDoc "Line length that the printer will wrap on.";
+              default = 80;
+            };
+          prose-wrap =
+            mkOption {
+              description = lib.mdDoc "When to or if at all hard wrap prose to print width.";
+              type = types.enum [ "always" "never" "preserve" ];
+              default = "preserve";
+            };
+          plugins =
+            mkOption {
+              description = lib.mdDoc "Add plugins from paths.";
+              type = types.listOf types.str;
+              default = [ ];
+            };
+          quote-props =
+            mkOption {
+              description = lib.mdDoc "Change when properties in objects are quoted.";
+              type = types.enum [ "as-needed" "consistent" "preserve" ];
+              default = "as-needed";
+            };
+          require-pragma =
+            mkOption {
+              description = lib.mdDoc "Require either '@prettier' or '@format' to be present in the file's first docblock comment.";
+              type = types.bool;
+              default = false;
+            };
+          single-attribute-per-line =
+            mkOption {
+              description = lib.mdDoc "Enforce single attribute per line in HTML, Vue andJSX.";
+              type = types.bool;
+              default = false;
+            };
+          single-quote =
+            mkOption {
+              description = lib.mdDoc "Number of spaces per indentation-level.";
+              type = types.bool;
+              default = false;
+            };
+          tab-width =
+            mkOption {
+              description = lib.mdDoc "Line length that the printer will wrap on.";
+              type = types.int;
+              default = 2;
+            };
+          trailing-comma =
+            mkOption {
+              description = lib.mdDoc "Print trailing commas wherever possible in multi-line comma-separated syntactic structures.";
+              type = types.enum [ "all" "es5" "none" ];
+              default = "all";
+            };
+          use-tabs =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Indent with tabs instead of spaces.";
+              default = false;
+            };
+          vue-indent-script-and-style =
+            mkOption {
+              description = lib.mdDoc "Indent script and style tags in Vue files.";
+              type = types.bool;
+              default = false;
+            };
+          with-node-modules =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Process files inside 'node_modules' directory.";
+              default = false;
+            };
+          write =
+            mkOption {
+              description = lib.mdDoc "Edit files in-place.";
+              type = types.bool;
+              default = false;
             };
         };
       psalm =
@@ -1884,13 +2099,58 @@ in
             '';
         files = lib.mkDefault "^secrets";
       };
+      # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
+      # See all options for prettier [here](https://prettier.io/docs/en/options.html).
       prettier =
         {
           name = "prettier";
           description = "Opinionated multi-language code formatter.";
-          entry = with settings.prettier;
-            "${binPath} ${lib.optionalString write "--write"} ${lib.optionalString (output != null) "--${output}"} --ignore-unknown";
           types = [ "text" ];
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with settings.prettier; [
+                    [ (allow-parens != "always") "--allow-parens ${allow-parens}" ]
+                    [ bracket-same-line "--bracket-same-line" ]
+                    [ cache "--cache" ]
+                    [ (cache-location != "./node_modules/.cache/prettier/.prettier-cache") "--cache-location ${cache-location}" ]
+                    [ (cache-strategy != null) "--cache-strategy ${cache-strategy}" ]
+                    [ check "--check" ]
+                    [ (!color) "--no-color" ]
+                    [ (configPath != "") "--config ${configPath}" ]
+                    [ (config-precedence != "cli-override") "--config-precedence ${config-precedence}" ]
+                    [ (embedded-language-formatting != "auto") "--embedded-language-formatting ${embedded-language-formatting}" ]
+                    [ (end-of-line != "lf") "--end-of-line ${end-of-line}" ]
+                    [ (html-whitespace-sensitivity != "css") "--html-whitespace-sensitivity ${html-whitespace-sensitivity}" ]
+                    [ (ignore-path != [ ]) "--ignore-path ${lib.escapeShellArgs ignore-path}" ]
+                    [ ignore-unknown "--ignore-unknown" ]
+                    [ insert-pragma "--insert-pragma" ]
+                    [ jsx-single-quote "--jsx-single-quote" ]
+                    [ list-different "--list-different" ]
+                    [ (log-level != "log") "--log-level ${log-level}" ]
+                    [ no-bracket-spacing "--no-bracket-spacing" ]
+                    [ no-config "--no-config" ]
+                    [ no-editorconfig "--no-editorconfig" ]
+                    [ no-error-on-unmatched-pattern "--no-error-on-unmatched-pattern" ]
+                    [ no-semi "--no-semi" ]
+                    [ (parser != "") "--parser ${parser}" ]
+                    [ (print-width != 80) "--print-width ${toString print-width}" ]
+                    [ (prose-wrap != "preserve") "--prose-wrap ${prose-wrap}" ]
+                    [ (plugins != [ ]) "--plugin ${lib.strings.concatStringsSep " --plugin " plugins}" ]
+                    [ (quote-props != "as-needed") "--quote-props ${quote-props}" ]
+                    [ require-pragma "--require-pragma" ]
+                    [ single-attribute-per-line "--single-attribute-per-line" ]
+                    [ single-quote "--single-quote" ]
+                    [ (tab-width != 2) "--tab-width ${toString tab-width}" ]
+                    [ (trailing-comma != "all") "--trailing-comma ${trailing-comma}" ]
+                    [ use-tabs "--use-tabs" ]
+                    [ vue-indent-script-and-style "--vue-indent-script-and-style" ]
+                    [ with-node-modules "--with-node-modules" ]
+                    [ write "--write" ]
+                  ]);
+            in
+            "${settings.prettier.binPath} ${cmdArgs}";
         };
       psalm =
         {
