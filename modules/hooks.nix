@@ -298,9 +298,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
-              default = "${tools.python39Packages.flake8}/bin/flake8";
+              default = "${tools.flake8}/bin/flake8";
               defaultText = lib.literalExpression ''
-                "''${tools.python39Packages.flake8}/bin/flake8"
+                "''${tools.flake8}/bin/flake8"
               '';
             };
           extendIgnore =
@@ -366,8 +366,8 @@ in
             mkOption {
               type = types.package;
               description = lib.mdDoc "The `flynt` package to use.";
-              default = "${tools.python311Packages.flynt}";
-              defaultText = "\${pkgs.python311Packages.flynt}";
+              default = "${tools.flynt}";
+              defaultText = "\${tools.flynt}";
               example = "\${pkgs.python310Packages.flynt}";
             };
           quiet =
@@ -571,9 +571,9 @@ in
             mkOption {
               type = types.path;
               description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
-              default = "${tools.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
+              default = "${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
               defaultText = lib.literalExpression ''
-                "''${tools.python311Packages.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+                "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
               '';
             };
 
@@ -654,9 +654,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP-CS-Fixer binary path.";
-              default = "${tools.php82Packages.php-cs-fixer}/bin/php-cs-fixer";
+              default = "${tools.php-cs-fixer}/bin/php-cs-fixer";
               defaultText = lib.literalExpression ''
-                "''${tools.php81Packages.php-cs-fixer}/bin/php-cs-fixer"
+                "''${tools.php-cs-fixer}/bin/php-cs-fixer"
               '';
             };
         };
@@ -666,9 +666,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${tools.php82Packages.phpcbf}/bin/phpcbf";
+              default = "${tools.phpcbf}/bin/phpcbf";
               defaultText = lib.literalExpression ''
-                "''${tools.php80Packages.phpcbf}/bin/phpcbf"
+                "''${tools.phpcbf}/bin/phpcbf"
               '';
             };
         };
@@ -678,9 +678,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHP_CodeSniffer binary path.";
-              default = "${tools.php82Packages.phpcs}/bin/phpcs";
+              default = "${tools.phpcs}/bin/phpcs";
               defaultText = lib.literalExpression ''
-                "''${tools.php80Packages.phpcs}/bin/phpcs"
+                "''${tools.phpcs}/bin/phpcs"
               '';
             };
         };
@@ -690,9 +690,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "PHPStan binary path.";
-              default = "${tools.php82Packages.phpstan}/bin/phpstan";
+              default = "${tools.phpstan}/bin/phpstan";
               defaultText = lib.literalExpression ''
-                "''${tools.php81Packages.phpstan}/bin/phpstan"
+                "''${tools.phpstan}/bin/phpstan"
               '';
             };
         };
@@ -942,9 +942,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Psalm binary path.";
-              default = "${tools.php82Packages.psalm}/bin/psalm";
+              default = "${tools.psalm}/bin/psalm";
               defaultText = lib.literalExpression ''
-                "''${tools.php81Packages.phpstan}/bin/psalm"
+                "''${tools.psalm}/bin/psalm"
               '';
             };
         };
@@ -954,9 +954,9 @@ in
             mkOption {
               type = types.str;
               description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
-              default = "${tools.python39Packages.pylint}/bin/pylint";
+              default = "${tools.pylint}/bin/pylint";
               defaultText = lib.literalExpression ''
-                "''${tools.python39Packages.pylint}/bin/pylint"
+                "''${tools.pylint}/bin/pylint"
               '';
             };
           reports =
@@ -1281,7 +1281,7 @@ in
         {
           name = "black";
           description = "The uncompromising Python code formatter.";
-          entry = "${tools.python3Packages.black}/bin/black";
+          entry = "${tools.black}/bin/black";
           types = [ "file" "python" ];
         };
       cabal-fmt =
@@ -1836,7 +1836,7 @@ in
                     [ (profile != "") " --profile ${profile}" ]
                   ]);
             in
-            "${pkgs.python3Packages.isort}/bin/isort${cmdArgs} ${settings.isort.flags}";
+            "${tools.isort}/bin/isort${cmdArgs} ${settings.isort.flags}";
         };
       juliaformatter =
         {

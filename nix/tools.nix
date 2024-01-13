@@ -48,7 +48,8 @@
 , ormolu
 , pkgsBuildBuild
 , pre-commit-hook-ensure-sops ? null
-, python39Packages
+, python3Packages
+, php82Packages
 , ruff ? null
 , runCommand
 , rustfmt
@@ -137,8 +138,10 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier cspell;
+  inherit (nodePackages) eslint markdownlint-cli prettier pyright cspell;
   inherit (ocamlPackages) ocp-indent;
+  inherit (python3Packages) black flake8 flynt isort mkdocs-linkcheck pylint;
+  inherit (php82Packages) php-cs-fixer phpcbf phpcs phpstan psalm;
   lua-language-server = lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
