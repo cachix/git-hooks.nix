@@ -3,6 +3,7 @@
 , actionlint
 , alejandra
 , ansible-lint
+, biome
 , cabal-fmt
 , cabal2nix
 , callPackage
@@ -10,6 +11,8 @@
 , checkmake
 , clang-tools
 , clippy
+, cljfmt
+, cmake-format
 , commitizen
 , conform
 , convco
@@ -20,6 +23,7 @@
 , dune_3
 , eclint
 , editorconfig-checker
+, elixir
 , elmPackages
 , fprettify
 , git
@@ -61,11 +65,13 @@
 , stylish-haskell
 , stylua
 , tagref
+, taplo
 , texlive
 , tflint
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , typos
 , typst-fmt
+, zprint
 , yamllint
 , writeScript
 , writeText
@@ -87,11 +93,14 @@ in
     alejandra
     ansible-lint
     beautysh
+    biome
     cabal2nix
     cabal-fmt
     cargo
     clang-tools
     clippy
+    cljfmt
+    cmake-format
     conform
     convco
     crystal
@@ -100,6 +109,7 @@ in
     dhall
     eclint
     editorconfig-checker
+    elixir
     fprettify
     git-annex
     go
@@ -129,10 +139,12 @@ in
     stylish-haskell
     stylua
     tagref
+    taplo
     topiary
     typos
     typst-fmt
     yamllint
+    zprint
     ;
   inherit (elmPackages) elm-format elm-review elm-test;
   # TODO: these two should be statically compiled
@@ -140,7 +152,7 @@ in
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier pyright cspell;
   inherit (ocamlPackages) ocp-indent;
-  inherit (python3Packages) black flake8 flynt isort mkdocs-linkcheck pylint;
+  inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy pylint pyupgrade;
   inherit (php82Packages) php-cs-fixer phpcbf phpcs psalm;
   # FIXME: workaround build failure
   phpstan = php82Packages.phpstan.overrideAttrs (old: {
