@@ -141,7 +141,11 @@ in
   inherit (nodePackages) eslint markdownlint-cli prettier pyright cspell;
   inherit (ocamlPackages) ocp-indent;
   inherit (python3Packages) black flake8 flynt isort mkdocs-linkcheck pylint;
-  inherit (php82Packages) php-cs-fixer phpcbf phpcs phpstan psalm;
+  inherit (php82Packages) php-cs-fixer phpcbf phpcs psalm;
+  # FIXME: workaround build failure
+  phpstan = php82Packages.phpstan.overrideAttrs (old: {
+    composerStrictValidation = false;
+  });
   lua-language-server = lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
