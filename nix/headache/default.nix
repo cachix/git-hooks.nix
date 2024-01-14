@@ -11,5 +11,5 @@ stdenv.mkDerivation {
   name = "headache-stripped";
   src = the-headache.src;
   phases = [ "installPhase" ];
-  installPhase = "install -Dm 555 -t $out/bin ${lib.getExe the-headache}";
+  installPhase = "install -Dm 555 -t $out/bin ${the-headache}/bin/headache";
 }

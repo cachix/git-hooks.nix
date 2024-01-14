@@ -25,6 +25,27 @@ let
             nixpkgs-fmt.enable = true;
           };
         };
+        all-tools-eval =
+          let
+            config = pkgs.lib.evalModules {
+              modules = [
+                ../modules/all-modules.nix
+                {
+                  inherit tools;
+                  settings.treefmt.package = pkgs.treefmt;
+                }
+              ];
+              specialArgs = { inherit pkgs; };
+            };
+            allHooks = config.config.hooks;
+            allEntryPoints = pkgs.lib.mapAttrsToList (_: v: v.entry) allHooks;
+          in
+          pkgs.runCommand "all-tools-eval"
+            {
+              inherit allEntryPoints;
+            } ''
+            touch $out
+          '';
         doc-check =
           let
             inherit (pkgs) lib;
