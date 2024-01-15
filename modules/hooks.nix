@@ -1147,6 +1147,16 @@ in
               description = lib.mdDoc "Search hidden files and directories.";
               default = false;
             };
+          ignored-words =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Spellings and words to ignore.";
+              default = [ ];
+              example = [
+                "MQTT"
+                "mosquitto"
+              ];
+            };
           locale =
             mkOption {
               type = types.enum [ "en" "en-us" "en-gb" "en-ca" "en-au" ];
@@ -2451,7 +2461,9 @@ in
           description = "Source code spell checker";
           entry =
             let
-              configFile = builtins.toFile "typos-config.toml" "${settings.typos.config}";
+              # Concatenate config in config file with section for ignoring words generated from list of words to ignore
+              config = "${settings.typos.config}" + lib.strings.optionalString (settings.typos.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") settings.typos.ignored-words;
+              configFile = builtins.toFile "typos-config.toml" config;
               cmdArgs =
                 mkCmdArgs
                   (with settings.typos; [
