@@ -2486,11 +2486,6 @@ in
             in
             "${tools.typos}/bin/typos ${cmdArgs}";
           types = [ "text" ];
-          # Typos is supposed to run on the whole tree. If this is set to true,
-          # the system gets stuck for large projects due to very high memory
-          # consumption. The restriction on with files typos run, should be
-          # specified in the typos config file.
-          pass_filenames = false;
         };
       typstfmt = {
         name = "typstfmt";
