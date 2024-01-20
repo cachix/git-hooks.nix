@@ -2350,7 +2350,7 @@ in
           name = "stylua";
           description = "An Opinionated Lua Code Formatter.";
           types = [ "file" "lua" ];
-          entry = "${tools.stylua}/bin/stylua";
+          entry = "${tools.stylua}/bin/stylua --respect-ignores";
         };
       tagref =
         {
