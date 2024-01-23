@@ -141,7 +141,7 @@ use nix
 
 - [purty](https://gitlab.com/joneshf/purty)
 
-## Javascript/Typescript
+## JavaScript/TypeScript
 
 - denofmt: Runs `deno fmt`
 - denolint: Runs `deno lint`
