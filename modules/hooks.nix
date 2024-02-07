@@ -744,13 +744,13 @@ in
             mkOption {
               description = lib.mdDoc "Output a human-friendly message and a list of unformatted files, if any.";
               type = types.bool;
-              default = true;
+              default = false;
             };
           list-different =
             mkOption {
               description = lib.mdDoc "Print the filenames of files that are different from Prettier formatting.";
               type = types.bool;
-              default = false;
+              default = true;
             };
           color =
             mkOption {
@@ -800,7 +800,7 @@ in
             mkOption {
               description = lib.mdDoc "Ignore unknown files.";
               type = types.bool;
-              default = false;
+              default = true;
             };
           insert-pragma =
             mkOption {
@@ -933,7 +933,7 @@ in
             mkOption {
               description = lib.mdDoc "Edit files in-place.";
               type = types.bool;
-              default = false;
+              default = true;
             };
         };
       psalm =
