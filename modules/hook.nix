@@ -1,9 +1,8 @@
 { config, name, lib, ... }:
 
-
 let
   inherit (lib) concatStringsSep mkOption types;
-  cfg = config.options;
+  cfg = config;
   mergeExcludes =
     excludes:
     if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
