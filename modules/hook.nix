@@ -155,13 +155,12 @@ in
     };
   };
 
-  config =
-    {
-      raw =
-        {
-          inherit (config) name entry language files types types_or pass_filenames fail_fast require_serial stages verbose always_run;
-          id = config.name;
-          exclude = mergeExcludes config.excludes;
-        };
-    };
+  config = {
+    raw =
+      {
+        inherit (config) name package entry language files types types_or pass_filenames fail_fast require_serial stages verbose always_run;
+        id = config.name;
+        exclude = mergeExcludes config.excludes;
+      };
+  };
 }
