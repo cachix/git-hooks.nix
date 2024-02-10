@@ -1,8 +1,7 @@
-{ config, name, lib, ... }:
+{ config, name, lib, default_stages, ... }:
 
 let
   inherit (lib) concatStringsSep mkOption types;
-  cfg = config;
   mergeExcludes =
     excludes:
     if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
@@ -135,7 +134,7 @@ in
       description = lib.mdDoc ''
         Confines the hook to run at a particular stage.
       '';
-      default = cfg.default_stages;
+      default = default_stages;
       defaultText = (lib.literalExpression or lib.literalExample) "default_stages";
     };
 
