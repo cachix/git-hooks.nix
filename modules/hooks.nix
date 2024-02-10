@@ -9,8 +9,8 @@ let
 
   cargoManifestPathArg =
     lib.optionalString
-      (settings.rust.cargoManifestPath != null)
-      "--manifest-path ${lib.escapeShellArg settings.rust.cargoManifestPath}";
+      (config.settings.rust.cargoManifestPath != null)
+      "--manifest-path ${lib.escapeShellArg config.settings.rust.cargoManifestPath}";
 
   mkCmdArgs = predActionList:
     lib.concatStringsSep
@@ -23,6 +23,13 @@ let
 
 in
 {
+  # PLEASE keep this sorted alphabetically.
+  options.settings.rust.cargoManifestPath = mkOption {
+    type = types.nullOr types.str;
+    description = lib.mdDoc "Path to Cargo.toml";
+    default = null;
+  };
+
   # PLEASE keep this sorted alphabetically.
   options.hooks =
     {
@@ -43,14 +50,6 @@ in
                 description = lib.mdDoc "Files or directories to exclude from formatting.";
                 default = [ ];
                 example = [ "flake.nix" "./templates" ];
-              };
-            package =
-              mkOption {
-                type = types.package;
-                description = lib.mdDoc "The `alejandra` package to use.";
-                default = "${tools.alejandra}";
-                defaultText = "\${pkgs.alejandra}";
-                example = "\${pkgs.alejandra}";
               };
             threads =
               mkOption {
@@ -281,14 +280,6 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options = {
-            package =
-              mkOption {
-                type = types.package;
-                description = lib.mdDoc "The `eclint` package to use.";
-                default = "${tools.eclint}";
-                defaultText = lib.literalExpression "\${tools.eclint}";
-                example = lib.literalExpression "\${pkgs.eclint}";
-              };
             fix =
               mkOption {
                 type = types.bool;
@@ -421,14 +412,6 @@ in
                 description = lib.mdDoc "Convert only single line expressions.";
                 default = false;
               };
-            package =
-              mkOption {
-                type = types.package;
-                description = lib.mdDoc "The `flynt` package to use.";
-                default = "${tools.flynt}";
-                defaultText = "\${tools.flynt}";
-                example = "\${pkgs.python310Packages.flynt}";
-              };
             quiet =
               mkOption {
                 type = types.bool;
@@ -447,12 +430,13 @@ in
                 description = lib.mdDoc "Replace string concatenations with f-strings.";
                 default = false;
               };
-            verbose =
-              mkOption {
-                type = types.bool;
-                description = lib.mdDoc "Run with verbose output.";
-                default = false;
-              };
+            # TODO: clashes with hook setting
+            # verbose =
+            #   mkOption {
+            #     type = types.bool;
+            #     description = lib.mdDoc "Run with verbose output.";
+            #     default = false;
+            #   };
           };
         };
       };
@@ -582,14 +566,6 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options = {
-            package =
-              mkOption {
-                type = types.package;
-                description = lib.mdDoc "The `mdl` package to use.";
-                default = "${tools.mdl}";
-                defaultText = "\${tools.mdl}";
-                example = "\${pkgs.mdl}";
-              };
             configPath =
               mkOption {
                 type = types.str;
@@ -656,12 +632,13 @@ in
                 description = lib.mdDoc "Markdown rules to use for linting containing the given tags. Per default all rules are processed.";
                 default = [ ];
               };
-            verbose =
-              mkOption {
-                type = types.bool;
-                description = lib.mdDoc "Increase verbosity.";
-                default = false;
-              };
+            # TODO: clases with hook setting
+            # verbose =
+            #   mkOption {
+            #     type = types.bool;
+            #     description = lib.mdDoc "Increase verbosity.";
+            #     default = false;
+            #   };
           };
         };
       };
@@ -874,12 +851,12 @@ in
                 type = types.nullOr (types.enum [ "metadata" "content" ]);
                 default = null;
               };
-            # check =
-            #   mkOption {
-            #     description = lib.mdDoc "Output a human-friendly message and a list of unformatted files, if any.";
-            #     type = types.bool;
-            #     default = false;
-            #   };
+            check =
+              mkOption {
+                description = lib.mdDoc "Output a human-friendly message and a list of unformatted files, if any.";
+                type = types.bool;
+                default = false;
+              };
             list-different =
               mkOption {
                 description = lib.mdDoc "Print the filenames of files that are different from Prettier formatting.";
@@ -1192,18 +1169,6 @@ in
           };
         };
       };
-      rust = mkOption {
-        type = types.submodule {
-          imports = [ hookModule ];
-          options = {
-            cargoManifestPath = mkOption {
-              type = types.nullOr types.str;
-              description = lib.mdDoc "Path to Cargo.toml";
-              default = null;
-            };
-          };
-        };
-      };
       statix = mkOption {
         type = types.submodule {
           imports = [ hookModule ];
@@ -1229,31 +1194,31 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options = {
-            package = mkOption {
-              type = types.package;
-              description = lib.mdDoc
-                ''
-                  The `treefmt` package to use.
-
-                  Should include all the formatters configured by treefmt.
-
-                  For example:
-                  ```nix
-                  pkgs.writeShellApplication {
-                    name = "treefmt";
-                    runtimeInputs = [
-                      pkgs.treefmt
-                      pkgs.nixpkgs-fmt
-                      pkgs.black
-                    ];
-                    text =
-                      '''
-                        exec treefmt "$@"
-                      ''';
-                  }
-                  ```
-                '';
-            };
+            # package = mkOption {
+            #   type = types.package;
+            #   description = lib.mdDoc
+            #     ''
+            #       The `treefmt` package to use.
+            #
+            #       Should include all the formatters configured by treefmt.
+            #
+            #       For example:
+            #       ```nix
+            #       pkgs.writeShellApplication {
+            #         name = "treefmt";
+            #         runtimeInputs = [
+            #           pkgs.treefmt
+            #           pkgs.nixpkgs-fmt
+            #           pkgs.black
+            #         ];
+            #         text =
+            #           '''
+            #             exec treefmt "$@"
+            #           ''';
+            #       }
+            #       ```
+            #     '';
+            # };
           };
         };
       };
@@ -1458,6 +1423,7 @@ in
         {
           name = "alejandra";
           description = "The Uncompromising Nix Code Formatter.";
+          package = tools.alejandra;
           entry =
             let
               cmdArgs =
@@ -1772,6 +1738,7 @@ in
           name = "eclint";
           description = "EditorConfig linter written in Go.";
           types = [ "file" ];
+          package = tools.eclint;
           entry =
             let
               cmdArgs =
@@ -1841,6 +1808,7 @@ in
         {
           name = "flynt";
           description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
+          package = tools.flynt;
           entry =
             let
               cmdArgs =
@@ -2174,6 +2142,7 @@ in
         {
           name = "mdl";
           description = "A tool to check markdown files and flag style issues.";
+          package = tools.mdl;
           entry =
             let
               cmdArgs =
@@ -2698,7 +2667,8 @@ in
         description = "A markup-aware linter for prose built with speed and extensibility in mind.";
         entry =
           let
-            configFile = builtins.toFile ".vale.ini" "${settings.vale.config}";
+            # TODO: was .vale.ini, throwed error in Nix
+            configFile = builtins.toFile "vale.ini" "${settings.vale.config}";
             cmdArgs =
               mkCmdArgs
                 (with settings.vale; [
