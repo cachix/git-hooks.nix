@@ -1,10 +1,10 @@
 { config, lib, pkgs, ... }:
 let
   inherit (config) tools;
-  # TODO: rename all uses of settings.<name> with hooks.<name>
-  settings = config.hooks;
-  inherit (lib) mkOption mkRenamedOptionModule types;
   cfg = config;
+  hooks = config.hooks;
+  settings = config.settings;
+  inherit (lib) mkOption mkRenamedOptionModule types;
 
   hookModule =
     [
@@ -14,8 +14,8 @@ let
 
   cargoManifestPathArg =
     lib.optionalString
-      (config.settings.rust.cargoManifestPath != null)
-      "--manifest-path ${lib.escapeShellArg config.settings.rust.cargoManifestPath}";
+      (settings.rust.cargoManifestPath != null)
+      "--manifest-path ${lib.escapeShellArg settings.rust.cargoManifestPath}";
 
   mkCmdArgs = predActionList:
     lib.concatStringsSep
@@ -29,7 +29,7 @@ let
 in
 {
   imports =
-    map (o: mkRenamedOptionModule [ "settings" o ] [ "hooks" o ])
+    map (o: mkRenamedOptionModule [ "settings" o ] [ "hooks" o "settings" ])
       [ "alejandra" "ansible-lint" "autoflake" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eclint" "eslint" "flake8" "flynt" "headache" "hlint" "hpack" "isort" "latexindent" "lua-ls" "lychee" "markdownlint" "mdl" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" "treefmt" "typos" "vale" "yamllint" ];
 
   # PLEASE keep this sorted alphabetically.
@@ -46,7 +46,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             check =
               mkOption {
                 type = types.bool;
@@ -82,7 +82,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             configPath = mkOption {
               type = types.str;
               description = lib.mdDoc "Path to the YAML configuration file.";
@@ -102,7 +102,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -126,7 +126,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             denyWarnings = mkOption {
               type = types.bool;
               description = lib.mdDoc "Fail when warnings are present";
@@ -149,7 +149,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             configPath = mkOption {
               type = types.str;
               description = lib.mdDoc "Path to the configuration file (.json,.python,.yaml)";
@@ -163,7 +163,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             strict =
               mkOption {
                 type = types.bool;
@@ -177,7 +177,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             edit =
               mkOption {
                 type = types.bool;
@@ -233,7 +233,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             write =
               mkOption {
                 type = types.bool;
@@ -255,7 +255,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             format =
               mkOption {
                 type = types.enum [ "default" "compact" "json" ];
@@ -278,7 +278,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             auto-promote =
               mkOption {
                 type = types.bool;
@@ -299,7 +299,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             fix =
               mkOption {
                 type = types.bool;
@@ -337,7 +337,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.path;
@@ -361,7 +361,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -391,7 +391,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             aggressive =
               mkOption {
                 type = types.bool;
@@ -402,8 +402,8 @@ in
               mkOption {
                 type = types.str;
                 description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
-                default = "${settings.flynt.package}/bin/flynt";
-                defaultText = "\${settings.flynt.package}/bin/flynt";
+                default = "${hooks.flynt.package}/bin/flynt";
+                defaultText = "\${hooks.flynt.package}/bin/flynt";
               };
             dry-run =
               mkOption {
@@ -453,13 +453,12 @@ in
                 description = lib.mdDoc "Replace string concatenations with f-strings.";
                 default = false;
               };
-            # TODO: clashes with hook setting
-            # verbose =
-            #   mkOption {
-            #     type = types.bool;
-            #     description = lib.mdDoc "Run with verbose output.";
-            #     default = false;
-            #   };
+            verbose =
+              mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Run with verbose output.";
+                default = false;
+              };
           };
         };
       };
@@ -467,7 +466,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             header-file = mkOption {
               type = types.str;
               description = lib.mdDoc "Path to the header file.";
@@ -480,7 +479,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             hintFile =
               mkOption {
                 type = types.nullOr types.path;
@@ -494,7 +493,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             silent =
               mkOption {
                 type = types.bool;
@@ -508,7 +507,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             profile =
               mkOption {
                 type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
@@ -528,7 +527,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             flags =
               mkOption {
                 type = types.str;
@@ -542,7 +541,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             checklevel = mkOption {
               type = types.enum [ "Error" "Warning" "Information" "Hint" ];
               description = lib.mdDoc
@@ -562,7 +561,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             configPath =
               mkOption {
                 type = types.str;
@@ -582,7 +581,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             config =
               mkOption {
                 type = types.attrs;
@@ -597,7 +596,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             configPath =
               mkOption {
                 type = types.str;
@@ -664,13 +663,12 @@ in
                 description = lib.mdDoc "Markdown rules to use for linting containing the given tags. Per default all rules are processed.";
                 default = [ ];
               };
-            # TODO: clases with hook setting
-            # verbose =
-            #   mkOption {
-            #     type = types.bool;
-            #     description = lib.mdDoc "Increase verbosity.";
-            #     default = false;
-            #   };
+            verbose =
+              mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Increase verbosity.";
+                default = false;
+              };
           };
         };
       };
@@ -678,7 +676,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.path;
@@ -730,7 +728,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -747,7 +745,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             width =
               mkOption {
                 type = types.nullOr types.int;
@@ -761,7 +759,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             defaultExtensions =
               mkOption {
                 type = types.listOf types.str;
@@ -781,7 +779,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -798,7 +796,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -815,7 +813,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -832,7 +830,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -851,7 +849,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 description = lib.mdDoc
@@ -1094,7 +1092,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -1111,7 +1109,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -1140,7 +1138,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -1157,7 +1155,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.str;
@@ -1174,7 +1172,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             configPath =
               mkOption {
                 type = types.str;
@@ -1190,7 +1188,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binPath =
               mkOption {
                 type = types.path;
@@ -1220,7 +1218,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             format =
               mkOption {
                 type = types.enum [ "stderr" "errfmt" "json" ];
@@ -1242,7 +1240,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             # package = mkOption {
             #   type = types.package;
             #   description = lib.mdDoc
@@ -1275,7 +1273,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             binary =
               mkOption {
                 type = types.bool;
@@ -1410,7 +1408,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             config =
               mkOption {
                 type = types.str;
@@ -1441,7 +1439,7 @@ in
         description = "";
         type = types.submodule {
           imports = hookModule;
-          options = {
+          options.settings = {
             relaxed = mkOption {
               type = types.bool;
               description = lib.mdDoc "Whether to use the relaxed configuration.";
@@ -1479,7 +1477,7 @@ in
           entry =
             let
               cmdArgs =
-                mkCmdArgs (with settings.alejandra; [
+                mkCmdArgs (with hooks.alejandra.settings; [
                   [ check "--check" ]
                   [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
                   [ (verbosity == "quiet") "-q" ]
@@ -1487,7 +1485,7 @@ in
                   [ (threads != null) "--threads ${toString threads}" ]
                 ]);
             in
-            "${settings.alejandra.package}/bin/alejandra ${cmdArgs}";
+            "${hooks.alejandra.package}/bin/alejandra ${cmdArgs}";
           files = "\\.nix$";
         };
       annex =
@@ -1505,17 +1503,17 @@ in
             let
               cmdArgs =
                 mkCmdArgs [
-                  [ (settings.ansible-lint.configPath != "") "-c ${settings.ansible-lint.configPath}" ]
+                  [ (hooks.ansible-lint.settings.configPath != "") "-c ${hooks.ansible-lint.settings.configPath}" ]
                 ];
             in
             "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
-          files = if settings.ansible-lint.subdir != "" then "${settings.ansible-lint.subdir}/" else "";
+          files = if hooks.ansible-lint.settings.subdir != "" then "${hooks.ansible-lint.settings.subdir}/" else "";
         };
       autoflake =
         {
           name = "autoflake";
           description = "Remove unused imports and variables from Python code.";
-          entry = "${settings.autoflake.binPath} ${settings.autoflake.flags}";
+          entry = "${hooks.autoflake.settings.binPath} ${hooks.autoflake.settings.flags}";
           types = [ "python" ];
         };
       bats =
@@ -1621,7 +1619,7 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString settings.clippy.offline "--offline"} ${lib.optionalString settings.clippy.allFeatures "--all-features"} -- ${lib.optionalString settings.clippy.denyWarnings "-D warnings"}";
+          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -1639,10 +1637,10 @@ in
           entry =
             let
               maybeConfigPath =
-                if settings.cmake-format.configPath == ""
+                if hooks.cmake-format.settings.configPath == ""
                 # Searches automatically for the config path.
                 then ""
-                else "-C ${settings.cmake-format.configPath}";
+                else "-C ${hooks.cmake-format.settings.configPath}";
             in
             "${tools.cmake-format}/bin/cmake-format --check ${maybeConfigPath}";
           files = "\\.cmake$|CMakeLists.txt";
@@ -1681,7 +1679,7 @@ in
         name = "credo";
         description = "Runs a static code analysis using Credo";
         entry =
-          let strict = if settings.credo.strict then "--strict" else "";
+          let strict = if hooks.credo.settings.strict then "--strict" else "";
           in "${pkgs.elixir}/bin/mix credo";
         files = "\\.exs?$";
       };
@@ -1704,7 +1702,7 @@ in
           entry =
             let
               cmdArgs =
-                mkCmdArgs (with settings.deadnix; [
+                mkCmdArgs (with hooks.deadnix.settings; [
                   [ noLambdaArg "--no-lambda-arg" ]
                   [ noLambdaPatternNames "--no-lambda-pattern-names" ]
                   [ noUnderscore "--no-underscore" ]
@@ -1726,8 +1724,8 @@ in
             let
               cmdArgs =
                 mkCmdArgs [
-                  [ (!settings.denofmt.write) "--check" ]
-                  [ (settings.denofmt.configPath != "") "-c ${settings.denofmt.configPath}" ]
+                  [ (!hooks.denofmt.settings.write) "--check" ]
+                  [ (hooks.denofmt.settings.configPath != "") "-c ${hooks.denofmt.settings.configPath}" ]
                 ];
             in
             "${tools.deno}/bin/deno fmt ${cmdArgs}";
@@ -1741,9 +1739,9 @@ in
             let
               cmdArgs =
                 mkCmdArgs [
-                  [ (settings.denolint.format == "compact") "--compact" ]
-                  [ (settings.denolint.format == "json") "--json" ]
-                  [ (settings.denolint.configPath != "") "-c ${settings.denolint.configPath}" ]
+                  [ (hooks.denolint.settings.format == "compact") "--compact" ]
+                  [ (hooks.denolint.settings.format == "json") "--json" ]
+                  [ (hooks.denolint.settings.configPath != "") "-c ${hooks.denolint.settings.configPath}" ]
                 ];
             in
             "${tools.deno}/bin/deno lint ${cmdArgs}";
@@ -1765,10 +1763,10 @@ in
         description = "Runs Dune's formatters on the code tree.";
         entry =
           let
-            auto-promote = if settings.dune-fmt.auto-promote then "--auto-promote" else "";
+            auto-promote = if hooks.dune-fmt.settings.auto-promote then "--auto-promote" else "";
             run-dune-fmt = pkgs.writeShellApplication {
               name = "run-dune-fmt";
-              runtimeInputs = settings.dune-fmt.extraRuntimeInputs;
+              runtimeInputs = hooks.dune-fmt.settings.extraRuntimeInputs;
               text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
             };
           in
@@ -1795,7 +1793,7 @@ in
             let
               cmdArgs =
                 mkCmdArgs
-                  (with settings.eclint; [
+                  (with hooks.eclint.settings; [
                     [ fix "-fix" ]
                     [ summary "-summary" ]
                     [ (color != "auto") "-color ${color}" ]
@@ -1803,7 +1801,7 @@ in
                     [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
                   ]);
             in
-            "${settings.eclint.package}/bin/eclint ${cmdArgs}";
+            "${hooks.eclint.package}/bin/eclint ${cmdArgs}";
         };
       editorconfig-checker =
         {
@@ -1840,20 +1838,20 @@ in
         {
           name = "eslint";
           description = "Find and fix problems in your JavaScript code.";
-          entry = "${settings.eslint.binPath} --fix";
-          files = "${settings.eslint.extensions}";
+          entry = "${hooks.eslint.settings.binPath} --fix";
+          files = "${hooks.eslint.settings.extensions}";
         };
       flake8 =
         let
           extendIgnoreStr =
-            if lib.lists.length settings.flake8.extendIgnore > 0
-            then "--extend-ignore " + builtins.concatStringsSep "," settings.flake8.extendIgnore
+            if lib.lists.length hooks.flake8.settings.extendIgnore > 0
+            then "--extend-ignore " + builtins.concatStringsSep "," hooks.flake8.settings.extendIgnore
             else "";
         in
         {
           name = "flake8";
           description = "Check the style and quality of Python files.";
-          entry = "${settings.flake8.binPath} --format ${settings.flake8.format} ${extendIgnoreStr}";
+          entry = "${hooks.flake8.settings.binPath} --format ${hooks.flake8.settings.format} ${extendIgnoreStr}";
           types = [ "python" ];
         };
       flynt =
@@ -1864,7 +1862,7 @@ in
           entry =
             let
               cmdArgs =
-                mkCmdArgs (with settings.flynt; [
+                mkCmdArgs (with hooks.flynt.settings; [
                   [ aggressive "--aggressive" ]
                   [ dry-run "--dry-run" ]
                   [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
@@ -1877,7 +1875,7 @@ in
                   [ verbose "--verbose" ]
                 ]);
             in
-            "${settings.flynt.binPath} ${cmdArgs}";
+            "${hooks.flynt.settings.binPath} ${cmdArgs}";
           types = [ "python" ];
         };
       fourmolu =
@@ -1886,7 +1884,7 @@ in
           description = "Haskell code prettifier.";
           entry =
             "${tools.fourmolu}/bin/fourmolu --mode inplace ${
-            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions)
+            lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormolu.settings.defaultExtensions)
             }";
           files = "\\.l?hs(-boot)?$";
         };
@@ -2033,7 +2031,7 @@ in
             lib.throwIf
               (tools.headache == null)
               "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
-              "${tools.headache}/bin/headache -h ${settings.headache.header-file}";
+              "${tools.headache}/bin/headache -h ${hooks.headache.settings.header-file}";
         };
       hindent =
         {
@@ -2047,7 +2045,7 @@ in
           name = "hlint";
           description =
             "HLint gives suggestions on how to improve your source code.";
-          entry = "${tools.hlint}/bin/hlint${if settings.hlint.hintFile == null then "" else " --hint=${settings.hlint.hintFile}"}";
+          entry = "${tools.hlint}/bin/hlint${if hooks.hlint.settings.hintFile == null then "" else " --hint=${hooks.hlint.settings.hintFile}"}";
           files = "\\.l?hs(-boot)?$";
         };
       hpack =
@@ -2055,7 +2053,7 @@ in
           name = "hpack";
           description =
             "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
-          entry = "${tools.hpack-dir}/bin/hpack-dir --${if settings.hpack.silent then "silent" else "verbose"}";
+          entry = "${tools.hpack-dir}/bin/hpack-dir --${if hooks.hpack.settings.silent then "silent" else "verbose"}";
           files = "(\\.l?hs(-boot)?$)|(\\.cabal$)|((^|/)package\\.yaml$)";
           # We don't pass filenames because they can only be misleading.
           # Indeed, we need to rerun `hpack` in every directory:
@@ -2090,11 +2088,11 @@ in
             let
               cmdArgs =
                 mkCmdArgs
-                  (with settings.isort; [
+                  (with hooks.isort.settings; [
                     [ (profile != "") " --profile ${profile}" ]
                   ]);
             in
-            "${tools.isort}/bin/isort${cmdArgs} ${settings.isort.flags}";
+            "${tools.isort}/bin/isort${cmdArgs} ${hooks.isort.settings.flags}";
         };
       juliaformatter =
         {
@@ -2121,13 +2119,13 @@ in
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
-          entry = "${tools.latexindent}/bin/latexindent ${settings.latexindent.flags}";
+          entry = "${tools.latexindent}/bin/latexindent ${hooks.latexindent.settings.flags}";
         };
       lua-ls =
         let
           # .luarc.json has to be in a directory,
           # or lua-language-server will hang forever.
-          luarc = pkgs.writeText ".luarc.json" (builtins.toJSON settings.lua-ls.config);
+          luarc = pkgs.writeText ".luarc.json" (builtins.toJSON hooks.lua-ls.settings.config);
           luarc-dir = pkgs.stdenv.mkDerivation {
             name = "luarc";
             unpackPhase = "true";
@@ -2144,7 +2142,7 @@ in
               set -e
               export logpath="$(mktemp -d)"
               lua-language-server --check $(realpath .) \
-                --checklevel="${settings.lua-ls.checklevel}" \
+                --checklevel="${hooks.lua-ls.settings.checklevel}" \
                 --configpath="${luarc-dir}/.luarc.json" \
                 --logpath="$logpath"
               if [[ -f $logpath/check.json ]]; then
@@ -2176,18 +2174,18 @@ in
           let
             cmdArgs =
               mkCmdArgs
-                (with settings.lychee; [
+                (with hooks.lychee.settings; [
                   [ (configPath != "") " --config ${configPath}" ]
                 ]);
           in
-          "${pkgs.lychee}/bin/lychee${cmdArgs} ${settings.lychee.flags}";
+          "${pkgs.lychee}/bin/lychee${cmdArgs} ${hooks.lychee.settings.flags}";
         types = [ "text" ];
       };
       markdownlint =
         {
           name = "markdownlint";
           description = "Style checker and linter for markdown files.";
-          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON settings.markdownlint.config)}";
+          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.config)}";
           files = "\\.md$";
         };
       mdl =
@@ -2199,7 +2197,7 @@ in
             let
               cmdArgs =
                 mkCmdArgs
-                  (with settings.mdl; [
+                  (with hooks.mdl.settings; [
                     [ (configPath != "") "--config ${configPath}" ]
                     [ git-recurse "--git-recurse" ]
                     [ ignore-front-matter "--ignore-front-matter" ]
@@ -2214,7 +2212,7 @@ in
                     [ verbose "--verbose" ]
                   ]);
             in
-            "${settings.mdl.package}/bin/mdl ${cmdArgs}";
+            "${hooks.mdl.package}/bin/mdl ${cmdArgs}";
           files = "\\.md$";
         };
       mdsh =
@@ -2250,7 +2248,7 @@ in
           let
             cmdArgs =
               mkCmdArgs
-                (with settings.mkdocs-linkcheck; [
+                (with hooks.mkdocs-linkcheck.settings; [
                   [ local-only " --local" ]
                   [ recurse " --recurse" ]
                   [ (extension != "") " --ext ${extension}" ]
@@ -2258,14 +2256,14 @@ in
                   [ (path != "") " ${path}" ]
                 ]);
           in
-          "${settings.mkdocs-linkcheck.binPath}${cmdArgs}";
+          "${hooks.mkdocs-linkcheck.settings.binPath}${cmdArgs}";
         types = [ "text" "markdown" ];
       };
       mypy =
         {
           name = "mypy";
           description = "Static type checker for Python";
-          entry = settings.mypy.binPath;
+          entry = hooks.mypy.settings.binPath;
           files = "\\.py$";
         };
       nil =
@@ -2298,7 +2296,7 @@ in
         {
           name = "nixfmt";
           description = "Nix code prettifier.";
-          entry = "${tools.nixfmt}/bin/nixfmt ${lib.optionalString (settings.nixfmt.width != null) "--width=${toString settings.nixfmt.width}"}";
+          entry = "${tools.nixfmt}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
@@ -2329,9 +2327,9 @@ in
           entry =
             let
               extensions =
-                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) settings.ormolu.defaultExtensions);
+                lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormolu.settings.defaultExtensions);
               cabalExtensions =
-                if settings.ormolu.cabalDefaultExtensions then "--cabal-default-extensions" else "";
+                if hooks.ormolu.settings.cabalDefaultExtensions then "--cabal-default-extensions" else "";
             in
             "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
           files = "\\.l?hs(-boot)?$";
@@ -2340,7 +2338,7 @@ in
         {
           name = "php-cs-fixer";
           description = "Lint PHP files.";
-          entry = with settings.php-cs-fixer;
+          entry = with hooks.php-cs-fixer.settings;
             "${binPath} fix";
           types = [ "php" ];
         };
@@ -2348,7 +2346,7 @@ in
         {
           name = "phpcbf";
           description = "Lint PHP files.";
-          entry = with settings.phpcbf;
+          entry = with hooks.phpcbf.settings;
             "${binPath}";
           types = [ "php" ];
         };
@@ -2356,7 +2354,7 @@ in
         {
           name = "phpcs";
           description = "Lint PHP files.";
-          entry = with settings.phpcs;
+          entry = with hooks.phpcs.settings;
             "${binPath}";
           types = [ "php" ];
         };
@@ -2364,7 +2362,7 @@ in
         {
           name = "phpstan";
           description = "Static Analysis of PHP files.";
-          entry = with settings.phpstan;
+          entry = with hooks.phpstan.settings;
             "${binPath} analyse";
           types = [ "php" ];
         };
@@ -2393,7 +2391,7 @@ in
             let
               cmdArgs =
                 mkCmdArgs
-                  (with settings.prettier; [
+                  (with hooks.prettier.settings; [
                     [ (allow-parens != "always") "--allow-parens ${allow-parens}" ]
                     [ bracket-same-line "--bracket-same-line" ]
                     [ cache "--cache" ]
@@ -2433,13 +2431,13 @@ in
                     [ write "--write" ]
                   ]);
             in
-            "${settings.prettier.binPath} ${cmdArgs}";
+            "${hooks.prettier.settings.binPath} ${cmdArgs}";
         };
       psalm =
         {
           name = "psalm";
           description = "Static Analysis of PHP files.";
-          entry = with settings.psalm;
+          entry = with hooks.psalm.settings;
             "${binPath}";
           types = [ "php" ];
         };
@@ -2461,7 +2459,7 @@ in
         {
           name = "pylint";
           description = "Lint Python files.";
-          entry = with settings.pylint;
+          entry = with hooks.pylint.settings;
             "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
           types = [ "python" ];
         };
@@ -2469,14 +2467,14 @@ in
         {
           name = "pyright";
           description = "Static type checker for Python";
-          entry = settings.pyright.binPath;
+          entry = hooks.pyright.settings.binPath;
           files = "\\.py$";
         };
       pyupgrade =
         {
           name = "pyupgrade";
           description = "Automatically upgrade syntax for newer versions.";
-          entry = with settings.pyupgrade;
+          entry = with hooks.pyupgrade.settings;
             "${binPath}";
           types = [ "python" ];
         };
@@ -2489,7 +2487,7 @@ in
               cmdArgs =
                 mkCmdArgs [
                   [ true "-set_exit_status" ]
-                  [ (settings.revive.configPath != "") "-config ${settings.revive.configPath}" ]
+                  [ (hooks.revive.settings.configPath != "") "-config ${hooks.revive.settings.configPath}" ]
                 ];
               # revive works with both files and directories; however some lints
               # may fail (e.g. package-comment) if they run on an individual file
@@ -2517,11 +2515,11 @@ in
             let
               cmdArgs =
                 mkCmdArgs [
-                  [ (settings.rome.write) "--apply" ]
-                  [ (settings.rome.configPath != "") "--config-path ${settings.rome.configPath}" ]
+                  [ (hooks.rome.settings.write) "--apply" ]
+                  [ (hooks.rome.settings.configPath != "") "--config-path ${hooks.rome.settings.configPath}" ]
                 ];
             in
-            "${settings.rome.binPath} check ${cmdArgs}";
+            "${hooks.rome.settings.binPath} check ${cmdArgs}";
         };
       ruff =
         {
@@ -2592,7 +2590,7 @@ in
         {
           name = "statix";
           description = "Lints and suggestions for the Nix programming language.";
-          entry = with settings.statix;
+          entry = with hooks.statix.settings;
             "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
           files = "\\.nix$";
           pass_filenames = false;
@@ -2674,7 +2672,7 @@ in
           description = "One CLI to format the code tree.";
           types = [ "file" ];
           pass_filenames = true;
-          entry = "${settings.treefmt.package}/bin/treefmt --fail-on-change";
+          entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
         };
       typos =
         {
@@ -2683,11 +2681,11 @@ in
           entry =
             let
               # Concatenate config in config file with section for ignoring words generated from list of words to ignore
-              config = "${settings.typos.config}" + lib.strings.optionalString (settings.typos.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") settings.typos.ignored-words;
+              config = "${hooks.typos.settings.config}" + lib.strings.optionalString (hooks.typos.settings.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") hooks.typos.settings.ignored-words;
               configFile = builtins.toFile "typos-config.toml" config;
               cmdArgs =
                 mkCmdArgs
-                  (with settings.typos; [
+                  (with hooks.typos.settings; [
                     [ binary "--binary" ]
                     [ (color != "auto") "--color ${color}" ]
                     [ (config != "") "--config ${configFile}" ]
@@ -2720,15 +2718,15 @@ in
         entry =
           let
             # TODO: was .vale.ini, throwed error in Nix
-            configFile = builtins.toFile "vale.ini" "${settings.vale.config}";
+            configFile = builtins.toFile "vale.ini" "${hooks.vale.settings.config}";
             cmdArgs =
               mkCmdArgs
-                (with settings.vale; [
+                (with hooks.vale.settings; [
                   [ (configPath != "") " --config ${configPath}" ]
                   [ (config != "" && configPath == "") " --config ${configFile}" ]
                 ]);
           in
-          "${pkgs.vale}/bin/vale${cmdArgs} ${settings.vale.flags}";
+          "${pkgs.vale}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
         types = [ "text" ];
       };
       yamllint =
@@ -2740,8 +2738,8 @@ in
             let
               cmdArgs =
                 mkCmdArgs [
-                  [ (settings.yamllint.relaxed) "-d relaxed" ]
-                  [ (settings.yamllint.configPath != "") "-c ${settings.yamllint.configPath}" ]
+                  [ (hooks.yamllint.settings.relaxed) "-d relaxed" ]
+                  [ (hooks.yamllint.settings.configPath != "") "-c ${hooks.yamllint.settings.configPath}" ]
                 ];
             in
             "${tools.yamllint}/bin/yamllint ${cmdArgs}";
