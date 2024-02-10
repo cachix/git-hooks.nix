@@ -3,7 +3,7 @@ let
   inherit (config) tools;
   # TODO: rename all uses of settings.<name> with hooks.<name>
   settings = config.hooks;
-  inherit (lib) mkOption types;
+  inherit (lib) mkOption mkRenamedOptionModule types;
   cfg = config;
 
   hookModule =
@@ -28,6 +28,10 @@ let
 
 in
 {
+  imports =
+    map (o: mkRenamedOptionModule [ "settings" o ] [ "hooks" o ])
+      [ "alejandra" "ansible-lint" "autoflake" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eclint" "eslint" "flake8" "flynt" "headache" "hlint" "hpack" "isort" "latexindent" "lua-ls" "lychee" "markdownlint" "mdl" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" "treefmt" "typos" "vale" "yamllint" ];
+
   # PLEASE keep this sorted alphabetically.
   options.settings.rust.cargoManifestPath = mkOption {
     type = types.nullOr types.str;
