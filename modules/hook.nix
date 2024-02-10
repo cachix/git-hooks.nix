@@ -2,8 +2,11 @@
 
 
 let
-  inherit (lib) mkOption types;
+  inherit (lib) concatStringsSep mkOption types;
   cfg = config.options;
+  mergeExcludes =
+    excludes:
+    if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
 in
 {
   options = {
@@ -153,4 +156,14 @@ in
       '';
     };
   };
+
+  config =
+    {
+      raw =
+        {
+          inherit (config) name entry language files types types_or pass_filenames fail_fast require_serial stages verbose always_run;
+          id = config.name;
+          exclude = mergeExcludes config.excludes;
+        };
+    };
 }
