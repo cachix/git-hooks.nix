@@ -34,6 +34,7 @@ in
   options.hooks =
     {
       alejandra = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -69,6 +70,7 @@ in
         };
       };
       ansible-lint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -88,6 +90,7 @@ in
         };
       };
       autoflake = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -111,6 +114,7 @@ in
         };
       };
       clippy = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -133,6 +137,7 @@ in
         };
       };
       cmake-format = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -146,6 +151,7 @@ in
         };
       };
       credo = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -159,6 +165,7 @@ in
         };
       };
       deadnix = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -214,6 +221,7 @@ in
         };
       };
       denofmt = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -235,6 +243,7 @@ in
         };
       };
       denolint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -257,6 +266,7 @@ in
         };
       };
       dune-fmt = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -277,6 +287,7 @@ in
         };
       };
       eclint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -314,6 +325,7 @@ in
         };
       };
       eslint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -337,6 +349,7 @@ in
         };
       };
       flake8 = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -366,6 +379,7 @@ in
         };
       };
       flynt = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -441,6 +455,7 @@ in
         };
       };
       headache = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -453,6 +468,7 @@ in
         };
       };
       hlint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -466,6 +482,7 @@ in
         };
       };
       hpack = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -479,6 +496,7 @@ in
         };
       };
       isort = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -498,6 +516,7 @@ in
         };
       };
       latexindent = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -511,6 +530,7 @@ in
         };
       };
       lua-ls = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -530,6 +550,7 @@ in
         };
       };
       lychee = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -549,6 +570,7 @@ in
         };
       };
       markdownlint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -563,6 +585,7 @@ in
         };
       };
       mdl = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -643,6 +666,7 @@ in
         };
       };
       mkdocs-linkcheck = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -694,6 +718,7 @@ in
         };
       };
       mypy = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -710,6 +735,7 @@ in
         };
       };
       nixfmt = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -723,6 +749,7 @@ in
         };
       };
       ormolu = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -742,6 +769,7 @@ in
         };
       };
       php-cs-fixer = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -758,6 +786,7 @@ in
         };
       };
       phpcbf = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -774,6 +803,7 @@ in
         };
       };
       phpcs = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -790,6 +820,7 @@ in
         };
       };
       phpstan = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -808,6 +839,7 @@ in
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
       # See all options for prettier [here](https://prettier.io/docs/en/options.html).
       prettier = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1050,6 +1082,7 @@ in
         };
       };
       psalm = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1066,6 +1099,7 @@ in
         };
       };
       pylint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1094,6 +1128,7 @@ in
         };
       };
       pyright = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1110,6 +1145,7 @@ in
         };
       };
       pyupgrade = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1126,6 +1162,7 @@ in
         };
       };
       revive = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1141,6 +1178,7 @@ in
         };
       };
       rome = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1170,6 +1208,7 @@ in
         };
       };
       statix = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1191,6 +1230,7 @@ in
         };
       };
       treefmt = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1223,6 +1263,7 @@ in
         };
       };
       typos = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1357,6 +1398,7 @@ in
         };
       };
       vale = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
@@ -1387,6 +1429,7 @@ in
         };
       };
       yamllint = mkOption {
+        description = "";
         type = types.submodule {
           imports = [ hookModule ];
           options = {
