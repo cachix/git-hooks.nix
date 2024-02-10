@@ -40,6 +40,7 @@
 , hunspell
 , luaPackages
 , lua-language-server
+, lychee
 , julia-bin
 , mdl
 , mdsh
@@ -69,6 +70,7 @@
 , texlive
 , tflint
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
+, treefmt
 , typos
 , typst-fmt
 , zprint
@@ -79,6 +81,7 @@
 , go-tools
 , golangci-lint
 , revive ? null
+, vale
 }:
 
 
@@ -121,6 +124,7 @@ in
     hlint
     hpack
     html-tidy
+    lychee
     julia-bin
     mdl
     mdsh
@@ -141,8 +145,10 @@ in
     tagref
     taplo
     topiary
+    treefmt
     typos
     typst-fmt
+    vale
     yamllint
     zprint
     ;

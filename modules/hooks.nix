@@ -4,7 +4,7 @@ let
   cfg = config;
   hooks = config.hooks;
   settings = config.settings;
-  inherit (lib) mkOption mkRenamedOptionModule types;
+  inherit (lib) mkDefault mkOption mkRenamedOptionModule types;
 
   hookModule =
     [
@@ -1464,15 +1464,16 @@ in
       actionlint =
         {
           name = "actionlint";
-          description = "Static checker for GitHub Actions workflow files.";
+          description = "Static checker for GitHub Actions workflow files";
           files = "^.github/workflows/";
           types = [ "yaml" ];
-          entry = "${tools.actionlint}/bin/actionlint";
+          package = tools.actionlint;
+          entry = "${hooks.actionlint.package}/bin/actionlint";
         };
       alejandra =
         {
           name = "alejandra";
-          description = "The Uncompromising Nix Code Formatter.";
+          description = "The Uncompromising Nix Code Formatter";
           package = tools.alejandra;
           entry =
             let
@@ -1492,13 +1493,13 @@ in
         {
           name = "annex";
           description = "Runs the git-annex hook for large file support";
-          entry = "${tools.git-annex}/bin/git-annex pre-commit";
+          package = tools.git-annex;
+          entry = "${hooks.git-annex.package}/bin/git-annex pre-commit";
         };
       ansible-lint =
         {
           name = "ansible-lint";
-          description =
-            "Ansible linter.";
+          description = "Ansible linter";
           entry =
             let
               cmdArgs =
@@ -1512,78 +1513,89 @@ in
       autoflake =
         {
           name = "autoflake";
-          description = "Remove unused imports and variables from Python code.";
+          description = "Remove unused imports and variables from Python code";
+          # TODO: unused. see binPath.
+          package = tools.autoflake;
           entry = "${hooks.autoflake.settings.binPath} ${hooks.autoflake.settings.flags}";
           types = [ "python" ];
         };
       bats =
         {
           name = "bats";
-          description = "Run bash unit tests.";
+          description = "Run bash unit tests";
           types = [ "shell" ];
           types_or = [ "bats" "bash" ];
-          entry = "${tools.bats}/bin/bats -p";
+          package = tools.bats;
+          entry = "${hooks.bats.package}/bin/bats -p";
         };
       beautysh =
         {
           name = "beautysh";
-          description = "Format shell files.";
+          description = "Format shell files";
           types = [ "shell" ];
-          entry = "${tools.beautysh}/bin/beautysh";
+          package = tools.beautysh;
+          entry = "${hooks.beautysh.package}/bin/beautysh";
         };
       black =
         {
           name = "black";
-          description = "The uncompromising Python code formatter.";
-          entry = "${tools.black}/bin/black";
+          description = "The uncompromising Python code formatter";
+          package = tools.black;
+          entry = "${hooks.black.package}/bin/black";
           types = [ "file" "python" ];
         };
       cabal-fmt =
         {
           name = "cabal-fmt";
           description = "Format Cabal files";
-          entry = "${tools.cabal-fmt}/bin/cabal-fmt --inplace";
+          package = tools.cabal-fmt;
+          entry = "${hooks.cabal-fmt.package}/bin/cabal-fmt --inplace";
           files = "\\.cabal$";
         };
       cabal2nix =
         {
           name = "cabal2nix";
-          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files.";
+          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files";
+          package = tools.cabal2nix;
+          entry = "${hooks.cabal2nix-dir.package}/bin/cabal2nix-dir";
           files = "\\.cabal$";
-          entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir";
         };
       cargo-check =
         {
           name = "cargo-check";
-          description = "Check the cargo package for errors.";
-          entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
+          description = "Check the cargo package for errors";
+          package = tools.cargo;
+          entry = "${hooks.cargo.package}/bin/cargo check ${cargoManifestPathArg}";
           files = "\\.rs$";
           pass_filenames = false;
         };
       checkmake = {
         name = "checkmake";
-        description = "Experimental linter/analyzer for Makefiles.";
+        description = "Experimental linter/analyzer for Makefiles";
         types = [ "makefile" ];
+        package = tools.checkmake;
         entry =
           ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
           ## this gets into a NixOS release, the following code will be useless.
           lib.throwIf
-            (tools.checkmake == null)
+            (hooks.checkmake.package == null)
             "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
-            "${tools.checkmake}/bin/checkmake";
+            "${hooks.checkmake.package}/bin/checkmake";
       };
       chktex =
         {
           name = "chktex";
           description = "LaTeX semantic checker";
           types = [ "file" "tex" ];
-          entry = "${tools.chktex}/bin/chktex";
+          package = tools.chktex;
+          entry = "${hooks.chktex.package}/bin/chktex";
         };
       clang-format =
         {
           name = "clang-format";
           description = "Format your code using `clang-format`.";
-          entry = "${tools.clang-tools}/bin/clang-format -style=file -i";
+          package = tools.clang-tools;
+          entry = "${hooks.clang-tools.package}/bin/clang-format -style=file -i";
           # Source:
           # https://github.com/pre-commit/mirrors-clang-format/blob/46516e8f532c8f2d55e801c34a740ebb8036365c/.pre-commit-hooks.yaml
           types_or = [
@@ -1601,7 +1613,8 @@ in
       clang-tidy = {
         name = "clang-tidy";
         description = "Static analyzer for C++ code.";
-        entry = "${tools.clang-tools}/bin/clang-tidy --fix";
+        package = tools.clang-tools;
+        entry = "${hooks.clang-tools.package}/bin/clang-tidy --fix";
         types = [ "c" "c++" "c#" "objective-c" ];
       };
       clippy =
@@ -1619,7 +1632,8 @@ in
         {
           name = "clippy";
           description = "Lint Rust code.";
-          entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
+          package = wrapper;
+          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -1627,13 +1641,15 @@ in
         {
           name = "cljfmt";
           description = "A tool for formatting Clojure code.";
-          entry = "${tools.cljfmt}/bin/cljfmt fix";
+          package = tools.cljfmt;
+          entry = "${hooks.cljfmt.package}/bin/cljfmt fix";
           types_or = [ "clojure" "clojurescript" "edn" ];
         };
       cmake-format =
         {
           name = "cmake-format";
           description = "A tool for formatting CMake-files.";
+          package = tools.cmake-format;
           entry =
             let
               maybeConfigPath =
@@ -1642,7 +1658,7 @@ in
                 then ""
                 else "-C ${hooks.cmake-format.settings.configPath}";
             in
-            "${tools.cmake-format}/bin/cmake-format --check ${maybeConfigPath}";
+            "${hooks.cmake-format.package}/bin/cmake-format --check ${maybeConfigPath}";
           files = "\\.cmake$|CMakeLists.txt";
         };
       commitizen =
@@ -1651,26 +1667,30 @@ in
           description = ''
             Check whether the current commit message follows committing rules.
           '';
-          entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
+          package = tools.commitizen;
+          entry = "${hooks.commitizen.package}/bin/cz check --allow-abort --commit-msg-file";
           stages = [ "commit-msg" ];
         };
       conform = {
         name = "conform enforce";
         description = "Policy enforcement for commits.";
-        entry = "${tools.conform}/bin/conform enforce --commit-msg-file";
+        package = tools.conform;
+        entry = "${hooks.conform.package}/bin/conform enforce --commit-msg-file";
         stages = [ "commit-msg" ];
       };
       convco = {
         name = "convco";
+        package = tools.convco;
         entry =
           let
+            convco = hooks.convco.package;
             script = pkgs.writeShellScript "precommit-convco" ''
-              cat $1 | ${pkgs.convco}/bin/convco check --from-stdin
+              cat $1 | ${convco}/bin/convco check --from-stdin
             '';
             # need version >= 0.4.0 for the --from-stdin flag
-            toolVersionCheck = lib.versionAtLeast tools.convco.version "0.4.0";
+            toolVersionCheck = lib.versionAtLeast convco.version "0.4.0";
           in
-          lib.throwIf (tools.convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+          lib.throwIf (convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
             builtins.toString
             script;
         stages = [ "commit-msg" ];
@@ -1678,27 +1698,31 @@ in
       credo = {
         name = "credo";
         description = "Runs a static code analysis using Credo";
+        package = tools.elixir;
         entry =
           let strict = if hooks.credo.settings.strict then "--strict" else "";
-          in "${pkgs.elixir}/bin/mix credo";
+          in "${hooks.credo.package}/bin/mix credo ${strict}";
         files = "\\.exs?$";
       };
       crystal = {
         name = "crystal";
         description = "A tool that automatically formats Crystal source code";
-        entry = "${tools.crystal}/bin/crystal tool format";
+        package = tools.crystal;
+        entry = "${hooks.crystal.package}/bin/crystal tool format";
         files = "\\.cr$";
       };
       cspell =
         {
           name = "cspell";
           description = "A Spell Checker for Code";
-          entry = "${tools.cspell}/bin/cspell";
+          package = tools.cspell;
+          entry = "${hooks.cspell.package}/bin/cspell";
         };
       deadnix =
         {
           name = "deadnix";
           description = "Scan Nix files for dead code (unused variable bindings).";
+          package = tools.deadnix;
           entry =
             let
               cmdArgs =
@@ -1712,7 +1736,7 @@ in
                   [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
                 ]);
             in
-            "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
+            "${hooks.deadnix.package}/bin/deadnix ${cmdArgs} --fail";
           files = "\\.nix$";
         };
       denofmt =
@@ -1720,6 +1744,7 @@ in
           name = "denofmt";
           description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
           types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
+          package = tools.deno;
           entry =
             let
               cmdArgs =
@@ -1728,13 +1753,14 @@ in
                   [ (hooks.denofmt.settings.configPath != "") "-c ${hooks.denofmt.settings.configPath}" ]
                 ];
             in
-            "${tools.deno}/bin/deno fmt ${cmdArgs}";
+            "${hooks.deno.package}/bin/deno fmt ${cmdArgs}";
         };
       denolint =
         {
           name = "denolint";
           description = "Lint JavaScript/TypeScript source code.";
           types_or = [ "javascript" "jsx" "ts" "tsx" ];
+          package = tools.deno;
           entry =
             let
               cmdArgs =
@@ -1744,30 +1770,33 @@ in
                   [ (hooks.denolint.settings.configPath != "") "-c ${hooks.denolint.settings.configPath}" ]
                 ];
             in
-            "${tools.deno}/bin/deno lint ${cmdArgs}";
+            "${hooks.deno.package}/bin/deno lint ${cmdArgs}";
         };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
-        entry = "${tools.dhall}/bin/dhall format";
+        package = tools.dhall;
+        entry = "${hooks.dhall.package}/bin/dhall format";
         files = "\\.dhall$";
       };
       dialyzer = {
         name = "dialyzer";
         description = "Runs a static code analysis using Dialyzer";
-        entry = "${tools.elixir}/bin/mix dialyzer";
+        package = tools.elixir;
+        entry = "${hooks.elixir.package}/bin/mix dialyzer";
         files = "\\.exs?$";
       };
       dune-fmt = {
         name = "dune-fmt";
         description = "Runs Dune's formatters on the code tree.";
+        package = tools.dune;
         entry =
           let
             auto-promote = if hooks.dune-fmt.settings.auto-promote then "--auto-promote" else "";
             run-dune-fmt = pkgs.writeShellApplication {
               name = "run-dune-fmt";
               runtimeInputs = hooks.dune-fmt.settings.extraRuntimeInputs;
-              text = "${tools.dune-fmt}/bin/dune-fmt ${auto-promote}";
+              text = "${hooks.dune-fmt.package}/bin/dune-fmt ${auto-promote}";
             };
           in
           "${run-dune-fmt}/bin/run-dune-fmt";
@@ -1776,7 +1805,8 @@ in
       dune-opam-sync = {
         name = "dune/opam sync";
         description = "Check that Dune-generated OPAM files are in sync.";
-        entry = "${tools.dune-build-opam-files}/bin/dune-build-opam-files";
+        package = tools.dune;
+        entry = "${hooks.dune-build-opam-files.package}/bin/dune-build-opam-files";
         files = "(\\.opam$)|(\\.opam.template$)|((^|/)dune-project$)";
         ## We don't pass filenames because they can only be misleading. Indeed,
         ## we need to re-run `dune build` for every `*.opam` file, but also when
@@ -1807,22 +1837,24 @@ in
         {
           name = "editorconfig-checker";
           description = "Verify that the files are in harmony with the `.editorconfig`.";
-          entry = "${tools.editorconfig-checker}/bin/editorconfig-checker";
+          package = tools.editorconfig-checker;
+          entry = "${hooks.editorconfig-checker.package}/bin/editorconfig-checker";
           types = [ "file" ];
         };
       elm-format =
         {
           name = "elm-format";
           description = "Format Elm files.";
-          entry =
-            "${tools.elm-format}/bin/elm-format --yes --elm-version=0.19";
+          package = tools.elm-format;
+          entry = "${hooks.elm-format.package}/bin/elm-format --yes --elm-version=0.19";
           files = "\\.elm$";
         };
       elm-review =
         {
           name = "elm-review";
           description = "Analyzes Elm projects, to help find mistakes before your users find them.";
-          entry = "${tools.elm-review}/bin/elm-review";
+          package = tools.elm-review;
+          entry = "${hooks.elm-review.package}/bin/elm-review";
           files = "\\.elm$";
           pass_filenames = false;
         };
@@ -1830,7 +1862,8 @@ in
         {
           name = "elm-test";
           description = "Run unit tests and fuzz tests for Elm code.";
-          entry = "${tools.elm-test}/bin/elm-test";
+          package = tools.elm-test;
+          entry = "${hooks.elm-test.package}/bin/elm-test";
           files = "\\.elm$";
           pass_filenames = false;
         };
@@ -1838,6 +1871,8 @@ in
         {
           name = "eslint";
           description = "Find and fix problems in your JavaScript code.";
+          # TODO: unused. see binPath.
+          package = tools.eslint;
           entry = "${hooks.eslint.settings.binPath} --fix";
           files = "${hooks.eslint.settings.extensions}";
         };
@@ -1851,6 +1886,8 @@ in
         {
           name = "flake8";
           description = "Check the style and quality of Python files.";
+          # unused. see binPath.
+          package = tools.flake8;
           entry = "${hooks.flake8.settings.binPath} --format ${hooks.flake8.settings.format} ${extendIgnoreStr}";
           types = [ "python" ];
         };
@@ -1858,6 +1895,7 @@ in
         {
           name = "flynt";
           description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
+          # unused. see binPath.
           package = tools.flynt;
           entry =
             let
@@ -1882,8 +1920,9 @@ in
         {
           name = "fourmolu";
           description = "Haskell code prettifier.";
+          package = tools.fourmolu;
           entry =
-            "${tools.fourmolu}/bin/fourmolu --mode inplace ${
+            "${hooks.fourmolu.package}/bin/fourmolu --mode inplace ${
             lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormolu.settings.defaultExtensions)
             }";
           files = "\\.l?hs(-boot)?$";
@@ -1892,12 +1931,14 @@ in
         name = "fprettify";
         description = "Auto-formatter for modern Fortran code.";
         types = [ "fortran " ];
-        entry = "${tools.fprettify}/bin/fprettify";
+        package = tools.fprettify;
+        entry = "${hooks.fprettify.package}/bin/fprettify";
       };
       gofmt =
         {
           name = "gofmt";
           description = "A tool that automatically formats Go source code";
+          package = tools.go;
           entry =
             let
               script = pkgs.writeShellScript "precommit-gofmt" ''
@@ -1905,7 +1946,7 @@ in
                 failed=false
                 for file in "$@"; do
                     # redirect stderr so that violations and summaries are properly interleaved.
-                    if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
+                    if ! ${hooks.go.package}/bin/gofmt -l -w "$file" 2>&1
                     then
                         failed=true
                     fi
@@ -1921,12 +1962,13 @@ in
       golangci-lint = {
         name = "golangci-lint";
         description = "Fast linters runner for Go.";
+        package = tools.golangci-lint;
         entry =
           let
             script = pkgs.writeShellScript "precommit-golangci-lint" ''
               set -e
               for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
+                ${hooks.golangci-lint.package}/bin/golangci-lint run ./"$dir"
               done
             '';
           in
@@ -1939,6 +1981,7 @@ in
       gotest = {
         name = "gotest";
         description = "Run go tests";
+        package = tools.go;
         entry =
           let
             script = pkgs.writeShellScript "precommit-gotest" ''
@@ -1966,7 +2009,7 @@ in
 
               # test each directory one by one
               for dir in "''${sorted_dirs[@]}"; do
-                  ${tools.go}/bin/go test "./$dir"
+                  ${hooks.go.package}/bin/go test "./$dir"
               done
             '';
           in
@@ -1980,13 +2023,14 @@ in
         {
           name = "govet";
           description = "Checks correctness of Go programs.";
+          package = tools.go;
           entry =
             let
               # go vet requires package (directory) names as inputs.
               script = pkgs.writeShellScript "precommit-govet" ''
                 set -e
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${tools.go}/bin/go vet ./"$dir"
+                  ${hooks.go.package}/bin/go vet ./"$dir"
                 done
               '';
             in
@@ -1999,10 +2043,11 @@ in
       gptcommit = {
         name = "gptcommit";
         description = "Generate a commit message using GPT3.";
+        package = tools.gptcommit;
         entry =
           let
             script = pkgs.writeShellScript "precommit-gptcomit" ''
-              ${tools.gptcommit}/bin/gptcommit prepare-commit-msg --commit-source \
+              ${hooks.gptcommit.package}/bin/gptcommit prepare-commit-msg --commit-source \
                 "$PRE_COMMIT_COMMIT_MSG_SOURCE" --commit-msg-file "$1"
             '';
           in
@@ -2015,7 +2060,8 @@ in
         {
           name = "hadolint";
           description = "Dockerfile linter, validate inline bash.";
-          entry = "${tools.hadolint}/bin/hadolint";
+          package = tools.hadolint;
+          entry = "${hooks.hadolint.package}/bin/hadolint";
           files = "Dockerfile$";
         };
       headache =
@@ -2025,35 +2071,37 @@ in
           ## NOTE: Supported `files` are taken from
           ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
           files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
+          package = tools.headache;
           entry =
             ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
             ## next NixOS release, the following code will become irrelevant.
             lib.throwIf
-              (tools.headache == null)
+              (hooks.headache.package == null)
               "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
-              "${tools.headache}/bin/headache -h ${hooks.headache.settings.header-file}";
+              "${hooks.headache.package}/bin/headache -h ${hooks.headache.settings.header-file}";
         };
       hindent =
         {
           name = "hindent";
           description = "Haskell code prettifier.";
-          entry = "${tools.hindent}/bin/hindent";
+          package = tools.hindent;
+          entry = "${hooks.hindent.package}/bin/hindent";
           files = "\\.l?hs(-boot)?$";
         };
       hlint =
         {
           name = "hlint";
-          description =
-            "HLint gives suggestions on how to improve your source code.";
-          entry = "${tools.hlint}/bin/hlint${if hooks.hlint.settings.hintFile == null then "" else " --hint=${hooks.hlint.settings.hintFile}"}";
+          description = "HLint gives suggestions on how to improve your source code.";
+          package = tools.hlint;
+          entry = "${hooks.hlint.package}/bin/hlint${if hooks.hlint.settings.hintFile == null then "" else " --hint=${hooks.hlint.settings.hintFile}"}";
           files = "\\.l?hs(-boot)?$";
         };
       hpack =
         {
           name = "hpack";
-          description =
-            "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
-          entry = "${tools.hpack-dir}/bin/hpack-dir --${if hooks.hpack.settings.silent then "silent" else "verbose"}";
+          description = "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
+          package = tools.hpack;
+          entry = "${hooks.hpack-dir.package}/bin/hpack-dir --${if hooks.hpack.settings.silent then "silent" else "verbose"}";
           files = "(\\.l?hs(-boot)?$)|(\\.cabal$)|((^|/)package\\.yaml$)";
           # We don't pass filenames because they can only be misleading.
           # Indeed, we need to rerun `hpack` in every directory:
@@ -2069,14 +2117,16 @@ in
         {
           name = "html-tidy";
           description = "HTML linter.";
-          entry = "${tools.html-tidy}/bin/tidy -quiet -errors";
+          package = tools.html-tidy;
+          entry = "${hooks.html-tidy.package}/bin/tidy -quiet -errors";
           files = "\\.html$";
         };
       hunspell =
         {
           name = "hunspell";
           description = "Spell checker and morphological analyzer.";
-          entry = "${tools.hunspell}/bin/hunspell -l";
+          package = tools.hunspell;
+          entry = "${hooks.hunspell.package}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
         };
       isort =
@@ -2084,6 +2134,7 @@ in
           name = "isort";
           description = "A Python utility / library to sort imports.";
           types = [ "file" "python" ];
+          package = tools.isort;
           entry =
             let
               cmdArgs =
@@ -2092,14 +2143,15 @@ in
                     [ (profile != "") " --profile ${profile}" ]
                   ]);
             in
-            "${tools.isort}/bin/isort${cmdArgs} ${hooks.isort.settings.flags}";
+            "${hooks.isort.package}/bin/isort${cmdArgs} ${hooks.isort.settings.flags}";
         };
       juliaformatter =
         {
           description = "Run JuliaFormatter.jl against Julia source files";
           files = "\\.jl$";
+          package = tools.julia;
           entry = ''
-            ${tools.julia-bin}/bin/julia -e '
+            ${hooks.julia-bin.package}/bin/julia -e '
             using Pkg
             Pkg.activate(".")
             using JuliaFormatter
@@ -2119,7 +2171,8 @@ in
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
-          entry = "${tools.latexindent}/bin/latexindent ${hooks.latexindent.settings.flags}";
+          package = tools.latexindent;
+          entry = "${hooks.latexindent.package}/bin/latexindent ${hooks.latexindent.settings.flags}";
         };
       lua-ls =
         let
@@ -2136,7 +2189,7 @@ in
           };
           script = pkgs.writeShellApplication {
             name = "lua-ls-lint";
-            runtimeInputs = [ tools.lua-language-server ];
+            runtimeInputs = [ hooks.lua-language-server.package ];
             checkPhase = ""; # The default checkPhase depends on GHC
             text = ''
               set -e
@@ -2156,6 +2209,7 @@ in
         {
           name = "lua-ls";
           description = "Uses the lua-language-server CLI to statically type-check and lint Lua code.";
+          package = tools.lua-language-server;
           entry = "${script}/bin/lua-ls-lint";
           files = "\\.lua$";
           pass_filenames = false;
@@ -2165,11 +2219,13 @@ in
           name = "luacheck";
           description = "A tool for linting and static analysis of Lua code.";
           types = [ "file" "lua" ];
-          entry = "${tools.luacheck}/bin/luacheck";
+          package = tools.luacheck;
+          entry = "${hooks.luacheck.package}/bin/luacheck";
         };
       lychee = {
         name = "lychee";
         description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
+        package = tools.lychee;
         entry =
           let
             cmdArgs =
@@ -2178,14 +2234,15 @@ in
                   [ (configPath != "") " --config ${configPath}" ]
                 ]);
           in
-          "${pkgs.lychee}/bin/lychee${cmdArgs} ${hooks.lychee.settings.flags}";
+          "${hooks.lychee.package}/bin/lychee${cmdArgs} ${hooks.lychee.settings.flags}";
         types = [ "text" ];
       };
       markdownlint =
         {
           name = "markdownlint";
           description = "Style checker and linter for markdown files.";
-          entry = "${tools.markdownlint-cli}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.config)}";
+          package = tools.markdownlint-cli;
+          entry = "${hooks.markdownlint-cli.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.config)}";
           files = "\\.md$";
         };
       mdl =
@@ -2219,31 +2276,36 @@ in
         let
           script = pkgs.writeShellScript "precommit-mdsh" ''
             for file in $(echo "$@"); do
-                ${tools.mdsh}/bin/mdsh -i "$file"
+                ${hooks.mdsh.package}/bin/mdsh -i "$file"
             done
           '';
         in
         {
           name = "mdsh";
           description = "Markdown shell pre-processor.";
+          package = tools.mdsh;
           entry = toString script;
           files = "\\.md$";
         };
       mix-format = {
         name = "mix-format";
         description = "Runs the built-in Elixir syntax formatter";
-        entry = "${tools.elixir}/bin/mix format";
+        package = tools.elixir;
+        entry = "${hooks.elixir.package}/bin/mix format";
         files = "\\.exs?$";
       };
       mix-test = {
         name = "mix-test";
         description = "Runs the built-in Elixir test framework";
-        entry = "${tools.elixir}/bin/mix test";
+        package = tools.elixir;
+        entry = "${hooks.elixir.package}/bin/mix test";
         files = "\\.exs?$";
       };
       mkdocs-linkcheck = {
         name = "mkdocs-linkcheck";
         description = "Validate links associated with markdown-based, statically generated websites.";
+        # TODO: unused. see binPath.
+        package = tools.mkdocs-linkcheck;
         entry =
           let
             cmdArgs =
@@ -2256,6 +2318,7 @@ in
                   [ (path != "") " ${path}" ]
                 ]);
           in
+          # TODO: missing space? check cmdArgs
           "${hooks.mkdocs-linkcheck.settings.binPath}${cmdArgs}";
         types = [ "text" "markdown" ];
       };
@@ -2263,6 +2326,8 @@ in
         {
           name = "mypy";
           description = "Static type checker for Python";
+          # TODO: unused. see binPath.
+          package = tools.mypy;
           entry = hooks.mypy.settings.binPath;
           files = "\\.py$";
         };
@@ -2270,13 +2335,14 @@ in
         {
           name = "nil";
           description = "Incremental analysis assistant for writing in Nix.";
+          package = tools.nil;
           entry =
             let
               script = pkgs.writeShellScript "precommit-nil" ''
                 errors=false
                 echo Checking: $@
                 for file in $(echo "$@"); do
-                  ${tools.nil}/bin/nil diagnostics "$file"
+                  ${hooks.nil.package}/bin/nil diagnostics "$file"
                   exit_code=$?
 
                   if [[ $exit_code -ne 0 ]]; then
@@ -2296,34 +2362,39 @@ in
         {
           name = "nixfmt";
           description = "Nix code prettifier.";
-          entry = "${tools.nixfmt}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          package = tools.nixfmt;
+          entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
         {
           name = "nixpkgs-fmt";
           description = "Nix code prettifier.";
-          entry = "${tools.nixpkgs-fmt}/bin/nixpkgs-fmt";
+          package = tools.nixpkgs-fmt;
+          entry = "${hooks.nixpkgs-fmt.package}/bin/nixpkgs-fmt";
           files = "\\.nix$";
         };
       ocp-indent =
         {
           name = "ocp-indent";
           description = "A tool to indent OCaml code.";
-          entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
+          package = tools.ocp-indent;
+          entry = "${hooks.ocp-indent.package}/bin/ocp-indent --inplace";
           files = "\\.mli?$";
         };
       opam-lint =
         {
           name = "opam lint";
           description = "OCaml package manager configuration checker.";
-          entry = "${tools.opam}/bin/opam lint";
+          package = tools.opam;
+          entry = "${hooks.opam.package}/bin/opam lint";
           files = "\\.opam$";
         };
       ormolu =
         {
           name = "ormolu";
           description = "Haskell code prettifier.";
+          package = tools.ormolu;
           entry =
             let
               extensions =
@@ -2331,13 +2402,15 @@ in
               cabalExtensions =
                 if hooks.ormolu.settings.cabalDefaultExtensions then "--cabal-default-extensions" else "";
             in
-            "${tools.ormolu}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
+            "${hooks.ormolu.package}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
           files = "\\.l?hs(-boot)?$";
         };
       php-cs-fixer =
         {
           name = "php-cs-fixer";
           description = "Lint PHP files.";
+          # TODO: unused. see binPath.
+          package = tools.php-cs-fixer;
           entry = with hooks.php-cs-fixer.settings;
             "${binPath} fix";
           types = [ "php" ];
@@ -2346,6 +2419,8 @@ in
         {
           name = "phpcbf";
           description = "Lint PHP files.";
+          # TODO: unused. see binPath.
+          package = tools.phpcbf;
           entry = with hooks.phpcbf.settings;
             "${binPath}";
           types = [ "php" ];
@@ -2354,6 +2429,8 @@ in
         {
           name = "phpcs";
           description = "Lint PHP files.";
+          # TODO: unused. see binPath.
+          package = tools.phpcs;
           entry = with hooks.phpcs.settings;
             "${binPath}";
           types = [ "php" ];
@@ -2362,21 +2439,24 @@ in
         {
           name = "phpstan";
           description = "Static Analysis of PHP files.";
+          # TODO: unused. see binPath.
+          package = tools.phpstan;
           entry = with hooks.phpstan.settings;
             "${binPath} analyse";
           types = [ "php" ];
         };
       pre-commit-hook-ensure-sops = {
         name = "pre-commit-hook-ensure-sops";
+        package = tools.pre-commit-hook-ensure-sops;
         entry =
           ## NOTE: pre-commit-hook-ensure-sops landed in nixpkgs on 8 July 2022. Once it reaches a
           ## release of NixOS, the `throwIf` piece of code below will become
           ## useless.
           lib.throwIf
-            (tools.pre-commit-hook-ensure-sops == null)
+            (hooks.pre-commit-hook-ensure-sops.package == null)
             "The version of nixpkgs used by pre-commit-hooks.nix does not have the `pre-commit-hook-ensure-sops` package. Please use a more recent version of nixpkgs."
             ''
-              ${tools.pre-commit-hook-ensure-sops}/bin/pre-commit-hook-ensure-sops
+              ${hooks.pre-commit-hook-ensure-sops.package}/bin/pre-commit-hook-ensure-sops
             '';
         files = lib.mkDefault "^secrets";
       };
@@ -2387,6 +2467,8 @@ in
           name = "prettier";
           description = "Opinionated multi-language code formatter.";
           types = [ "text" ];
+          # TODO: unused. see binPath.
+          package = tools.prettier;
           entry =
             let
               cmdArgs =
@@ -2437,6 +2519,8 @@ in
         {
           name = "psalm";
           description = "Static Analysis of PHP files.";
+          # TODO: unused. see binPath.
+          package = tools.psalm;
           entry = with hooks.psalm.settings;
             "${binPath}";
           types = [ "php" ];
@@ -2445,20 +2529,24 @@ in
         {
           name = "purs-tidy";
           description = "Format purescript files.";
-          entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
+          package = tools.purs-tidy;
+          entry = "${hooks.purs-tidy.package}/bin/purs-tidy format-in-place";
           files = "\\.purs$";
         };
       purty =
         {
           name = "purty";
           description = "Format purescript files.";
-          entry = "${tools.purty}/bin/purty";
+          package = tools.purty;
+          entry = "${hooks.purty.package}/bin/purty";
           files = "\\.purs$";
         };
       pylint =
         {
           name = "pylint";
           description = "Lint Python files.";
+          # TODO: unused. see binPath.
+          package = tools.pylint;
           entry = with hooks.pylint.settings;
             "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
           types = [ "python" ];
@@ -2467,6 +2555,8 @@ in
         {
           name = "pyright";
           description = "Static type checker for Python";
+          # TODO: unused. see binPath.
+          package = tools.pyright;
           entry = hooks.pyright.settings.binPath;
           files = "\\.py$";
         };
@@ -2474,6 +2564,8 @@ in
         {
           name = "pyupgrade";
           description = "Automatically upgrade syntax for newer versions.";
+          # TODO: unused. see binPath.
+          package = tools.pyupgrade;
           entry = with hooks.pyupgrade.settings;
             "${binPath}";
           types = [ "python" ];
@@ -2482,6 +2574,7 @@ in
         {
           name = "revive";
           description = "A linter for Go source code.";
+          package = tools.revive;
           entry =
             let
               cmdArgs =
@@ -2496,7 +2589,7 @@ in
               script = pkgs.writeShellScript "precommit-revive" ''
                 set -e
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${tools.revive}/bin/revive ${cmdArgs} ./"$dir"
+                  ${hooks.revive.package}/bin/revive ${cmdArgs} ./"$dir"
                 done
               '';
             in
@@ -2511,6 +2604,8 @@ in
           name = "rome";
           description = "Unified developer tools for JavaScript, TypeScript, and the web";
           types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+          # TODO: unused. see binPath.
+          package = tools.rome;
           entry =
             let
               cmdArgs =
@@ -2525,7 +2620,8 @@ in
         {
           name = "ruff";
           description = "An extremely fast Python linter, written in Rust.";
-          entry = "${tools.ruff}/bin/ruff --fix";
+          package = tools.ruff;
+          entry = "${hooks.ruff.package}/bin/ruff --fix";
           types = [ "python" ];
         };
       rustfmt =
@@ -2543,6 +2639,7 @@ in
         {
           name = "rustfmt";
           description = "Format Rust code.";
+          package = wrapper;
           entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
           files = "\\.rs$";
           pass_filenames = false;
@@ -2552,26 +2649,29 @@ in
           name = "shellcheck";
           description = "Format shell files.";
           types = [ "shell" ];
-          entry = "${tools.shellcheck}/bin/shellcheck";
+          package = tools.shellcheck;
+          entry = "${hooks.shellcheck.package}/bin/shellcheck";
         };
       shfmt =
         {
           name = "shfmt";
           description = "Format shell files.";
           types = [ "shell" ];
-          entry = "${tools.shfmt}/bin/shfmt -w -s -l";
+          package = tools.shfmt;
+          entry = "${hooks.shfmt.package}/bin/shfmt -w -s -l";
         };
       staticcheck =
         {
           name = "staticcheck";
           description = "State of the art linter for the Go programming language";
+          package = tools.go-tools;
           # staticheck works with directories.
           entry =
             let
               script = pkgs.writeShellScript "precommit-staticcheck" ''
                 err=0
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${tools.go-tools}/bin/staticcheck ./"$dir"
+                  ${hooks.staticcheck.package}/bin/staticcheck ./"$dir"
                   code="$?"
                   if [[ "$err" -eq 0 ]]; then
                      err="$code"
@@ -2590,8 +2690,9 @@ in
         {
           name = "statix";
           description = "Lints and suggestions for the Nix programming language.";
+          package = tools.statix;
           entry = with hooks.statix.settings;
-            "${tools.statix}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
+            "${hooks.statix.package}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
           files = "\\.nix$";
           pass_filenames = false;
         };
@@ -2599,7 +2700,8 @@ in
         {
           name = "stylish-haskell";
           description = "A simple Haskell code prettifier";
-          entry = "${tools.stylish-haskell}/bin/stylish-haskell --inplace";
+          package = tools.stylish-haskell;
+          entry = "${hooks.stylish-haskell.package}/bin/stylish-haskell --inplace";
           files = "\\.l?hs(-boot)?$";
         };
       stylua =
@@ -2607,7 +2709,8 @@ in
           name = "stylua";
           description = "An Opinionated Lua Code Formatter.";
           types = [ "file" "lua" ];
-          entry = "${tools.stylua}/bin/stylua --respect-ignores";
+          package = tools.stylua;
+          entry = "${hooks.stylua.package}/bin/stylua --respect-ignores";
         };
       tagref =
         {
@@ -2615,7 +2718,8 @@ in
           description = ''
             Have tagref check all references and tags.
           '';
-          entry = "${tools.tagref}/bin/tagref";
+          package = tools.tagref;
+          entry = "${hooks.tagref.package}/bin/tagref";
           types = [ "text" ];
           pass_filenames = false;
         };
@@ -2623,33 +2727,37 @@ in
         {
           name = "taplo";
           description = "Format TOML files with taplo fmt";
-          entry = "${tools.taplo}/bin/taplo fmt";
+          package = tools.taplo;
+          entry = "${hooks.taplo.package}/bin/taplo fmt";
           types = [ "toml" ];
         };
       terraform-format =
         {
           name = "terraform-format";
           description = "Format terraform (`.tf`) files.";
-          entry = "${tools.terraform-fmt}/bin/terraform-fmt";
+          package = tools.terraform-fmt;
+          entry = "${hooks.terraform-fmt.package}/bin/terraform-fmt";
           files = "\\.tf$";
         };
       tflint =
         {
           name = "tflint";
           description = "A Pluggable Terraform Linter.";
-          entry = "${tools.tflint}/bin/tflint";
+          package = tools.tflint;
+          entry = "${hooks.tflint.package}/bin/tflint";
           files = "\\.tf$";
         };
       topiary =
         {
           name = "topiary";
           description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
+          package = tools.topiary;
           entry =
             ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
             ## release of NixOS, the `throwIf` piece of code below will become
             ## useless.
             lib.throwIf
-              (tools.topiary == null)
+              (hooks.topiary.package == null)
               "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
               (
                 let
@@ -2657,7 +2765,7 @@ in
                     name = "topiary-inplace";
                     text = ''
                       for file; do
-                        ${tools.topiary}/bin/topiary --in-place --input-file "$file"
+                        ${hooks.topiary.package}/bin/topiary --in-place --input-file "$file"
                       done
                     '';
                   };
@@ -2672,12 +2780,14 @@ in
           description = "One CLI to format the code tree.";
           types = [ "file" ];
           pass_filenames = true;
+          package = mkDefault tools.treefmt;
           entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
         };
       typos =
         {
           name = "typos";
           description = "Source code spell checker";
+          package = tools.typos;
           entry =
             let
               # Concatenate config in config file with section for ignoring words generated from list of words to ignore
@@ -2703,18 +2813,20 @@ in
                     [ (write && !diff) "--write-changes" ]
                   ]);
             in
-            "${tools.typos}/bin/typos ${cmdArgs}";
+            "${hooks.typos.package}/bin/typos ${cmdArgs}";
           types = [ "text" ];
         };
       typstfmt = {
         name = "typstfmt";
         description = "format typst";
-        entry = "${tools.typst-fmt}/bin/typst-fmt";
+        package = tools.typst-fmt;
+        entry = "${hooks.typst-fmt.package}/bin/typst-fmt";
         files = "\\.typ$";
       };
       vale = {
         name = "vale";
         description = "A markup-aware linter for prose built with speed and extensibility in mind.";
+        package = tools.vale;
         entry =
           let
             # TODO: was .vale.ini, throwed error in Nix
@@ -2726,7 +2838,7 @@ in
                   [ (config != "" && configPath == "") " --config ${configFile}" ]
                 ]);
           in
-          "${pkgs.vale}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
+          "${hooks.vale.package}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
         types = [ "text" ];
       };
       yamllint =
@@ -2734,6 +2846,7 @@ in
           name = "yamllint";
           description = "Yaml linter.";
           types = [ "file" "yaml" ];
+          package = tools.yamllint;
           entry =
             let
               cmdArgs =
@@ -2742,13 +2855,14 @@ in
                   [ (hooks.yamllint.settings.configPath != "") "-c ${hooks.yamllint.settings.configPath}" ]
                 ];
             in
-            "${tools.yamllint}/bin/yamllint ${cmdArgs}";
+            "${hooks.yamllint.package}/bin/yamllint ${cmdArgs}";
         };
       zprint =
         {
           name = "zprint";
           description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
-          entry = "${tools.zprint}/bin/zprint '{:search-config? true}' -w";
+          package = tools.zprint;
+          entry = "${hooks.zprint.package}/bin/zprint '{:search-config? true}' -w";
           types_or = [ "clojure" "clojurescript" "edn" ];
         };
 

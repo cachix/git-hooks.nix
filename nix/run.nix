@@ -18,6 +18,7 @@ let
               {
                 _module.args.pkgs = pkgs;
                 _module.args.gitignore-nix-src = gitignore-nix-src;
+                _module.args.default_stages = default_stages;
                 inherit hooks excludes default_stages settings;
                 tools = builtinStuff.tools // tools;
                 package = pre-commit;
