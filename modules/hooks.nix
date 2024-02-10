@@ -4,8 +4,13 @@ let
   # TODO: rename all uses of settings.<name> with hooks.<name>
   settings = config.hooks;
   inherit (lib) mkOption types;
+  cfg = config;
 
-  hookModule = ./hook.nix;
+  hookModule =
+    [
+      ({ ... }: { _module.args.default_stages = cfg.default_stages; })
+      ./hook.nix
+    ];
 
   cargoManifestPathArg =
     lib.optionalString
@@ -36,7 +41,7 @@ in
       alejandra = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             check =
               mkOption {
@@ -72,7 +77,7 @@ in
       ansible-lint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             configPath = mkOption {
               type = types.str;
@@ -92,7 +97,7 @@ in
       autoflake = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -116,7 +121,7 @@ in
       clippy = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             denyWarnings = mkOption {
               type = types.bool;
@@ -139,7 +144,7 @@ in
       cmake-format = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             configPath = mkOption {
               type = types.str;
@@ -153,7 +158,7 @@ in
       credo = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             strict =
               mkOption {
@@ -167,7 +172,7 @@ in
       deadnix = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             edit =
               mkOption {
@@ -223,7 +228,7 @@ in
       denofmt = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             write =
               mkOption {
@@ -245,7 +250,7 @@ in
       denolint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             format =
               mkOption {
@@ -268,7 +273,7 @@ in
       dune-fmt = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             auto-promote =
               mkOption {
@@ -289,7 +294,7 @@ in
       eclint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             fix =
               mkOption {
@@ -327,7 +332,7 @@ in
       eslint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -351,7 +356,7 @@ in
       flake8 = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -381,7 +386,7 @@ in
       flynt = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             aggressive =
               mkOption {
@@ -457,7 +462,7 @@ in
       headache = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             header-file = mkOption {
               type = types.str;
@@ -470,7 +475,7 @@ in
       hlint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             hintFile =
               mkOption {
@@ -484,7 +489,7 @@ in
       hpack = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             silent =
               mkOption {
@@ -498,7 +503,7 @@ in
       isort = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             profile =
               mkOption {
@@ -518,7 +523,7 @@ in
       latexindent = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             flags =
               mkOption {
@@ -532,7 +537,7 @@ in
       lua-ls = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             checklevel = mkOption {
               type = types.enum [ "Error" "Warning" "Information" "Hint" ];
@@ -552,7 +557,7 @@ in
       lychee = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             configPath =
               mkOption {
@@ -572,7 +577,7 @@ in
       markdownlint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             config =
               mkOption {
@@ -587,7 +592,7 @@ in
       mdl = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             configPath =
               mkOption {
@@ -668,7 +673,7 @@ in
       mkdocs-linkcheck = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -720,7 +725,7 @@ in
       mypy = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -737,7 +742,7 @@ in
       nixfmt = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             width =
               mkOption {
@@ -751,7 +756,7 @@ in
       ormolu = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             defaultExtensions =
               mkOption {
@@ -771,7 +776,7 @@ in
       php-cs-fixer = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -788,7 +793,7 @@ in
       phpcbf = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -805,7 +810,7 @@ in
       phpcs = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -822,7 +827,7 @@ in
       phpstan = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -841,7 +846,7 @@ in
       prettier = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -1084,7 +1089,7 @@ in
       psalm = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -1101,7 +1106,7 @@ in
       pylint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -1130,7 +1135,7 @@ in
       pyright = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -1147,7 +1152,7 @@ in
       pyupgrade = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -1164,7 +1169,7 @@ in
       revive = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             configPath =
               mkOption {
@@ -1180,7 +1185,7 @@ in
       rome = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binPath =
               mkOption {
@@ -1210,7 +1215,7 @@ in
       statix = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             format =
               mkOption {
@@ -1232,7 +1237,7 @@ in
       treefmt = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             # package = mkOption {
             #   type = types.package;
@@ -1265,7 +1270,7 @@ in
       typos = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             binary =
               mkOption {
@@ -1400,7 +1405,7 @@ in
       vale = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             config =
               mkOption {
@@ -1431,7 +1436,7 @@ in
       yamllint = mkOption {
         description = "";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = hookModule;
           options = {
             relaxed = mkOption {
               type = types.bool;
