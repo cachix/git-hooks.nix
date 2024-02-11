@@ -4,7 +4,7 @@ let
   cfg = config;
   hooks = config.hooks;
   settings = config.settings;
-  inherit (lib) mkDefault mkOption mkRenamedOptionModule types;
+  inherit (lib) mapAttrs mkDefault mkOption mkRenamedOptionModule types;
 
   hookModule =
     [
@@ -1241,31 +1241,31 @@ in
         type = types.submodule {
           imports = hookModule;
           options.settings = {
-            # package = mkOption {
-            #   type = types.package;
-            #   description = lib.mdDoc
-            #     ''
-            #       The `treefmt` package to use.
-            #
-            #       Should include all the formatters configured by treefmt.
-            #
-            #       For example:
-            #       ```nix
-            #       pkgs.writeShellApplication {
-            #         name = "treefmt";
-            #         runtimeInputs = [
-            #           pkgs.treefmt
-            #           pkgs.nixpkgs-fmt
-            #           pkgs.black
-            #         ];
-            #         text =
-            #           '''
-            #             exec treefmt "$@"
-            #           ''';
-            #       }
-            #       ```
-            #     '';
-            # };
+            package = mkOption {
+              type = types.package;
+              description = lib.mdDoc
+                ''
+                  The `treefmt` package to use.
+
+                  Should include all the formatters configured by treefmt.
+
+                  For example:
+                  ```nix
+                  pkgs.writeShellApplication {
+                    name = "treefmt";
+                    runtimeInputs = [
+                      pkgs.treefmt
+                      pkgs.nixpkgs-fmt
+                      pkgs.black
+                    ];
+                    text =
+                      '''
+                        exec treefmt "$@"
+                      ''';
+                  }
+                  ```
+                '';
+            };
           };
         };
       };
@@ -1459,7 +1459,7 @@ in
     };
 
   # PLEASE keep this sorted alphabetically.
-  config.hooks =
+  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault))
     {
       actionlint =
         {
@@ -2458,7 +2458,7 @@ in
             ''
               ${hooks.pre-commit-hook-ensure-sops.package}/bin/pre-commit-hook-ensure-sops
             '';
-        files = lib.mkDefault "^secrets";
+        files = "^secrets";
       };
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
       # See all options for prettier [here](https://prettier.io/docs/en/options.html).
@@ -2780,7 +2780,7 @@ in
           description = "One CLI to format the code tree.";
           types = [ "file" ];
           pass_filenames = true;
-          package = mkDefault tools.treefmt;
+          package = tools.treefmt;
           entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
         };
       typos =
