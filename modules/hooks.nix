@@ -1494,7 +1494,7 @@ in
           name = "annex";
           description = "Runs the git-annex hook for large file support";
           package = tools.git-annex;
-          entry = "${hooks.git-annex.package}/bin/git-annex pre-commit";
+          entry = "${hooks.annex.package}/bin/git-annex pre-commit";
         };
       ansible-lint =
         {
@@ -1556,8 +1556,8 @@ in
         {
           name = "cabal2nix";
           description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files";
-          package = tools.cabal2nix;
-          entry = "${hooks.cabal2nix-dir.package}/bin/cabal2nix-dir";
+          package = tools.cabal2nix-dir;
+          entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir";
           files = "\\.cabal$";
         };
       cargo-check =
@@ -1565,7 +1565,7 @@ in
           name = "cargo-check";
           description = "Check the cargo package for errors";
           package = tools.cargo;
-          entry = "${hooks.cargo.package}/bin/cargo check ${cargoManifestPathArg}";
+          entry = "${hooks.cargo-check.package}/bin/cargo check ${cargoManifestPathArg}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -1595,7 +1595,7 @@ in
           name = "clang-format";
           description = "Format your code using `clang-format`.";
           package = tools.clang-tools;
-          entry = "${hooks.clang-tools.package}/bin/clang-format -style=file -i";
+          entry = "${hooks.clang-format.package}/bin/clang-format -style=file -i";
           # Source:
           # https://github.com/pre-commit/mirrors-clang-format/blob/46516e8f532c8f2d55e801c34a740ebb8036365c/.pre-commit-hooks.yaml
           types_or = [
@@ -1614,7 +1614,7 @@ in
         name = "clang-tidy";
         description = "Static analyzer for C++ code.";
         package = tools.clang-tools;
-        entry = "${hooks.clang-tools.package}/bin/clang-tidy --fix";
+        entry = "${hooks.clang-tidy.package}/bin/clang-tidy --fix";
         types = [ "c" "c++" "c#" "objective-c" ];
       };
       clippy =
@@ -1753,7 +1753,7 @@ in
                   [ (hooks.denofmt.settings.configPath != "") "-c ${hooks.denofmt.settings.configPath}" ]
                 ];
             in
-            "${hooks.deno.package}/bin/deno fmt ${cmdArgs}";
+            "${hooks.denofmt.package}/bin/deno fmt ${cmdArgs}";
         };
       denolint =
         {
@@ -1770,26 +1770,26 @@ in
                   [ (hooks.denolint.settings.configPath != "") "-c ${hooks.denolint.settings.configPath}" ]
                 ];
             in
-            "${hooks.deno.package}/bin/deno lint ${cmdArgs}";
+            "${hooks.denolint.package}/bin/deno lint ${cmdArgs}";
         };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
         package = tools.dhall;
-        entry = "${hooks.dhall.package}/bin/dhall format";
+        entry = "${hooks.dhall-format.package}/bin/dhall format";
         files = "\\.dhall$";
       };
       dialyzer = {
         name = "dialyzer";
         description = "Runs a static code analysis using Dialyzer";
         package = tools.elixir;
-        entry = "${hooks.elixir.package}/bin/mix dialyzer";
+        entry = "${hooks.dialyzer.package}/bin/mix dialyzer";
         files = "\\.exs?$";
       };
       dune-fmt = {
         name = "dune-fmt";
         description = "Runs Dune's formatters on the code tree.";
-        package = tools.dune;
+        package = tools.dune-fmt;
         entry =
           let
             auto-promote = if hooks.dune-fmt.settings.auto-promote then "--auto-promote" else "";
@@ -1805,8 +1805,8 @@ in
       dune-opam-sync = {
         name = "dune/opam sync";
         description = "Check that Dune-generated OPAM files are in sync.";
-        package = tools.dune;
-        entry = "${hooks.dune-build-opam-files.package}/bin/dune-build-opam-files";
+        package = tools.dune-build-opam-files;
+        entry = "${hooks.dune-opam-sync.package}/bin/dune-build-opam-files";
         files = "(\\.opam$)|(\\.opam.template$)|((^|/)dune-project$)";
         ## We don't pass filenames because they can only be misleading. Indeed,
         ## we need to re-run `dune build` for every `*.opam` file, but also when
@@ -1946,7 +1946,7 @@ in
                 failed=false
                 for file in "$@"; do
                     # redirect stderr so that violations and summaries are properly interleaved.
-                    if ! ${hooks.go.package}/bin/gofmt -l -w "$file" 2>&1
+                    if ! ${hooks.gofmt.package}/bin/gofmt -l -w "$file" 2>&1
                     then
                         failed=true
                     fi
@@ -2009,7 +2009,7 @@ in
 
               # test each directory one by one
               for dir in "''${sorted_dirs[@]}"; do
-                  ${hooks.go.package}/bin/go test "./$dir"
+                  ${hooks.gotest.package}/bin/go test "./$dir"
               done
             '';
           in
@@ -2030,7 +2030,7 @@ in
               script = pkgs.writeShellScript "precommit-govet" ''
                 set -e
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${hooks.go.package}/bin/go vet ./"$dir"
+                  ${hooks.govet.package}/bin/go vet ./"$dir"
                 done
               '';
             in
@@ -2051,7 +2051,7 @@ in
                 "$PRE_COMMIT_COMMIT_MSG_SOURCE" --commit-msg-file "$1"
             '';
           in
-          lib.throwIf (tools.gptcommit == null) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `gptcommit` package. Please use a more recent version of Nixpkgs."
+          lib.throwIf (hooks.gptcommit.package == null) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `gptcommit` package. Please use a more recent version of Nixpkgs."
             toString
             script;
         stages = [ "prepare-commit-msg" ];
@@ -2100,8 +2100,8 @@ in
         {
           name = "hpack";
           description = "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
-          package = tools.hpack;
-          entry = "${hooks.hpack-dir.package}/bin/hpack-dir --${if hooks.hpack.settings.silent then "silent" else "verbose"}";
+          package = tools.hpack-dir;
+          entry = "${hooks.hpack.package}/bin/hpack-dir --${if hooks.hpack.settings.silent then "silent" else "verbose"}";
           files = "(\\.l?hs(-boot)?$)|(\\.cabal$)|((^|/)package\\.yaml$)";
           # We don't pass filenames because they can only be misleading.
           # Indeed, we need to rerun `hpack` in every directory:
@@ -2149,9 +2149,9 @@ in
         {
           description = "Run JuliaFormatter.jl against Julia source files";
           files = "\\.jl$";
-          package = tools.julia;
+          package = tools.julia-bin;
           entry = ''
-            ${hooks.julia-bin.package}/bin/julia -e '
+            ${hooks.juliaformatter.package}/bin/julia -e '
             using Pkg
             Pkg.activate(".")
             using JuliaFormatter
@@ -2189,7 +2189,7 @@ in
           };
           script = pkgs.writeShellApplication {
             name = "lua-ls-lint";
-            runtimeInputs = [ hooks.lua-language-server.package ];
+            runtimeInputs = [ hooks.lua-ls.package ];
             checkPhase = ""; # The default checkPhase depends on GHC
             text = ''
               set -e
@@ -2242,7 +2242,7 @@ in
           name = "markdownlint";
           description = "Style checker and linter for markdown files.";
           package = tools.markdownlint-cli;
-          entry = "${hooks.markdownlint-cli.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.config)}";
+          entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.config)}";
           files = "\\.md$";
         };
       mdl =
@@ -2291,14 +2291,14 @@ in
         name = "mix-format";
         description = "Runs the built-in Elixir syntax formatter";
         package = tools.elixir;
-        entry = "${hooks.elixir.package}/bin/mix format";
+        entry = "${hooks.mix-format.package}/bin/mix format";
         files = "\\.exs?$";
       };
       mix-test = {
         name = "mix-test";
         description = "Runs the built-in Elixir test framework";
         package = tools.elixir;
-        entry = "${hooks.elixir.package}/bin/mix test";
+        entry = "${hooks.mix-test.package}/bin/mix test";
         files = "\\.exs?$";
       };
       mkdocs-linkcheck = {
@@ -2387,7 +2387,7 @@ in
           name = "opam lint";
           description = "OCaml package manager configuration checker.";
           package = tools.opam;
-          entry = "${hooks.opam.package}/bin/opam lint";
+          entry = "${hooks.opam-lint.package}/bin/opam lint";
           files = "\\.opam$";
         };
       ormolu =
@@ -2640,7 +2640,7 @@ in
           name = "rustfmt";
           description = "Format Rust code.";
           package = wrapper;
-          entry = "${wrapper}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
+          entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -2736,7 +2736,7 @@ in
           name = "terraform-format";
           description = "Format terraform (`.tf`) files.";
           package = tools.terraform-fmt;
-          entry = "${hooks.terraform-fmt.package}/bin/terraform-fmt";
+          entry = "${hooks.terraform-format.package}/bin/terraform-fmt";
           files = "\\.tf$";
         };
       tflint =
@@ -2820,7 +2820,7 @@ in
         name = "typstfmt";
         description = "format typst";
         package = tools.typst-fmt;
-        entry = "${hooks.typst-fmt.package}/bin/typst-fmt";
+        entry = "${hooks.typstfmt.package}/bin/typst-fmt";
         files = "\\.typ$";
       };
       vale = {
