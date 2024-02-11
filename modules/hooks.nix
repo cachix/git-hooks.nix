@@ -4,7 +4,7 @@ let
   cfg = config;
   hooks = config.hooks;
   settings = config.settings;
-  inherit (lib) mapAttrs mkDefault mkOption mkRenamedOptionModule types;
+  inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRenamedOptionModule types;
 
   hookModule =
     [
@@ -29,14 +29,26 @@ let
 in
 {
   imports =
-    map (o: mkRenamedOptionModule [ "settings" o ] [ "hooks" o "settings" ])
-      [ "alejandra" "ansible-lint" "autoflake" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eclint" "eslint" "flake8" "flynt" "headache" "hlint" "hpack" "isort" "latexindent" "lua-ls" "lychee" "markdownlint" "mdl" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" "treefmt" "typos" "vale" "yamllint" ];
+    # Rename `settings.<name>.package` to `hooks.<name>.package`
+    map (name: mkRenamedOptionModule [ "settings" name "package" ] [ "hooks" name "package" ]) [ "alejandra" "eclint" "flynt" "mdl" "treefmt" ]
+    # Manually rename options that had a package option
+    ++ flatten (mapAttrsToList (name: map (o: mkRenamedOptionModule [ "settings" name o ] [ "hooks" name o ])) {
+      "alejandra" = [ "check" "exclude" "threads" "verbosity" ];
+      "eclint" = [ "fix" "summary" "color" "exclude" "verbosity" ];
+      "flynt" = [ "aggressive" "binPath" "dry-run" "exclude" "fail-on-change" "line-length" "no-multiline" "quiet" "string" "transform-concats" "verbose" ];
+      "mdl" = [ "configPath" "git-recurse" "ignore-front-matter" "json" "rules" "rulesets" "show-aliases" "warnings" "skip-default-ruleset" "style" "tags" "verbose" ];
+    })
+    # Rename the remaining `settings.<name>` to `hooks.<name>.settings`
+    ++ map (name: mkRenamedOptionModule [ "settings" name ] [ "hooks" name "settings" ])
+      [ "ansible-lint" "autoflake" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lua-ls" "lychee" "markdownlint" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" "typos" "vale" "yamllint" ];
 
   # PLEASE keep this sorted alphabetically.
-  options.settings.rust.cargoManifestPath = mkOption {
-    type = types.nullOr types.str;
-    description = lib.mdDoc "Path to Cargo.toml";
-    default = null;
+  options.settings = {
+    rust.cargoManifestPath = mkOption {
+      type = types.nullOr types.str;
+      description = lib.mdDoc "Path to Cargo.toml";
+      default = null;
+    };
   };
 
   # PLEASE keep this sorted alphabetically.
@@ -1236,39 +1248,40 @@ in
           };
         };
       };
-      treefmt = mkOption {
-        description = "";
-        type = types.submodule {
-          imports = hookModule;
-          options.settings = {
-            package = mkOption {
-              type = types.package;
-              description = lib.mdDoc
-                ''
-                  The `treefmt` package to use.
-
-                  Should include all the formatters configured by treefmt.
-
-                  For example:
-                  ```nix
-                  pkgs.writeShellApplication {
-                    name = "treefmt";
-                    runtimeInputs = [
-                      pkgs.treefmt
-                      pkgs.nixpkgs-fmt
-                      pkgs.black
-                    ];
-                    text =
-                      '''
-                        exec treefmt "$@"
-                      ''';
-                  }
-                  ```
-                '';
-            };
-          };
-        };
-      };
+      # TODO: how do we provide a default package for this?
+      # treefmt = mkOption {
+      #   description = "";
+      #   type = types.submodule {
+      #     imports = hookModule;
+      #     options.settings = {
+      #       package = mkOption {
+      #         type = types.package;
+      #         description = lib.mdDoc
+      #           ''
+      #             The `treefmt` package to use.
+      #
+      #             Should include all the formatters configured by treefmt.
+      #
+      #             For example:
+      #             ```nix
+      #             pkgs.writeShellApplication {
+      #               name = "treefmt";
+      #               runtimeInputs = [
+      #                 pkgs.treefmt
+      #                 pkgs.nixpkgs-fmt
+      #                 pkgs.black
+      #               ];
+      #               text =
+      #                 '''
+      #                   exec treefmt "$@"
+      #                 ''';
+      #             }
+      #             ```
+      #           '';
+      #       };
+      #     };
+      #   };
+      # };
       typos = mkOption {
         description = "";
         type = types.submodule {
