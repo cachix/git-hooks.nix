@@ -55,7 +55,7 @@ in
   options.hooks =
     {
       alejandra = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional alejandra settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -91,7 +91,7 @@ in
         };
       };
       ansible-lint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional ansible-lint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -111,7 +111,7 @@ in
         };
       };
       autoflake = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional autoflake settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -135,7 +135,7 @@ in
         };
       };
       clippy = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional clippy settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -158,7 +158,7 @@ in
         };
       };
       cmake-format = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional cmake-format settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -172,7 +172,7 @@ in
         };
       };
       credo = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional credo settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -186,7 +186,7 @@ in
         };
       };
       deadnix = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional deadnix settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -242,7 +242,7 @@ in
         };
       };
       denofmt = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional denofmt settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -264,7 +264,7 @@ in
         };
       };
       denolint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional denolint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -287,7 +287,7 @@ in
         };
       };
       dune-fmt = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional dune-fmt settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -308,7 +308,7 @@ in
         };
       };
       eclint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional eclint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -346,7 +346,7 @@ in
         };
       };
       eslint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional eslint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -370,7 +370,7 @@ in
         };
       };
       flake8 = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional flake8 settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -400,7 +400,7 @@ in
         };
       };
       flynt = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional flynt settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -475,7 +475,7 @@ in
         };
       };
       headache = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional headache settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -488,7 +488,7 @@ in
         };
       };
       hlint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional hlint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -502,7 +502,7 @@ in
         };
       };
       hpack = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional hpack settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -516,7 +516,7 @@ in
         };
       };
       isort = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional isort settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -536,7 +536,7 @@ in
         };
       };
       latexindent = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional latexindent settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -550,7 +550,7 @@ in
         };
       };
       lua-ls = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional lua-ls settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -570,7 +570,7 @@ in
         };
       };
       lychee = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional lychee settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -590,7 +590,7 @@ in
         };
       };
       markdownlint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional markdownlint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -605,7 +605,7 @@ in
         };
       };
       mdl = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional mdl settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -685,7 +685,7 @@ in
         };
       };
       mkdocs-linkcheck = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional mkdocs-linkcheck settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -737,7 +737,7 @@ in
         };
       };
       mypy = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional mypy settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -754,7 +754,7 @@ in
         };
       };
       nixfmt = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional nixfmt settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -768,7 +768,7 @@ in
         };
       };
       ormolu = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional ormolu settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -788,7 +788,7 @@ in
         };
       };
       php-cs-fixer = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional php-cs-fixer settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -805,7 +805,7 @@ in
         };
       };
       phpcbf = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional phpcbf settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -822,7 +822,7 @@ in
         };
       };
       phpcs = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional phpcs settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -839,7 +839,7 @@ in
         };
       };
       phpstan = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional phpstan settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -858,7 +858,7 @@ in
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
       # See all options for prettier [here](https://prettier.io/docs/en/options.html).
       prettier = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional prettier settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1101,7 +1101,7 @@ in
         };
       };
       psalm = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional psalm settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1118,7 +1118,7 @@ in
         };
       };
       pylint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional pylint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1147,7 +1147,7 @@ in
         };
       };
       pyright = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional pyright settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1164,7 +1164,7 @@ in
         };
       };
       pyupgrade = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional pyupgrade settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1181,7 +1181,7 @@ in
         };
       };
       revive = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional revive settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1197,7 +1197,7 @@ in
         };
       };
       rome = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional rome settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1227,7 +1227,7 @@ in
         };
       };
       statix = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional statix settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1250,7 +1250,7 @@ in
       };
       # TODO: how do we provide a default package for this?
       # treefmt = mkOption {
-      #   description = "";
+      #   description = lib.mdDoc "Additional treefmt settings";
       #   type = types.submodule {
       #     imports = hookModule;
       #     options.settings = {
@@ -1283,7 +1283,7 @@ in
       #   };
       # };
       typos = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional typos settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1418,7 +1418,7 @@ in
         };
       };
       vale = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional vale settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
@@ -1449,7 +1449,7 @@ in
         };
       };
       yamllint = mkOption {
-        description = "";
+        description = lib.mdDoc "Additional yamllint settings";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
