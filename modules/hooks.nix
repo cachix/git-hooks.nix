@@ -32,7 +32,7 @@ in
     # Rename `settings.<name>.package` to `hooks.<name>.package`
     map (name: mkRenamedOptionModule [ "settings" name "package" ] [ "hooks" name "package" ]) [ "alejandra" "eclint" "flynt" "mdl" "treefmt" ]
     # Manually rename options that had a package option
-    ++ flatten (mapAttrsToList (name: map (o: mkRenamedOptionModule [ "settings" name o ] [ "hooks" name o ])) {
+    ++ flatten (mapAttrsToList (name: map (o: mkRenamedOptionModule [ "settings" name o ] [ "hooks" name "settings" o ])) {
       "alejandra" = [ "check" "exclude" "threads" "verbosity" ];
       "eclint" = [ "fix" "summary" "color" "exclude" "verbosity" ];
       "flynt" = [ "aggressive" "binPath" "dry-run" "exclude" "fail-on-change" "line-length" "no-multiline" "quiet" "string" "transform-concats" "verbose" ];
