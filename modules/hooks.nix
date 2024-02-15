@@ -1087,17 +1087,22 @@ in
         };
       typos =
         {
+          binary =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Whether to search binary files.";
+              default = false;
+            };
           color =
             mkOption {
               type = types.enum [ "auto" "always" "never" ];
               description = lib.mdDoc "When to use generate output.";
               default = "auto";
             };
-
           config =
             mkOption {
               type = types.str;
-              description = lib.mdDoc "Multiline-string configuration passed as config file.";
+              description = lib.mdDoc "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
               default = "";
               example = ''
                 [files]
@@ -1110,7 +1115,6 @@ in
                 extend-glob = []
               '';
             };
-
           configPath =
             mkOption {
               type = types.str;
@@ -1118,47 +1122,81 @@ in
               default = "";
               example = ".typos.toml";
             };
-
           diff =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to print a diff of what would change.";
+              description = lib.mdDoc "Print a diff of what would change.";
               default = false;
             };
-
           exclude =
             mkOption {
               type = types.str;
-              description = lib.mdDoc "Which files & directories to exclude matching the glob.";
+              description = lib.mdDoc "Ignore files and directories matching the glob.";
               default = "";
               example = "*.nix";
             };
-
           format =
             mkOption {
               type = types.enum [ "silent" "brief" "long" "json" ];
-              description = lib.mdDoc "Which output format to use.";
+              description = lib.mdDoc "Output format to use.";
               default = "long";
             };
-
           hidden =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to search hidden files and directories.";
+              description = lib.mdDoc "Search hidden files and directories.";
               default = false;
             };
-
+          ignored-words =
+            mkOption {
+              type = types.listOf types.str;
+              description = lib.mdDoc "Spellings and words to ignore.";
+              default = [ ];
+              example = [
+                "MQTT"
+                "mosquitto"
+              ];
+            };
           locale =
             mkOption {
               type = types.enum [ "en" "en-us" "en-gb" "en-ca" "en-au" ];
               description = lib.mdDoc "Which language to use for spell checking.";
               default = "en";
             };
-
+          no-check-filenames =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Skip verifying spelling in file names.";
+              default = false;
+            };
+          no-check-files =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Skip verifying spelling in files.";
+              default = false;
+            };
+          no-unicode =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Only allow ASCII characters in identifiers.";
+              default = false;
+            };
+          quiet =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Less output per occurence.";
+              default = false;
+            };
+          verbose =
+            mkOption {
+              type = types.bool;
+              description = lib.mdDoc "More output per occurence.";
+              default = false;
+            };
           write =
             mkOption {
               type = types.bool;
-              description = lib.mdDoc "Whether to fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
+              description = lib.mdDoc "Fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
               default = false;
             };
         };
@@ -2423,26 +2461,31 @@ in
           description = "Source code spell checker";
           entry =
             let
-              configFile = builtins.toFile "config.toml" "${settings.typos.config}";
+              # Concatenate config in config file with section for ignoring words generated from list of words to ignore
+              config = "${settings.typos.config}" + lib.strings.optionalString (settings.typos.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") settings.typos.ignored-words;
+              configFile = builtins.toFile "typos-config.toml" config;
               cmdArgs =
                 mkCmdArgs
                   (with settings.typos; [
-                    [ (color != "") "--color ${color}" ]
-                    [ (configPath != "") "--config ${configPath}" ]
-                    [ (config != "" && configPath == "") "--config ${configFile}" ]
+                    [ binary "--binary" ]
+                    [ (color != "auto") "--color ${color}" ]
+                    [ (config != "") "--config ${configFile}" ]
+                    [ (configPath != "" && config == "") "--config ${configPath}" ]
+                    [ diff "--diff" ]
                     [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
-                    [ (format != "") "--format ${format}" ]
-                    [ (locale != "") "--locale ${locale}" ]
+                    [ (format != "long") "--format ${format}" ]
+                    [ hidden "--hidden" ]
+                    [ (locale != "en") "--locale ${locale}" ]
+                    [ no-check-filenames "--no-check-filenames" ]
+                    [ no-check-files "--no-check-files" ]
+                    [ no-unicode "--no-unicode" ]
+                    [ quiet "--quiet" ]
+                    [ verbose "--verbose" ]
                     [ (write && !diff) "--write-changes" ]
                   ]);
             in
-            "${tools.typos}/bin/typos ${cmdArgs}${lib.optionalString settings.typos.diff " --diff"}${lib.optionalString settings.typos.hidden " --hidden"}";
+            "${tools.typos}/bin/typos ${cmdArgs}";
           types = [ "text" ];
-          # Typos is supposed to run on the whole tree. If this is set to true,
-          # the system gets stuck for large projects due to very high memory
-          # consumption. The restriction on with files typos run, should be
-          # specified in the typos config file.
-          pass_filenames = false;
         };
       typstfmt = {
         name = "typstfmt";
