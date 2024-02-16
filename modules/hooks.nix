@@ -586,7 +586,7 @@ in
                 "The diagnostic check level";
               default = "Warning";
             };
-            config = mkOption {
+            configuration = mkOption {
               type = types.attrs;
               description = lib.mdDoc
                 "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
@@ -620,7 +620,7 @@ in
         type = types.submodule {
           imports = hookModule;
           options.settings = {
-            config =
+            configuration =
               mkOption {
                 type = types.attrs;
                 description = lib.mdDoc
@@ -1368,7 +1368,7 @@ in
                 default = "auto";
               };
 
-            config =
+            configuration =
               mkOption {
                 type = types.str;
                 description = lib.mdDoc "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
@@ -1489,7 +1489,7 @@ in
         type = types.submodule {
           imports = hookModule;
           options.settings = {
-            config =
+            configuration =
               mkOption {
                 type = types.str;
                 description = lib.mdDoc "Multiline-string configuration passed as config file.";
@@ -2955,15 +2955,15 @@ in
           entry =
             let
               # Concatenate config in config file with section for ignoring words generated from list of words to ignore
-              config = "${hooks.typos.settings.config}" + lib.strings.optionalString (hooks.typos.settings.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") hooks.typos.settings.ignored-words;
-              configFile = builtins.toFile "typos-config.toml" config;
+              configuration = "${hooks.typos.settings.configuration}" + lib.strings.optionalString (hooks.typos.settings.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") hooks.typos.settings.ignored-words;
+              configFile = builtins.toFile "typos-config.toml" configuration;
               cmdArgs =
                 mkCmdArgs
                   (with hooks.typos.settings; [
                     [ binary "--binary" ]
                     [ (color != "auto") "--color ${color}" ]
-                    [ (config != "") "--config ${configFile}" ]
-                    [ (configPath != "" && config == "") "--config ${configPath}" ]
+                    [ (configuration != "") "--config ${configFile}" ]
+                    [ (configPath != "" && configuration == "") "--config ${configPath}" ]
                     [ diff "--diff" ]
                     [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
                     [ (format != "long") "--format ${format}" ]
@@ -2993,13 +2993,12 @@ in
         package = tools.vale;
         entry =
           let
-            # TODO: was .vale.ini, throwed error in Nix
-            configFile = builtins.toFile "vale.ini" "${hooks.vale.settings.config}";
+            configFile = builtins.toFile ".vale.ini" "${hooks.vale.settings.configuration}";
             cmdArgs =
               mkCmdArgs
                 (with hooks.vale.settings; [
                   [ (configPath != "") " --config ${configPath}" ]
-                  [ (config != "" && configPath == "") " --config ${configFile}" ]
+                  [ (configuration != "" && configPath == "") " --config ${configFile}" ]
                 ]);
           in
           "${hooks.vale.package}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
