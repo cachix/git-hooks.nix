@@ -55,6 +55,7 @@
 , pre-commit-hook-ensure-sops ? null
 , python3Packages
 , php82Packages
+, ripsecrets ? null
 , ruff ? null
 , runCommand
 , rustfmt
@@ -135,6 +136,7 @@ in
     ormolu
     pre-commit-hook-ensure-sops
     revive
+    ripsecrets
     ruff
     rustfmt
     shellcheck
