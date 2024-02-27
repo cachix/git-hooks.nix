@@ -210,6 +210,13 @@ use nix
 - [pyupgrade](https://github.com/asottile/pyupgrade)
 - [pylint](https://github.com/PyCQA/pylint)
 - [flake8](https://github.com/PyCQA/flake8)
+- [python-debug-statements](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/debug_statement_hook.py)
+- [check-builtin-literals](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_builtin_literals.py)
+- [check-docstring-first](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_docstring_first.py)
+- [check-python](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_ast.py)
+- [name-tests-test](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/tests_should_end_in_test.py)
+- [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
+- [fix-encoding-pragma](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_encoding_pragma.py)
 
 ## PHP
 
@@ -273,10 +280,19 @@ use nix
 ## YAML
 
 - [yamllint](https://github.com/adrienverge/yamllint)
+- [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
+- [sort-simple-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/sort_simple_yaml.py)
 
 ## TOML
 
 - [taplo fmt](https://github.com/tamasfe/taplo)
+- [check-toml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_toml.py)
+
+
+## JSON
+
+- [check-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_json.py)
+- [pretty-format-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/pretty_format_json.py)
 
 ## Typst
 
@@ -292,7 +308,7 @@ use nix
 - [typos](https://github.com/crate-ci/typos)
 - [cspell](https://cspell.org/)
 
-## Other Formatters
+## Various other hooks
 
 - [prettier](https://prettier.io)
 - `dhall format`: built-in formatter
@@ -307,6 +323,20 @@ use nix
 - [headache](https://github.com/frama-c/headache)
 - [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
 - [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
+- [sort-file-contents](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/file_contents_sorter.py)
+- [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
+- [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
+- [check-case-conflicts](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_case_conflict.py)
+- [check-added-large-files](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_added_large_files.py)
+- [end-of-file-fixer](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/end_of_file_fixer.py)
+- [detect-aws-credentials](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_aws_credentials.py)
+- [detect-private-keys](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_private_key.py)
+- [check-shebang-scripts-are-executable](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_shebang_scripts_are_executable.py)
+- [check-executables-have-shebangs](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_executables_have_shebangs.py)
+- [check-symlinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_symlinks.py)
+- [check-vcs-permalinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_vcs_permalinks.py)
+- [check-xml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_xml.py)
+- [fix-byte-order-marker](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_byte_order_marker.py)
 
 You may restrict which languages should be formatted by `clang-format` using
 `clang-format.types_or`. For example to check only C and C++ files:
@@ -318,7 +348,7 @@ clang-format = {
 };
 ```
 
-Otherwise, the default internal list is used which includes everything that 
+Otherwise, the default internal list is used which includes everything that
 clang-format supports.
 
 ## Git
@@ -327,6 +357,10 @@ clang-format supports.
 - [gptcommit](https://github.com/zurawiki/gptcommit)
 - [convco](https://github.com/convco/convco)
 - [annex](https://git-annex.branchable.com/)
+- [no-commit-to-branch](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/no_commit_to_branch.py)
+- [check-merge-conflicts](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_merge_conflict.py)
+- [forbid-new-submodules](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/forbid_new_submodules.py)
+- [forbid-submodules](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/forbid_submodules.py)
 
 ## Custom hooks
 
