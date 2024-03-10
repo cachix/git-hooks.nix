@@ -45,10 +45,10 @@ in
     };
 
     package = mkOption {
-      type = types.package;
+      type = types.nullOr types.package;
       description = lib.mdDoc
         ''
-          The package that provides the hook.
+          An optional package that provides the hook's dependencies.
         '';
     };
 

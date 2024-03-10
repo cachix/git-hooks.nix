@@ -26,6 +26,10 @@ let
         [ ]
         predActionList);
 
+  migrateBinPathToPackage = hook: binPath:
+    if hook.settings.binPath == null
+    then "${hook.package}${binPath}"
+    else hook.settings.binPath;
 in
 {
   imports =
@@ -117,9 +121,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "Path to autoflake binary.";
-                default = "${tools.autoflake}/bin/autoflake";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.autoflake}/bin/autoflake"
                 '';
@@ -352,10 +356,10 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.path;
+                type = types.nullOr types.path;
                 description = lib.mdDoc
                   "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
-                default = "${tools.eslint}/bin/eslint";
+                default = null;
                 defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
               };
 
@@ -376,9 +380,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
-                default = "${tools.flake8}/bin/flake8";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.flake8}/bin/flake8"
                 '';
@@ -412,9 +416,9 @@ in
               };
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
-                default = "${hooks.flynt.package}/bin/flynt";
+                default = null;
                 defaultText = "\${hooks.flynt.package}/bin/flynt";
               };
             dry-run =
@@ -691,9 +695,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.path;
+                type = types.nullOr types.path;
                 description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
-                default = "${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
                 '';
@@ -743,9 +747,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
-                default = "${tools.mypy}/bin/mypy";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mypy}/bin/mypy"
                 '';
@@ -794,9 +798,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "PHP-CS-Fixer binary path.";
-                default = "${tools.php-cs-fixer}/bin/php-cs-fixer";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.php-cs-fixer}/bin/php-cs-fixer"
                 '';
@@ -811,9 +815,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "PHP_CodeSniffer binary path.";
-                default = "${tools.phpcbf}/bin/phpcbf";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.phpcbf}/bin/phpcbf"
                 '';
@@ -828,9 +832,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "PHP_CodeSniffer binary path.";
-                default = "${tools.phpcs}/bin/phpcs";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.phpcs}/bin/phpcs"
                 '';
@@ -845,9 +849,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "PHPStan binary path.";
-                default = "${tools.phpstan}/bin/phpstan";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.phpstan}/bin/phpstan"
                 '';
@@ -866,8 +870,8 @@ in
               mkOption {
                 description = lib.mdDoc
                   "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
-                type = types.path;
-                default = "${tools.prettier}/bin/prettier";
+                type = types.nullOr types.path;
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.prettier}/bin/prettier"
                 '';
@@ -1107,9 +1111,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "Psalm binary path.";
-                default = "${tools.psalm}/bin/psalm";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.psalm}/bin/psalm"
                 '';
@@ -1124,9 +1128,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
-                default = "${tools.pylint}/bin/pylint";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pylint}/bin/pylint"
                 '';
@@ -1153,9 +1157,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
-                default = "${tools.pyright}/bin/pyright";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyright}/bin/pyright"
                 '';
@@ -1170,9 +1174,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.str;
+                type = types.nullOr types.str;
                 description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
-                default = "${tools.pyupgrade}/bin/pyupgrade";
+                default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyupgrade}/bin/pyupgrade"
                 '';
@@ -1203,9 +1207,9 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.path;
+                type = types.nullOr types.path;
                 description = lib.mdDoc "`rome` binary path. E.g. if you want to use the `rome` in `node_modules`, use `./node_modules/.bin/rome`.";
-                default = "${tools.biome}/bin/biome";
+                default = null;
                 defaultText = "\${tools.biome}/bin/biome";
               };
 
@@ -1527,9 +1531,12 @@ in
         {
           name = "autoflake";
           description = "Remove unused imports and variables from Python code";
-          # TODO: unused. see binPath.
           package = tools.autoflake;
-          entry = "${hooks.autoflake.settings.binPath} ${hooks.autoflake.settings.flags}";
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.autoflake "/bin/autoflake";
+            in
+            "${binPath} ${hooks.autoflake.settings.flags}";
           types = [ "python" ];
         };
       bats =
@@ -1884,9 +1891,12 @@ in
         {
           name = "eslint";
           description = "Find and fix problems in your JavaScript code.";
-          # TODO: unused. see binPath.
           package = tools.eslint;
-          entry = "${hooks.eslint.settings.binPath} --fix";
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.eslint "/bin/eslint";
+            in
+            "${binPath} --fix";
           files = "${hooks.eslint.settings.extensions}";
         };
       flake8 =
@@ -1899,19 +1909,22 @@ in
         {
           name = "flake8";
           description = "Check the style and quality of Python files.";
-          # unused. see binPath.
           package = tools.flake8;
-          entry = "${hooks.flake8.settings.binPath} --format ${hooks.flake8.settings.format} ${extendIgnoreStr}";
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.flake8 "/bin/flake8";
+            in
+            "${binPath} --format ${hooks.flake8.settings.format} ${extendIgnoreStr}";
           types = [ "python" ];
         };
       flynt =
         {
           name = "flynt";
           description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
-          # unused. see binPath.
           package = tools.flynt;
           entry =
             let
+              binPath = migrateBinPathToPackage hooks.flynt "/bin/flynt";
               cmdArgs =
                 mkCmdArgs (with hooks.flynt.settings; [
                   [ aggressive "--aggressive" ]
@@ -1926,7 +1939,7 @@ in
                   [ verbose "--verbose" ]
                 ]);
             in
-            "${hooks.flynt.settings.binPath} ${cmdArgs}";
+            "${binPath} ${cmdArgs}";
           types = [ "python" ];
         };
       fourmolu =
@@ -2317,10 +2330,10 @@ in
       mkdocs-linkcheck = {
         name = "mkdocs-linkcheck";
         description = "Validate links associated with markdown-based, statically generated websites.";
-        # TODO: unused. see binPath.
         package = tools.mkdocs-linkcheck;
         entry =
           let
+            binPath = migrateBinPathToPackage hooks.mkdocs-linkcheck "/bin/mkdocs-linkcheck";
             cmdArgs =
               mkCmdArgs
                 (with hooks.mkdocs-linkcheck.settings; [
@@ -2331,17 +2344,15 @@ in
                   [ (path != "") " ${path}" ]
                 ]);
           in
-          # TODO: missing space? check cmdArgs
-          "${hooks.mkdocs-linkcheck.settings.binPath}${cmdArgs}";
+          "${binPath}${cmdArgs}";
         types = [ "text" "markdown" ];
       };
       mypy =
         {
           name = "mypy";
           description = "Static type checker for Python";
-          # TODO: unused. see binPath.
           package = tools.mypy;
-          entry = hooks.mypy.settings.binPath;
+          entry = migrateBinPathToPackage hooks.mypy "/bin/mypy";
           files = "\\.py$";
         };
       nil =
@@ -2422,9 +2433,11 @@ in
         {
           name = "php-cs-fixer";
           description = "Lint PHP files.";
-          # TODO: unused. see binPath.
           package = tools.php-cs-fixer;
-          entry = with hooks.php-cs-fixer.settings;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.php-cs-fixer "/bin/php-cs-fixer";
+            in
             "${binPath} fix";
           types = [ "php" ];
         };
@@ -2432,29 +2445,27 @@ in
         {
           name = "phpcbf";
           description = "Lint PHP files.";
-          # TODO: unused. see binPath.
           package = tools.phpcbf;
-          entry = with hooks.phpcbf.settings;
-            "${binPath}";
+          entry = migrateBinPathToPackage hooks.phpcbf "/bin/phpcbf";
           types = [ "php" ];
         };
       phpcs =
         {
           name = "phpcs";
           description = "Lint PHP files.";
-          # TODO: unused. see binPath.
           package = tools.phpcs;
-          entry = with hooks.phpcs.settings;
-            "${binPath}";
+          entry = migrateBinPathToPackage hooks.phpcs "/bin/phpcs";
           types = [ "php" ];
         };
       phpstan =
         {
           name = "phpstan";
           description = "Static Analysis of PHP files.";
-          # TODO: unused. see binPath.
           package = tools.phpstan;
-          entry = with hooks.phpstan.settings;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.phpstan "/bin/phpstan";
+            in
             "${binPath} analyse";
           types = [ "php" ];
         };
@@ -2480,10 +2491,10 @@ in
           name = "prettier";
           description = "Opinionated multi-language code formatter.";
           types = [ "text" ];
-          # TODO: unused. see binPath.
           package = tools.prettier;
           entry =
             let
+              binPath = migrateBinPathToPackage hooks.prettier "/bin/prettier";
               cmdArgs =
                 mkCmdArgs
                   (with hooks.prettier.settings; [
@@ -2526,16 +2537,14 @@ in
                     [ write "--write" ]
                   ]);
             in
-            "${hooks.prettier.settings.binPath} ${cmdArgs}";
+            "${binPath} ${cmdArgs}";
         };
       psalm =
         {
           name = "psalm";
           description = "Static Analysis of PHP files.";
-          # TODO: unused. see binPath.
           package = tools.psalm;
-          entry = with hooks.psalm.settings;
-            "${binPath}";
+          entry = migrateBinPathToPackage hooks.psalm "/bin/psalm";
           types = [ "php" ];
         };
       purs-tidy =
@@ -2558,29 +2567,34 @@ in
         {
           name = "pylint";
           description = "Lint Python files.";
-          # TODO: unused. see binPath.
           package = tools.pylint;
-          entry = with hooks.pylint.settings;
-            "${binPath} ${lib.optionalString reports "-ry"} ${lib.optionalString (! score) "-sn"}";
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.pylint "/bin/pylint";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.pylint.settings; [
+                    [ reports "-ry" ]
+                    [ (! score) "-sn" ]
+                  ]);
+            in
+            "${binPath} ${cmdArgs}";
           types = [ "python" ];
         };
       pyright =
         {
           name = "pyright";
           description = "Static type checker for Python";
-          # TODO: unused. see binPath.
           package = tools.pyright;
-          entry = hooks.pyright.settings.binPath;
+          entry = migrateBinPathToPackage hooks.pyright "/bin/pyright";
           files = "\\.py$";
         };
       pyupgrade =
         {
           name = "pyupgrade";
           description = "Automatically upgrade syntax for newer versions.";
-          # TODO: unused. see binPath.
           package = tools.pyupgrade;
-          entry = with hooks.pyupgrade.settings;
-            "${binPath}";
+          entry = migrateBinPathToPackage hooks.pyupgrade "/bin/pyupgrade";
           types = [ "python" ];
         };
       revive =
@@ -2617,17 +2631,17 @@ in
           name = "rome";
           description = "Unified developer tools for JavaScript, TypeScript, and the web";
           types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
-          # TODO: unused. see binPath.
-          package = tools.rome;
+          package = tools.biome;
           entry =
             let
+              binPath = migrateBinPathToPackage hooks.rome "/bin/biome";
               cmdArgs =
                 mkCmdArgs [
                   [ (hooks.rome.settings.write) "--apply" ]
                   [ (hooks.rome.settings.configPath != "") "--config-path ${hooks.rome.settings.configPath}" ]
                 ];
             in
-            "${hooks.rome.settings.binPath} check ${cmdArgs}";
+            "${binPath} check ${cmdArgs}";
         };
       ruff =
         {
