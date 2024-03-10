@@ -1252,7 +1252,8 @@ in
           };
         };
       };
-      # TODO: how do we provide a default package for this?
+      # TODO: should this be an option like `packages` or `formatters`?
+      # A list of packages to wrap in an env with treefmt.
       # treefmt = mkOption {
       #   description = lib.mdDoc "Additional treefmt settings";
       #   type = types.submodule {
