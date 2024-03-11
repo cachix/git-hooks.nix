@@ -70,7 +70,7 @@
 , tflint
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , typos
-, typst-fmt
+, typstfmt
 , zprint
 , yamllint
 , writeScript
@@ -142,7 +142,7 @@ in
     taplo
     topiary
     typos
-    typst-fmt
+    typstfmt
     yamllint
     zprint
     ;

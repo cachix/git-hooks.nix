@@ -2490,7 +2490,7 @@ in
       typstfmt = {
         name = "typstfmt";
         description = "format typst";
-        entry = "${tools.typst-fmt}/bin/typst-fmt";
+        entry = "${tools.typstfmt}/bin/typstfmt";
         files = "\\.typ$";
       };
       vale = {
