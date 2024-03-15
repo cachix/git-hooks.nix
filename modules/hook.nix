@@ -48,7 +48,18 @@ in
       type = types.nullOr types.package;
       description = lib.mdDoc
         ''
-          An optional package that provides the hook's dependencies.
+          The package that provides the hook.
+        '';
+    };
+
+    packageInputs = mkOption {
+      type = types.submodule {
+        freeformType = types.attrsOf types.package;
+      };
+      default = { };
+      description = lib.mdDoc
+        ''
+          Additional inputs required to construct the hook package.
         '';
     };
 
