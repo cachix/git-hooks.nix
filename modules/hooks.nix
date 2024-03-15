@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (config) tools;
+  inherit (config) hooks tools settings;
   cfg = config;
-  hooks = config.hooks;
-  settings = config.settings;
   inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRenamedOptionModule types;
 
   hookModule =
@@ -142,6 +140,16 @@ in
         description = lib.mdDoc "Additional clippy settings";
         type = types.submodule {
           imports = hookModule;
+          options.packageInputs = {
+            cargo = mkOption {
+              type = types.package;
+              description = lib.mdDoc "The cargo package to use for clippy";
+            };
+            clippy = mkOption {
+              type = types.package;
+              description = lib.mdDoc "The clippy package to use for clippy";
+            };
+          };
           options.settings = {
             denyWarnings = mkOption {
               type = types.bool;
@@ -1230,6 +1238,22 @@ in
           };
         };
       };
+      rustfmt = mkOption {
+        description = lib.mdDoc "Additional rustfmt settings";
+        type = types.submodule {
+          imports = hookModule;
+          options.packageInputs = {
+            cargo = mkOption {
+              type = types.package;
+              description = lib.mdDoc "The cargo package to use.";
+            };
+            rustfmt = mkOption {
+              type = types.package;
+              description = lib.mdDoc "The rustfmt package to use.";
+            };
+          };
+        };
+      };
       statix = mkOption {
         description = lib.mdDoc "Additional statix settings";
         type = types.submodule {
@@ -1252,41 +1276,18 @@ in
           };
         };
       };
-      # TODO: should this be an option like `packages` or `formatters`?
-      # A list of packages to wrap in an env with treefmt.
-      # treefmt = mkOption {
-      #   description = lib.mdDoc "Additional treefmt settings";
-      #   type = types.submodule {
-      #     imports = hookModule;
-      #     options.settings = {
-      #       package = mkOption {
-      #         type = types.package;
-      #         description = lib.mdDoc
-      #           ''
-      #             The `treefmt` package to use.
-      #
-      #             Should include all the formatters configured by treefmt.
-      #
-      #             For example:
-      #             ```nix
-      #             pkgs.writeShellApplication {
-      #               name = "treefmt";
-      #               runtimeInputs = [
-      #                 pkgs.treefmt
-      #                 pkgs.nixpkgs-fmt
-      #                 pkgs.black
-      #               ];
-      #               text =
-      #                 '''
-      #                   exec treefmt "$@"
-      #                 ''';
-      #             }
-      #             ```
-      #           '';
-      #       };
-      #     };
-      #   };
-      # };
+      treefmt = mkOption {
+        description = lib.mdDoc "Additional treefmt settings";
+        type = types.submodule {
+          imports = hookModule;
+          options.packageInputs = {
+            treefmt = mkOption {
+              type = types.package;
+              description = lib.mdDoc "The treefmt package to use.";
+            };
+          };
+        };
+      };
       typos = mkOption {
         description = lib.mdDoc "Additional typos settings";
         type = types.submodule {
@@ -1640,13 +1641,14 @@ in
       };
       clippy =
         let
+          inherit (hooks.clippy) packageInputs;
           wrapper = pkgs.symlinkJoin {
             name = "clippy-wrapped";
-            paths = [ tools.clippy ];
+            paths = [ packageInputs.clippy ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-clippy \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo ]}
+                --prefix PATH : ${lib.makeBinPath [ packageInputs.cargo ]}
             '';
           };
         in
@@ -1654,6 +1656,7 @@ in
           name = "clippy";
           description = "Lint Rust code.";
           package = wrapper;
+          packageInputs = { cargo = tools.cargo; clippy = tools.clippy; };
           entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
@@ -2654,13 +2657,14 @@ in
         };
       rustfmt =
         let
+          inherit (hooks.rustfmt) packageInputs;
           wrapper = pkgs.symlinkJoin {
             name = "rustfmt-wrapped";
-            paths = [ tools.rustfmt ];
+            paths = [ packageInputs.rustfmt ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-fmt \
-                --prefix PATH : ${lib.makeBinPath [ tools.cargo tools.rustfmt ]}
+                --prefix PATH : ${lib.makeBinPath [ packageInputs.cargo packageInputs.rustfmt ]}
             '';
           };
         in
@@ -2668,6 +2672,7 @@ in
           name = "rustfmt";
           description = "Format Rust code.";
           package = wrapper;
+          packageInputs = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
           entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
           files = "\\.rs$";
           pass_filenames = false;
@@ -2803,12 +2808,28 @@ in
           files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
         };
       treefmt =
+        let
+          inherit (hooks.treefmt) packageInputs;
+          wrapper =
+            pkgs.writeShellApplication {
+              name = "treefmt";
+              runtimeInputs = [
+                packageInputs.treefmt
+              ] ++ builtins.attrValues (builtins.removeAttrs packageInputs [ "treefmt" ]);
+
+              text =
+                ''
+                  exec treefmt "$@"
+                '';
+            };
+        in
         {
           name = "treefmt";
           description = "One CLI to format the code tree.";
           types = [ "file" ];
           pass_filenames = true;
-          package = tools.treefmt;
+          package = wrapper;
+          packageInputs = { treefmt = tools.treefmt; };
           entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
         };
       typos =
