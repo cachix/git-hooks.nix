@@ -140,14 +140,14 @@ in
         description = lib.mdDoc "Additional clippy settings";
         type = types.submodule {
           imports = hookModule;
-          options.packageInputs = {
+          options.packageOverrides = {
             cargo = mkOption {
               type = types.package;
-              description = lib.mdDoc "The cargo package to use for clippy";
+              description = lib.mdDoc "The cargo package to use";
             };
             clippy = mkOption {
               type = types.package;
-              description = lib.mdDoc "The clippy package to use for clippy";
+              description = lib.mdDoc "The clippy package to use";
             };
           };
           options.settings = {
@@ -1239,10 +1239,19 @@ in
         };
       };
       rustfmt = mkOption {
-        description = lib.mdDoc "Additional rustfmt settings";
+        description = lib.mdDoc ''
+          Additional rustfmt settings
+
+          Override the `rustfmt` and `cargo` packages by setting `hooks.rustfmt.packageOverrides`.
+
+          ```
+          hooks.rustfmt.packageOverrides.cargo = pkgs.cargo;
+          hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
+          ```
+        '';
         type = types.submodule {
           imports = hookModule;
-          options.packageInputs = {
+          options.packageOverrides = {
             cargo = mkOption {
               type = types.package;
               description = lib.mdDoc "The cargo package to use.";
@@ -1277,13 +1286,37 @@ in
         };
       };
       treefmt = mkOption {
-        description = lib.mdDoc "Additional treefmt settings";
+        description = lib.mdDoc ''
+          Treefmt hook.
+
+          Include any additional formatters configured by treefmt as `hooks.treefmt.settings.formatters`.
+
+          ```
+          hooks.treefmt.settings.formatters = [
+            pkgs.nixpkgs-fmt
+            pkgs.black
+          ];
+          ```
+
+          Override `treefmt` itself by setting `hooks.treefmt.packageOverrides.treefmt`.
+
+          ```
+          hooks.treefmt.packageOverrides.treefmt = pkgs.treefmt;
+          ```
+        '';
         type = types.submodule {
           imports = hookModule;
-          options.packageInputs = {
+          options.packageOverrides = {
             treefmt = mkOption {
               type = types.package;
-              description = lib.mdDoc "The treefmt package to use.";
+              description = lib.mdDoc "The treefmt package to use";
+            };
+          };
+          options.settings = {
+            formatters = mkOption {
+              type = types.listOf types.package;
+              description = lib.mdDoc "The formatter packages configured by treefmt";
+              default = [ ];
             };
           };
         };
@@ -1641,14 +1674,14 @@ in
       };
       clippy =
         let
-          inherit (hooks.clippy) packageInputs;
+          inherit (hooks.clippy) packageOverrides;
           wrapper = pkgs.symlinkJoin {
             name = "clippy-wrapped";
-            paths = [ packageInputs.clippy ];
+            paths = [ packageOverrides.clippy ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-clippy \
-                --prefix PATH : ${lib.makeBinPath [ packageInputs.cargo ]}
+                --prefix PATH : ${lib.makeBinPath [ packageOverrides.cargo ]}
             '';
           };
         in
@@ -1656,7 +1689,7 @@ in
           name = "clippy";
           description = "Lint Rust code.";
           package = wrapper;
-          packageInputs = { cargo = tools.cargo; clippy = tools.clippy; };
+          packageOverrides = { cargo = tools.cargo; clippy = tools.clippy; };
           entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
@@ -2657,14 +2690,14 @@ in
         };
       rustfmt =
         let
-          inherit (hooks.rustfmt) packageInputs;
+          inherit (hooks.rustfmt) packageOverrides;
           wrapper = pkgs.symlinkJoin {
             name = "rustfmt-wrapped";
-            paths = [ packageInputs.rustfmt ];
+            paths = [ packageOverrides.rustfmt ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-fmt \
-                --prefix PATH : ${lib.makeBinPath [ packageInputs.cargo packageInputs.rustfmt ]}
+                --prefix PATH : ${lib.makeBinPath [ packageOverrides.cargo packageOverrides.rustfmt ]}
             '';
           };
         in
@@ -2672,7 +2705,7 @@ in
           name = "rustfmt";
           description = "Format Rust code.";
           package = wrapper;
-          packageInputs = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
+          packageOverrides = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
           entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
           files = "\\.rs$";
           pass_filenames = false;
@@ -2809,13 +2842,13 @@ in
         };
       treefmt =
         let
-          inherit (hooks.treefmt) packageInputs;
+          inherit (hooks.treefmt) packageOverrides settings;
           wrapper =
             pkgs.writeShellApplication {
               name = "treefmt";
               runtimeInputs = [
-                packageInputs.treefmt
-              ] ++ builtins.attrValues (builtins.removeAttrs packageInputs [ "treefmt" ]);
+                packageOverrides.treefmt
+              ] ++ settings.formatters;
 
               text =
                 ''
@@ -2829,7 +2862,7 @@ in
           types = [ "file" ];
           pass_filenames = true;
           package = wrapper;
-          packageInputs = { treefmt = tools.treefmt; };
+          packageOverrides = { treefmt = tools.treefmt; };
           entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
         };
       typos =

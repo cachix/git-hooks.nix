@@ -31,7 +31,7 @@ in
       default = name;
       description = lib.mdDoc
         ''
-          The name of the hook - shown during hook execution.
+          The name of the hook. Shown during hook execution.
         '';
     };
 
@@ -39,7 +39,7 @@ in
       type = types.str;
       description = lib.mdDoc
         ''
-          Description of the hook. used for metadata purposes only.
+          Description of the hook. Used for metadata purposes only.
         '';
       default = "";
     };
@@ -48,18 +48,32 @@ in
       type = types.nullOr types.package;
       description = lib.mdDoc
         ''
-          The package that provides the hook.
+          An optional package that provides the hook.
+
+          For most hooks, the package name matches the name of the hook and can be overriden directly.
+
+          ```
+          hooks.nixfmt.package = pkgs.nixfmt;
+          ```
+
+          Some hooks may require multiple packages or a wrapper script to function correctly.
+          Such hooks can expose additional named packages as `packageOverrides`.
+
+          ```
+          hooks.rustfmt.packageOverrides.cargo = pkgs.cargo;
+          hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
+          ```
         '';
     };
 
-    packageInputs = mkOption {
+    packageOverrides = mkOption {
       type = types.submodule {
         freeformType = types.attrsOf types.package;
       };
       default = { };
       description = lib.mdDoc
         ''
-          Additional inputs required to construct the hook package.
+          Additional packages required to construct the hook package.
         '';
     };
 
