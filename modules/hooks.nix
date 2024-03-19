@@ -2706,7 +2706,7 @@ in
           description = "Format Rust code.";
           package = wrapper;
           packageOverrides = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
-          entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} -- --color always";
+          entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} --all -- --color always";
           files = "\\.rs$";
           pass_filenames = false;
         };
