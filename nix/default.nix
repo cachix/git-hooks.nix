@@ -32,7 +32,7 @@ let
                 ../modules/all-modules.nix
                 {
                   inherit tools;
-                  settings.treefmt.package = pkgs.treefmt;
+                  hooks.treefmt.package = pkgs.treefmt;
                 }
               ];
               specialArgs = { inherit pkgs; };
