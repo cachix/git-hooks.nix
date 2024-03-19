@@ -2901,8 +2901,8 @@ in
       typstfmt = {
         name = "typstfmt";
         description = "format typst";
-        package = tools.typst-fmt;
-        entry = "${hooks.typstfmt.package}/bin/typst-fmt";
+        package = tools.typstfmt;
+        entry = "${hooks.typstfmt.package}/bin/typstfmt";
         files = "\\.typ$";
       };
       vale = {
