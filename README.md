@@ -90,6 +90,7 @@ nix develop
           # override a package with a different version
           ormolu.enable = true;
           ormolu.package = pkgs.haskellPackages.ormolu;
+          ormolu.settings.defaultExtensions = [ "lhs" "hs" ];
           
           # some hooks have more than one package, like clippy:
           clippy.enable = true;
@@ -97,14 +98,6 @@ nix develop
           clippy.packageOverrides.clippy = tools.clippy;
           # some hooks provide settings
           clippy.settings.allFeatures = true;
-        };
-    
-        # Set the pkgs to get the tools for the hooks from. 
-        # tools = pkgs; 
-
-        # Some hooks offer custom settings that affect how they execute
-        settings = {
-          ormolu.defaultExtensions = [ "lhs" "hs" ];
         };
       };
     }
