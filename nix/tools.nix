@@ -72,7 +72,7 @@
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , treefmt
 , typos
-, typst-fmt
+, typstfmt
 , zprint
 , yamllint
 , writeScript
@@ -147,7 +147,7 @@ in
     topiary
     treefmt
     typos
-    typst-fmt
+    typstfmt
     vale
     yamllint
     zprint
