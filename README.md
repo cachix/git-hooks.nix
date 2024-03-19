@@ -2,22 +2,67 @@
 
 ![pre-commit.png](pre-commit.png)
 
-The goal is to **manage commit hooks with Nix** and solve the following:
+## Features
 
 - **Trivial integration for Nix projects** (wires up a few things behind the scenes)
 
 - Provide a low-overhead build of all the tooling available for the hooks to use
    (naive implementation of calling nix-shell does bring some latency when committing)
 
-- **Common hooks for languages** like Python, Haskell, Elm, etc.
+- **Common hooks for languages** like Python, Haskell, Elm, etc. [see all hook options](https://devenv.sh/?q=pre-commit.hooks)
 
-- Run hooks **as part of development** and **on your CI**
+- Run hooks **as part of development** and **on during CI**
+
 
 # Getting started
 
 ## devenv.sh
 
 https://devenv.sh/pre-commit-hooks/
+
+## Flakes support
+
+Given the following `flake.nix` example:
+
+```nix
+{
+  description = "An example project.";
+
+  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+
+  outputs = { self, nixpkgs, pre-commit-hooks, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      {
+        checks = {
+          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              nixpkgs-fmt.enable = true;
+            };
+          };
+        };
+        devShell = nixpkgs.legacyPackages.${system}.mkShell {
+          inherit (self.checks.${system}.pre-commit-check) shellHook;
+        };
+      }
+    );
+}
+```
+
+Add `/.pre-commit-config.yaml` to the `.gitignore`.
+
+To run the all the hooks on CI:
+
+```bash
+nix flake check
+```
+
+To install pre-commit hooks developers would run:
+
+```bash
+nix develop
+```
 
 ## Nix
 
@@ -41,8 +86,17 @@ https://devenv.sh/pre-commit-hooks/
         # default_stages = ["manual" "push"];
         hooks = {
           elm-format.enable = true;
+
+          # override a package with a different version
           ormolu.enable = true;
-          shellcheck.enable = true;
+          ormolu.package = pkgs.haskellPackages.ormolu;
+          
+          # some hooks have more than one package, like clippy:
+          clippy.enable = true;
+          clippy.packageOverrides.cargo = pkgs.cargo;
+          clippy.packageOverrides.clippy = tools.clippy;
+          # some hooks provide settings
+          clippy.settings.allFeatures = true;
         };
     
         # Set the pkgs to get the tools for the hooks from. 
@@ -331,49 +385,6 @@ Example configuration:
 Custom hooks are defined with the same schema as [pre-defined
 hooks](modules/pre-commit.nix).
 
-# Nix Flakes support
-
-Given the following `flake.nix` example:
-
-```nix
-{
-  description = "An example project.";
-
-  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-
-  outputs = { self, nixpkgs, pre-commit-hooks, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      {
-        checks = {
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              nixpkgs-fmt.enable = true;
-            };
-          };
-        };
-        devShell = nixpkgs.legacyPackages.${system}.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-        };
-      }
-    );
-}
-```
-
-Add `/.pre-commit-config.yaml` to the `.gitignore`.
-
-To run the all the hooks on CI:
-
-```bash
-nix flake check
-```
-
-To install pre-commit hooks developers would run:
-
-```bash
-nix develop
-```
 
 # Contributing hooks
 
