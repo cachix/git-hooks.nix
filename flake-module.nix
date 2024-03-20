@@ -68,7 +68,7 @@ in
             rootSrc = self.outPath;
             package = lib.mkDefault pkgs.pre-commit;
             tools = import ./nix/call-tools.nix pkgs;
-            settings.treefmt.package = lib.mkIf (options?treefmt) (lib.mkDefault config.treefmt.build.wrapper);
+            hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
           };
           pre-commit.devShell = pkgs.mkShell {
             nativeBuildInputs = [ cfg.settings.package ];
