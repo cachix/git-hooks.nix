@@ -44,6 +44,7 @@ Given the following `flake.nix` example:
         };
         devShell = nixpkgs.legacyPackages.${system}.mkShell {
           inherit (self.checks.${system}.pre-commit-check) shellHook;
+          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
         };
       }
     );
@@ -108,10 +109,13 @@ nix develop
 3. Integrate hooks to prepare environment as part of `shell.nix`:
 
    ```nix
-    (import <nixpkgs> {}).mkShell {
-       shellHook = ''
-        ${(import ./default.nix).pre-commit-check.shellHook}
+    let 
+      pre-commit = import ./default.nix;
+    in (import <nixpkgs> {}).mkShell {
+      shellHook = ''
+        ${pre-commit.pre-commit-check.shellHook}
       '';
+      buildInputs = pre-commit.pre-commit-check.enabledPackages;
     }
    ```
 

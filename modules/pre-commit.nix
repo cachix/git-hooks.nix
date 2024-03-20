@@ -131,6 +131,18 @@ in
             lib.literalExpression or literalExample ''pre-commit-hooks.nix-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
         };
 
+      enabledPackages = mkOption {
+        type = types.list;
+        description = lib.mdDoc
+          ''
+            All packages provided by hooks that are enabled.
+
+            Useful for including into the developer environment.
+          '';
+
+        default = builtins.map (hook: hook.package) (lib.filter (hook: hook.enable) (builtins.attrValues config.hooks));
+      };
+
       hooks =
         mkOption {
           type = types.submodule {
