@@ -34,4 +34,5 @@ let
 in
 project.config.run // {
   shellHook = installationScript;
+  enabledPackages = project.config.enabledPackages;
 }
