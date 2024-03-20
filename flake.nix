@@ -26,7 +26,7 @@
     {
       flakeModule = ./flake-module.nix;
 
-      defaultTemplate = {
+      templates.default = {
         path = ./template;
         description = ''
           A template with flake-parts and nixpkgs-fmt.
@@ -39,11 +39,11 @@
         exposed-stable = import ./nix { nixpkgs = nixpkgs-stable; inherit system; gitignore-nix-src = gitignore; isFlakes = true; };
       in
       {
-        packages = exposed.packages;
+        packages = exposed.packages // {
+          default = exposed.packages.pre-commit;
+        };
 
-        defaultPackage = exposed.packages.pre-commit;
-
-        devShell = nixpkgs.legacyPackages.${system}.mkShell {
+        devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
           inherit (exposed.checks.pre-commit-check) shellHook;
         };
 
