@@ -132,7 +132,7 @@ in
         };
 
       enabledPackages = mkOption {
-        type = types.list;
+        type = types.listOf types.unspecified;
         description = lib.mdDoc
           ''
             All packages provided by hooks that are enabled.
