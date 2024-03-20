@@ -136,6 +136,20 @@ in
           };
         };
       };
+      black = mkOption {
+        description = lib.mdDoc "black hook";
+        type = types.submodule {
+          imports = hookModule;
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to black. See all available [here](https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#command-line-options).";
+              default = "";
+              example = "--skip-magic-trailing-comma";
+            };
+          };
+        };
+      };
       clippy = mkOption {
         description = lib.mdDoc "clippy hook";
         type = types.submodule {
@@ -1596,7 +1610,7 @@ in
           name = "black";
           description = "The uncompromising Python code formatter";
           package = tools.black;
-          entry = "${hooks.black.package}/bin/black";
+          entry = "${hooks.black.package}/bin/black ${hooks.black.settings.flags}";
           types = [ "file" "python" ];
         };
       cabal-fmt =
