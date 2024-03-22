@@ -2738,7 +2738,8 @@ in
           description = "Format shell files.";
           types = [ "shell" ];
           package = tools.shfmt;
-          entry = "${hooks.shfmt.package}/bin/shfmt -w -s -l";
+          entry = "${hooks.shfmt.package}/bin/shfmt -w -l";
+          args = [ "-s" ];
         };
       staticcheck =
         {
