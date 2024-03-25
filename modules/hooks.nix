@@ -1222,6 +1222,20 @@ in
           };
         };
       };
+      ripsecrets = mkOption {
+        description = lib.mdDoc "ripsecrets hook";
+        type = types.submodule {
+          imports = hookModule;
+          options.settings = {
+            additionalPatterns =
+              mkOption {
+                type = types.listOf types.str;
+                description = lib.mdDoc "Additional regex patterns used to find secrets. If there is a matching group in the regex the matched group will be tested for randomness before being reported as a secret.";
+                default = [ ];
+              };
+          };
+        };
+      };
       rome = mkOption {
         description = lib.mdDoc "rome hook";
         type = types.submodule {
@@ -2676,6 +2690,26 @@ in
           # to avoid multiple invocations of the same directory input, provide
           # all file names in a single run.
           require_serial = true;
+        };
+      ripsecrets =
+        {
+          name = "ripsecrets";
+          description = "Prevent committing secret keys into your source code";
+          package = tools.ripsecrets;
+          entry =
+            let
+              cmdArgs = mkCmdArgs (
+                with hooks.ripsecrets.settings; [
+                  [ true "--strict-ignore" ]
+                  [
+                    (additionalPatterns != [ ])
+                    "--additional-pattern ${lib.strings.concatStringsSep " --additional-pattern " additionalPatterns}"
+                  ]
+                ]
+              );
+            in
+            "${hooks.ripsecrets.package}/bin/ripsecrets ${cmdArgs}";
+          types = [ "text" ];
         };
       rome =
         {
