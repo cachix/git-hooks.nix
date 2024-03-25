@@ -52,6 +52,7 @@
 , opam
 , ormolu
 , pkgsBuildBuild
+, poetry
 , pre-commit-hook-ensure-sops ? null
 , python3Packages
 , php82Packages
@@ -134,6 +135,7 @@ in
     opam
     ormolu
     pre-commit-hook-ensure-sops
+    poetry
     revive
     ruff
     rustfmt
