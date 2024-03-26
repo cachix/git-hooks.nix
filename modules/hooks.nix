@@ -2536,7 +2536,6 @@ in
         files = "^(poetry\\.lock$|pyproject\\.toml)$";
         pass_filenames = false;
       };
-
       pre-commit-hook-ensure-sops = {
         name = "pre-commit-hook-ensure-sops";
         package = tools.pre-commit-hook-ensure-sops;
