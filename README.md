@@ -1,4 +1,4 @@
-# Seamless integration of [pre-commit](https://pre-commit.com/) git hooks with [Nix](https://nixos.org/nix)
+# Seamless integration of [git hooks](https://pre-commit.com/) with [Nix](https://nixos.org/nix)
 
 ![pre-commit.png](pre-commit.png)
 
