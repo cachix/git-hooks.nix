@@ -1379,14 +1379,13 @@ in
           options.packageOverrides = {
             treefmt = mkOption {
               type = types.package;
-              description = lib.mdDoc
-                "The treefmt package to use";
+              description = lib.mdDoc "The treefmt package to use";
             };
           };
           options.settings = {
             formatters = mkOption {
               type = types.listOf types.package;
-              description = lib.mdDoc "The formatter packages configured bytreefmt";
+              description = lib.mdDoc "The formatter packages configured by treefmt";
               default = [ ];
             };
           };
@@ -1666,7 +1665,7 @@ in
           name = "black";
           description = "The uncompromising Python code formatter";
           package = tools.black;
-          entry = "${hooks.black.package}/bin/black${hooks.black.settings.flags}";
+          entry = "${hooks.black.package}/bin/black ${hooks.black.settings.flags}";
           types = [ "file" "python" ];
         };
       cabal-fmt =
