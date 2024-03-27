@@ -1336,7 +1336,7 @@ in
         };
       };
       sort-file-contents = mkOption {
-        description = lib.mdDoc "Additional ormolu settings";
+        description = lib.mdDoc "sort-file-contents-hook";
         type = types.submodule {
           imports = hookModule;
           options.settings = {
