@@ -7,13 +7,14 @@ let
   overlay =
     self: pkgs:
     let
+      inherit (pkgs) lib;
       tools = import ./call-tools.nix pkgs;
       run = pkgs.callPackage ./run.nix { inherit pkgs tools isFlakes gitignore-nix-src; };
     in
     {
       inherit tools run;
       # Flake style attributes
-      packages = tools // {
+      packages = (lib.filterAttrs (_name: value: value != null) tools) // {
         inherit (pkgs) pre-commit;
       };
       checks = self.packages // {
@@ -27,7 +28,7 @@ let
         };
         all-tools-eval =
           let
-            config = pkgs.lib.evalModules {
+            config = lib.evalModules {
               modules = [
                 ../modules/all-modules.nix
                 {
@@ -37,7 +38,10 @@ let
               specialArgs = { inherit pkgs; };
             };
             allHooks = config.config.hooks;
-            allEntryPoints = pkgs.lib.mapAttrsToList (_: v: v.entry) allHooks;
+            allEntryPoints = lib.pipe allHooks [
+              (lib.filterAttrs (_name: value: value.package != null))
+              (lib.mapAttrsToList (_: value: value.entry))
+            ];
           in
           pkgs.runCommand "all-tools-eval"
             {
@@ -47,7 +51,6 @@ let
           '';
         doc-check =
           let
-            inherit (pkgs) lib;
             # We might add that it keeps rendering fast and robust,
             # and we want to teach `defaultText` which is more broadly applicable,
             # but the message is long enough.
@@ -64,7 +67,7 @@ let
                 If necessary, you can also find the offending option by evaluating with `--show-trace` and then look for occurrences of `option`.
               '';
             pkgsStub = lib.mapAttrs failPkgAttr pkgs;
-            configuration = pkgs.lib.evalModules {
+            configuration = lib.evalModules {
               modules = [
                 ../modules/all-modules.nix
                 {
