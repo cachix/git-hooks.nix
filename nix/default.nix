@@ -24,6 +24,7 @@ let
           hooks = {
             shellcheck.enable = true;
             nixpkgs-fmt.enable = true;
+            typos.enable = true;
           };
         };
         all-tools-eval =
