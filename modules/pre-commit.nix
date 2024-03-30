@@ -64,11 +64,11 @@ let
       ln -fs ${configFile} src/.pre-commit-config.yaml
       cd src
       rm -rf .git
-      git init
+      git init -q
       git add .
       git config --global user.email "you@example.com"
       git config --global user.name "Your Name"
-      git commit -m "init"
+      git commit -m "init" -q
       if [[ ${toString (compare install_stages [ "manual" ])} -eq 0 ]]
       then
         echo "Running: $ pre-commit run --hook-stage manual --all-files"
