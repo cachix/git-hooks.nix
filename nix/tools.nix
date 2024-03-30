@@ -1,4 +1,5 @@
 { stdenv
+, lib
 
 , actionlint
 , alejandra
@@ -26,18 +27,14 @@
 , elixir
 , elmPackages
 , fprettify
-, git
 , git-annex
-, gitAndTools
 , gptcommit ? null
 , hadolint
-, haskell
 , haskellPackages
 , hindent
 , hlint
 , hpack
 , html-tidy
-, hunspell
 , luaPackages
 , lua-language-server
 , lychee
@@ -57,7 +54,6 @@
 , php82Packages
 , ripsecrets ? null
 , ruff ? null
-, runCommand
 , rustfmt
 , shellcheck
 , bats
@@ -69,15 +65,12 @@
 , tagref
 , taplo
 , texlive
-, tflint
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , treefmt
 , typos
 , typstfmt
 , zprint
 , yamllint
-, writeScript
-, writeText
 , go
 , go-tools
 , golangci-lint
@@ -115,7 +108,6 @@ in
     editorconfig-checker
     elixir
     fprettify
-    git-annex
     go
     go-tools
     golangci-lint
@@ -132,7 +124,6 @@ in
     nil
     nixfmt
     nixpkgs-fmt
-    opam
     ormolu
     pre-commit-hook-ensure-sops
     revive
@@ -183,6 +174,9 @@ in
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
   bats = if bats ? withLibraries then (bats.withLibraries (p: [ p.bats-support p.bats-assert p.bats-file ])) else bats;
+  git-annex = if stdenv.isDarwin then null else git-annex;
+  # Note: Only broken in stable nixpkgs, works fine on latest master.
+  opam = if stdenv.isDarwin then null else opam;
 
   ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once this gets
   ## into a NixOS release, the following code will be useless.
