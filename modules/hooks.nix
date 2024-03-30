@@ -1580,6 +1580,7 @@ in
         {
           name = "ansible-lint";
           description = "Ansible linter";
+          package = tools.ansible-lint;
           entry =
             let
               cmdArgs =
@@ -1587,7 +1588,7 @@ in
                   [ (hooks.ansible-lint.settings.configPath != "") "-c ${hooks.ansible-lint.settings.configPath}" ]
                 ];
             in
-            "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
+            "${hooks.ansible-lint.package}/bin/ansible-lint ${cmdArgs}";
           files = if hooks.ansible-lint.settings.subdir != "" then "${hooks.ansible-lint.settings.subdir}/" else "";
         };
       autoflake =
