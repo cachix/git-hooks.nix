@@ -27,6 +27,7 @@ let
             typos.enable = true;
           };
         };
+        installation-test = pkgs.callPackage ./installation-test.nix { inherit run; };
         all-tools-eval =
           let
             config = lib.evalModules {

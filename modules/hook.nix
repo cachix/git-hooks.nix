@@ -155,7 +155,7 @@ in
     };
 
     stages = mkOption {
-      type = types.listOf types.str;
+      type = (import ./supported-hooks.nix { inherit lib; }).supportedHooksType;
       description = lib.mdDoc ''
         Confines the hook to run at a particular stage.
       '';

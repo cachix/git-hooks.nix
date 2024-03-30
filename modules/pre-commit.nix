@@ -10,12 +10,15 @@ let
     mkIf
     mkOption
     types
+    remove
     ;
 
   inherit (pkgs) runCommand writeText git;
 
   cfg = config;
-  install_stages = lib.unique (cfg.default_stages ++ (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks)));
+  install_stages = lib.unique (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks));
+
+  supportedHooksLib = import ./supported-hooks.nix { inherit lib; };
 
   hookType = types.submodule {
     imports = [
@@ -175,7 +178,7 @@ in
               The predefined hooks are:
 
               ${
-                lib.concatStringsSep
+                concatStringsSep
                   "\n"
                   (lib.mapAttrsToList
                     (hookName: hookConf:
@@ -253,14 +256,14 @@ in
 
       default_stages =
         mkOption {
-          type = types.listOf types.str;
+          type = supportedHooksLib.supportedHooksType;
           description = lib.mdDoc
             ''
               A configuration wide option for the stages property.
               Installs hooks to the defined stages.
               See [https://pre-commit.com/#confining-hooks-to-run-at-certain-stages](https://pre-commit.com/#confining-hooks-to-run-at-certain-stages).
             '';
-          default = [ "commit" ];
+          default = [ "pre-commit" ];
         };
 
       rawConfig =
@@ -332,12 +335,11 @@ in
 
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
-            # and prevents installation loops by via lorri.
+            # and prevents installation loops by lorri.
 
             if ! readlink "''${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
               || [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") != ${configFile} ]]; then
               echo 1>&2 "pre-commit-hooks.nix: updating $PWD repo"
-
               [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
 
               if [ -e "''${GIT_WC}/.pre-commit-config.yaml" ]; then
@@ -349,7 +351,7 @@ in
               else
                 ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
-                hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
+                hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
                 for hook in $hooks; do
                   pre-commit uninstall -t $hook
                 done
@@ -357,16 +359,15 @@ in
                 # Add hooks for configured stages (only) ...
                 if [ ! -z "${concatStringsSep " " install_stages}" ]; then
                   for stage in ${concatStringsSep " " install_stages}; do
-                    if [[ "$stage" == "manual" ]]; then
-                      continue
-                    fi
                     case $stage in
+                      manual)
+                        ;;
                       # if you amend these switches please also review $hooks above
                       commit | merge-commit | push)
                         stage="pre-"$stage
                         pre-commit install -t $stage
                         ;;
-                      prepare-commit-msg | commit-msg | post-checkout | post-commit)
+                      ${concatStringsSep "|" supportedHooksLib.supportedHooks})
                         pre-commit install -t $stage
                         ;;
                       *)

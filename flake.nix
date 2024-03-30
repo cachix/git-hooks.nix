@@ -35,7 +35,7 @@
     }
     // flake-utils.lib.eachSystem defaultSystems (system:
       let
-        exposed = import ./nix { nixpkgs = nixpkgs; inherit system; gitignore-nix-src = gitignore; isFlakes = true; };
+        exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
         exposed-stable = import ./nix { nixpkgs = nixpkgs-stable; inherit system; gitignore-nix-src = gitignore; isFlakes = true; };
       in
       {
