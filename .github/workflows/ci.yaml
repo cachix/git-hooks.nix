@@ -15,6 +15,7 @@ jobs:
       with:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: rm -rf /opt&
     - run: nix-build --keep-going
   tests-flakes:
     strategy:
@@ -28,5 +29,6 @@ jobs:
       with:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: rm -rf /opt&
     - run: nix flake check --show-trace
     - run: nix eval .#lib.x86_64-linux.run --show-trace

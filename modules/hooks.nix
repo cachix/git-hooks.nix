@@ -1475,14 +1475,14 @@ in
             quiet =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Less output per occurence.";
+                description = lib.mdDoc "Less output per occurrence.";
                 default = false;
               };
 
             verbose =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "More output per occurence.";
+                description = lib.mdDoc "More output per occurrence.";
                 default = false;
               };
 
@@ -1625,6 +1625,7 @@ in
         {
           name = "ansible-lint";
           description = "Ansible linter";
+          package = tools.ansible-lint;
           entry =
             let
               cmdArgs =
@@ -1632,7 +1633,7 @@ in
                   [ (hooks.ansible-lint.settings.configPath != "") "-c ${hooks.ansible-lint.settings.configPath}" ]
                 ];
             in
-            "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
+            "${hooks.ansible-lint.package}/bin/ansible-lint ${cmdArgs}";
           files = if hooks.ansible-lint.settings.subdir != "" then "${hooks.ansible-lint.settings.subdir}/" else "";
         };
       autoflake =
@@ -2360,7 +2361,7 @@ in
         };
       lychee = {
         name = "lychee";
-        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail adresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
+        description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail addresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
         package = tools.lychee;
         entry =
           let
@@ -3004,7 +3005,8 @@ in
         package = tools.vale;
         entry =
           let
-            configFile = builtins.toFile ".vale.ini" "${hooks.vale.settings.configuration}";
+            # TODO: was .vale.ini, threw error in Nix
+            configFile = builtins.toFile "vale.ini" "${hooks.vale.settings.config}";
             cmdArgs =
               mkCmdArgs
                 (with hooks.vale.settings; [

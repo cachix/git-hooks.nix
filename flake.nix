@@ -48,7 +48,9 @@
         };
 
         checks = lib.filterAttrs (k: v: v != null)
-          (exposed.checks // exposed-stable.checks);
+          (exposed.checks
+          // (lib.mapAttrs' (name: value: lib.nameValuePair "stable-${name}" value)
+            exposed-stable.checks));
 
         lib = { inherit (exposed) run; };
       }
