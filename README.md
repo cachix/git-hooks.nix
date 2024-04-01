@@ -227,6 +227,7 @@ clang-format supports.
 - [pylint](https://github.com/PyCQA/pylint)
 - [pyright](https://github.com/microsoft/pyright)
 - [python-debug-statements](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/debug_statement_hook.py)
+- [poetry](https://python-poetry.org/docs/pre-commit-hooks)
 - [pyupgrade](https://github.com/asottile/pyupgrade)
 - [ruff](https://github.com/charliermarsh/ruff)
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
