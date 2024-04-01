@@ -1,14 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hookModule, ... }:
 let
   inherit (config) hooks tools settings;
   cfg = config;
   inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRenamedOptionModule types;
-
-  hookModule =
-    [
-      ({ ... }: { _module.args.default_stages = cfg.default_stages; })
-      ./hook.nix
-    ];
 
   cargoManifestPathArg =
     lib.optionalString
@@ -44,6 +38,20 @@ in
     ++ map (name: mkRenamedOptionModule [ "settings" name ] [ "hooks" name "settings" ])
       [ "ansible-lint" "autoflake" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lua-ls" "lychee" "markdownlint" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" "typos" "vale" "yamllint" ];
 
+  options.hookModule = lib.mkOption {
+    type = types.deferredModule;
+    internal = true;
+    description = ''
+      Base module that must be loaded into each hook.
+    '';
+  };
+
+  config.hookModule = {
+    imports = [ ./hook.nix ];
+    config._module.args.default_stages = cfg.default_stages;
+  };
+  config._module.args.hookModule = config.hookModule;
+
   # PLEASE keep this sorted alphabetically.
   options.settings = {
     rust.cargoManifestPath = mkOption {
@@ -59,7 +67,7 @@ in
       alejandra = mkOption {
         description = lib.mdDoc "alejandra hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             check =
               mkOption {
@@ -95,7 +103,7 @@ in
       ansible-lint = mkOption {
         description = lib.mdDoc "ansible-lint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             configPath = mkOption {
               type = types.str;
@@ -115,7 +123,7 @@ in
       autoflake = mkOption {
         description = lib.mdDoc "autoflake hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -139,7 +147,7 @@ in
       black = mkOption {
         description = lib.mdDoc "black hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             flags = mkOption {
               type = types.str;
@@ -153,7 +161,7 @@ in
       clippy = mkOption {
         description = lib.mdDoc "clippy hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.packageOverrides = {
             cargo = mkOption {
               type = types.package;
@@ -186,7 +194,7 @@ in
       cmake-format = mkOption {
         description = lib.mdDoc "cmake-format hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             configPath = mkOption {
               type = types.str;
@@ -200,7 +208,7 @@ in
       credo = mkOption {
         description = lib.mdDoc "credo hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             strict =
               mkOption {
@@ -214,7 +222,7 @@ in
       deadnix = mkOption {
         description = lib.mdDoc "deadnix hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             edit =
               mkOption {
@@ -270,7 +278,7 @@ in
       denofmt = mkOption {
         description = lib.mdDoc "denofmt hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             write =
               mkOption {
@@ -292,7 +300,7 @@ in
       denolint = mkOption {
         description = lib.mdDoc "denolint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             format =
               mkOption {
@@ -315,7 +323,7 @@ in
       dune-fmt = mkOption {
         description = lib.mdDoc "dune-fmt hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             auto-promote =
               mkOption {
@@ -336,7 +344,7 @@ in
       eclint = mkOption {
         description = lib.mdDoc "eclint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             fix =
               mkOption {
@@ -374,7 +382,7 @@ in
       eslint = mkOption {
         description = lib.mdDoc "eslint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -398,7 +406,7 @@ in
       flake8 = mkOption {
         description = lib.mdDoc "flake8 hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -428,7 +436,7 @@ in
       flynt = mkOption {
         description = lib.mdDoc "flynt hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             aggressive =
               mkOption {
@@ -503,7 +511,7 @@ in
       headache = mkOption {
         description = lib.mdDoc "headache hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             header-file = mkOption {
               type = types.str;
@@ -516,7 +524,7 @@ in
       hlint = mkOption {
         description = lib.mdDoc "hlint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             hintFile =
               mkOption {
@@ -530,7 +538,7 @@ in
       hpack = mkOption {
         description = lib.mdDoc "hpack hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             silent =
               mkOption {
@@ -544,7 +552,7 @@ in
       isort = mkOption {
         description = lib.mdDoc "isort hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             profile =
               mkOption {
@@ -564,7 +572,7 @@ in
       latexindent = mkOption {
         description = lib.mdDoc "latexindent hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             flags =
               mkOption {
@@ -578,7 +586,7 @@ in
       lua-ls = mkOption {
         description = lib.mdDoc "lua-ls hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             checklevel = mkOption {
               type = types.enum [ "Error" "Warning" "Information" "Hint" ];
@@ -598,7 +606,7 @@ in
       lychee = mkOption {
         description = lib.mdDoc "lychee hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
@@ -618,7 +626,7 @@ in
       markdownlint = mkOption {
         description = lib.mdDoc "markdownlint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             config =
               mkOption {
@@ -633,7 +641,7 @@ in
       mdl = mkOption {
         description = lib.mdDoc "mdl hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
@@ -713,7 +721,7 @@ in
       mkdocs-linkcheck = mkOption {
         description = lib.mdDoc "mkdocs-linkcheck hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -765,7 +773,7 @@ in
       mypy = mkOption {
         description = lib.mdDoc "mypy hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -782,7 +790,7 @@ in
       nixfmt = mkOption {
         description = lib.mdDoc "nixfmt hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             width =
               mkOption {
@@ -796,7 +804,7 @@ in
       ormolu = mkOption {
         description = lib.mdDoc "ormolu hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             defaultExtensions =
               mkOption {
@@ -816,7 +824,7 @@ in
       php-cs-fixer = mkOption {
         description = lib.mdDoc "php-cs-fixer hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -833,7 +841,7 @@ in
       phpcbf = mkOption {
         description = lib.mdDoc "phpcbf hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -850,7 +858,7 @@ in
       phpcs = mkOption {
         description = lib.mdDoc "phpcs hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -867,7 +875,7 @@ in
       phpstan = mkOption {
         description = lib.mdDoc "phpstan hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -886,7 +894,7 @@ in
       prettier = mkOption {
         description = lib.mdDoc "prettier hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -1129,7 +1137,7 @@ in
       psalm = mkOption {
         description = lib.mdDoc "psalm hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -1146,7 +1154,7 @@ in
       pylint = mkOption {
         description = lib.mdDoc "pylint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -1175,7 +1183,7 @@ in
       pyright = mkOption {
         description = lib.mdDoc "pyright hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -1192,7 +1200,7 @@ in
       pyupgrade = mkOption {
         description = lib.mdDoc "pyupgrade hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -1209,7 +1217,7 @@ in
       revive = mkOption {
         description = lib.mdDoc "revive hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
@@ -1225,7 +1233,7 @@ in
       ripsecrets = mkOption {
         description = lib.mdDoc "ripsecrets hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             additionalPatterns =
               mkOption {
@@ -1239,7 +1247,7 @@ in
       rome = mkOption {
         description = lib.mdDoc "rome hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
@@ -1278,7 +1286,7 @@ in
           ```
         '';
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.packageOverrides = {
             cargo = mkOption {
               type = types.package;
@@ -1294,7 +1302,7 @@ in
       statix = mkOption {
         description = lib.mdDoc "statix hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             format =
               mkOption {
@@ -1333,7 +1341,7 @@ in
           ```
         '';
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.packageOverrides = {
             treefmt = mkOption {
               type = types.package;
@@ -1352,7 +1360,7 @@ in
       typos = mkOption {
         description = lib.mdDoc "typos hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             binary =
               mkOption {
@@ -1487,7 +1495,7 @@ in
       vale = mkOption {
         description = lib.mdDoc "vale hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             config =
               mkOption {
@@ -1518,7 +1526,7 @@ in
       yamllint = mkOption {
         description = lib.mdDoc "yamllint hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             relaxed = mkOption {
               type = types.bool;
