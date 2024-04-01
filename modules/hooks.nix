@@ -804,7 +804,7 @@ in
       no-commit-to-branch = mkOption {
         description = lib.mdDoc "no-commit-to-branch-hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             branch =
               mkOption {
@@ -1346,7 +1346,7 @@ in
       sort-file-contents = mkOption {
         description = lib.mdDoc "sort-file-contents-hook";
         type = types.submodule {
-          imports = hookModule;
+          imports = [ hookModule ];
           options.settings = {
             ignore-case =
               mkOption {
