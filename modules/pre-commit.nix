@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hookModule, ... }:
 let
   inherit (lib)
     attrNames
@@ -17,12 +17,7 @@ let
   cfg = config;
   install_stages = lib.unique (cfg.default_stages ++ (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks)));
 
-  hookType = types.submodule {
-    imports = [
-      ({ ... }: { _module.args.default_stages = cfg.default_stages; })
-      ./hook.nix
-    ];
-  };
+  hookType = types.submodule hookModule;
 
   mergeExcludes =
     excludes:
