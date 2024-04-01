@@ -1,7 +1,8 @@
 /*
   A module to import into flakes based on flake-parts.
   Makes integration into a flake easy and tidy.
-  See https://flake.parts
+  See https://flake.parts,
+  https://flake.parts/options/pre-commit-hooks-nix
 */
 
 { lib, self, flake-parts-lib, ... }:
