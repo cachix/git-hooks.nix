@@ -92,7 +92,7 @@ nix develop
           ormolu.enable = true;
           ormolu.package = pkgs.haskellPackages.ormolu;
           ormolu.settings.defaultExtensions = [ "lhs" "hs" ];
-          
+
           # some hooks have more than one package, like clippy:
           clippy.enable = true;
           clippy.packageOverrides.cargo = pkgs.cargo;
@@ -109,7 +109,7 @@ nix develop
 1. Integrate hooks to prepare environment as part of `shell.nix`:
 
    ```nix
-    let 
+    let
       pre-commit = import ./default.nix;
     in (import <nixpkgs> {}).mkShell {
       shellHook = ''
@@ -412,6 +412,9 @@ Example configuration:
          # Set this to false to not pass the changed files
          # to the command (default: true):
          pass_filenames = false;
+
+         # Which git hooks the command should run for (default: [ "pre-commit" ]):
+         stages = ["pre-push"];
        };
      };
    };
