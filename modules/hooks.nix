@@ -2528,7 +2528,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         let
           # .luarc.json has to be in a directory,
           # or lua-language-server will hang forever.
-          luarc = pkgs.writeText ".luarc.json" (builtins.toJSON hooks.lua-ls.settings.config);
+          luarc = pkgs.writeText ".luarc.json" (builtins.toJSON hooks.lua-ls.settings.configuration);
           luarc-dir = pkgs.stdenv.mkDerivation {
             name = "luarc";
             unpackPhase = "true";
