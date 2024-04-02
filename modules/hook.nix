@@ -107,7 +107,7 @@ in
       type = types.listOf types.str;
       description = lib.mdDoc
         ''
-          List of file types to run on. See [Filtering files with types](https://pre-commit.com/#plugins).
+          List of file types to run on. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
         '';
       default = [ "file" ];
     };
@@ -155,7 +155,7 @@ in
     };
 
     stages = mkOption {
-      type = types.listOf types.str;
+      type = (import ./supported-hooks.nix { inherit lib; }).supportedHooksType;
       description = lib.mdDoc ''
         Confines the hook to run at a particular stage.
       '';

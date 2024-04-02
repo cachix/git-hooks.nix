@@ -49,6 +49,7 @@
 , opam
 , ormolu
 , pkgsBuildBuild
+, poetry
 , pre-commit-hook-ensure-sops ? null
 , python3Packages
 , php82Packages
@@ -126,6 +127,7 @@ in
     nixpkgs-fmt
     ormolu
     pre-commit-hook-ensure-sops
+    poetry
     revive
     ripsecrets
     ruff
@@ -151,7 +153,7 @@ in
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier pyright cspell;
   inherit (ocamlPackages) ocp-indent;
-  inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy pylint pyupgrade;
+  inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy pre-commit-hooks pylint pyupgrade;
   inherit (php82Packages) php-cs-fixer psalm;
   # FIXME: workaround build failure
   phpstan = php82Packages.phpstan.overrideAttrs (old: {
