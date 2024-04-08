@@ -138,7 +138,7 @@ in
             Useful for including into the developer environment.
           '';
 
-        default = builtins.map (hook: hook.package) (lib.filter (hook: hook.enable) (builtins.attrValues config.hooks));
+        default = builtins.map (hook: hook.package) (lib.filter (hook: hook.enable && hook.package != null) (builtins.attrValues config.hooks));
       };
 
       hooks =

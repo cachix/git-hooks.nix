@@ -46,6 +46,7 @@ in
 
     package = mkOption {
       type = types.nullOr types.package;
+      default = null;
       description = lib.mdDoc
         ''
           An optional package that provides the hook.
