@@ -594,6 +594,12 @@ in
           };
         };
       };
+      lacheck = mkOption {
+        description = lib.mdDoc "lacheck hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+        };
+      };
       lua-ls = mkOption {
         description = lib.mdDoc "lua-ls hook";
         type = types.submodule {
@@ -2523,6 +2529,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           types = [ "file" "tex" ];
           package = tools.latexindent;
           entry = "${hooks.latexindent.package}/bin/latexindent ${hooks.latexindent.settings.flags}";
+        };
+      lacheck =
+        {
+          name = "lacheck";
+          description = "A consistency checker for LaTeX documents.";
+          types = [ "file" "tex" ];
+          package = tools.lacheck;
+          entry = "${hooks.lacheck.package}/bin/lacheck";
         };
       lua-ls =
         let
