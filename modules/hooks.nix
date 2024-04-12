@@ -1399,22 +1399,26 @@ in
           hooks.treefmt.packageOverrides.treefmt = pkgs.treefmt;
           ```
         '';
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.packageOverrides = {
-            treefmt = mkOption {
-              type = types.package;
-              description = lib.mdDoc "The treefmt package to use";
-            };
-          };
-          options.settings = {
-            formatters = mkOption {
-              type = types.listOf types.package;
-              description = lib.mdDoc "The formatter packages configured by treefmt";
-              default = [ ];
-            };
-          };
-        };
+        type = types.submodule
+          ({ config, ... }:
+            {
+              imports = [ hookModule ];
+              options.packageOverrides = {
+                treefmt = mkOption {
+                  type = types.package;
+                  description = lib.mdDoc "The treefmt package to use";
+                };
+              };
+              options.settings = {
+                formatters = mkOption {
+                  type = types.listOf types.package;
+                  description = lib.mdDoc "The formatter packages configured by treefmt";
+                  default = [ ];
+                };
+              };
+
+              config.extraPackages = config.settings.formatters;
+            });
       };
       typos = mkOption {
         description = lib.mdDoc "typos hook";
