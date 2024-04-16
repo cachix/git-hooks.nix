@@ -1659,7 +1659,7 @@ in
               cmdArgs =
                 mkCmdArgs (with hooks.alejandra.settings; [
                   [ check "--check" ]
-                  [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs (lib.unique exclude)}" ]
+                  [ (exclude != [ ]) "${lib.escapeShellArgs (map (file: "--exclude '${file}'") (lib.unique exclude))}" ]
                   [ (verbosity == "quiet") "-q" ]
                   [ (verbosity == "silent") "-qq" ]
                   [ (threads != null) "--threads ${toString threads}" ]
