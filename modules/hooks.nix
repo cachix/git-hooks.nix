@@ -45,9 +45,11 @@ in
       "vale" = [ "configPath" "flags" ];
       "yamllint" = [ "configPath" ];
     })
+    # Rename `rome` hook to `biome`, since `biome` was being used in both hooks
+    ++ [ (mkRenamedOptionModule [ "settings" "rome" ] [ "hooks" "biome" "settings" ]) ]
     # Rename the remaining `settings.<name>` to `hooks.<name>.settings`
     ++ map (name: mkRenamedOptionModule [ "settings" name ] [ "hooks" name "settings" ])
-      [ "ansible-lint" "autoflake" "biome" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lychee" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" ];
+      [ "ansible-lint" "autoflake" "biome" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lychee" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "statix" ];
 
   options.hookModule = lib.mkOption {
     type = types.deferredModule;
@@ -73,7 +75,7 @@ in
   };
 
   # PLEASE keep this sorted alphabetically.
-  options.hooks = rec
+  options.hooks =
     {
       alejandra = mkOption {
         description = lib.mdDoc "alejandra hook";
@@ -1313,7 +1315,6 @@ in
           };
         };
       };
-      rome = biome;
       rustfmt = mkOption {
         description = lib.mdDoc ''
           Additional rustfmt settings
