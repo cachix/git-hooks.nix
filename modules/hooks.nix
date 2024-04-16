@@ -73,7 +73,7 @@ in
   };
 
   # PLEASE keep this sorted alphabetically.
-  options.hooks =
+  options.hooks = rec
     {
       alejandra = mkOption {
         description = lib.mdDoc "alejandra hook";
@@ -1313,36 +1313,7 @@ in
           };
         };
       };
-      rome = mkOption {
-        description = lib.mdDoc "rome hook";
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.path;
-                description = lib.mdDoc "`rome` binary path. E.g. if you want to use the `rome` in `node_modules`, use `./node_modules/.bin/rome`.";
-                default = null;
-                defaultText = "\${tools.biome}/bin/biome";
-              };
-
-            write =
-              mkOption {
-                type = types.bool;
-                description = lib.mdDoc "Whether to edit files inplace.";
-                default = true;
-              };
-
-            configPath = mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying rome binary (i.e rome.json if exists)
-              default = "";
-            };
-          };
-        };
-      };
+      rome = biome;
       rustfmt = mkOption {
         description = lib.mdDoc ''
           Additional rustfmt settings
@@ -1668,7 +1639,7 @@ in
     };
 
   # PLEASE keep this sorted alphabetically.
-  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault))
+  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault)) rec
     {
       actionlint =
         {
@@ -3107,24 +3078,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             "${hooks.ripsecrets.package}/bin/ripsecrets ${cmdArgs}";
           types = [ "text" ];
         };
-      rome =
-        {
-          name = "rome";
-          description = "Unified developer tools for JavaScript, TypeScript, and the web";
-          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
-
-          package = tools.biome;
-          entry =
-            let
-              binPath = migrateBinPathToPackage hooks.rome "/bin/biome";
-              cmdArgs =
-                mkCmdArgs [
-                  [ (hooks.rome.settings.write) "--apply" ]
-                  [ (hooks.rome.settings.configPath != "") "--config-path ${hooks.rome.settings.configPath}" ]
-                ];
-            in
-            "${binPath} check ${cmdArgs}";
-        };
+      rome = biome;
       ruff =
         {
           name = "ruff";
