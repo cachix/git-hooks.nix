@@ -203,8 +203,8 @@ in
             };
 
             config.extraPackages = [
-              config.settings.packageOverrides.cargo
-              config.settings.packageOverrides.clippy
+              config.packageOverrides.cargo
+              config.packageOverrides.clippy
             ];
           });
       };
@@ -1348,8 +1348,8 @@ in
             };
 
             config.extraPackages = [
-              config.settings.packageOverrides.cargo
-              config.settings.packageOverrides.rustfmt
+              config.packageOverrides.cargo
+              config.packageOverrides.rustfmt
             ];
           });
       };
