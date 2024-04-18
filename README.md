@@ -143,6 +143,7 @@ use nix
 
 - [alejandra](https://github.com/kamadorueda/alejandra)
 - [deadnix](https://github.com/astro/deadnix)
+- [flake-checker](https://github.com/DeterminateSystems/flake-checker)
 - [nil](https://github.com/oxalica/nil)
 - [nixfmt](https://github.com/serokell/nixfmt/)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)

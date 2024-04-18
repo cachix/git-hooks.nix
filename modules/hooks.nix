@@ -2239,6 +2239,14 @@ in
             "${binPath} --format ${hooks.flake8.settings.format} ${extendIgnoreStr}";
           types = [ "python" ];
         };
+      flake-checker = {
+        name = "flake-checker";
+        description = "Run health on the Nix flake.";
+        package = tools.flake-checker;
+        entry = "${hooks.flake-checker.package}/bin/flake-checker -f";
+        files = "(^flake\\.nix$|^flake\\.lock$)";
+        pass_filenames = false;
+      };
       flynt =
         {
           name = "flynt";
