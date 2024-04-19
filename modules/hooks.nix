@@ -1476,6 +1476,15 @@ in
                 example = "*.nix";
               };
 
+            force-exclude =
+              mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Respect excluded files from config file even for paths passed explicitly";
+                # This must be true as this is the natural behaviour. Similar to when executing `typos`
+                # from the cmdline.
+                default = true;
+              };
+
             format =
               mkOption {
                 type = types.enum [ "silent" "brief" "long" "json" ];
@@ -3375,7 +3384,8 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                     # Config file always exists (we generate one if not).
                     [ true "--config ${pathToConfigFile}" ]
                     [ diff "--diff" ]
-                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+                    [ (exclude != "") "--exclude ${exclude}" ]
+                    [ (force-exclude) "--force-exclude" ]
                     [ (format != "long") "--format ${format}" ]
                     [ hidden "--hidden" ]
                     [ (locale != "en") "--locale ${locale}" ]
