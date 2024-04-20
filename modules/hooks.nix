@@ -1639,6 +1639,11 @@ in
       };
     };
 
+  config.warnings =
+    lib.optional cfg.hooks.rome.enable ''
+      The hook `hooks.rome` has been renamed to `hooks.biome`.
+    '';
+
   # PLEASE keep this sorted alphabetically.
   config.hooks = mapAttrs (_: mapAttrs (_: mkDefault)) rec
     {
