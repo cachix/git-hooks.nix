@@ -1645,8 +1645,8 @@ in
     '';
 
   # PLEASE keep this sorted alphabetically.
-  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault)) rec
-    {
+  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault))
+    rec {
       actionlint =
         {
           name = "actionlint";
