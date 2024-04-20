@@ -2241,7 +2241,7 @@ in
         };
       flake-checker = {
         name = "flake-checker";
-        description = "Run health on the Nix flake.";
+        description = "Run health checks on your flake-powered Nix projects.";
         package = tools.flake-checker;
         entry = "${hooks.flake-checker.package}/bin/flake-checker -f";
         files = "(^flake\\.nix$|^flake\\.lock$)";
