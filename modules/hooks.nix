@@ -2583,12 +2583,19 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.latexindent.package}/bin/latexindent ${hooks.latexindent.settings.flags}";
         };
       lacheck =
+        let
+          script = pkgs.writeShellScript "precommit-mdsh" ''
+            for file in $(echo "$@"); do
+                "${hooks.lacheck.package}/bin/lacheck" "$file"
+            done
+          '';
+        in
         {
           name = "lacheck";
           description = "A consistency checker for LaTeX documents.";
           types = [ "file" "tex" ];
           package = tools.lacheck;
-          entry = "${hooks.lacheck.package}/bin/lacheck";
+          entry = "${script}";
         };
       lua-ls =
         let
