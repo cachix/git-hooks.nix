@@ -171,36 +171,42 @@ in
       };
       clippy = mkOption {
         description = lib.mdDoc "clippy hook";
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.packageOverrides = {
-            cargo = mkOption {
-              type = types.package;
-              description = lib.mdDoc "The cargo package to use";
+        type = types.submodule
+          ({ config, ... }: {
+            imports = [ hookModule ];
+            options.packageOverrides = {
+              cargo = mkOption {
+                type = types.package;
+                description = lib.mdDoc "The cargo package to use";
+              };
+              clippy = mkOption {
+                type = types.package;
+                description = lib.mdDoc "The clippy package to use";
+              };
             };
-            clippy = mkOption {
-              type = types.package;
-              description = lib.mdDoc "The clippy package to use";
+            options.settings = {
+              denyWarnings = mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Fail when warnings are present";
+                default = false;
+              };
+              offline = mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Run clippy offline";
+                default = true;
+              };
+              allFeatures = mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Run clippy with --all-features";
+                default = false;
+              };
             };
-          };
-          options.settings = {
-            denyWarnings = mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Fail when warnings are present";
-              default = false;
-            };
-            offline = mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Run clippy offline";
-              default = true;
-            };
-            allFeatures = mkOption {
-              type = types.bool;
-              description = lib.mdDoc "Run clippy with --all-features";
-              default = false;
-            };
-          };
-        };
+
+            config.extraPackages = [
+              config.packageOverrides.cargo
+              config.packageOverrides.clippy
+            ];
+          });
       };
       cmake-format = mkOption {
         description = lib.mdDoc "cmake-format hook";
@@ -333,24 +339,27 @@ in
       };
       dune-fmt = mkOption {
         description = lib.mdDoc "dune-fmt hook";
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            auto-promote =
-              mkOption {
-                type = types.bool;
-                description = lib.mdDoc "Whether to auto-promote the changes.";
-                default = true;
-              };
+        type = types.submodule
+          ({ config, ... }: {
+            imports = [ hookModule ];
+            options.settings = {
+              auto-promote =
+                mkOption {
+                  type = types.bool;
+                  description = lib.mdDoc "Whether to auto-promote the changes.";
+                  default = true;
+                };
 
-            extraRuntimeInputs =
-              mkOption {
-                type = types.listOf types.package;
-                description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
-                default = [ ];
-              };
-          };
-        };
+              extraRuntimeInputs =
+                mkOption {
+                  type = types.listOf types.package;
+                  description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
+                  default = [ ];
+                };
+            };
+
+            config.extraPackages = config.settings.extraRuntimeInputs;
+          });
       };
       eclint = mkOption {
         description = lib.mdDoc "eclint hook";
@@ -1324,19 +1333,25 @@ in
           hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
           ```
         '';
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.packageOverrides = {
-            cargo = mkOption {
-              type = types.package;
-              description = lib.mdDoc "The cargo package to use.";
+        type = types.submodule
+          ({ config, ... }: {
+            imports = [ hookModule ];
+            options.packageOverrides = {
+              cargo = mkOption {
+                type = types.package;
+                description = lib.mdDoc "The cargo package to use.";
+              };
+              rustfmt = mkOption {
+                type = types.package;
+                description = lib.mdDoc "The rustfmt package to use.";
+              };
             };
-            rustfmt = mkOption {
-              type = types.package;
-              description = lib.mdDoc "The rustfmt package to use.";
-            };
-          };
-        };
+
+            config.extraPackages = [
+              config.packageOverrides.cargo
+              config.packageOverrides.rustfmt
+            ];
+          });
       };
       statix = mkOption {
         description = lib.mdDoc "statix hook";
@@ -1399,22 +1414,26 @@ in
           hooks.treefmt.packageOverrides.treefmt = pkgs.treefmt;
           ```
         '';
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.packageOverrides = {
-            treefmt = mkOption {
-              type = types.package;
-              description = lib.mdDoc "The treefmt package to use";
-            };
-          };
-          options.settings = {
-            formatters = mkOption {
-              type = types.listOf types.package;
-              description = lib.mdDoc "The formatter packages configured by treefmt";
-              default = [ ];
-            };
-          };
-        };
+        type = types.submodule
+          ({ config, ... }:
+            {
+              imports = [ hookModule ];
+              options.packageOverrides = {
+                treefmt = mkOption {
+                  type = types.package;
+                  description = lib.mdDoc "The treefmt package to use";
+                };
+              };
+              options.settings = {
+                formatters = mkOption {
+                  type = types.listOf types.package;
+                  description = lib.mdDoc "The formatter packages configured by treefmt";
+                  default = [ ];
+                };
+              };
+
+              config.extraPackages = config.settings.formatters;
+            });
       };
       typos = mkOption {
         description = lib.mdDoc "typos hook";

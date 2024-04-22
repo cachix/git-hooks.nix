@@ -138,7 +138,14 @@ in
             Useful for including into the developer environment.
           '';
 
-        default = builtins.map (hook: hook.package) (lib.filter (hook: hook.enable && hook.package != null) (builtins.attrValues config.hooks));
+        default = lib.pipe config.hooks [
+          builtins.attrValues
+          (lib.filter (hook: hook.enable))
+          (builtins.concatMap (hook:
+            (lib.optional (hook.package != null) hook.package)
+            ++ hook.extraPackages
+          ))
+        ];
       };
 
       hooks =

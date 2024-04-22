@@ -53,6 +53,18 @@ in
         '';
     };
 
+    extraPackages = mkOption {
+      type = types.listOf types.package;
+      default = [ ];
+      description = lib.mdDoc
+        ''
+          Additional packages required to run the hook.
+
+          These are propagated to `enabledPackages` for constructing developer
+          environments.
+        '';
+    };
+
     entry = mkOption {
       type = types.str;
       description = lib.mdDoc
