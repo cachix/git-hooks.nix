@@ -26,6 +26,7 @@
 , editorconfig-checker
 , elixir
 , elmPackages
+, flake-checker ? null
 , fprettify
 , git-annex
 , gptcommit ? null
@@ -108,6 +109,7 @@ in
     eclint
     editorconfig-checker
     elixir
+    flake-checker
     fprettify
     go
     go-tools
