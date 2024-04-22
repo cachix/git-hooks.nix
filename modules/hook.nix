@@ -50,31 +50,6 @@ in
       description = lib.mdDoc
         ''
           An optional package that provides the hook.
-
-          For most hooks, the package name matches the name of the hook and can be overridden directly.
-
-          ```
-          hooks.nixfmt.package = pkgs.nixfmt;
-          ```
-
-          Some hooks may require multiple packages or a wrapper script to function correctly.
-          Such hooks can expose additional named packages as `packageOverrides`.
-
-          ```
-          hooks.rustfmt.packageOverrides.cargo = pkgs.cargo;
-          hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
-          ```
-        '';
-    };
-
-    packageOverrides = mkOption {
-      type = types.submodule {
-        freeformType = types.attrsOf types.package;
-      };
-      default = { };
-      description = lib.mdDoc
-        ''
-          Additional packages required to construct the hook package.
         '';
     };
 
