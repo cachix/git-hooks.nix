@@ -45,9 +45,11 @@ in
       "vale" = [ "configPath" "flags" ];
       "yamllint" = [ "configPath" ];
     })
+    # Rename `rome` hook to `biome`, since `biome` was being used in both hooks
+    ++ [ (mkRenamedOptionModule [ "settings" "rome" ] [ "hooks" "biome" "settings" ]) ]
     # Rename the remaining `settings.<name>` to `hooks.<name>.settings`
     ++ map (name: mkRenamedOptionModule [ "settings" name ] [ "hooks" name "settings" ])
-      [ "ansible-lint" "autoflake" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lychee" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "rome" "statix" ];
+      [ "ansible-lint" "autoflake" "biome" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lychee" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "statix" ];
 
   options.hookModule = lib.mkOption {
     type = types.deferredModule;
@@ -152,6 +154,36 @@ in
                 description = lib.mdDoc "Flags passed to autoflake.";
                 default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
               };
+          };
+        };
+      };
+      biome = mkOption {
+        description = lib.mdDoc "biome hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            binPath =
+              mkOption {
+                type = types.nullOr types.path;
+                description = lib.mdDoc "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                default = null;
+                defaultText = "\${tools.biome}/bin/biome";
+              };
+
+            write =
+              mkOption {
+                type = types.bool;
+                description = lib.mdDoc "Whether to edit files inplace.";
+                default = true;
+              };
+
+            configPath = mkOption {
+              type = types.str;
+              description = lib.mdDoc "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying biome binary (i.e biome.json if exists)
+              default = "";
+            };
           };
         };
       };
@@ -1292,36 +1324,6 @@ in
           };
         };
       };
-      rome = mkOption {
-        description = lib.mdDoc "rome hook";
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.path;
-                description = lib.mdDoc "`rome` binary path. E.g. if you want to use the `rome` in `node_modules`, use `./node_modules/.bin/rome`.";
-                default = null;
-                defaultText = "\${tools.biome}/bin/biome";
-              };
-
-            write =
-              mkOption {
-                type = types.bool;
-                description = lib.mdDoc "Whether to edit files inplace.";
-                default = true;
-              };
-
-            configPath = mkOption {
-              type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying rome binary (i.e rome.json if exists)
-              default = "";
-            };
-          };
-        };
-      };
       rustfmt = mkOption {
         description = lib.mdDoc ''
           Additional rustfmt settings
@@ -1656,9 +1658,14 @@ in
       };
     };
 
+  config.warnings =
+    lib.optional cfg.hooks.rome.enable ''
+      The hook `hooks.rome` has been renamed to `hooks.biome`.
+    '';
+
   # PLEASE keep this sorted alphabetically.
   config.hooks = mapAttrs (_: mapAttrs (_: mkDefault))
-    {
+    rec {
       actionlint =
         {
           name = "actionlint";
@@ -1721,6 +1728,24 @@ in
             in
             "${binPath} ${hooks.autoflake.settings.flags}";
           types = [ "python" ];
+        };
+      biome =
+        {
+          name = "biome";
+          description = "A toolchain for web projects, aimed to provide functionalities to maintain them";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+
+          package = tools.biome;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.biome "/bin/biome";
+              cmdArgs =
+                mkCmdArgs [
+                  [ (hooks.biome.settings.write) "--apply" ]
+                  [ (hooks.biome.settings.configPath != "") "--config-path ${hooks.biome.settings.configPath}" ]
+                ];
+            in
+            "${binPath} check ${cmdArgs}";
         };
       bats =
         {
@@ -3086,24 +3111,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             "${hooks.ripsecrets.package}/bin/ripsecrets ${cmdArgs}";
           types = [ "text" ];
         };
-      rome =
-        {
-          name = "rome";
-          description = "Unified developer tools for JavaScript, TypeScript, and the web";
-          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
-
-          package = tools.biome;
-          entry =
-            let
-              binPath = migrateBinPathToPackage hooks.rome "/bin/biome";
-              cmdArgs =
-                mkCmdArgs [
-                  [ (hooks.rome.settings.write) "--apply" ]
-                  [ (hooks.rome.settings.configPath != "") "--config-path ${hooks.rome.settings.configPath}" ]
-                ];
-            in
-            "${binPath} check ${cmdArgs}";
-        };
+      rome = biome;
       ruff =
         {
           name = "ruff";

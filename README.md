@@ -208,10 +208,11 @@ clang-format supports.
 
 ### JavaScript/TypeScript
 
+- [biome](https://biomejs.dev/)
 - denofmt: Runs `deno fmt`
 - denolint: Runs `deno lint`
 - [eslint](https://github.com/eslint/eslint)
-- [rome](https://github.com/rome/tools)
+- rome: (alias to the biome hook)
 
 ### Python
 
