@@ -271,6 +271,7 @@ clang-format supports.
 ### LaTeX
 
 - [chktex](https://www.nongnu.org/chktex/)
+- [lacheck](https://ctan.org/pkg/lacheck)
 - [latexindent](https://github.com/cmhughes/latexindent.pl)
 
 ### Lua
