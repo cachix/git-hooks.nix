@@ -72,7 +72,7 @@ in
             hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
           };
           pre-commit.devShell = pkgs.mkShell {
-            nativeBuildInputs = [ cfg.settings.package ];
+            nativeBuildInputs = cfg.settings.enabledPackages ++ [ cfg.settings.package ];
             shellHook = cfg.installationScript;
           };
         };
