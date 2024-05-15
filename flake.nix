@@ -3,7 +3,6 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.flake-compat = {
     url = "github:edolstra/flake-compat";
     flake = false;
@@ -13,7 +12,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, flake-utils, gitignore, nixpkgs-stable, ... }:
+  outputs = { self, nixpkgs, gitignore, nixpkgs-stable, ... }:
     let
       lib = nixpkgs.lib;
       defaultSystems = [
@@ -22,6 +21,12 @@
         "x86_64-darwin"
         "x86_64-linux"
       ];
+      depsFor = lib.genAttrs defaultSystems (system: {
+        pkgs = nixpkgs.legacyPackages.${system};
+        exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
+        exposed-stable = import ./nix { nixpkgs = nixpkgs-stable; inherit system; gitignore-nix-src = gitignore; isFlakes = true; };
+      });
+      forAllSystems = fn: lib.genAttrs defaultSystems (system: fn depsFor.${system});
     in
     {
       flakeModule = ./flake-module.nix;
@@ -32,27 +37,23 @@
           A template with flake-parts and nixpkgs-fmt.
         '';
       };
-    }
-    // flake-utils.lib.eachSystem defaultSystems (system:
-      let
-        exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
-        exposed-stable = import ./nix { nixpkgs = nixpkgs-stable; inherit system; gitignore-nix-src = gitignore; isFlakes = true; };
-      in
-      {
-        packages = exposed.packages // {
-          default = exposed.packages.pre-commit;
-        };
 
-        devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
+      packages = forAllSystems ({ exposed, ... }: exposed.packages // {
+        default = exposed.packages.pre-commit;
+      });
+
+      devShells = forAllSystems ({ pkgs, exposed, ... }: {
+        default = pkgs.mkShellNoCC {
           inherit (exposed.checks.pre-commit-check) shellHook;
         };
+      });
 
-        checks = lib.filterAttrs (k: v: v != null)
+      checks = forAllSystems ({ exposed, exposed-stable, ... }:
+        lib.filterAttrs (k: v: v != null)
           (exposed.checks
-          // (lib.mapAttrs' (name: value: lib.nameValuePair "stable-${name}" value)
-            exposed-stable.checks));
+            // (lib.mapAttrs' (name: value: lib.nameValuePair "stable-${name}" value)
+            exposed-stable.checks)));
 
-        lib = { inherit (exposed) run; };
-      }
-    );
+      lib = forAllSystems ({ exposed, ... }: { inherit (exposed) run; });
+    };
 }
