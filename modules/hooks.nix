@@ -1957,7 +1957,7 @@ in
         description = "Static analyzer for C++ code.";
         package = tools.clang-tools;
         entry = "${hooks.clang-tidy.package}/bin/clang-tidy --fix";
-        types = [ "c" "c++" "c#" "objective-c" ];
+        types_or = [ "c" "c++" "c#" "objective-c" ];
       };
       clippy =
         let
