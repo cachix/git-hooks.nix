@@ -67,7 +67,7 @@ let
       git config --global user.email "you@example.com"
       git config --global user.name "Your Name"
       git commit -m "init" -q
-      if [[ ${toString (compare install_stages [ "manual" ])} -eq 0 ]]
+      if [[ ${toString (compare install_stages [ "manual" ])} -eq 1 ]]
       then
         echo "Running: $ pre-commit run --hook-stage manual --all-files"
         ${cfg.package}/bin/pre-commit run --hook-stage manual --all-files
