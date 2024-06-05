@@ -72,6 +72,7 @@
 , typos
 , typstfmt
 , zprint
+, yamlfmt
 , yamllint
 , go
 , go-tools
@@ -146,6 +147,7 @@ in
     typos
     typstfmt
     vale
+    yamlfmt
     yamllint
     zprint
     ;
