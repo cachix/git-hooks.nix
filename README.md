@@ -304,6 +304,7 @@ clang-format supports.
 
 - [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
 - [sort-simple-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/sort_simple_yaml.py)
+- [yamlfmt](https://github.com/google/yamlfmt)
 - [yamllint](https://github.com/adrienverge/yamllint)
 
 ### TOML

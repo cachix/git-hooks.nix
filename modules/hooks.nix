@@ -1601,6 +1601,25 @@ in
           };
         };
       };
+      yamlfmt = mkOption {
+        description = lib.mdDoc "yamlfmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath =
+              mkOption {
+                type = types.str;
+                description = lib.mdDoc "Path to a custom configuration file.";
+                # An empty string translates to yamlfmt looking for a configuration file in the
+                # following locations (by order of preference):
+                # a file named .yamlfmt, yamlfmt.yml, yamlfmt.yaml, .yamlfmt.yaml or .yamlfmt.yml in the current working directory
+                # See details [here](https://github.com/google/yamlfmt/blob/main/docs/config-file.md#config-file-discovery)
+                default = "";
+                example = ".yamlfmt";
+              };
+          };
+        };
+      };
       yamllint = mkOption {
         description = lib.mdDoc "yamllint hook";
         type = types.submodule {
@@ -3413,6 +3432,27 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           "${hooks.vale.package}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
         types = [ "text" ];
       };
+      yamlfmt =
+        {
+          name = "yamlfmt";
+          description = "Formatter for YAML files.";
+          types = [ "file" "yaml" ];
+          package = tools.yamlfmt;
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.yamlfmt.settings; [
+                    # Exit non-zero on changes
+                    [ true "-lint" ]
+                    # But do not print the diff
+                    [ true "-quiet" ]
+                    # See https://github.com/google/yamlfmt/blob/main/docs/config-file.md#config-file-discovery
+                    [ (configPath != "") "-conf ${configPath}" ]
+                  ]);
+            in
+            "${hooks.yamlfmt.package}/bin/yamlfmt ${cmdArgs}";
+        };
       yamllint =
         {
           name = "yamllint";
