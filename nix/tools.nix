@@ -71,6 +71,7 @@
 , treefmt
 , typos
 , typstfmt
+, typstyle
 , zprint
 , yamlfmt
 , yamllint
@@ -146,6 +147,7 @@ in
     treefmt
     typos
     typstfmt
+    typstyle
     vale
     yamlfmt
     yamllint
