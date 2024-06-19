@@ -3417,7 +3417,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
       typstyle = {
         name = "typstyle";
         description = "Beautiful and reliable typst code formatter";
-        packages = tools.typstyle;
+        package = tools.typstyle;
         entry =
           lib.throwIf
             (hooks.typstyle.package == null)
