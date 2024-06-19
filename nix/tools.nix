@@ -53,6 +53,7 @@
 , poetry
 , pre-commit-hook-ensure-sops ? null
 , python3Packages
+, pyright ? nodePackages.pyright
 , php82Packages
 , ripsecrets ? null
 , reuse
@@ -132,6 +133,7 @@ in
     ormolu
     pre-commit-hook-ensure-sops
     poetry
+    pyright
     reuse
     revive
     ripsecrets
@@ -157,7 +159,7 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier pyright cspell;
+  inherit (nodePackages) eslint markdownlint-cli prettier cspell;
   inherit (ocamlPackages) ocp-indent;
   inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy pre-commit-hooks pylint pyupgrade;
   inherit (php82Packages) php-cs-fixer psalm;
