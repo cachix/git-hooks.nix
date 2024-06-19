@@ -1294,6 +1294,20 @@ in
           };
         };
       };
+      reuse = mkOption {
+        description = lib.mdDoc "reuse hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = lib.mdDoc "Flags passed to reuse. For available options run 'reuse lint --help'";
+              default = "";
+              example = "--json";
+            };
+          };
+        };
+      };
       revive = mkOption {
         description = lib.mdDoc "revive hook";
         type = types.submodule {
@@ -3087,6 +3101,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           package = tools.pyupgrade;
           entry = migrateBinPathToPackage hooks.pyupgrade "/bin/pyupgrade";
           types = [ "python" ];
+        };
+      reuse =
+        {
+          name = "reuse";
+          description = "reuse is a tool for compliance with the REUSE recommendations.";
+          package = tools.reuse;
+          entry = "${hooks.reuse.package}/bin/reuse lint ${hooks.reuse.settings.flags}";
+          types = [ "file" ];
+          pass_filenames = false;
         };
       revive =
         {

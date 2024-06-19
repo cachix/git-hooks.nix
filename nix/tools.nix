@@ -56,6 +56,7 @@
 , pyright ? nodePackages.pyright
 , php82Packages
 , ripsecrets ? null
+, reuse
 , ruff ? null
 , rustfmt
 , shellcheck
@@ -133,6 +134,7 @@ in
     pre-commit-hook-ensure-sops
     poetry
     pyright
+    reuse
     revive
     ripsecrets
     ruff
