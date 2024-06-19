@@ -3418,7 +3418,11 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         name = "typstyle";
         description = "Beautiful and reliable typst code formatter";
         packages = tools.typstyle;
-        entry = "${hooks.typstyle.package}/bin/typstyle";
+        entry =
+          lib.throwIf
+            (hooks.typstyle.package == null)
+            "The version of nixpkgs used by pre-commit-hooks.nix must contain typstyle"
+            "${hooks.typstyle.package}/bin/typstyle";
         files = "\\.typ$";
       };
       vale = {

@@ -71,7 +71,7 @@
 , treefmt
 , typos
 , typstfmt
-, typstyle
+, typstyle ? null ## Add in nixpkgs added on commit 800ca60
 , zprint
 , yamlfmt
 , yamllint
