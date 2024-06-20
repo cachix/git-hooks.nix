@@ -73,6 +73,7 @@
 , treefmt
 , typos
 , typstfmt
+, typstyle ? null ## Add in nixpkgs added on commit 800ca60
 , zprint
 , yamlfmt
 , yamllint
@@ -150,6 +151,7 @@ in
     treefmt
     typos
     typstfmt
+    typstyle
     vale
     yamlfmt
     yamllint

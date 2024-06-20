@@ -3437,6 +3437,17 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         entry = "${hooks.typstfmt.package}/bin/typstfmt";
         files = "\\.typ$";
       };
+      typstyle = {
+        name = "typstyle";
+        description = "Beautiful and reliable typst code formatter";
+        package = tools.typstyle;
+        entry =
+          lib.throwIf
+            (hooks.typstyle.package == null)
+            "The version of nixpkgs used by pre-commit-hooks.nix must contain typstyle"
+            "${hooks.typstyle.package}/bin/typstyle";
+        files = "\\.typ$";
+      };
       vale = {
         name = "vale";
         description = "A markup-aware linter for prose built with speed and extensibility in mind.";
