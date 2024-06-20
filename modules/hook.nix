@@ -10,13 +10,13 @@ in
   options = {
     enable = mkOption {
       type = types.bool;
-      description = lib.mdDoc "Whether to enable this pre-commit hook.";
+      description = "Whether to enable this pre-commit hook.";
       default = false;
     };
 
     raw = mkOption {
       type = types.attrsOf types.unspecified;
-      description = lib.mdDoc
+      description =
         ''
           Raw fields of a pre-commit hook. This is mostly for internal use but
           exposed in case you need to work around something.
@@ -29,7 +29,7 @@ in
       type = types.str;
       defaultText = lib.literalMD "internal name, same as `id`";
       default = name;
-      description = lib.mdDoc
+      description =
         ''
           The name of the hook. Shown during hook execution.
         '';
@@ -37,7 +37,7 @@ in
 
     description = mkOption {
       type = types.str;
-      description = lib.mdDoc
+      description =
         ''
           Description of the hook. Used for metadata purposes only.
         '';
@@ -47,7 +47,7 @@ in
     package = mkOption {
       type = types.nullOr types.package;
       default = null;
-      description = lib.mdDoc
+      description =
         ''
           An optional package that provides the hook.
         '';
@@ -56,7 +56,7 @@ in
     extraPackages = mkOption {
       type = types.listOf types.package;
       default = [ ];
-      description = lib.mdDoc
+      description =
         ''
           Additional packages required to run the hook.
 
@@ -67,7 +67,7 @@ in
 
     entry = mkOption {
       type = types.str;
-      description = lib.mdDoc
+      description =
         ''
           The entry point - the executable to run. {option}`entry` can also contain arguments that will not be overridden, such as `entry = "autopep8 -i";`.
         '';
@@ -75,7 +75,7 @@ in
 
     language = mkOption {
       type = types.str;
-      description = lib.mdDoc
+      description =
         ''
           The language of the hook - tells pre-commit how to install the hook.
         '';
@@ -84,7 +84,7 @@ in
 
     files = mkOption {
       type = types.str;
-      description = lib.mdDoc
+      description =
         ''
           The pattern of files to run on.
         '';
@@ -93,7 +93,7 @@ in
 
     types = mkOption {
       type = types.listOf types.str;
-      description = lib.mdDoc
+      description =
         ''
           List of file types to run on. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
         '';
@@ -102,7 +102,7 @@ in
 
     types_or = mkOption {
       type = types.listOf types.str;
-      description = lib.mdDoc
+      description =
         ''
           List of file types to run on, where only a single type needs to match.
         '';
@@ -111,7 +111,7 @@ in
 
     excludes = mkOption {
       type = types.listOf types.str;
-      description = lib.mdDoc
+      description =
         ''
           Exclude files that were matched by these patterns.
         '';
@@ -120,7 +120,7 @@ in
 
     pass_filenames = mkOption {
       type = types.bool;
-      description = lib.mdDoc ''
+      description = ''
         Whether to pass filenames as arguments to the entry point.
       '';
       default = true;
@@ -128,7 +128,7 @@ in
 
     fail_fast = mkOption {
       type = types.bool;
-      description = lib.mdDoc ''
+      description = ''
         if true pre-commit will stop running hooks if this hook fails.
       '';
       default = false;
@@ -136,7 +136,7 @@ in
 
     require_serial = mkOption {
       type = types.bool;
-      description = lib.mdDoc ''
+      description = ''
         if true this hook will execute using a single process instead of in parallel.
       '';
       default = false;
@@ -144,7 +144,7 @@ in
 
     stages = mkOption {
       type = (import ./supported-hooks.nix { inherit lib; }).supportedHooksType;
-      description = lib.mdDoc ''
+      description = ''
         Confines the hook to run at a particular stage.
       '';
       default = default_stages;
@@ -154,7 +154,7 @@ in
     verbose = mkOption {
       type = types.bool;
       default = false;
-      description = lib.mdDoc ''
+      description = ''
         forces the output of the hook to be printed even when the hook passes.
       '';
     };
@@ -162,7 +162,7 @@ in
     always_run = mkOption {
       type = types.bool;
       default = false;
-      description = lib.mdDoc ''
+      description = ''
         if true this hook will run even if there are no matching files.
       '';
     };

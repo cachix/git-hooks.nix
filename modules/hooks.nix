@@ -69,7 +69,7 @@ in
   options.settings = {
     rust.cargoManifestPath = mkOption {
       type = types.nullOr types.str;
-      description = lib.mdDoc "Path to Cargo.toml";
+      description = "Path to Cargo.toml";
       default = null;
     };
   };
@@ -78,35 +78,35 @@ in
   options.hooks =
     {
       alejandra = mkOption {
-        description = lib.mdDoc "alejandra hook";
+        description = "alejandra hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             check =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Check if the input is already formatted and disable writing in-place the modified content";
+                description = "Check if the input is already formatted and disable writing in-place the modified content";
                 default = false;
                 example = true;
               };
             exclude =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Files or directories to exclude from formatting.";
+                description = "Files or directories to exclude from formatting.";
                 default = [ ];
                 example = [ "flake.nix" "./templates" ];
               };
             threads =
               mkOption {
                 type = types.nullOr types.int;
-                description = lib.mdDoc "Number of formatting threads to spawn.";
+                description = "Number of formatting threads to spawn.";
                 default = null;
                 example = 8;
               };
             verbosity =
               mkOption {
                 type = types.enum [ "normal" "quiet" "silent" ];
-                description = lib.mdDoc "Whether informational messages or all messages should be hidden or not.";
+                description = "Whether informational messages or all messages should be hidden or not.";
                 default = "normal";
                 example = "quiet";
               };
@@ -114,34 +114,34 @@ in
         };
       };
       ansible-lint = mkOption {
-        description = lib.mdDoc "ansible-lint hook";
+        description = "ansible-lint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configPath = mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the YAML configuration file.";
+              description = "Path to the YAML configuration file.";
               # an empty string translates to use default configuration of the
               # underlying ansible-lint binary
               default = "";
             };
             subdir = mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the Ansible subdirectory.";
+              description = "Path to the Ansible subdirectory.";
               default = "";
             };
           };
         };
       };
       autoflake = mkOption {
-        description = lib.mdDoc "autoflake hook";
+        description = "autoflake hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "Path to autoflake binary.";
+                description = "Path to autoflake binary.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.autoflake}/bin/autoflake"
@@ -151,21 +151,21 @@ in
             flags =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Flags passed to autoflake.";
+                description = "Flags passed to autoflake.";
                 default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
               };
           };
         };
       };
       biome = mkOption {
-        description = lib.mdDoc "biome hook";
+        description = "biome hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.path;
-                description = lib.mdDoc "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
                 default = null;
                 defaultText = "\${tools.biome}/bin/biome";
               };
@@ -173,13 +173,13 @@ in
             write =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to edit files inplace.";
+                description = "Whether to edit files inplace.";
                 default = true;
               };
 
             configPath = mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the configuration JSON file";
+              description = "Path to the configuration JSON file";
               # an empty string translates to use default configuration of the
               # underlying biome binary (i.e biome.json if exists)
               default = "";
@@ -188,13 +188,13 @@ in
         };
       };
       black = mkOption {
-        description = lib.mdDoc "black hook";
+        description = "black hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             flags = mkOption {
               type = types.str;
-              description = lib.mdDoc "Flags passed to black. See all available [here](https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#command-line-options).";
+              description = "Flags passed to black. See all available [here](https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#command-line-options).";
               default = "";
               example = "--skip-magic-trailing-comma";
             };
@@ -202,34 +202,34 @@ in
         };
       };
       clippy = mkOption {
-        description = lib.mdDoc "clippy hook";
+        description = "clippy hook";
         type = types.submodule
           ({ config, ... }: {
             imports = [ hookModule ];
             options.packageOverrides = {
               cargo = mkOption {
                 type = types.package;
-                description = lib.mdDoc "The cargo package to use";
+                description = "The cargo package to use";
               };
               clippy = mkOption {
                 type = types.package;
-                description = lib.mdDoc "The clippy package to use";
+                description = "The clippy package to use";
               };
             };
             options.settings = {
               denyWarnings = mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Fail when warnings are present";
+                description = "Fail when warnings are present";
                 default = false;
               };
               offline = mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Run clippy offline";
+                description = "Run clippy offline";
                 default = true;
               };
               allFeatures = mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Run clippy with --all-features";
+                description = "Run clippy with --all-features";
                 default = false;
               };
             };
@@ -241,13 +241,13 @@ in
           });
       };
       cmake-format = mkOption {
-        description = lib.mdDoc "cmake-format hook";
+        description = "cmake-format hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configPath = mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the configuration file (.json,.python,.yaml)";
+              description = "Path to the configuration file (.json,.python,.yaml)";
               default = "";
               example = ".cmake-format.json";
             };
@@ -255,90 +255,90 @@ in
         };
       };
       credo = mkOption {
-        description = lib.mdDoc "credo hook";
+        description = "credo hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             strict =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to auto-promote the changes.";
+                description = "Whether to auto-promote the changes.";
                 default = true;
               };
           };
         };
       };
       deadnix = mkOption {
-        description = lib.mdDoc "deadnix hook";
+        description = "deadnix hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             edit =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Remove unused code and write to source file.";
+                description = "Remove unused code and write to source file.";
                 default = false;
               };
 
             exclude =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Files to exclude from analysis.";
+                description = "Files to exclude from analysis.";
                 default = [ ];
               };
 
             hidden =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Recurse into hidden subdirectories and process hidden .*.nix files.";
+                description = "Recurse into hidden subdirectories and process hidden .*.nix files.";
                 default = false;
               };
 
             noLambdaArg =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Don't check lambda parameter arguments.";
+                description = "Don't check lambda parameter arguments.";
                 default = false;
               };
 
             noLambdaPatternNames =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Don't check lambda pattern names (don't break nixpkgs `callPackage`).";
+                description = "Don't check lambda pattern names (don't break nixpkgs `callPackage`).";
                 default = false;
               };
 
             noUnderscore =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Don't check any bindings that start with a `_`.";
+                description = "Don't check any bindings that start with a `_`.";
                 default = false;
               };
 
             quiet =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Don't print a dead code report.";
+                description = "Don't print a dead code report.";
                 default = false;
               };
           };
         };
       };
       denofmt = mkOption {
-        description = lib.mdDoc "denofmt hook";
+        description = "denofmt hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             write =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to edit files inplace.";
+                description = "Whether to edit files inplace.";
                 default = true;
               };
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to the configuration JSON file";
+                description = "Path to the configuration JSON file";
                 # an empty string translates to use default configuration of the
                 # underlying deno binary (i.e deno.json or deno.jsonc)
                 default = "";
@@ -347,21 +347,21 @@ in
         };
       };
       denolint = mkOption {
-        description = lib.mdDoc "denolint hook";
+        description = "denolint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             format =
               mkOption {
                 type = types.enum [ "default" "compact" "json" ];
-                description = lib.mdDoc "Output format.";
+                description = "Output format.";
                 default = "default";
               };
 
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to the configuration JSON file";
+                description = "Path to the configuration JSON file";
                 # an empty string translates to use default configuration of the
                 # underlying deno binary (i.e deno.json or deno.jsonc)
                 default = "";
@@ -370,7 +370,7 @@ in
         };
       };
       dune-fmt = mkOption {
-        description = lib.mdDoc "dune-fmt hook";
+        description = "dune-fmt hook";
         type = types.submodule
           ({ config, ... }: {
             imports = [ hookModule ];
@@ -378,14 +378,14 @@ in
               auto-promote =
                 mkOption {
                   type = types.bool;
-                  description = lib.mdDoc "Whether to auto-promote the changes.";
+                  description = "Whether to auto-promote the changes.";
                   default = true;
                 };
 
               extraRuntimeInputs =
                 mkOption {
                   type = types.listOf types.package;
-                  description = lib.mdDoc "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
+                  description = "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
                   default = [ ];
                 };
             };
@@ -394,52 +394,52 @@ in
           });
       };
       eclint = mkOption {
-        description = lib.mdDoc "eclint hook";
+        description = "eclint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             fix =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Modify files in place rather than showing the errors.";
+                description = "Modify files in place rather than showing the errors.";
                 default = false;
               };
             summary =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Only show number of errors per file.";
+                description = "Only show number of errors per file.";
                 default = false;
               };
             color =
               mkOption {
                 type = types.enum [ "auto" "always" "never" ];
-                description = lib.mdDoc "When to generate colored output.";
+                description = "When to generate colored output.";
                 default = "auto";
               };
             exclude =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Filter to exclude files.";
+                description = "Filter to exclude files.";
                 default = [ ];
               };
             verbosity =
               mkOption {
                 type = types.enum [ 0 1 2 3 4 ];
-                description = lib.mdDoc "Log level verbosity";
+                description = "Log level verbosity";
                 default = 0;
               };
           };
         };
       };
       eslint = mkOption {
-        description = lib.mdDoc "eslint hook";
+        description = "eslint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.path;
-                description = lib.mdDoc
+                description =
                   "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
                 default = null;
                 defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
@@ -448,7 +448,7 @@ in
             extensions =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc
+                description =
                   "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
                 default = "\\.js$";
               };
@@ -456,14 +456,14 @@ in
         };
       };
       flake8 = mkOption {
-        description = lib.mdDoc "flake8 hook";
+        description = "flake8 hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+                description = "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.flake8}/bin/flake8"
@@ -472,189 +472,189 @@ in
             extendIgnore =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "List of additional ignore codes";
+                description = "List of additional ignore codes";
                 default = [ ];
                 example = [ "E501" ];
               };
             format =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Output format.";
+                description = "Output format.";
                 default = "default";
               };
           };
         };
       };
       flynt = mkOption {
-        description = lib.mdDoc "flynt hook";
+        description = "flynt hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             aggressive =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Include conversions with potentially changed behavior.";
+                description = "Include conversions with potentially changed behavior.";
                 default = false;
               };
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
+                description = "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
                 default = null;
                 defaultText = "\${hooks.flynt.package}/bin/flynt";
               };
             dry-run =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Do not change files in-place and print diff instead.";
+                description = "Do not change files in-place and print diff instead.";
                 default = false;
               };
             exclude =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Ignore files with given strings in their absolute path.";
+                description = "Ignore files with given strings in their absolute path.";
                 default = [ ];
               };
             fail-on-change =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Fail when diff is not empty (for linting purposes).";
+                description = "Fail when diff is not empty (for linting purposes).";
                 default = true;
               };
             line-length =
               mkOption {
                 type = types.nullOr types.int;
-                description = lib.mdDoc "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
+                description = "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
                 default = null;
               };
             no-multiline =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Convert only single line expressions.";
+                description = "Convert only single line expressions.";
                 default = false;
               };
             quiet =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Run without output.";
+                description = "Run without output.";
                 default = false;
               };
             string =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Interpret the input as a Python code snippet and print the converted version.";
+                description = "Interpret the input as a Python code snippet and print the converted version.";
                 default = false;
               };
             transform-concats =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Replace string concatenations with f-strings.";
+                description = "Replace string concatenations with f-strings.";
                 default = false;
               };
             verbose =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Run with verbose output.";
+                description = "Run with verbose output.";
                 default = false;
               };
           };
         };
       };
       headache = mkOption {
-        description = lib.mdDoc "headache hook";
+        description = "headache hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             header-file = mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to the header file.";
+              description = "Path to the header file.";
               default = ".header";
             };
           };
         };
       };
       hlint = mkOption {
-        description = lib.mdDoc "hlint hook";
+        description = "hlint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             hintFile =
               mkOption {
                 type = types.nullOr types.path;
-                description = lib.mdDoc "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
+                description = "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
                 default = null;
               };
           };
         };
       };
       hpack = mkOption {
-        description = lib.mdDoc "hpack hook";
+        description = "hpack hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             silent =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether generation should be silent.";
+                description = "Whether generation should be silent.";
                 default = false;
               };
           };
         };
       };
       isort = mkOption {
-        description = lib.mdDoc "isort hook";
+        description = "isort hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             profile =
               mkOption {
                 type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
-                description = lib.mdDoc "Built-in profiles to allow easy interoperability with common projects and code styles.";
+                description = "Built-in profiles to allow easy interoperability with common projects and code styles.";
                 default = "";
               };
             flags =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
+                description = "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
                 default = "";
               };
           };
         };
       };
       latexindent = mkOption {
-        description = lib.mdDoc "latexindent hook";
+        description = "latexindent hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             flags =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
+                description = "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
                 default = "--local --silent --overwriteIfDifferent";
               };
           };
         };
       };
       lacheck = mkOption {
-        description = lib.mdDoc "lacheck hook";
+        description = "lacheck hook";
         type = types.submodule {
           imports = [ hookModule ];
         };
       };
       lua-ls = mkOption {
-        description = lib.mdDoc "lua-ls hook";
+        description = "lua-ls hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             checklevel = mkOption {
               type = types.enum [ "Error" "Warning" "Information" "Hint" ];
-              description = lib.mdDoc
+              description =
                 "The diagnostic check level";
               default = "Warning";
             };
             configuration = mkOption {
               type = types.attrs;
-              description = lib.mdDoc
+              description =
                 "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
               default = { };
             };
@@ -662,34 +662,34 @@ in
         };
       };
       lychee = mkOption {
-        description = lib.mdDoc "lychee hook";
+        description = "lychee hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to the config file.";
+                description = "Path to the config file.";
                 default = "";
               };
             flags =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
+                description = "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
                 default = "";
               };
           };
         };
       };
       markdownlint = mkOption {
-        description = lib.mdDoc "markdownlint hook";
+        description = "markdownlint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configuration =
               mkOption {
                 type = types.attrs;
-                description = lib.mdDoc
+                description =
                   "See https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc";
                 default = { };
               };
@@ -697,94 +697,94 @@ in
         };
       };
       mdl = mkOption {
-        description = lib.mdDoc "mdl hook";
+        description = "mdl hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "The configuration file to use.";
+                description = "The configuration file to use.";
                 default = "";
               };
             git-recurse =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Only process files known to git when given a directory.";
+                description = "Only process files known to git when given a directory.";
                 default = false;
               };
             ignore-front-matter =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Ignore YAML front matter.";
+                description = "Ignore YAML front matter.";
                 default = false;
               };
             json =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Format output as JSON.";
+                description = "Format output as JSON.";
                 default = false;
               };
             rules =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Markdown rules to use for linting. Per default all rules are processed.";
+                description = "Markdown rules to use for linting. Per default all rules are processed.";
                 default = [ ];
               };
             rulesets =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Specify additional ruleset files to load.";
+                description = "Specify additional ruleset files to load.";
                 default = [ ];
               };
             show-aliases =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Show rule alias instead of rule ID when viewing rules.";
+                description = "Show rule alias instead of rule ID when viewing rules.";
                 default = false;
               };
             warnings =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Show Kramdown warnings.";
+                description = "Show Kramdown warnings.";
                 default = false;
               };
             skip-default-ruleset =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Do not load the default markdownlint ruleset. Use this option if you only want to load custom rulesets.";
+                description = "Do not load the default markdownlint ruleset. Use this option if you only want to load custom rulesets.";
                 default = false;
               };
             style =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Select which style mdl uses.";
+                description = "Select which style mdl uses.";
                 default = "default";
               };
             tags =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Markdown rules to use for linting containing the given tags. Per default all rules are processed.";
+                description = "Markdown rules to use for linting containing the given tags. Per default all rules are processed.";
                 default = [ ];
               };
             verbose =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Increase verbosity.";
+                description = "Increase verbosity.";
                 default = false;
               };
           };
         };
       };
       mkdocs-linkcheck = mkOption {
-        description = lib.mdDoc "mkdocs-linkcheck hook";
+        description = "mkdocs-linkcheck hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.path;
-                description = lib.mdDoc "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
@@ -794,49 +794,49 @@ in
             path =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to check";
+                description = "Path to check";
                 default = "";
               };
 
             local-only =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to only check local links.";
+                description = "Whether to only check local links.";
                 default = false;
               };
 
             recurse =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to recurse directories under path.";
+                description = "Whether to recurse directories under path.";
                 default = false;
               };
 
             extension =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "File extension to scan for.";
+                description = "File extension to scan for.";
                 default = "";
               };
 
             method =
               mkOption {
                 type = types.enum [ "get" "head" ];
-                description = lib.mdDoc "HTTP method to use when checking external links.";
+                description = "HTTP method to use when checking external links.";
                 default = "get";
               };
           };
         };
       };
       mypy = mkOption {
-        description = lib.mdDoc "mypy hook";
+        description = "mypy hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
+                description = "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mypy}/bin/mypy"
@@ -846,34 +846,34 @@ in
         };
       };
       nixfmt = mkOption {
-        description = lib.mdDoc "nixfmt hook";
+        description = "nixfmt hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             width =
               mkOption {
                 type = types.nullOr types.int;
-                description = lib.mdDoc "Line width.";
+                description = "Line width.";
                 default = null;
               };
           };
         };
       };
       no-commit-to-branch = mkOption {
-        description = lib.mdDoc "no-commit-to-branch-hook";
+        description = "no-commit-to-branch-hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             branch =
               mkOption {
-                description = lib.mdDoc "Branches to disallow commits to.";
+                description = "Branches to disallow commits to.";
                 type = types.listOf types.str;
                 default = [ "main" ];
                 example = [ "main" "master" ];
               };
             pattern =
               mkOption {
-                description = lib.mdDoc "RegEx patterns for branch names to disallow commits to.";
+                description = "RegEx patterns for branch names to disallow commits to.";
                 type = types.listOf types.str;
                 default = [ ];
                 example = [ "ma.*" ];
@@ -882,34 +882,34 @@ in
         };
       };
       ormolu = mkOption {
-        description = lib.mdDoc "ormolu hook";
+        description = "ormolu hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             defaultExtensions =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Haskell language extensions to enable.";
+                description = "Haskell language extensions to enable.";
                 default = [ ];
               };
             cabalDefaultExtensions =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Use `default-extensions` from `.cabal` files.";
+                description = "Use `default-extensions` from `.cabal` files.";
                 default = false;
               };
           };
         };
       };
       php-cs-fixer = mkOption {
-        description = lib.mdDoc "php-cs-fixer hook";
+        description = "php-cs-fixer hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "PHP-CS-Fixer binary path.";
+                description = "PHP-CS-Fixer binary path.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.php-cs-fixer}/bin/php-cs-fixer"
@@ -919,14 +919,14 @@ in
         };
       };
       phpcbf = mkOption {
-        description = lib.mdDoc "phpcbf hook";
+        description = "phpcbf hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "PHP_CodeSniffer binary path.";
+                description = "PHP_CodeSniffer binary path.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.phpcbf}/bin/phpcbf"
@@ -936,14 +936,14 @@ in
         };
       };
       phpcs = mkOption {
-        description = lib.mdDoc "phpcs hook";
+        description = "phpcs hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "PHP_CodeSniffer binary path.";
+                description = "PHP_CodeSniffer binary path.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.phpcs}/bin/phpcs"
@@ -953,14 +953,14 @@ in
         };
       };
       phpstan = mkOption {
-        description = lib.mdDoc "phpstan hook";
+        description = "phpstan hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "PHPStan binary path.";
+                description = "PHPStan binary path.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.phpstan}/bin/phpstan"
@@ -972,13 +972,13 @@ in
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
       # See all options for prettier [here](https://prettier.io/docs/en/options.html).
       prettier = mkOption {
-        description = lib.mdDoc "prettier hook";
+        description = "prettier hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
-                description = lib.mdDoc
+                description =
                   "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
                 type = types.nullOr types.path;
                 default = null;
@@ -988,85 +988,85 @@ in
               };
             allow-parens =
               mkOption {
-                description = lib.mdDoc "Include parentheses around a sole arrow function parameter.";
+                description = "Include parentheses around a sole arrow function parameter.";
                 default = "always";
                 type = types.enum [ "always" "avoid" ];
               };
             bracket-same-line =
               mkOption {
-                description = lib.mdDoc "Put > of opening tags on the last line instead of on a new line.";
+                description = "Put > of opening tags on the last line instead of on a new line.";
                 type = types.bool;
                 default = false;
               };
             cache =
               mkOption {
-                description = lib.mdDoc "Only format changed files.";
+                description = "Only format changed files.";
                 type = types.bool;
                 default = false;
               };
             cache-location =
               mkOption {
-                description = lib.mdDoc "Path to the cache file location used by `--cache` flag.";
+                description = "Path to the cache file location used by `--cache` flag.";
                 type = types.str;
                 default = "./node_modules/.cache/prettier/.prettier-cache";
               };
             cache-strategy =
               mkOption {
-                description = lib.mdDoc "Strategy for the cache to use for detecting changed files.";
+                description = "Strategy for the cache to use for detecting changed files.";
                 type = types.nullOr (types.enum [ "metadata" "content" ]);
                 default = null;
               };
             check =
               mkOption {
-                description = lib.mdDoc "Output a human-friendly message and a list of unformatted files, if any.";
+                description = "Output a human-friendly message and a list of unformatted files, if any.";
                 type = types.bool;
                 default = false;
               };
             list-different =
               mkOption {
-                description = lib.mdDoc "Print the filenames of files that are different from Prettier formatting.";
+                description = "Print the filenames of files that are different from Prettier formatting.";
                 type = types.bool;
                 default = true;
               };
             color =
               mkOption {
-                description = lib.mdDoc "Colorize error messages.";
+                description = "Colorize error messages.";
                 type = types.bool;
                 default = true;
               };
             configPath =
               mkOption {
-                description = lib.mdDoc "Path to a Prettier configuration file (.prettierrc, package.json, prettier.config.js).";
+                description = "Path to a Prettier configuration file (.prettierrc, package.json, prettier.config.js).";
                 type = types.str;
                 default = "";
               };
             config-precedence =
               mkOption {
-                description = lib.mdDoc "Defines how config file should be evaluated in combination of CLI options.";
+                description = "Defines how config file should be evaluated in combination of CLI options.";
                 type = types.enum [ "cli-override" "file-override" "prefer-file" ];
                 default = "cli-override";
               };
             embedded-language-formatting =
               mkOption {
-                description = lib.mdDoc "Control how Prettier formats quoted code embedded in the file.";
+                description = "Control how Prettier formats quoted code embedded in the file.";
                 type = types.enum [ "auto" "off" ];
                 default = "auto";
               };
             end-of-line =
               mkOption {
-                description = lib.mdDoc "Which end of line characters to apply.";
+                description = "Which end of line characters to apply.";
                 type = types.enum [ "lf" "crlf" "cr" "auto" ];
                 default = "lf";
               };
             html-whitespace-sensitivity =
               mkOption {
-                description = lib.mdDoc "How to handle whitespaces in HTML.";
+                description = "How to handle whitespaces in HTML.";
                 type = types.enum [ "css" "strict" "ignore" ];
                 default = "css";
               };
             ignore-path =
               mkOption {
-                description = lib.mdDoc "Path to a file containing patterns that describe files to ignore.
+                description = "Path to a file containing patterns that describe files to ignore.
                 By default, prettier looks for `./.gitignore` and `./.prettierignore`.
                 Multiple values are accepted.";
                 type = types.listOf types.path;
@@ -1074,140 +1074,140 @@ in
               };
             ignore-unknown =
               mkOption {
-                description = lib.mdDoc "Ignore unknown files.";
+                description = "Ignore unknown files.";
                 type = types.bool;
                 default = true;
               };
             insert-pragma =
               mkOption {
-                description = lib.mdDoc "Insert @format pragma into file's first docblock comment.";
+                description = "Insert @format pragma into file's first docblock comment.";
                 type = types.bool;
                 default = false;
               };
             jsx-single-quote =
               mkOption {
-                description = lib.mdDoc "Use single quotes in JSX.";
+                description = "Use single quotes in JSX.";
                 type = types.bool;
                 default = false;
               };
             log-level =
               mkOption {
-                description = lib.mdDoc "What level of logs to report.";
+                description = "What level of logs to report.";
                 type = types.enum [ "silent" "error" "warn" "log" "debug" ];
                 default = "log";
                 example = "debug";
               };
             no-bracket-spacing =
               mkOption {
-                description = lib.mdDoc "Do not print spaces between brackets.";
+                description = "Do not print spaces between brackets.";
                 type = types.bool;
                 default = false;
               };
             no-config =
               mkOption {
-                description = lib.mdDoc "Do not look for a configuration file.";
+                description = "Do not look for a configuration file.";
                 type = types.bool;
                 default = false;
               };
             no-editorconfig =
               mkOption {
-                description = lib.mdDoc "Don't take .editorconfig into account when parsing configuration.";
+                description = "Don't take .editorconfig into account when parsing configuration.";
                 type = types.bool;
                 default = false;
               };
             no-error-on-unmatched-pattern =
               mkOption {
-                description = lib.mdDoc "Prevent errors when pattern is unmatched.";
+                description = "Prevent errors when pattern is unmatched.";
                 type = types.bool;
                 default = false;
               };
             no-semi =
               mkOption {
-                description = lib.mdDoc "Do not print semicolons, except at the beginning of lines which may need them.";
+                description = "Do not print semicolons, except at the beginning of lines which may need them.";
                 type = types.bool;
                 default = false;
               };
             parser =
               mkOption {
-                description = lib.mdDoc "Which parser to use.";
+                description = "Which parser to use.";
                 type = types.enum [ "" "flow" "babel" "babel-flow" "babel-ts" "typescript" "acorn" "espree" "meriyah" "css" "less" "scss" "json" "json5" "json-stringify" "graphql" "markdown" "mdx" "vue" "yaml" "glimmer" "html" "angular" "lwc" ];
                 default = "";
               };
             print-width =
               mkOption {
                 type = types.int;
-                description = lib.mdDoc "Line length that the printer will wrap on.";
+                description = "Line length that the printer will wrap on.";
                 default = 80;
               };
             prose-wrap =
               mkOption {
-                description = lib.mdDoc "When to or if at all hard wrap prose to print width.";
+                description = "When to or if at all hard wrap prose to print width.";
                 type = types.enum [ "always" "never" "preserve" ];
                 default = "preserve";
               };
             plugins =
               mkOption {
-                description = lib.mdDoc "Add plugins from paths.";
+                description = "Add plugins from paths.";
                 type = types.listOf types.str;
                 default = [ ];
               };
             quote-props =
               mkOption {
-                description = lib.mdDoc "Change when properties in objects are quoted.";
+                description = "Change when properties in objects are quoted.";
                 type = types.enum [ "as-needed" "consistent" "preserve" ];
                 default = "as-needed";
               };
             require-pragma =
               mkOption {
-                description = lib.mdDoc "Require either '@prettier' or '@format' to be present in the file's first docblock comment.";
+                description = "Require either '@prettier' or '@format' to be present in the file's first docblock comment.";
                 type = types.bool;
                 default = false;
               };
             single-attribute-per-line =
               mkOption {
-                description = lib.mdDoc "Enforce single attribute per line in HTML, Vue andJSX.";
+                description = "Enforce single attribute per line in HTML, Vue andJSX.";
                 type = types.bool;
                 default = false;
               };
             single-quote =
               mkOption {
-                description = lib.mdDoc "Number of spaces per indentation-level.";
+                description = "Number of spaces per indentation-level.";
                 type = types.bool;
                 default = false;
               };
             tab-width =
               mkOption {
-                description = lib.mdDoc "Line length that the printer will wrap on.";
+                description = "Line length that the printer will wrap on.";
                 type = types.int;
                 default = 2;
               };
             trailing-comma =
               mkOption {
-                description = lib.mdDoc "Print trailing commas wherever possible in multi-line comma-separated syntactic structures.";
+                description = "Print trailing commas wherever possible in multi-line comma-separated syntactic structures.";
                 type = types.enum [ "all" "es5" "none" ];
                 default = "all";
               };
             use-tabs =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Indent with tabs instead of spaces.";
+                description = "Indent with tabs instead of spaces.";
                 default = false;
               };
             vue-indent-script-and-style =
               mkOption {
-                description = lib.mdDoc "Indent script and style tags in Vue files.";
+                description = "Indent script and style tags in Vue files.";
                 type = types.bool;
                 default = false;
               };
             with-node-modules =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Process files inside 'node_modules' directory.";
+                description = "Process files inside 'node_modules' directory.";
                 default = false;
               };
             write =
               mkOption {
-                description = lib.mdDoc "Edit files in-place.";
+                description = "Edit files in-place.";
                 type = types.bool;
                 default = true;
               };
@@ -1215,14 +1215,14 @@ in
         };
       };
       psalm = mkOption {
-        description = lib.mdDoc "psalm hook";
+        description = "psalm hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "Psalm binary path.";
+                description = "Psalm binary path.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.psalm}/bin/psalm"
@@ -1232,14 +1232,14 @@ in
         };
       };
       pylint = mkOption {
-        description = lib.mdDoc "pylint hook";
+        description = "pylint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+                description = "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pylint}/bin/pylint"
@@ -1248,27 +1248,27 @@ in
             reports =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to display a full report.";
+                description = "Whether to display a full report.";
                 default = false;
               };
             score =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to activate the evaluation score.";
+                description = "Whether to activate the evaluation score.";
                 default = true;
               };
           };
         };
       };
       pyright = mkOption {
-        description = lib.mdDoc "pyright hook";
+        description = "pyright hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
+                description = "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyright}/bin/pyright"
@@ -1278,14 +1278,14 @@ in
         };
       };
       pyupgrade = mkOption {
-        description = lib.mdDoc "pyupgrade hook";
+        description = "pyupgrade hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = lib.mdDoc "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyupgrade}/bin/pyupgrade"
@@ -1295,13 +1295,13 @@ in
         };
       };
       reuse = mkOption {
-        description = lib.mdDoc "reuse hook";
+        description = "reuse hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             flags = mkOption {
               type = types.str;
-              description = lib.mdDoc "Flags passed to reuse. For available options run 'reuse lint --help'";
+              description = "Flags passed to reuse. For available options run 'reuse lint --help'";
               default = "";
               example = "--json";
             };
@@ -1309,14 +1309,14 @@ in
         };
       };
       revive = mkOption {
-        description = lib.mdDoc "revive hook";
+        description = "revive hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to the configuration TOML file.";
+                description = "Path to the configuration TOML file.";
                 # an empty string translates to use default configuration of the
                 # underlying revive binary
                 default = "";
@@ -1325,21 +1325,21 @@ in
         };
       };
       ripsecrets = mkOption {
-        description = lib.mdDoc "ripsecrets hook";
+        description = "ripsecrets hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             additionalPatterns =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Additional regex patterns used to find secrets. If there is a matching group in the regex the matched group will be tested for randomness before being reported as a secret.";
+                description = "Additional regex patterns used to find secrets. If there is a matching group in the regex the matched group will be tested for randomness before being reported as a secret.";
                 default = [ ];
               };
           };
         };
       };
       rustfmt = mkOption {
-        description = lib.mdDoc ''
+        description = ''
           Additional rustfmt settings
 
           Override the `rustfmt` and `cargo` packages by setting `hooks.rustfmt.packageOverrides`.
@@ -1355,11 +1355,11 @@ in
             options.packageOverrides = {
               cargo = mkOption {
                 type = types.package;
-                description = lib.mdDoc "The cargo package to use.";
+                description = "The cargo package to use.";
               };
               rustfmt = mkOption {
                 type = types.package;
-                description = lib.mdDoc "The rustfmt package to use.";
+                description = "The rustfmt package to use.";
               };
             };
 
@@ -1370,21 +1370,21 @@ in
           });
       };
       statix = mkOption {
-        description = lib.mdDoc "statix hook";
+        description = "statix hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             format =
               mkOption {
                 type = types.enum [ "stderr" "errfmt" "json" ];
-                description = lib.mdDoc "Error Output format.";
+                description = "Error Output format.";
                 default = "errfmt";
               };
 
             ignore =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Globs of file patterns to skip.";
+                description = "Globs of file patterns to skip.";
                 default = [ ];
                 example = [ "flake.nix" "_*" ];
               };
@@ -1392,27 +1392,27 @@ in
         };
       };
       sort-file-contents = mkOption {
-        description = lib.mdDoc "sort-file-contents-hook";
+        description = "sort-file-contents-hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             ignore-case =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Fold lower case to upper case characters.";
+                description = "Fold lower case to upper case characters.";
                 default = false;
               };
             unique =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Ensure each line is unique.";
+                description = "Ensure each line is unique.";
                 default = false;
               };
           };
         };
       };
       treefmt = mkOption {
-        description = lib.mdDoc ''
+        description = ''
           Treefmt hook.
 
           Include any additional formatters configured by treefmt as `hooks.treefmt.settings.formatters`.
@@ -1437,13 +1437,13 @@ in
               options.packageOverrides = {
                 treefmt = mkOption {
                   type = types.package;
-                  description = lib.mdDoc "The treefmt package to use";
+                  description = "The treefmt package to use";
                 };
               };
               options.settings = {
                 formatters = mkOption {
                   type = types.listOf types.package;
-                  description = lib.mdDoc "The formatter packages configured by treefmt";
+                  description = "The formatter packages configured by treefmt";
                   default = [ ];
                 };
               };
@@ -1452,26 +1452,26 @@ in
             });
       };
       typos = mkOption {
-        description = lib.mdDoc "typos hook";
+        description = "typos hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             binary =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Whether to search binary files.";
+                description = "Whether to search binary files.";
                 default = false;
               };
             color =
               mkOption {
                 type = types.enum [ "auto" "always" "never" ];
-                description = lib.mdDoc "When to use generate output.";
+                description = "When to use generate output.";
                 default = "auto";
               };
             configuration =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
+                description = "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
                 default = "";
                 example = ''
                   [files]
@@ -1488,7 +1488,7 @@ in
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to a custom config file.";
+                description = "Path to a custom config file.";
                 default = "";
                 example = ".typos.toml";
               };
@@ -1496,14 +1496,14 @@ in
             diff =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Print a diff of what would change.";
+                description = "Print a diff of what would change.";
                 default = false;
               };
 
             exclude =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Ignore files and directories matching the glob.";
+                description = "Ignore files and directories matching the glob.";
                 default = "";
                 example = "*.nix";
               };
@@ -1511,21 +1511,21 @@ in
             format =
               mkOption {
                 type = types.enum [ "silent" "brief" "long" "json" ];
-                description = lib.mdDoc "Output format to use.";
+                description = "Output format to use.";
                 default = "long";
               };
 
             hidden =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Search hidden files and directories.";
+                description = "Search hidden files and directories.";
                 default = false;
               };
 
             ignored-words =
               mkOption {
                 type = types.listOf types.str;
-                description = lib.mdDoc "Spellings and words to ignore.";
+                description = "Spellings and words to ignore.";
                 default = [ ];
                 example = [
                   "MQTT"
@@ -1536,63 +1536,63 @@ in
             locale =
               mkOption {
                 type = types.enum [ "en" "en-us" "en-gb" "en-ca" "en-au" ];
-                description = lib.mdDoc "Which language to use for spell checking.";
+                description = "Which language to use for spell checking.";
                 default = "en";
               };
 
             no-check-filenames =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Skip verifying spelling in file names.";
+                description = "Skip verifying spelling in file names.";
                 default = false;
               };
 
             no-check-files =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Skip verifying spelling in files.";
+                description = "Skip verifying spelling in files.";
                 default = false;
               };
 
             no-unicode =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Only allow ASCII characters in identifiers.";
+                description = "Only allow ASCII characters in identifiers.";
                 default = false;
               };
 
             quiet =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Less output per occurrence.";
+                description = "Less output per occurrence.";
                 default = false;
               };
 
             verbose =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "More output per occurrence.";
+                description = "More output per occurrence.";
                 default = false;
               };
 
             write =
               mkOption {
                 type = types.bool;
-                description = lib.mdDoc "Fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
+                description = "Fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
                 default = false;
               };
           };
         };
       };
       vale = mkOption {
-        description = lib.mdDoc "vale hook";
+        description = "vale hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configuration =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Multiline-string configuration passed as config file.";
+                description = "Multiline-string configuration passed as config file.";
                 default = "";
                 example = ''
                   MinAlertLevel = suggestion
@@ -1603,27 +1603,27 @@ in
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to the config file.";
+                description = "Path to the config file.";
                 default = "";
               };
             flags =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Flags passed to vale.";
+                description = "Flags passed to vale.";
                 default = "";
               };
           };
         };
       };
       yamlfmt = mkOption {
-        description = lib.mdDoc "yamlfmt hook";
+        description = "yamlfmt hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             configPath =
               mkOption {
                 type = types.str;
-                description = lib.mdDoc "Path to a custom configuration file.";
+                description = "Path to a custom configuration file.";
                 # An empty string translates to yamlfmt looking for a configuration file in the
                 # following locations (by order of preference):
                 # a file named .yamlfmt, yamlfmt.yml, yamlfmt.yaml, .yamlfmt.yaml or .yamlfmt.yml in the current working directory
@@ -1635,7 +1635,7 @@ in
         };
       };
       yamllint = mkOption {
-        description = lib.mdDoc "yamllint hook";
+        description = "yamllint hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
@@ -1644,7 +1644,7 @@ in
             # therefore fails when warnings level problems are detected but there is no output
             configuration = mkOption {
               type = types.str;
-              description = lib.mdDoc "Multiline-string configuration passed as config file. If set, configuration file set in `yamllint.settings.configPath` gets ignored.";
+              description = "Multiline-string configuration passed as config file. If set, configuration file set in `yamllint.settings.configPath` gets ignored.";
               default = "";
               example = ''
                 ---
@@ -1657,13 +1657,13 @@ in
             };
             configData = mkOption {
               type = types.str;
-              description = lib.mdDoc "Serialized YAML object describing the configuration.";
+              description = "Serialized YAML object describing the configuration.";
               default = "";
               example = "{extends: relaxed, rules: {line-length: {max: 120}}}";
             };
             configPath = mkOption {
               type = types.str;
-              description = lib.mdDoc "Path to a custom configuration file.";
+              description = "Path to a custom configuration file.";
               # An empty string translates to yamllint looking for a configuration file in the
               # following locations (by order of preference):
               # a file named .yamllint, .yamllint.yaml or .yamllint.yml in the current working directory
@@ -1673,17 +1673,17 @@ in
             };
             format = mkOption {
               type = types.enum [ "parsable" "standard" "colored" "github" "auto" ];
-              description = lib.mdDoc "Format for parsing output.";
+              description = "Format for parsing output.";
               default = "auto";
             };
             preset = mkOption {
               type = types.enum [ "default" "relaxed" ];
-              description = lib.mdDoc "The configuration preset to use.";
+              description = "The configuration preset to use.";
               default = "default";
             };
             strict = mkOption {
               type = types.bool;
-              description = lib.mdDoc "Return non-zero exit code on warnings as well as errors.";
+              description = "Return non-zero exit code on warnings as well as errors.";
               default = true;
             };
           };
