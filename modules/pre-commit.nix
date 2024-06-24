@@ -106,7 +106,7 @@ in
       package =
         mkOption {
           type = types.package;
-          description = lib.mdDoc
+          description =
             ''
               The `pre-commit` package to use.
             '';
@@ -119,7 +119,7 @@ in
       tools =
         mkOption {
           type = types.lazyAttrsOf (types.nullOr types.package);
-          description = lib.mdDoc
+          description =
             ''
               Tool set from which `nix-pre-commit-hooks` will pick binaries.
 
@@ -131,7 +131,7 @@ in
 
       enabledPackages = mkOption {
         type = types.listOf types.unspecified;
-        description = lib.mdDoc
+        description =
           ''
             All packages provided by hooks that are enabled.
 
@@ -153,7 +153,7 @@ in
           type = types.submodule {
             freeformType = types.attrsOf hookType;
           };
-          description = lib.mdDoc
+          description =
             ''
               The hook definitions.
 
@@ -199,7 +199,7 @@ in
       run =
         mkOption {
           type = types.package;
-          description = lib.mdDoc
+          description =
             ''
               A derivation that tests whether the pre-commit hooks run cleanly on
               the entire project.
@@ -212,7 +212,7 @@ in
       installationScript =
         mkOption {
           type = types.str;
-          description = lib.mdDoc
+          description =
             ''
               A bash snippet that installs nix-pre-commit-hooks in the current directory
             '';
@@ -221,7 +221,7 @@ in
 
       src =
         lib.mkOption {
-          description = lib.mdDoc ''
+          description = ''
             Root of the project. By default this will be filtered with the `gitignoreSource`
             function later, unless `rootSrc` is specified.
 
@@ -234,7 +234,7 @@ in
       rootSrc =
         mkOption {
           type = types.path;
-          description = lib.mdDoc
+          description =
             ''
               The source of the project to be checked.
 
@@ -249,7 +249,7 @@ in
       excludes =
         mkOption {
           type = types.listOf types.str;
-          description = lib.mdDoc
+          description =
             ''
               Exclude files that were matched by these patterns.
             '';
@@ -259,7 +259,7 @@ in
       default_stages =
         mkOption {
           type = supportedHooksLib.supportedHooksType;
-          description = lib.mdDoc
+          description =
             ''
               A configuration wide option for the stages property.
               Installs hooks to the defined stages.
@@ -271,7 +271,7 @@ in
       rawConfig =
         mkOption {
           type = types.attrs;
-          description = lib.mdDoc
+          description =
             ''
               The raw configuration before writing to file.
 
