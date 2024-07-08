@@ -6,6 +6,7 @@
 , ansible-lint
 , biome
 , cabal-fmt
+, cabal-gild
 , cabal2nix
 , callPackage
 , cargo
@@ -99,6 +100,7 @@ in
     biome
     cabal2nix
     cabal-fmt
+    cabal-gild
     cargo
     clang-tools
     clippy
