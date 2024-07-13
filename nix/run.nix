@@ -6,6 +6,7 @@ builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, wr
 , excludes ? [ ]
 , tools ? { }
 , default_stages ? [ "commit" ]
+, imports ? [ ]
 }:
 let
   project =
@@ -27,7 +28,7 @@ let
                 rootSrc = gitignore-nix-src.lib.gitignoreSource src;
               });
           }
-        ];
+        ] ++ imports;
     };
   inherit (project.config) installationScript;
 
