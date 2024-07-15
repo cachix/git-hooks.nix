@@ -3182,7 +3182,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "ruff";
           description = "An extremely fast Python linter, written in Rust.";
           package = tools.ruff;
-          entry = "${hooks.ruff.package}/bin/ruff --fix";
+          entry = "${hooks.ruff.package}/bin/ruff check --fix";
           types = [ "python" ];
         };
       rustfmt =
