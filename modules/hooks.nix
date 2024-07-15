@@ -3344,12 +3344,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.terraform-format.package}/bin/terraform-fmt";
           files = "\\.tf$";
         };
-      tflint =
+      terraform-lint =
         {
-          name = "tflint";
+          name = "terraform-lint";
           description = "A Pluggable Terraform Linter.";
-          package = tools.tflint;
-          entry = "${hooks.tflint.package}/bin/tflint";
+          package = tools.terraform-lint;
+          extraPackages = [ pkgs.tflint ];
+          entry = "${hooks.terraform-lint.package}/bin/terraform-lint";
           files = "\\.tf$";
         };
       topiary =
