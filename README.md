@@ -237,6 +237,7 @@ clang-format supports.
 - [poetry](https://python-poetry.org/docs/pre-commit-hooks)
 - [pyupgrade](https://github.com/asottile/pyupgrade)
 - [ruff](https://github.com/charliermarsh/ruff)
+- [ruff-format](https://github.com/charliermarsh/ruff)
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
 
 ### PHP
