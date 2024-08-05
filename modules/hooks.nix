@@ -3187,7 +3187,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         };
       ruff-format =
         {
-          name = "ruff";
+          name = "ruff-format";
           description = "An extremely fast Python code formatter, written in Rust.";
           package = tools.ruff;
           entry = "${hooks.ruff.package}/bin/ruff format";
