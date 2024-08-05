@@ -3185,6 +3185,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.ruff.package}/bin/ruff check --fix";
           types = [ "python" ];
         };
+      ruff-format =
+        {
+          name = "ruff";
+          description = "An extremely fast Python code formatter, written in Rust.";
+          package = tools.ruff;
+          entry = "${hooks.ruff.package}/bin/ruff format";
+          types = [ "python" ];
+        };
       rustfmt =
         let
           inherit (hooks.rustfmt) packageOverrides;
