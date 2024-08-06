@@ -3229,8 +3229,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           description = "Format shell files.";
           types = [ "shell" ];
           package = tools.shfmt;
-          entry = "${hooks.shfmt.package}/bin/shfmt -w -l";
-          args = [ "-s" ];
+          entry = "${hooks.shfmt.package}/bin/shfmt -w -s -l";
         };
       single-quoted-strings =
         {

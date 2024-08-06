@@ -120,9 +120,9 @@ in
 
     exclude_types = mkOption {
       type = types.listOf types.str;
-      description = lib.mdDoc
+      description =
         ''
-          List of file types to exclude. See [Filtering files with types](https://pre-commit.com/#plugins).
+          List of file types to exclude. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
         '';
       default = [ ];
     };
@@ -178,9 +178,10 @@ in
 
     args = mkOption {
       type = types.listOf types.str;
-      description = lib.mdDoc ''
-        List of additional parameters to pass to the hook.
-      '';
+      description =
+        ''
+          List of additional parameters to pass to the hook.
+        '';
       default = [ ];
     };
   };
