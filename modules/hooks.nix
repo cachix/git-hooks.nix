@@ -1369,6 +1369,19 @@ in
             ];
           });
       };
+      shfmt = mkOption {
+        description = "shfmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            simplify = mkOption {
+              type = types.bool;
+              description = "Simplify the code.";
+              default = true;
+            };
+          };
+        };
+      };
       statix = mkOption {
         description = "statix hook";
         type = types.submodule {
@@ -3229,7 +3242,11 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           description = "Format shell files.";
           types = [ "shell" ];
           package = tools.shfmt;
-          entry = "${hooks.shfmt.package}/bin/shfmt -w -s -l";
+          entry =
+            let
+              simplify = if hooks.shfmt.settings.simplify then "-s" else "";
+            in
+            "${hooks.shfmt.package}/bin/shfmt -w -l ${simplify}";
         };
       single-quoted-strings =
         {
