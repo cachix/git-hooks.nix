@@ -3369,6 +3369,16 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.terraform-format.package}/bin/terraform-fmt";
           files = "\\.tf$";
         };
+      terraform-validate =
+        {
+          name = "terraform-validate";
+          description = "Validates terraform configuration files (`.tf`).";
+          package = tools.terraform-validate;
+          entry = "${hooks.terraform-validate.package}/bin/terraform-validate";
+          files = "\\.(tf(vars)?|terraform\\.lock\\.hcl)$";
+          excludes = [ "\\.terraform/.*$" ];
+          require_serial = true;
+        };
       tflint =
         {
           name = "tflint";
