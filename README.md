@@ -7,12 +7,11 @@
 - **Trivial integration for Nix projects** (wires up a few things behind the scenes)
 
 - Provide a low-overhead build of all the tooling available for the hooks to use
-   (naive implementation of calling nix-shell does bring some latency when committing)
+  (naive implementation of calling nix-shell does bring some latency when committing)
 
 - **Common hooks for languages** like Python, Haskell, Elm, etc. [see all hook options](https://devenv.sh/?q=pre-commit.hooks)
 
 - Run hooks **as part of development** and **on during CI**
-
 
 ## Getting started
 
@@ -299,6 +298,7 @@ clang-format supports.
 ### Terraform
 
 - `terraform-format`: built-in formatter (using [OpenTofu](https://opentofu.org/)'s [`fmt`](https://opentofu.org/docs/cli/commands/fmt/))
+- `terraform-validate`: built-in validator (using [OpenTofu](https://opentofu.org/)'s [`validate`](https://opentofu.org/docs/cli/commands/validate/))
 - [tflint](https://github.com/terraform-linters/tflint)
 
 ### YAML
@@ -435,12 +435,12 @@ Example configuration:
 Custom hooks are defined with the same schema as [pre-defined
 hooks](modules/pre-commit.nix).
 
-
 ## Contributing hooks
 
 Everyone is encouraged to add new hooks.
 
 <!-- TODO generate option docs -->
+
 Have a look at the [existing hooks](modules/hooks.nix) and the [options](modules/pre-commit.nix).
 
 There's no guarantee the hook will be accepted, but the general guidelines are:
