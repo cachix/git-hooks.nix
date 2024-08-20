@@ -45,6 +45,8 @@
 , mdsh
 , nil
 , nixfmt
+, nixfmt-classic ? null
+, nixfmt-rfc-style ? null
 , nixpkgs-fmt
 , nodePackages
 , ocamlPackages
@@ -131,7 +133,6 @@ in
     mdl
     mdsh
     nil
-    nixfmt
     nixpkgs-fmt
     ormolu
     pre-commit-hook-ensure-sops
@@ -201,4 +202,9 @@ in
   checkmake = if stdenv.isLinux || checkmake.version >= "0.2.2" then checkmake else null;
 
   headache = callPackage ./headache { };
+
+  # nixfmt was renamed to nixfmt-classic in 24.05.
+  # nixfmt may be replaced by nixfmt-rfc-style in the future.
+  nixfmt = if nixfmt-classic == null then nixfmt else nixfmt-classic;
+  inherit nixfmt-classic nixfmt-rfc-style;
 }
