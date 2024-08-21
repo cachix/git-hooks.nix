@@ -2674,7 +2674,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           };
           script = pkgs.writeShellApplication {
             name = "lua-ls-lint";
-            runtimeInputs = [ hooks.lua-ls.package ];
+            runtimeInputs = [ hooks.lua-ls.package pkgs.jq ];
             checkPhase = ""; # The default checkPhase depends on GHC
             text = ''
               set -e
@@ -2686,7 +2686,10 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               if [[ -f $logpath/check.json ]]; then
                 echo "+++++++++++++++ lua-language-server diagnostics +++++++++++++++"
                 cat $logpath/check.json
-                exit 1
+                diagnostic_count=$(jq 'length' $logpath/check.json)
+                if [ "$diagnostic_count" -gt 0 ]; then
+                  exit 1
+                fi
               fi
             '';
           };
