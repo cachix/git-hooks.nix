@@ -27,7 +27,7 @@ Given the following `flake.nix` example:
 {
   description = "An example project.";
 
-  inputs.pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+  inputs.pre-commit-hooks.url = "github:cachix/git-hooks.nix";
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
@@ -82,7 +82,7 @@ nix develop
 
    ```nix
     let
-      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
+      nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/git-hooks.nix/tarball/master");
     in {
       # Configured with the module options defined in `modules/pre-commit.nix`:
       pre-commit-check = nix-pre-commit-hooks.run {
@@ -387,7 +387,7 @@ Example configuration:
 
 ```nix
  let
-   nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/pre-commit-hooks.nix/tarball/master");
+   nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/git-hooks.nix/tarball/master");
  in {
    pre-commit-check = nix-pre-commit-hooks.run {
      hooks = {

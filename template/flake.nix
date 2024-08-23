@@ -3,9 +3,9 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
+    git-hooks-nix.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
-    pre-commit-hooks-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ self, flake-parts, ... }:
@@ -13,7 +13,7 @@
       { inherit inputs; }
       {
         imports = [
-          inputs.pre-commit-hooks-nix.flakeModule
+          inputs.git-hooks-nix.flakeModule
         ];
         systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
         perSystem = { config, self', inputs', pkgs, ... }: {
