@@ -1869,7 +1869,7 @@ in
           ## this gets into a NixOS release, the following code will be useless.
           lib.throwIf
             (hooks.checkmake.package == null)
-            "The version of nixpkgs used by pre-commit-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
+            "The version of nixpkgs used by git-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
             "${hooks.checkmake.package}/bin/checkmake";
       };
       check-added-large-files =
@@ -2096,7 +2096,7 @@ in
             # need version >= 0.4.0 for the --from-stdin flag
             toolVersionCheck = lib.versionAtLeast convco.version "0.4.0";
           in
-          lib.throwIf (convco == null || !toolVersionCheck) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+          lib.throwIf (convco == null || !toolVersionCheck) "The version of Nixpkgs used by git-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
             builtins.toString
             script;
         stages = [ "commit-msg" ];
@@ -2521,7 +2521,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                 "$PRE_COMMIT_COMMIT_MSG_SOURCE" --commit-msg-file "$1"
             '';
           in
-          lib.throwIf (hooks.gptcommit.package == null) "The version of Nixpkgs used by pre-commit-hooks.nix does not have the `gptcommit` package. Please use a more recent version of Nixpkgs."
+          lib.throwIf (hooks.gptcommit.package == null) "The version of Nixpkgs used by git-hooks.nix does not have the `gptcommit` package. Please use a more recent version of Nixpkgs."
             toString
             script;
         stages = [ "prepare-commit-msg" ];
@@ -2547,7 +2547,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             ## next NixOS release, the following code will become irrelevant.
             lib.throwIf
               (hooks.headache.package == null)
-              "The version of nixpkgs used by pre-commit-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
+              "The version of nixpkgs used by git-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
               "${hooks.headache.package}/bin/headache -h ${hooks.headache.settings.header-file}";
         };
       hindent =
@@ -3002,7 +3002,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           ## useless.
           lib.throwIf
             (hooks.pre-commit-hook-ensure-sops.package == null)
-            "The version of nixpkgs used by pre-commit-hooks.nix does not have the `pre-commit-hook-ensure-sops` package. Please use a more recent version of nixpkgs."
+            "The version of nixpkgs used by git-hooks.nix does not have the `pre-commit-hook-ensure-sops` package. Please use a more recent version of nixpkgs."
             ''
               ${hooks.pre-commit-hook-ensure-sops.package}/bin/pre-commit-hook-ensure-sops
             '';
@@ -3401,7 +3401,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             ## useless.
             lib.throwIf
               (hooks.topiary.package == null)
-              "The version of nixpkgs used by pre-commit-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
+              "The version of nixpkgs used by git-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
               (
                 let
                   topiary-inplace = pkgs.writeShellApplication {
@@ -3498,7 +3498,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         entry =
           lib.throwIf
             (hooks.typstyle.package == null)
-            "The version of nixpkgs used by pre-commit-hooks.nix must contain typstyle"
+            "The version of nixpkgs used by git-hooks.nix must contain typstyle"
             "${hooks.typstyle.package}/bin/typstyle -i";
         files = "\\.typ$";
       };

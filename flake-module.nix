@@ -46,7 +46,7 @@ in
               };
               default = { };
               description = ''
-                The pre-commit-hooks.nix configuration.
+                The git-hooks.nix configuration.
               '';
             };
             installationScript = mkOption {
