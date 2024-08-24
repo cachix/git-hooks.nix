@@ -2,6 +2,7 @@
 let
   inherit (lib)
     attrNames
+    boolToString
     concatStringsSep
     compare
     filterAttrs
@@ -281,6 +282,15 @@ in
           internal = true;
         };
 
+      addGcRoot = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          Whether to add the generated pre-commit-config.yaml to the garbage collector roots.
+          This prevents Nix from garbage-collecting the tools used by hooks.
+        '';
+      };
+
       assertions = lib.mkOption {
         type = types.listOf types.unspecified;
         internal = true;
@@ -351,7 +361,11 @@ in
                 echo 1>&2 "    2. remove .pre-commit-config.yaml"
                 echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
               else
-                ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
+                if ${boolToString cfg.addGcRoot}; then
+                  nix-store --add-root "''${GIT_WC}/.pre-commit-config.yaml" --indirect --realise ${configFile}
+                else
+                  ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
+                fi
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
                 for hook in $hooks; do
