@@ -61,7 +61,7 @@ let
 
   executeTest = lib.mapAttrsToList
     (name: test:
-      let runDerivation = run ({ src = null; } // test.conf);
+      let runDerivation = run ({ src = null; addGcRoot = false; } // test.conf);
       in ''
         rm -f ~/.git/hooks/*
         ${runDerivation.shellHook}
