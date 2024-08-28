@@ -149,7 +149,8 @@ use nix
 - [deadnix](https://github.com/astro/deadnix)
 - [flake-checker](https://github.com/DeterminateSystems/flake-checker)
 - [nil](https://github.com/oxalica/nil)
-- [nixfmt](https://github.com/serokell/nixfmt/)
+- [nixfmt-classic](https://github.com/NixOS/nixfmt/tree/v0.6.0)
+- [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [statix](https://github.com/nerdypepper/statix)
 
