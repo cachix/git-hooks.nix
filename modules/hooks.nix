@@ -859,6 +859,20 @@ in
           };
         };
       };
+      nixfmt-rfc-style = mkOption {
+        description = "nixfmt (RFC 166 style) hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            width =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Line width.";
+                default = null;
+              };
+          };
+        };
+      };
       no-commit-to-branch = mkOption {
         description = "no-commit-to-branch-hook";
         type = types.submodule {
@@ -2866,6 +2880,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           description = "Nix code prettifier.";
           package = tools.nixfmt-classic;
           entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          files = "\\.nix$";
+        };
+      nixfmt-rfc-style =
+        {
+          name = "nixfmt-rfc-style";
+          description = "Nix code prettifier (RFC 166 style).";
+          package = tools.nixfmt-rfc-style;
+          entry = "${hooks.nixfmt-rfc-style.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-rfc-style.settings.width != null) "--width=${toString hooks.nixfmt-rfc-style.settings.width}"}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
