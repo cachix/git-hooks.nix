@@ -1731,7 +1731,7 @@ in
               cmdArgs =
                 mkCmdArgs (with hooks.alejandra.settings; [
                   [ check "--check" ]
-                  [ (exclude != [ ]) "${lib.escapeShellArgs (map (file: "--exclude '${file}'") (lib.unique exclude))}" ]
+                  [ (exclude != [ ]) "--exclude ${lib.strings.concatStringsSep " --exclude " (map lib.escapeShellArg (lib.unique exclude))}" ]
                   [ (verbosity == "quiet") "-q" ]
                   [ (verbosity == "silent") "-qq" ]
                   [ (threads != null) "--threads ${toString threads}" ]
