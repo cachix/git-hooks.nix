@@ -846,7 +846,22 @@ in
         };
       };
       nixfmt = mkOption {
-        description = "nixfmt hook";
+        description = "Deprecated nixfmt hook";
+        visible = false;
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            width =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Line width.";
+                default = null;
+              };
+          };
+        };
+      };
+      nixfmt-classic = mkOption {
+        description = "nixfmt (classic) hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
@@ -1721,6 +1736,11 @@ in
   config.warnings =
     lib.optional cfg.hooks.rome.enable ''
       The hook `hooks.rome` has been renamed to `hooks.biome`.
+    ''
+    ++ lib.optional cfg.hooks.nixfmt.enable ''
+      The hook `hooks.nixfmt` has been renamed to `hooks.nixfmt-classic`.
+
+      The new RFC 166-style nixfmt is available as `hooks.nixfmt-rfc-style`.
     '';
 
   # PLEASE keep this sorted alphabetically.
@@ -2874,12 +2894,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             builtins.toString script;
           files = "\\.nix$";
         };
-      nixfmt =
+      # nixfmt was renamed to nixfmt-classic.
+      # The hook has been deprecated to free up the name for when the new RFC-style nixfmt becomes stable.
+      nixfmt = nixfmt-classic;
+      nixfmt-classic =
         {
-          name = "nixfmt";
-          description = "Nix code prettifier.";
+          name = "nixfmt-classic";
+          description = "Nix code prettifier (classic).";
           package = tools.nixfmt-classic;
-          entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          entry = "${hooks.nixfmt-classic.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-classic.settings.width != null) "--width=${toString hooks.nixfmt-classic.settings.width}"}";
           files = "\\.nix$";
         };
       nixfmt-rfc-style =
