@@ -3508,7 +3508,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               '';
             in
             builtins.toString script;
-          package = pkgs.trufflehog;
+          package = tools.trufflehog;
 
           # trufflehog expects to run across the whole repo, not particular files
           pass_filenames = false;

@@ -74,6 +74,7 @@
 , texlive
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , treefmt
+, trufflehog
 , typos
 , typstfmt
 , typstyle ? null ## Add in nixpkgs added on commit 800ca60
@@ -152,6 +153,7 @@ in
     taplo
     topiary
     treefmt
+    trufflehog
     typos
     typstfmt
     typstyle
