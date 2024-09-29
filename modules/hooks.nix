@@ -67,10 +67,18 @@ in
 
   # PLEASE keep this sorted alphabetically.
   options.settings = {
-    rust.cargoManifestPath = mkOption {
-      type = types.nullOr types.str;
-      description = "Path to Cargo.toml";
-      default = null;
+    rust = {
+      check.cargoDeps = mkOption {
+        type = types.nullOr types.attrs;
+        description = "Cargo dependencies needed to run the checks.";
+        example = "pkgs.rustPlatform.importCargoLock { lockFile = ./Cargo.lock; }";
+        default = null;
+      };
+      cargoManifestPath = mkOption {
+        type = types.nullOr types.str;
+        description = "Path to Cargo.toml";
+        default = null;
+      };
     };
   };
 
