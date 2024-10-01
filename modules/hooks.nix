@@ -232,6 +232,11 @@ in
                 description = "Run clippy with --all-features";
                 default = false;
               };
+              extraArgs = mkOption {
+                type = types.str;
+                description = "Additional arguments to pass to clippy";
+                default = "";
+              };
             };
 
             config.extraPackages = [
@@ -2073,7 +2078,7 @@ in
           description = "Lint Rust code.";
           package = wrapper;
           packageOverrides = { cargo = tools.cargo; clippy = tools.clippy; };
-          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
+          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} ${hooks.clippy.settings.extraArgs} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
