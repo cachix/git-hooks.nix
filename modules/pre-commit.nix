@@ -78,7 +78,7 @@ let
       fi
       exitcode=$?
       git --no-pager diff --color
-      touch $out
+      mkdir $out
       [ $? -eq 0 ] && exit $exitcode
     '';
 
