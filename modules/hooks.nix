@@ -565,6 +565,20 @@ in
           };
         };
       };
+      golines = mkOption {
+        description = "golines hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Flags passed to golines. See all available [here](https://github.com/segmentio/golines?tab=readme-ov-file#options)";
+              default = "";
+              example = "-m 120";
+            };
+          };
+        };
+      };
       headache = mkOption {
         description = "headache hook";
         type = types.submodule {
@@ -2487,6 +2501,31 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         # all file names in a single run.
         require_serial = true;
       };
+      golines =
+        {
+          name = "golines";
+          description = "A golang formatter that fixes long lines";
+          package = tools.golines;
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-golines" ''
+                set -e
+                failed=false
+                for file in "$@"; do
+                    # redirect stderr so that violations and summaries are properly interleaved.
+                    if ! ${hooks.golines.package}/bin/golines ${hooks.golines.settings.flags} -w "$file" 2>&1
+                    then
+                        failed=true
+                    fi
+                done
+                if [[ $failed == "true" ]]; then
+                    exit 1
+                fi
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+        };
       gotest = {
         name = "gotest";
         description = "Run go tests";
