@@ -1,13 +1,8 @@
 { config, lib, pkgs, hookModule, ... }:
 let
-  inherit (config) hooks tools settings;
+  inherit (config) hooks tools;
   cfg = config;
   inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRemovedOptionModule mkRenamedOptionModule types;
-
-  cargoManifestPathArg =
-    lib.optionalString
-      (settings.rust.cargoManifestPath != null)
-      "--manifest-path ${lib.escapeShellArg settings.rust.cargoManifestPath}";
 
   mkCmdArgs = predActionList:
     lib.concatStringsSep
@@ -76,7 +71,8 @@ in
 
   # PLEASE keep this sorted alphabetically.
   options.hooks =
-    {
+    import ./rust/options.nix { inherit config lib hookModule; }
+    // {
       alejandra = mkOption {
         description = "alejandra hook";
         type = types.submodule {
@@ -200,50 +196,6 @@ in
             };
           };
         };
-      };
-      clippy = mkOption {
-        description = "clippy hook";
-        type = types.submodule
-          ({ config, ... }: {
-            imports = [ hookModule ];
-            options.packageOverrides = {
-              cargo = mkOption {
-                type = types.package;
-                description = "The cargo package to use";
-              };
-              clippy = mkOption {
-                type = types.package;
-                description = "The clippy package to use";
-              };
-            };
-            options.settings = {
-              denyWarnings = mkOption {
-                type = types.bool;
-                description = "Fail when warnings are present";
-                default = false;
-              };
-              offline = mkOption {
-                type = types.bool;
-                description = "Run clippy offline";
-                default = true;
-              };
-              allFeatures = mkOption {
-                type = types.bool;
-                description = "Run clippy with --all-features";
-                default = false;
-              };
-              extraArgs = mkOption {
-                type = types.str;
-                description = "Additional arguments to pass to clippy";
-                default = "";
-              };
-            };
-
-            config.extraPackages = [
-              config.packageOverrides.cargo
-              config.packageOverrides.clippy
-            ];
-          });
       };
       cmake-format = mkOption {
         description = "cmake-format hook";
@@ -1372,37 +1324,6 @@ in
           };
         };
       };
-      rustfmt = mkOption {
-        description = ''
-          Additional rustfmt settings
-
-          Override the `rustfmt` and `cargo` packages by setting `hooks.rustfmt.packageOverrides`.
-
-          ```
-          hooks.rustfmt.packageOverrides.cargo = pkgs.cargo;
-          hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
-          ```
-        '';
-        type = types.submodule
-          ({ config, ... }: {
-            imports = [ hookModule ];
-            options.packageOverrides = {
-              cargo = mkOption {
-                type = types.package;
-                description = "The cargo package to use.";
-              };
-              rustfmt = mkOption {
-                type = types.package;
-                description = "The rustfmt package to use.";
-              };
-            };
-
-            config.extraPackages = [
-              config.packageOverrides.cargo
-              config.packageOverrides.rustfmt
-            ];
-          });
-      };
       shfmt = mkOption {
         description = "shfmt hook";
         type = types.submodule {
@@ -1753,8 +1674,10 @@ in
       };
     };
 
+  config.assertions = import ./rust/assertions.nix { inherit config lib; };
   config.warnings =
-    lib.optional cfg.hooks.rome.enable ''
+    import ./rust/warnings.nix { inherit config lib; }
+    ++ lib.optional cfg.hooks.rome.enable ''
       The hook `hooks.rome` has been renamed to `hooks.biome`.
     ''
     ++ lib.optional cfg.hooks.nixfmt.enable ''
@@ -1764,8 +1687,9 @@ in
     '';
 
   # PLEASE keep this sorted alphabetically.
-  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault))
-    rec {
+  config.hooks = mapAttrs (_: mapAttrs (_: mkDefault)) (
+    import ./rust/config.nix { inherit config lib pkgs; }
+    // rec {
       actionlint =
         {
           name = "actionlint";
@@ -1903,15 +1827,6 @@ in
           package = tools.cabal2nix-dir;
           entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir";
           files = "\\.cabal$";
-        };
-      cargo-check =
-        {
-          name = "cargo-check";
-          description = "Check the cargo package for errors";
-          package = tools.cargo;
-          entry = "${hooks.cargo-check.package}/bin/cargo check ${cargoManifestPathArg}";
-          files = "\\.rs$";
-          pass_filenames = false;
         };
       checkmake = {
         name = "checkmake";
@@ -2075,28 +1990,6 @@ in
         entry = "${hooks.clang-tidy.package}/bin/clang-tidy --fix";
         types_or = [ "c" "c++" "c#" "objective-c" ];
       };
-      clippy =
-        let
-          inherit (hooks.clippy) packageOverrides;
-          wrapper = pkgs.symlinkJoin {
-            name = "clippy-wrapped";
-            paths = [ packageOverrides.clippy ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/cargo-clippy \
-                --prefix PATH : ${lib.makeBinPath [ packageOverrides.cargo ]}
-            '';
-          };
-        in
-        {
-          name = "clippy";
-          description = "Lint Rust code.";
-          package = wrapper;
-          packageOverrides = { cargo = tools.cargo; clippy = tools.clippy; };
-          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} ${hooks.clippy.settings.extraArgs} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
-          files = "\\.rs$";
-          pass_filenames = false;
-        };
       cljfmt =
         {
           name = "cljfmt";
@@ -3274,28 +3167,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.ruff.package}/bin/ruff format";
           types = [ "python" ];
         };
-      rustfmt =
-        let
-          inherit (hooks.rustfmt) packageOverrides;
-          wrapper = pkgs.symlinkJoin {
-            name = "rustfmt-wrapped";
-            paths = [ packageOverrides.rustfmt ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              wrapProgram $out/bin/cargo-fmt \
-              --prefix PATH : ${lib.makeBinPath [ packageOverrides.cargo packageOverrides.rustfmt ]}
-            '';
-          };
-        in
-        {
-          name = "rustfmt";
-          description = "Format Rust code.";
-          package = wrapper;
-          packageOverrides = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
-          entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} --all -- --color always";
-          files = "\\.rs$";
-          pass_filenames = false;
-        };
       shellcheck =
         {
           name = "shellcheck";
@@ -3663,5 +3534,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           types_or = [ "clojure" "clojurescript" "edn" ];
         };
 
-    };
+    }
+  );
 }
