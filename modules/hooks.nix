@@ -1383,10 +1383,10 @@ in
           hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
           ```
         '';
-        type = types.submodule
-          ({ config, ... }: {
-            imports = [ hookModule ];
-            options.packageOverrides = {
+        type = types.submodule ({ config, ... }: {
+          imports = [ hookModule ];
+          options = {
+            packageOverrides = {
               cargo = mkOption {
                 type = types.package;
                 description = "The cargo package to use.";
@@ -1396,12 +1396,84 @@ in
                 description = "The rustfmt package to use.";
               };
             };
-
-            config.extraPackages = [
-              config.packageOverrides.cargo
-              config.packageOverrides.rustfmt
-            ];
-          });
+            settings =
+              let
+                nameType = types.strMatching "[][*?!0-9A-Za-z_-]+";
+              in
+              {
+                all = mkOption {
+                  type = types.bool;
+                  description = "Format all packages, and also their local path-based dependencies";
+                  default = true;
+                };
+                check = mkOption {
+                  type = types.bool;
+                  description = "Run rustfmt in check mode";
+                  default = false;
+                };
+                color = mkOption {
+                  type = types.enum [ "auto" "always" "never" ];
+                  description = "Coloring the output";
+                  default = "always";
+                };
+                config = mkOption {
+                  type = types.attrs;
+                  description = "Override configuration values";
+                  default = { };
+                  apply = config:
+                    let
+                      config' = lib.mapAttrsToList
+                        (key: value: "${key}=${toString value}")
+                        config;
+                    in
+                    if config != { }
+                    then
+                      (builtins.concatStringsSep "," config')
+                    else
+                      null;
+                };
+                config-path = mkOption {
+                  type = types.nullOr types.str;
+                  description = "Path to rustfmt.toml config file";
+                  default = null;
+                };
+                emit = mkOption {
+                  type = types.nullOr (types.enum [ "files" "stdout" ]);
+                  description = "What data to emit and how";
+                  default = null;
+                };
+                files-with-diff = mkOption {
+                  type = types.bool;
+                  description = "";
+                  default = hooks.rustfmt.settings.message-format == "short";
+                };
+                manifest-path = mkOption {
+                  type = types.nullOr types.str;
+                  description = "Path to Cargo.toml";
+                  default = settings.rust.cargoManifestPath;
+                };
+                message-format = mkOption {
+                  type = types.nullOr (types.enum [ "human" "short" ]);
+                  description = "The output format of diagnostic messages";
+                  default = null;
+                };
+                package = mkOption {
+                  type = types.listOf nameType;
+                  description = "Package(s) to check";
+                  default = [ ];
+                };
+                verbose = mkOption {
+                  type = types.bool;
+                  description = "Use verbose output";
+                  default = false;
+                };
+              };
+          };
+          config.extraPackages = [
+            config.packageOverrides.cargo
+            config.packageOverrides.rustfmt
+          ];
+        });
       };
       shfmt = mkOption {
         description = "shfmt hook";
@@ -3276,6 +3348,8 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         };
       rustfmt =
         let
+          mkAdditionalArgs = args: lib.optionalString (args != "") " -- ${args}";
+
           inherit (hooks.rustfmt) packageOverrides;
           wrapper = pkgs.symlinkJoin {
             name = "rustfmt-wrapped";
@@ -3283,7 +3357,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-fmt \
-              --prefix PATH : ${lib.makeBinPath [ packageOverrides.cargo packageOverrides.rustfmt ]}
+              --prefix PATH : ${lib.makeBinPath (builtins.attrValues packageOverrides)}
             '';
           };
         in
@@ -3291,8 +3365,19 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "rustfmt";
           description = "Format Rust code.";
           package = wrapper;
-          packageOverrides = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
-          entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} --all -- --color always";
+          packageOverrides = { inherit (tools) cargo rustfmt; };
+          entry =
+            let
+              inherit (hooks) rustfmt;
+              inherit (rustfmt) settings;
+              cargoArgs = lib.cli.toGNUCommandLineShell { } {
+                inherit (settings) all package verbose;
+              };
+              rustfmtArgs = lib.cli.toGNUCommandLineShell { } {
+                inherit (settings) check emit config-path color files-with-diff config verbose;
+              };
+            in
+            "${rustfmt.package}/bin/cargo-fmt fmt ${cargoArgs}${mkAdditionalArgs rustfmtArgs}";
           files = "\\.rs$";
           pass_filenames = false;
         };
