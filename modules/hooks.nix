@@ -1421,6 +1421,13 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
+            config =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Path to statix.toml or its parent directory.";
+                default = null;
+              };
+
             format =
               mkOption {
                 type = types.enum [ "stderr" "errfmt" "json" ];
@@ -1434,6 +1441,14 @@ in
                 description = "Globs of file patterns to skip.";
                 default = [ ];
                 example = [ "flake.nix" "_*" ];
+              };
+
+            unrestricted =
+              mkOption {
+                type = types.bool;
+                description = "Don't respect .gitignore files.";
+                default = false;
+                example = true;
               };
           };
         };
@@ -3374,8 +3389,16 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "statix";
           description = "Lints and suggestions for the Nix programming language.";
           package = tools.statix;
-          entry = with hooks.statix.settings;
-            "${hooks.statix.package}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
+          entry =
+            let
+              inherit (hooks.statix) package settings;
+              options = lib.cli.toGNUCommandLineShell
+                {
+                  mkList = name: value: [ name ] ++ lib.unique value;
+                }
+                settings;
+            in
+            "${package}/bin/statix check ${options}";
           files = "\\.nix$";
           pass_filenames = false;
         };
