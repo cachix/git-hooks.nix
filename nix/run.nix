@@ -35,6 +35,7 @@ let
 
 in
 project.config.run // {
+  inherit (project) config;
+  inherit (project.config) enabledPackages;
   shellHook = installationScript;
-  enabledPackages = project.config.enabledPackages;
 }

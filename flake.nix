@@ -55,5 +55,7 @@
             exposed-stable.checks)));
 
       lib = forAllSystems ({ exposed, ... }: { inherit (exposed) run; });
+
+      exposed = forAllSystems ({ exposed, ... }: exposed);
     };
 }
