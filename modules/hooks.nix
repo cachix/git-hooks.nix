@@ -3392,9 +3392,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry =
             let
               inherit (hooks.statix) package settings;
+              mkOptionName = k:
+                if builtins.stringLength k == 1
+                then "-${k}"
+                else "--${k}";
               options = lib.cli.toGNUCommandLineShell
                 {
-                  mkList = name: value: [ name ] ++ lib.unique value;
+                  # instead of repeating the option name for each element,
+                  # create a single option with a space-separated list of unique values.
+                  mkList = k: v: [ (mkOptionName k) ] ++ lib.unique v;
                 }
                 settings;
             in
