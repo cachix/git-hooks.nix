@@ -3485,7 +3485,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                 {
                   # instead of repeating the option name for each element,
                   # create a single option with a space-separated list of unique values.
-                  mkList = k: v: [ (mkOptionName k) ] ++ lib.unique v;
+                  mkList = k: v: if v == [ ] then [ ] else [ (mkOptionName k) ] ++ lib.unique v;
                 }
                 settings;
             in
