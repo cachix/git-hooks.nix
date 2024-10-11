@@ -3479,7 +3479,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               inherit (hooks.statix) package settings;
               options = lib.cli.toGNUCommandLineShell
                 {
-                  mkList = name: value: [ name ] ++ lib.unique value;
+                  mkList = name: value: if value == [] then [] else [ name ] ++ lib.unique value;
                 }
                 settings;
             in
