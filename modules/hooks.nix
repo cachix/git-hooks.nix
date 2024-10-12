@@ -2099,7 +2099,7 @@ in
       check-xml =
         {
           name = "check-xml";
-          description = "Check syntax of TOML files.";
+          description = "Check syntax of XML files.";
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-xml.package}/bin/check-xml";
           types = [ "xml" ];
