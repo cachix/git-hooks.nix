@@ -1,20 +1,18 @@
 { config, lib, pkgs, hookModule, ... }:
 let
   inherit (lib)
-    attrNames
     boolToString
     concatStringsSep
     compare
     filterAttrs
     literalExample
     mapAttrsToList
-    mkIf
     mkOption
     types
     remove
     ;
 
-  inherit (pkgs) runCommand writeText git;
+  inherit (pkgs) runCommand git;
 
   cfg = config;
   install_stages = lib.unique (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks));

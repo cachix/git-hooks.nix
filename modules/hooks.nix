@@ -851,7 +851,7 @@ in
         };
       };
       nixfmt = mkOption {
-        description = "Deprecated nixfmt hook";
+        description = "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.";
         visible = false;
         type = types.submodule {
           imports = [ hookModule ];
@@ -1369,6 +1369,37 @@ in
                 description = "Additional regex patterns used to find secrets. If there is a matching group in the regex the matched group will be tested for randomness before being reported as a secret.";
                 default = [ ];
               };
+          };
+        };
+      };
+      rome = mkOption {
+        description = "Deprecated rome hook. Use biome instead.";
+        visible = false;
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            binPath =
+              mkOption {
+                type = types.nullOr types.path;
+                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                default = null;
+                defaultText = "\${tools.biome}/bin/biome";
+              };
+
+            write =
+              mkOption {
+                type = types.bool;
+                description = "Whether to edit files inplace.";
+                default = true;
+              };
+
+            configPath = mkOption {
+              type = types.str;
+              description = "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying biome binary (i.e biome.json if exists)
+              default = "";
+            };
           };
         };
       };
@@ -2986,9 +3017,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             builtins.toString script;
           files = "\\.nix$";
         };
-      # nixfmt was renamed to nixfmt-classic.
-      # The hook has been deprecated to free up the name for when the new RFC-style nixfmt becomes stable.
-      nixfmt = nixfmt-classic;
+      nixfmt =
+        {
+          name = "nixfmt-deprecated";
+          description = "Deprecated Nix code prettifier. Use nixfmt-classic.";
+          package = tools.nixfmt;
+          entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          files = "\\.nix$";
+        };
       nixfmt-classic =
         {
           name = "nixfmt-classic";
@@ -3329,7 +3365,23 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             "${hooks.ripsecrets.package}/bin/ripsecrets ${cmdArgs}";
           types = [ "text" ];
         };
-      rome = biome;
+      rome =
+        {
+          name = "rome-deprecated";
+          description = "";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+          package = tools.biome;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.rome "/bin/biome";
+              cmdArgs =
+                mkCmdArgs [
+                  [ (hooks.rome.settings.write) "--apply" ]
+                  [ (hooks.rome.settings.configPath != "") "--config-path ${hooks.rome.settings.configPath}" ]
+                ];
+            in
+            "${binPath} check ${cmdArgs}";
+        };
       ruff =
         {
           name = "ruff";
