@@ -205,7 +205,7 @@ in
             '';
           readOnly = true;
           default = run;
-          defaultText = "<derivation>";
+          defaultText = lib.literalExpression "<derivation>";
         };
 
       installationScript =
