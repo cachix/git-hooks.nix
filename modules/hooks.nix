@@ -22,6 +22,20 @@ let
     if hook.settings.binPath == null
     then "${hook.package}${binPath}"
     else hook.settings.binPath;
+
+  texliveCombine = pkgs.texlive.combine (
+    lib.mergeAttrsList
+      (
+        map
+          (package: { ${package} = pkgs.texlive.${package}; })
+          (
+            builtins.filter
+              (hook: hooks.${hook}.enable)
+              [ "chktex" "lacheck" "latexindent" ]
+          )
+      )
+    // { inherit (pkgs.texlive) scheme-minimal; }
+  );
 in
 {
   imports =
@@ -2162,7 +2176,7 @@ in
           name = "chktex";
           description = "LaTeX semantic checker";
           types = [ "file" "tex" ];
-          package = tools.chktex;
+          package = texliveCombine;
           entry = "${hooks.chktex.package}/bin/chktex";
         };
       clang-format =
@@ -2837,7 +2851,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "latexindent";
           description = "Perl script to add indentation to LaTeX files.";
           types = [ "file" "tex" ];
-          package = tools.latexindent;
+          package = texliveCombine;
           entry = "${hooks.latexindent.package}/bin/latexindent ${hooks.latexindent.settings.flags}";
         };
       lacheck =
@@ -2852,7 +2866,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "lacheck";
           description = "A consistency checker for LaTeX documents.";
           types = [ "file" "tex" ];
-          package = tools.lacheck;
+          package = texliveCombine;
           entry = "${script}";
         };
       lua-ls =
