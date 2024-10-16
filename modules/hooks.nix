@@ -3423,7 +3423,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               inherit (hooks) rustfmt;
               inherit (rustfmt) settings;
               cargoArgs = lib.cli.toGNUCommandLineShell { } {
-                inherit (settings) all package verbose;
+                inherit (settings) all package verbose manifest-path;
               };
               rustfmtArgs = lib.cli.toGNUCommandLineShell { } {
                 inherit (settings) check emit config-path color files-with-diff config verbose;
