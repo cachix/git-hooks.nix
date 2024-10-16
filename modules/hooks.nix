@@ -167,7 +167,6 @@ in
                 type = types.nullOr types.path;
                 description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
                 default = null;
-                defaultText = "\${tools.biome}/bin/biome";
               };
 
             write =
@@ -506,7 +505,6 @@ in
                 type = types.nullOr types.str;
                 description = "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
                 default = null;
-                defaultText = "\${hooks.flynt.package}/bin/flynt";
               };
             dry-run =
               mkOption {
