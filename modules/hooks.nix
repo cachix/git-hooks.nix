@@ -2791,7 +2791,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           description = "Spell checker and morphological analyzer.";
           package = tools.hunspell;
           entry = "${hooks.hunspell.package}/bin/hunspell -l";
-          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
+          files = "\\.((txt)|(html)|(xml)|(md)|(org)|(rst)|(tex)|(odf)|\\d)$";
         };
       isort =
         {
