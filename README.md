@@ -88,7 +88,7 @@ nix develop
       pre-commit-check = nix-pre-commit-hooks.run {
         src = ./.;
         # If your hooks are intrusive, avoid running on each commit with a default_states like this:
-        # default_stages = ["manual" "push"];
+        # default_stages = ["manual" "pre-push"];
         hooks = {
           elm-format.enable = true;
 

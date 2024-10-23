@@ -5,7 +5,7 @@ builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, wr
 , hooks ? { }
 , excludes ? [ ]
 , tools ? { }
-, default_stages ? [ "commit" ]
+, default_stages ? [ "pre-commit" ]
 , addGcRoot ? true
 , imports ? [ ]
 }:

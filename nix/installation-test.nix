@@ -54,7 +54,7 @@ let
       expectedHooks = [ "pre-push" ];
       conf.hooks.nixpkgs-fmt = {
         enable = true;
-        stages = [ "push" ];
+        stages = [ "pre-push" ];
       };
     };
   };

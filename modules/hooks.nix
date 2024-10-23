@@ -2047,7 +2047,7 @@ in
           description = "Prevent very large files to be committed (e.g. binaries).";
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-added-large-files.package}/bin/check-added-large-files";
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
         };
       check-builtin-literals =
         {
@@ -2080,7 +2080,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-executables-have-shebangs.package}/bin/check-executables-have-shebangs";
           types = [ "text" "executable" ];
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
         };
       check-json =
         {
@@ -2113,7 +2113,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-shebang-scripts-are-executable.package}/bin/check-shebang-scripts-are-executable";
           types = [ "text" ];
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
         };
       check-symlinks =
         {
@@ -3700,7 +3700,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "trim-trailing-whitespace";
           description = "Trim trailing whitespace.";
           types = [ "text" ];
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
           package = tools.pre-commit-hooks;
           entry = "${hooks.trim-trailing-whitespace.package}/bin/trailing-whitespace-fixer";
         };
