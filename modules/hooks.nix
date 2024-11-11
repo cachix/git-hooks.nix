@@ -1618,6 +1618,18 @@ in
                 };
               };
               options.settings = {
+                fail-on-change =
+                  mkOption {
+                    type = types.bool;
+                    description = "Fail if some files require re-formatting.";
+                    default = true;
+                  };
+                no-cache =
+                  mkOption {
+                    type = types.bool;
+                    description = "Ignore the evaluation cache entirely.";
+                    default = true;
+                  };
                 formatters = mkOption {
                   type = types.listOf types.package;
                   description = "The formatter packages configured by treefmt";
@@ -3693,7 +3705,16 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           pass_filenames = true;
           package = wrapper;
           packageOverrides = { treefmt = tools.treefmt; };
-          entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.treefmt.settings; [
+                    [ fail-on-change "--fail-on-change" ]
+                    [ no-cache "--no-cache" ]
+                  ]);
+            in
+            "${hooks.treefmt.package}/bin/treefmt ${cmdArgs}";
         };
       trim-trailing-whitespace =
         {
