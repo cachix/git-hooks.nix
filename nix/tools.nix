@@ -85,7 +85,7 @@
 , go-tools
 , golangci-lint
 , golines
-, gotools
+, gotools ? null
 , revive ? null
 , vale
 }:
