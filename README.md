@@ -69,6 +69,10 @@ To install pre-commit hooks developers would run:
 nix develop
 ```
 
+### flake-parts
+
+If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts module as well. Checkout [`./template/flake.nix`](https://github.com/cachix/git-hooks.nix/blob/master/template/flake.nix) for an example.
+
 ## Nix
 
 1. **Optionally** use binary caches to avoid compilation:
