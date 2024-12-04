@@ -12,7 +12,7 @@ let
     remove
     ;
 
-  inherit (pkgs) runCommand git;
+  inherit (pkgs) runCommand;
 
   cfg = config;
   install_stages = lib.unique (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks));
@@ -51,7 +51,7 @@ let
     );
 
   run =
-    runCommand "pre-commit-run" { buildInputs = [ git ]; } ''
+    runCommand "pre-commit-run" { buildInputs = [ cfg.gitPackage ]; } ''
       set +e
       HOME=$PWD
       # Use `chmod +w` instead of `cp --no-preserve=mode` to be able to write and to
@@ -112,6 +112,20 @@ in
           defaultText =
             lib.literalExpression or literalExample ''
               pkgs.pre-commit
+            '';
+        };
+
+      gitPackage =
+        mkOption {
+          type = types.package;
+          description =
+            ''
+              The `git` package to use.
+            '';
+          default = pkgs.gitMinimal;
+          defaultText =
+            lib.literalExpression or literalExample ''
+              pkgs.gitMinimal
             '';
         };
 
@@ -338,10 +352,10 @@ in
           if ! type -t git >/dev/null; then
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: git-hooks.nix: git command not found; skipping installation."
-          elif ! ${git}/bin/git rev-parse --git-dir &> /dev/null; then
+          elif ! ${cfg.gitPackage}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: git-hooks.nix: .git not found; skipping installation."
           else
-            GIT_WC=`${git}/bin/git rev-parse --show-toplevel`
+            GIT_WC=`${cfg.gitPackage}/bin/git rev-parse --show-toplevel`
 
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
@@ -369,7 +383,7 @@ in
                 for hook in $hooks; do
                   pre-commit uninstall -t $hook
                 done
-                ${git}/bin/git config --local core.hooksPath ""
+                ${cfg.gitPackage}/bin/git config --local core.hooksPath ""
                 # Add hooks for configured stages (only) ...
                 if [ ! -z "${concatStringsSep " " install_stages}" ]; then
                   for stage in ${concatStringsSep " " install_stages}; do
@@ -396,12 +410,12 @@ in
                 fi
 
                 # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
-                common_dir=''$(${git}/bin/git rev-parse --path-format=absolute --git-common-dir)
+                common_dir=''$(${cfg.gitPackage}/bin/git rev-parse --path-format=absolute --git-common-dir)
 
                 # Convert the absolute path to a path relative to the toplevel working directory.
                 common_dir=''${common_dir#''$GIT_WC/}
 
-                ${git}/bin/git config --local core.hooksPath "''$common_dir/hooks"
+                ${cfg.gitPackage}/bin/git config --local core.hooksPath "''$common_dir/hooks"
               fi
             fi
           fi
