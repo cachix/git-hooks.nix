@@ -3665,7 +3665,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                 set -euo pipefail
 
                 print_help() {
-                  echo "Run '$1 fmt -check -diff -recursive' to format the code"
+                  echo "Run '$1 fmt -recursive' to format the code"
                   exit 1
                 }
 
