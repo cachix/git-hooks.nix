@@ -3632,9 +3632,28 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
       terraform-format =
         {
           name = "terraform-format";
-          description = "Format terraform (`.tf`) files.";
-          package = tools.terraform-fmt;
-          entry = "${hooks.terraform-format.package}/bin/terraform-fmt";
+          description = "Format Terraform (`.tf`) files.";
+          package = tools.opentofu;
+          entry =
+            let
+              terraform-fmt = pkgs.writeScriptBin "terraform-fmt" ''
+                #!/usr/bin/env bash
+
+                set -euo pipefail
+
+                print_help() {
+                  echo "Run '$1 fmt -recursive' to format the code"
+                  exit 1
+                }
+
+                if [ -f "${hooks.terraform-format.package}/bin/tofu" ]; then
+                  ${hooks.terraform-format.package}/bin/tofu fmt -check -diff "$@" || print_help "tofu"
+                else
+                  ${hooks.terraform-format.package}/bin/terraform fmt -check -diff "$@" || print_help "terraform"
+                fi
+              '';
+            in
+            "${terraform-fmt}/bin/terraform-fmt";
           files = "\\.tf$";
         };
       terraform-validate =
