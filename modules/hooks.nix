@@ -3662,16 +3662,16 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               terraform-fmt = pkgs.writeScriptBin "terraform-fmt" ''
                 #!/usr/bin/env bash
 
-                opentofu_or_terraform() {
-                  local bin_dir=${hooks.terraform-format.package}
-                  if [ -f "''${bin_dir}/bin/tofu" ]; then
-                    ''${bin_dir}/bin/tofu "$@"
-                  else
-                    ''${bin_dir}/bin/terraform "$@"
-                  fi
+                print_help() {
+                  echo "Run `$1 fmt -check -diff -recursive` to format the code"
+                  exit 1
                 }
 
-                opentofu_or_terraform fmt -check -diff "$@"
+                if [ -f "${hooks.terraform-format.package}/bin/tofu" ]; then
+                  ${hooks.terraform-format.package}/bin/tofu fmt -check -diff "$@" || print_help "tofu"
+                else
+                  ${hooks.terraform-format.package}/bin/terraform fmt -check -diff "$@" || print_help "terraform"
+                fi
               '';
             in
             "${terraform-fmt}/bin/terraform-fmt";
