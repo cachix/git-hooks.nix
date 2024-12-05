@@ -3662,6 +3662,8 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               terraform-fmt = pkgs.writeScriptBin "terraform-fmt" ''
                 #!/usr/bin/env bash
 
+                set -euo pipefail
+
                 print_help() {
                   echo "Run `$1 fmt -check -diff -recursive` to format the code"
                   exit 1
