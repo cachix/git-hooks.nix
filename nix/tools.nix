@@ -11,7 +11,7 @@
 , callPackage
 , cargo
 , checkmake
-, clang-tools
+, llvmPackages_latest
 , clippy
 , cljfmt
 , cmake-format
@@ -96,6 +96,7 @@ let
   };
 in
 {
+  clang-tools = llvmPackages_latest.clang-tools;
   inherit
     actionlint
     alejandra
@@ -106,7 +107,6 @@ in
     cabal-fmt
     cabal-gild
     cargo
-    clang-tools
     clippy
     cljfmt
     cmake-format
