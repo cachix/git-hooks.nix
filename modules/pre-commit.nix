@@ -30,7 +30,21 @@ let
   enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
   processedHooks =
-    mapAttrsToList (id: value: value.raw // { inherit id; }) enabledHooks;
+    let
+      # Sort the list of hooks by priority (lower number = higher priority)
+      sortedHooks = builtins.sort
+        (a: b: a.priority < b.priority)
+        (mapAttrsToList
+          (id: value:
+            value.raw // {
+              inherit id;
+              priority = value.raw.priority;
+            }
+          )
+          enabledHooks
+        );
+    in
+    sortedHooks;
 
   configFile =
     performAssertions (

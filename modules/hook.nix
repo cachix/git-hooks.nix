@@ -135,6 +135,15 @@ in
       default = true;
     };
 
+    priority = mkOption {
+      type = types.number;
+      description = ''
+        Defines the priority order in which hooks are executed.
+        Lower the number, the higher the precedence.
+      '';
+      default = 0;
+    };
+
     fail_fast = mkOption {
       type = types.bool;
       description = ''
@@ -189,7 +198,7 @@ in
   config = {
     raw =
       {
-        inherit (config) name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
+        inherit (config) name entry language files types types_or exclude_types pass_filenames priority fail_fast require_serial stages verbose always_run args;
         id = config.name;
         exclude = mergeExcludes config.excludes;
       };
