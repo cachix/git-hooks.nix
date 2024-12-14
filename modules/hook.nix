@@ -184,12 +184,31 @@ in
         '';
       default = [ ];
     };
+
+    before = mkOption {
+      type = types.listOf types.str;
+      description =
+        ''
+          List of hooks that should run after this hook.
+        '';
+      default = [ ];
+    };
+
+    after = mkOption {
+      type = types.listOf types.str;
+      description =
+        ''
+          List of hooks that should run before this hook.
+        '';
+      default = [ ];
+    };
+
   };
 
   config = {
     raw =
       {
-        inherit (config) name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
+        inherit (config) name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args before after;
         id = config.name;
         exclude = mergeExcludes config.excludes;
       };
