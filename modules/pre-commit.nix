@@ -31,20 +31,20 @@ let
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
   processedHooks =
     let
-      # Sort the list of hooks by priority (lower number = higher priority)
-      sortedHooks = builtins.sort
-        (a: b: a.priority < b.priority)
+      sortedHooks = lib.toposort
+        (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
         (mapAttrsToList
           (id: value:
             value.raw // {
               inherit id;
-              priority = value.raw.priority;
+              before = value.raw.before;
+              after = value.raw.after;
             }
           )
           enabledHooks
         );
     in
-    sortedHooks;
+    sortedHooks.result;
 
   configFile =
     performAssertions (
