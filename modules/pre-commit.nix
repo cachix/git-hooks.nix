@@ -30,7 +30,21 @@ let
   enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
   processedHooks =
-    mapAttrsToList (id: value: value.raw // { inherit id; }) enabledHooks;
+    let
+      sortedHooks = lib.toposort
+        (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
+        (mapAttrsToList
+          (id: value:
+            value.raw // {
+              inherit id;
+              before = value.raw.before;
+              after = value.raw.after;
+            }
+          )
+          enabledHooks
+        );
+    in
+    sortedHooks.result;
 
   configFile =
     performAssertions (
