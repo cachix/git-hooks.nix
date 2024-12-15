@@ -9,6 +9,7 @@ let
     mapAttrsToList
     mkOption
     types
+    removeAttrs
     remove
     ;
 
@@ -43,8 +44,15 @@ let
           )
           enabledHooks
         );
+      cleanedHooks = builtins.map (
+        hook:
+        removeAttrs hook [
+          "before"
+          "after"
+        ]
+      ) sortedHooks.result;
     in
-    sortedHooks.result;
+    cleanedHooks;
 
   configFile =
     performAssertions (
