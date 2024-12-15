@@ -9,7 +9,6 @@ let
     mapAttrsToList
     mkOption
     types
-    removeAttrs
     remove
     ;
 
@@ -34,25 +33,9 @@ let
     let
       sortedHooks = lib.toposort
         (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
-        (mapAttrsToList
-          (id: value:
-            value.raw // {
-              inherit id;
-              before = value.raw.before;
-              after = value.raw.after;
-            }
-          )
-          enabledHooks
-        );
-      cleanedHooks = builtins.map (
-        hook:
-        removeAttrs hook [
-          "before"
-          "after"
-        ]
-      ) sortedHooks.result;
+        (builtins.attrValues enabledHooks);
     in
-    cleanedHooks;
+    builtins.map (value: value.raw) sortedHooks.result;
 
   configFile =
     performAssertions (
