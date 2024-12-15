@@ -54,6 +54,18 @@ in
         '';
     };
 
+    alias = mkOption {
+      type = types.nullOr types.str;
+      description =
+        ''
+          An optional alias for the hook.
+
+          Allows the hook to referenced using an additional id.
+          ```
+        '';
+      default = null;
+    };
+
     name = mkOption {
       type = types.str;
       default = name;
@@ -236,8 +248,23 @@ in
   config = {
     raw =
       {
-        inherit (config) id name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
+        inherit (config)
+          always_run
+          args
+          entry
+          exclude_types
+          fail_fast
+          files
+          id
+          language
+          name
+          pass_filenames
+          require_serial
+          stages
+          types
+          types_or
+          verbose;
         exclude = mergeExcludes config.excludes;
-      };
+      } // lib.optionalAttrs (config.alias != null) { alias = config.alias; };
   };
 }
