@@ -1976,7 +1976,7 @@ in
               binPath = migrateBinPathToPackage hooks.biome "/bin/biome";
               cmdArgs =
                 mkCmdArgs [
-                  [ (hooks.biome.settings.write) "--apply" ]
+                  [ (hooks.biome.settings.write) "--write" ]
                   [ (hooks.biome.settings.configPath != "") "--config-path ${hooks.biome.settings.configPath}" ]
                 ];
             in
