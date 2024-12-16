@@ -2052,6 +2052,7 @@ in
           package = tools.cabal2nix-dir;
           entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir --outputFileName=${hooks.cabal2nix.settings.output_filename}";
           files = "\\.cabal$";
+          after = [ "hpack" ];
         };
       cargo-check =
         {
