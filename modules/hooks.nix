@@ -208,6 +208,20 @@ in
           };
         };
       };
+      cabal2nix = mkOption {
+        description = "cabal2nix hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            outputFilename =
+              mkOption {
+                type = types.str;
+                description = "The name of the output file generated after running `cabal2nix`.";
+                default = "default.nix";
+              };
+          };
+        };
+      };
       clippy = mkOption {
         description = "clippy hook";
         type = types.submodule
@@ -2034,9 +2048,9 @@ in
       cabal2nix =
         {
           name = "cabal2nix";
-          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files";
+          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `.nix` files";
           package = tools.cabal2nix-dir;
-          entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir";
+          entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir --outputFileName=${hooks.cabal2nix.settings.outputFilename}";
           files = "\\.cabal$";
           after = [ "hpack" ];
         };
