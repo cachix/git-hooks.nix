@@ -9,7 +9,6 @@ let
     mapAttrsToList
     mkOption
     types
-    removeAttrs
     remove
     ;
 
@@ -34,25 +33,34 @@ let
     let
       sortedHooks = lib.toposort
         (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
-        (mapAttrsToList
-          (id: value:
-            value.raw // {
-              inherit id;
-              before = value.raw.before;
-              after = value.raw.after;
-            }
-          )
-          enabledHooks
-        );
-      cleanedHooks = builtins.map (
-        hook:
-        removeAttrs hook [
-          "before"
-          "after"
-        ]
-      ) sortedHooks.result;
+        (builtins.attrValues enabledHooks);
     in
-    cleanedHooks;
+    if sortedHooks ? result then
+      builtins.map (value: value.raw) sortedHooks.result
+    else
+      let
+        getIds = builtins.map (value: value.id);
+
+        prettyPrintCycle = opts: cycle:
+          lib.pipe cycle [
+            (builtins.map (hook:
+              lib.nameValuePair hook.id { before = hook.before; after = hook.after; }
+            ))
+            lib.listToAttrs
+            (lib.generators.toPretty opts)
+          ];
+      in
+      throw ''
+        The hooks can't be sorted because of a cycle in the dependency graph:
+
+          ${concatStringsSep " -> " (getIds sortedHooks.cycle)}
+
+          which leads to a loop back to: ${concatStringsSep ", " (getIds sortedHooks.loops)}
+
+        Try removing the conflicting hook ids from the `before` and `after` attributes of these hooks:
+
+          ${prettyPrintCycle { indent = "  "; } sortedHooks.cycle}
+      '';
 
   configFile =
     performAssertions (
