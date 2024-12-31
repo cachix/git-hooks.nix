@@ -1,7 +1,9 @@
 name: "Build"
+
 on:
   pull_request:
   push:
+
 jobs:
   tests:
     strategy:
@@ -17,6 +19,7 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: rm -rf /opt&
     - run: nix-build --keep-going
+
   tests-flakes:
     strategy:
       matrix:
@@ -30,5 +33,11 @@ jobs:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: rm -rf /opt&
-    - run: nix flake check -L --show-trace
+
+    - name: Check nixpkgs-unstable
+      run: nix flake check -L --show-trace
+
+    - name: Check nixpkgs-stable
+      run: nix flake check -L --show-trace --override-input nixpkgs github:NixOS/nixpkgs/nixos-24.11
+
     - run: nix eval .#lib.x86_64-linux.run --show-trace
