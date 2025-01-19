@@ -172,8 +172,10 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `biome` binary path. For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
+                '';
                 default = null;
               };
 
@@ -464,9 +466,10 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description =
-                  "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `eslint` binary path. For example, if you want to use the `eslint` binary from `node_modules`, use `"./node_modules/.bin/eslint"`.
+                '';
                 default = null;
                 defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
               };
@@ -619,7 +622,7 @@ in
           options.settings = {
             hintFile =
               mkOption {
-                type = types.nullOr types.path;
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 description = "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
                 default = null;
               };
@@ -822,7 +825,7 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
@@ -1046,9 +1049,10 @@ in
           options.settings = {
             binPath =
               mkOption {
-                description =
-                  "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
-                type = types.nullOr types.path;
+                description = ''
+                  `prettier` binary path. For example, if you want to use the `prettier` binary from `node_modules`, use `"./node_modules/.bin/prettier"`.
+                '';
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.prettier}/bin/prettier"
@@ -1137,7 +1141,7 @@ in
                 description = "Path to a file containing patterns that describe files to ignore.
                 By default, prettier looks for `./.gitignore` and `./.prettierignore`.
                 Multiple values are accepted.";
-                type = types.listOf types.path;
+                type = types.listOf (types.oneOf [ types.str types.path ]);
                 default = [ ];
               };
             ignore-unknown =
@@ -1414,8 +1418,10 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `biome` binary path. For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
+                '';
                 default = null;
                 defaultText = "\${tools.biome}/bin/biome";
               };
