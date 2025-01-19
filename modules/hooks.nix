@@ -172,9 +172,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `biome` binary path.
+                  For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.biome}/bin/biome"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/biome"
+                '';
               };
 
             write =
@@ -464,11 +474,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description =
-                  "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `eslint` binary path.
+                  For example, if you want to use the `eslint` binary from `node_modules`, use `"./node_modules/.bin/eslint"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
-                defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
+                defaultText = lib.literalExpression ''
+                  "''${tools.eslint}/bin/eslint"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/eslint"
+                '';
               };
 
             extensions =
@@ -489,7 +507,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+                description = "flake8 binary path. Should be used to specify flake8 binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.flake8}/bin/flake8"
@@ -619,7 +637,7 @@ in
           options.settings = {
             hintFile =
               mkOption {
-                type = types.nullOr types.path;
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 description = "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
                 default = null;
               };
@@ -822,8 +840,8 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
@@ -1046,12 +1064,18 @@ in
           options.settings = {
             binPath =
               mkOption {
-                description =
-                  "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
-                type = types.nullOr types.path;
+                description = ''
+                  `prettier` binary path.
+                  For example, if you want to use the `prettier` binary from `node_modules`, use `"./node_modules/.bin/prettier"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.prettier}/bin/prettier"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/prettier"
                 '';
               };
             allow-parens =
@@ -1137,7 +1161,7 @@ in
                 description = "Path to a file containing patterns that describe files to ignore.
                 By default, prettier looks for `./.gitignore` and `./.prettierignore`.
                 Multiple values are accepted.";
-                type = types.listOf types.path;
+                type = types.listOf (types.oneOf [ types.str types.path ]);
                 default = [ ];
               };
             ignore-unknown =
@@ -1307,7 +1331,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+                description = "Pylint binary path. Should be used to specify Pylint binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pylint}/bin/pylint"
@@ -1353,7 +1377,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyupgrade}/bin/pyupgrade"
@@ -1414,10 +1438,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `rome` binary path.
+                  For example, if you want to use the `rome` binary from `node_modules`, use `"./node_modules/.bin/rome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
-                defaultText = "\${tools.biome}/bin/biome";
+                defaultText = lib.literalExpression ''
+                  "''${tools.rome}/bin/rome
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/rome"
+                '';
               };
 
             write =
