@@ -86,7 +86,6 @@ let
   run =
     mkDerivation {
       name = "pre-commit-run";
-
       src = cfg.rootSrc;
       buildInputs = [ cfg.gitPackage ];
       nativeBuildInputs = enabledExtraPackages
@@ -94,7 +93,8 @@ let
       cargoDeps = config.settings.rust.check.cargoDeps;
       buildPhase = ''
         set +e
-        HOME=$PWD
+        # Set HOME to a temporary directory for pre-commit to create its cache files in.
+        HOME=$(mktemp -d)
         ln -fs ${configFile} .pre-commit-config.yaml
         git init -q
         git add .
@@ -111,6 +111,7 @@ let
         fi
         exitcode=$?
         git --no-pager diff --color
+        # Derivations must produce an output
         mkdir $out
         [ $? -eq 0 ] && exit $exitcode
       '';
