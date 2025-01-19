@@ -176,6 +176,7 @@ in
                 description = ''
                   `biome` binary path.
                   For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
                 '';
                 default = null;
                 defaultText = lib.literalExpression ''
@@ -477,6 +478,7 @@ in
                 description = ''
                   `eslint` binary path.
                   For example, if you want to use the `eslint` binary from `node_modules`, use `"./node_modules/.bin/eslint"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
                 '';
                 default = null;
                 defaultText = lib.literalExpression ''
@@ -1065,6 +1067,7 @@ in
                 description = ''
                   `prettier` binary path.
                   For example, if you want to use the `prettier` binary from `node_modules`, use `"./node_modules/.bin/prettier"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
                 '';
                 type = types.nullOr (types.oneOf [ types.str types.path ]);
                 default = null;
@@ -1439,6 +1442,7 @@ in
                 description = ''
                   `rome` binary path.
                   For example, if you want to use the `rome` binary from `node_modules`, use `"./node_modules/.bin/rome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
                 '';
                 default = null;
                 defaultText = lib.literalExpression ''
