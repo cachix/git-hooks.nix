@@ -2237,9 +2237,10 @@ in
           description = "Validate CircleCI config files.";
           package = tools.circleci-cli;
           entry = builtins.toString (pkgs.writeShellScript "precommit-circleci" ''
-            set -o errexit
+            set -e
             
             for file in "$@"; do
+              echo "$file"
               ${hooks.circleci.package}/bin/circleci config validate "$file"
             done
           '');
