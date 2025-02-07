@@ -1312,7 +1312,7 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
-            configuration =
+            config =
               mkOption {
                 type = types.str;
                 description = "Multiline-string configuration passed as config file.";
@@ -3300,7 +3300,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                 mkCmdArgs
                   (with hooks.proselint.settings; [
                     [ (configPath != "") " --config ${configPath}" ]
-                    [ (configuration != "" && configPath == "") " --config ${configFile}" ]
+                    [ (config != "" && configPath == "") " --config ${configFile}" ]
                   ]);
             in
             "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
