@@ -41,6 +41,7 @@ in
       "flynt" = [ "aggressive" "binPath" "dry-run" "exclude" "fail-on-change" "line-length" "no-multiline" "quiet" "string" "transform-concats" "verbose" ];
       "mdl" = [ "configPath" "git-recurse" "ignore-front-matter" "json" "rules" "rulesets" "show-aliases" "warnings" "skip-default-ruleset" "style" "tags" "verbose" ];
       "lua-ls" = [ "checklevel" ];
+      "proselint" = [ "configPath" "flags" ];
       "typos" = [ "binary" "color" "configPath" "diff" "exclude" "format" "hidden" "ignored-words" "locale" "no-check-filenames" "no-check-files" "no-unicode" "quiet" "verbose" "write" ];
       "vale" = [ "configPath" "flags" ];
       "yamllint" = [ "configPath" ];
@@ -1302,6 +1303,37 @@ in
                 description = "Edit files in-place.";
                 type = types.bool;
                 default = true;
+              };
+          };
+        };
+      };
+      proselint = mkOption {
+        description = "proselint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configuration =
+              mkOption {
+                type = types.str;
+                description = "Multiline-string configuration passed as config file.";
+                default = "";
+                example = ''
+                  "checks": {
+                    "typography.diacritical_marks": false
+                  }
+                '';
+              };
+            configPath =
+              mkOption {
+                type = types.str;
+                description = "Path to the config file.";
+                default = "";
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Flags passed to proselint.";
+                default = "";
               };
           };
         };
@@ -3254,6 +3286,24 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           package = tools.pre-commit-hooks;
           entry = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
           types = [ "json" ];
+        };
+      proselint =
+        {
+          name = "proselint";
+          description = "A linter for prose.";
+          types = [ "text" ];
+          package = tools.proselint;
+          entry =
+            let
+              configFile = builtins.toFile "proselint-config.json" "${hooks.proselint.settings.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.vale.settings; [
+                    [ (configPath != "") " --config ${configPath}" ]
+                    [ (configuration != "" && configPath == "") " --config ${configFile}" ]
+                  ]);
+            in
+            "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
         };
       poetry-check = {
         name = "poetry check";
