@@ -2238,11 +2238,17 @@ in
           package = tools.circleci-cli;
           entry = builtins.toString (pkgs.writeShellScript "precommit-circleci" ''
             set -e
-            
+            failed=false
             for file in "$@"; do
-              echo "$file"
-              ${hooks.circleci.package}/bin/circleci config validate "$file"
+              if ! ${hooks.circleci.package}/bin/circleci config validate "$file" 2>&1
+              then
+                echo "$file"
+                failed=true
+              fi
             done
+            if [[ $failed == "true" ]]; then
+              exit 1
+            fi
           '');
           files = "^.circleci/";
           types = [ "yaml" ];
