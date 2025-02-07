@@ -2231,6 +2231,14 @@ in
           package = tools.chktex;
           entry = "${hooks.chktex.package}/bin/chktex";
         };
+      circleci =
+        {
+          name = "circleci";
+          description = "Validate CircleCI config";
+          package = tools.circleci-cli;
+          entry = "${hooks.circleci.package}/bin/circleci config validate";
+          files = "^\.circleci/config\.yml$";
+        };
       clang-format =
         {
           name = "clang-format";
