@@ -2237,7 +2237,7 @@ in
           description = "Validate CircleCI config";
           package = tools.circleci-cli;
           entry = "${hooks.circleci.package}/bin/circleci config validate";
-          files = "^\.circleci/config\.yml$";
+          files = "^\.circleci/*\.yml$";
         };
       clang-format =
         {
