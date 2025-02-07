@@ -3298,7 +3298,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               configFile = builtins.toFile "proselint-config.json" "${hooks.proselint.settings.config}";
               cmdArgs =
                 mkCmdArgs
-                  (with hooks.vale.settings; [
+                  (with hooks.proselint.settings; [
                     [ (configPath != "") " --config ${configPath}" ]
                     [ (configuration != "" && configPath == "") " --config ${configFile}" ]
                   ]);
