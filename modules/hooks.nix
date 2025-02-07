@@ -2236,7 +2236,13 @@ in
           name = "circleci";
           description = "Validate CircleCI config files.";
           package = tools.circleci-cli;
-          entry = "${hooks.circleci.package}/bin/circleci config validate";
+          entry = builtins.toString pkgs.writeShellScript "precommit-circleci" ''
+            set -o errexit
+            
+            for file in "$@"; do
+              ${hooks.circleci.package}/bin/circleci config validate "$file"
+            done
+          '';
           files = "^.circleci/";
           types = [ "yaml" ];
         };
