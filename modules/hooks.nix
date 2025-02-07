@@ -2234,10 +2234,11 @@ in
       circleci =
         {
           name = "circleci";
-          description = "Validate CircleCI config";
+          description = "Validate CircleCI config files.";
           package = tools.circleci-cli;
           entry = "${hooks.circleci.package}/bin/circleci config validate";
-          files = "^\.circleci/*\.yml$";
+          files = "^.circleci/";
+          types = [ "yaml" ];
         };
       clang-format =
         {
