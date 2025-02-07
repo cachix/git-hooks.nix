@@ -1318,8 +1318,10 @@ in
                 description = "Multiline-string configuration passed as config file.";
                 default = "";
                 example = ''
-                  "checks": {
-                    "typography.diacritical_marks": false
+                  {
+                    "checks": {
+                      "typography.diacritical_marks": false
+                    }
                   }
                 '';
               };
