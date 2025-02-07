@@ -2242,7 +2242,7 @@ in
             for file in "$@"; do
               if ! ${hooks.circleci.package}/bin/circleci config validate "$file" 2>&1
               then
-                echo "$file"
+                echo "Config file at $file is invalid, check the errors above."
                 failed=true
               fi
             done
