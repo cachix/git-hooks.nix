@@ -49,7 +49,7 @@ in
     ++ [ (mkRenamedOptionModule [ "settings" "rome" ] [ "hooks" "biome" "settings" ]) ]
     # Rename the remaining `settings.<name>` to `hooks.<name>.settings`
     ++ map (name: mkRenamedOptionModule [ "settings" name ] [ "hooks" name "settings" ])
-      [ "ansible-lint" "autoflake" "biome" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lychee" "mkdocs-linkcheck" "mypy" "nixfmt" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "statix" ];
+      [ "ansible-lint" "autoflake" "biome" "clippy" "cmake-format" "credo" "deadnix" "denofmt" "denolint" "dune-fmt" "eslint" "flake8" "headache" "hlint" "hpack" "isort" "latexindent" "lychee" "mkdocs-linkcheck" "mypy" "nixfmt" "openapi-spec-validator" "ormolu" "php-cs-fixer" "phpcbf" "phpcs" "phpstan" "prettier" "psalm" "pylint" "pyright" "pyupgrade" "revive" "statix" ];
 
   options.hookModule = lib.mkOption {
     type = types.deferredModule;
@@ -3187,6 +3187,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           package = tools.opam;
           entry = "${hooks.opam-lint.package}/bin/opam lint";
           files = "\\.opam$";
+        };
+      openapi-spec-validator =
+        {
+          name = "openapi spec validator";
+          description = "A tool to validate OpenAPI spec files";
+          package = tools.openapi-spec-validator;
+          entry = "${hooks.openapi-spec-validator.package}/bin/openapi-spec-validator";
+          files = ".*openapi.*\\.(json|yaml|yml)$";
         };
       ormolu =
         {
