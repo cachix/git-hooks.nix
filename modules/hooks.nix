@@ -2641,6 +2641,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         package = tools.fprettify;
         entry = "${hooks.fprettify.package}/bin/fprettify";
       };
+      gitlint = {
+        name = "gitlint";
+        description = "Linting for your git commit messages";
+        package = tools.gitlint;
+        entry = "${hooks.gitlint.package}/bin/gitlint --staged --msg-filename";
+        stages = [ "commit-msg" ];
+      };
       gofmt =
         {
           name = "gofmt";

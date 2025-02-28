@@ -30,6 +30,7 @@
 , flake-checker ? null
 , fprettify
 , git-annex
+, gitlint
 , gptcommit ? null
 , hadolint
 , haskellPackages
@@ -122,6 +123,7 @@ in
     elixir
     flake-checker
     fprettify
+    gitlint
     go
     go-tools
     golangci-lint
