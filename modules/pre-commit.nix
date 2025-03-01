@@ -95,7 +95,7 @@ let
         set +e
         # Set HOME to a temporary directory for pre-commit to create its cache files in.
         HOME=$(mktemp -d)
-        ln -fs ${cfg.configFile} .pre-commit-config.yaml
+        ln -fs ${cfg.configFile} ${cfg.configPath}
         git init -q
         git add .
         git config --global user.email "you@example.com"
@@ -104,10 +104,10 @@ let
         if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
         then
           echo "Running: $ pre-commit run --hook-stage manual --all-files"
-          pre-commit run --hook-stage manual --all-files
+          pre-commit run -c ${cfg.configPath} --hook-stage manual --all-files
         else
           echo "Running: $ pre-commit run --all-files"
-          pre-commit run --all-files
+          pre-commit run -c ${cfg.configPath} --all-files
         fi
         exitcode=$?
         git --no-pager diff --color
@@ -281,6 +281,15 @@ in
           defaultText = "<derivation>";
         };
 
+      configPath = lib.mkOption {
+        type = types.str;
+        default = ".pre-commit-config.yaml";
+        description =
+          ''
+            The path to the generated pre-commit configuration file.
+          '';
+      };
+
       src =
         lib.mkOption {
           description = ''
@@ -347,7 +356,7 @@ in
         type = types.bool;
         default = true;
         description = ''
-          Whether to add the generated pre-commit-config.yaml to the garbage collector roots.
+          Whether to add the generated pre-commit config to the garbage collector roots.
           This prevents Nix from garbage-collecting the tools used by hooks.
         '';
       };
@@ -419,22 +428,22 @@ in
             # filesystem churn. This improves performance with watch tools like lorri
             # and prevents installation loops by lorri.
 
-            if ! readlink "''${GIT_WC}/.pre-commit-config.yaml" >/dev/null \
-              || [[ $(readlink "''${GIT_WC}/.pre-commit-config.yaml") != ${configFile} ]]; then
+            if ! readlink "''${GIT_WC}/${cfg.configPath}" >/dev/null \
+              || [[ $(readlink "''${GIT_WC}/${cfg.configPath}") != ${cfg.configFile} ]]; then
               echo 1>&2 "git-hooks.nix: updating $PWD repo"
-              [ -L .pre-commit-config.yaml ] && unlink .pre-commit-config.yaml
+              [ -L ${cfg.configPath} ] && unlink ${cfg.configPath}
 
-              if [ -e "''${GIT_WC}/.pre-commit-config.yaml" ]; then
-                echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of pre-existing .pre-commit-config.yaml"
-                echo 1>&2 "    1. Translate .pre-commit-config.yaml contents to the new syntax in your Nix file"
+              if [ -e "''${GIT_WC}/${cfg.configPath}" ]; then
+                echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of pre-existing ${cfg.configPath}"
+                echo 1>&2 "    1. Translate ${cfg.configPath} contents to the new syntax in your Nix file"
                 echo 1>&2 "        see https://github.com/cachix/git-hooks.nix#getting-started"
-                echo 1>&2 "    2. remove .pre-commit-config.yaml"
-                echo 1>&2 "    3. add .pre-commit-config.yaml to .gitignore"
+                echo 1>&2 "    2. remove ${cfg.configPath}"
+                echo 1>&2 "    3. add ${cfg.configPath} to .gitignore"
               else
                 if ${boolToString cfg.addGcRoot}; then
-                  nix-store --add-root "''${GIT_WC}/.pre-commit-config.yaml" --indirect --realise ${configFile}
+                  nix-store --add-root "''${GIT_WC}/${cfg.configPath}" --indirect --realise ${cfg.configFile}
                 else
-                  ln -fs ${configFile} "''${GIT_WC}/.pre-commit-config.yaml"
+                  ln -fs ${cfg.configFile} "''${GIT_WC}/${cfg.configPath}"
                 fi
                 # Remove any previously installed hooks (since pre-commit itself has no convergent design)
                 hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
@@ -451,10 +460,10 @@ in
                       # if you amend these switches please also review $hooks above
                       commit | merge-commit | push)
                         stage="pre-"$stage
-                        pre-commit install -t $stage
+                        pre-commit install -c ${cfg.configPath} -t $stage
                         ;;
                       ${concatStringsSep "|" supportedHooksLib.supportedHooks})
-                        pre-commit install -t $stage
+                        pre-commit install -c ${cfg.configPath} -t $stage
                         ;;
                       *)
                         echo 1>&2 "ERROR: git-hooks.nix: either $stage is not a valid stage or git-hooks.nix doesn't yet support it."
@@ -464,7 +473,7 @@ in
                   done
                 # ... or default 'pre-commit' hook
                 else
-                  pre-commit install
+                  pre-commit install -c ${cfg.configPath}
                 fi
 
                 # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
