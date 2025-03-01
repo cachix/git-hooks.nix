@@ -87,7 +87,7 @@ let
     mkDerivation {
       name = "pre-commit-run";
       src = cfg.rootSrc;
-      buildInputs = [ cfg.gitPackage ];
+      buildInputs = [ cfg.gitPackage cfg.package ];
       nativeBuildInputs = enabledExtraPackages
         ++ lib.optional (config.settings.rust.check.cargoDeps != null) cargoSetupHook;
       cargoDeps = config.settings.rust.check.cargoDeps;
@@ -95,19 +95,19 @@ let
         set +e
         # Set HOME to a temporary directory for pre-commit to create its cache files in.
         HOME=$(mktemp -d)
-        ln -fs ${configFile} .pre-commit-config.yaml
+        ln -fs ${cfg.configFile} .pre-commit-config.yaml
         git init -q
         git add .
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
         git commit -m "init" -q
-        if [[ ${toString (compare install_stages [ "manual" ])} -eq 0 ]]
+        if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
         then
           echo "Running: $ pre-commit run --hook-stage manual --all-files"
-          ${cfg.package}/bin/pre-commit run --hook-stage manual --all-files
+          pre-commit run --hook-stage manual --all-files
         else
           echo "Running: $ pre-commit run --all-files"
-          ${cfg.package}/bin/pre-commit run --all-files
+          pre-commit run --all-files
         fi
         exitcode=$?
         git --no-pager diff --color
@@ -254,7 +254,7 @@ in
               A derivation that tests whether the pre-commit hooks run cleanly on
               the entire project.
             '';
-          readOnly = true;
+          readOnly = false;
           default = run;
           defaultText = lib.literalExpression "<derivation>";
         };
@@ -267,6 +267,18 @@ in
               A bash snippet that installs nix-pre-commit-hooks in the current directory
             '';
           readOnly = true;
+        };
+
+      configFile =
+        mkOption {
+          type = types.package;
+          description =
+            ''
+              The pre-commit configuration file.
+            '';
+          readOnly = true;
+          default = configFile;
+          defaultText = "<derivation>";
         };
 
       src =
@@ -362,6 +374,15 @@ in
           configuration. For example, `lib.mkRenamedOptionModule` uses this to
           display a warning message when a renamed option is used.
         '';
+      };
+
+      installStages = lib.mkOption {
+        type = types.listOf (types.either types.str types.anything);
+        description = ''
+          The stages to install the hooks to.
+        '';
+        default = install_stages;
+        readOnly = true;
       };
     };
 
