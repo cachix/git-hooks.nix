@@ -378,6 +378,7 @@ clang-format supports.
 - [headache](https://github.com/frama-c/headache)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
+- [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)
 - [prettier](https://prettier.io)
 - [sort-file-contents](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/file_contents_sorter.py)
 - [tagref](https://github.com/stepchowfun/tagref)

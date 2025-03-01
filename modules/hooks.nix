@@ -3261,6 +3261,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.opam-lint.package}/bin/opam lint";
           files = "\\.opam$";
         };
+      openapi-spec-validator =
+        {
+          name = "openapi spec validator";
+          description = "A tool to validate OpenAPI spec files";
+          package = tools.openapi-spec-validator;
+          entry = "${hooks.openapi-spec-validator.package}/bin/openapi-spec-validator";
+          files = ".*openapi.*\\.(json|yaml|yml)$";
+        };
       ormolu =
         {
           name = "ormolu";
