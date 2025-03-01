@@ -3009,6 +3009,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
           files = "\\.md$";
         };
+      mdformat = {
+        name = "mdformat";
+        description = "CommonMark compliant Markdown formatter";
+        package = tools.mdformat;
+        entry = "${hooks.mdformat.package}/bin/mdformat";
+        types = [ "markdown" ];
+      };
       mdl =
         {
           name = "mdl";

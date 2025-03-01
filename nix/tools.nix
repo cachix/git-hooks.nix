@@ -42,6 +42,7 @@
 , lua-language-server
 , lychee
 , julia-bin
+, mdformat
 , mdl
 , mdsh
 , nil
@@ -136,6 +137,7 @@ in
     html-tidy
     lychee
     julia-bin
+    mdformat
     mdl
     mdsh
     nil
