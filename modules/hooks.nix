@@ -172,9 +172,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `biome` binary path.
+                  For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.biome}/bin/biome"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/biome"
+                '';
               };
 
             write =
@@ -464,11 +474,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description =
-                  "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `eslint` binary path.
+                  For example, if you want to use the `eslint` binary from `node_modules`, use `"./node_modules/.bin/eslint"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
-                defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
+                defaultText = lib.literalExpression ''
+                  "''${tools.eslint}/bin/eslint"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/eslint"
+                '';
               };
 
             extensions =
@@ -489,7 +507,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+                description = "flake8 binary path. Should be used to specify flake8 binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.flake8}/bin/flake8"
@@ -619,7 +637,7 @@ in
           options.settings = {
             hintFile =
               mkOption {
-                type = types.nullOr types.path;
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 description = "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
                 default = null;
               };
@@ -822,8 +840,8 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
@@ -1046,12 +1064,18 @@ in
           options.settings = {
             binPath =
               mkOption {
-                description =
-                  "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
-                type = types.nullOr types.path;
+                description = ''
+                  `prettier` binary path.
+                  For example, if you want to use the `prettier` binary from `node_modules`, use `"./node_modules/.bin/prettier"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.prettier}/bin/prettier"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/prettier"
                 '';
               };
             allow-parens =
@@ -1137,7 +1161,7 @@ in
                 description = "Path to a file containing patterns that describe files to ignore.
                 By default, prettier looks for `./.gitignore` and `./.prettierignore`.
                 Multiple values are accepted.";
-                type = types.listOf types.path;
+                type = types.listOf (types.oneOf [ types.str types.path ]);
                 default = [ ];
               };
             ignore-unknown =
@@ -1282,6 +1306,78 @@ in
           };
         };
       };
+      pretty-format-json = mkOption
+        {
+          description = "pretty-format-json hook";
+          type = types.submodule {
+            imports = [ hookModule ];
+            options.settings = {
+              autofix =
+                mkOption {
+                  type = types.bool;
+                  description = "Automatically format JSON files.";
+                  default = false;
+                };
+              indent =
+                mkOption {
+                  type = types.nullOr (types.oneOf [ types.int types.str ]);
+                  description = "Control the indentation (either a number for a number of spaces or a string of whitespace). Defaults to 2 spaces.";
+                  default = null;
+                };
+              no-ensure-ascii =
+                mkOption {
+                  type = types.bool;
+                  description = "Preserve unicode characters instead of converting to escape sequences.";
+                  default = false;
+                };
+              no-sort-keys =
+                mkOption {
+                  type = types.bool;
+                  description = "When autofixing, retain the original key ordering (instead of sorting the keys).";
+                  default = false;
+                };
+              top-keys =
+                mkOption {
+                  type = types.listOf types.str;
+                  description = "Keys to keep at the top of mappings.";
+                  default = [ ];
+                };
+            };
+          };
+        };
+      proselint = mkOption {
+        description = "proselint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            config =
+              mkOption {
+                type = types.str;
+                description = "Multiline-string configuration passed as config file.";
+                default = "";
+                example = ''
+                  {
+                    "checks": {
+                      "typography.diacritical_marks": false
+                    }
+                  }
+                '';
+              };
+            configPath =
+              mkOption {
+                type = types.str;
+                description = "Path to the config file.";
+                default = "";
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Flags passed to proselint.";
+                default = "";
+              };
+          };
+        };
+      };
       psalm = mkOption {
         description = "psalm hook";
         type = types.submodule {
@@ -1307,7 +1403,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+                description = "Pylint binary path. Should be used to specify Pylint binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pylint}/bin/pylint"
@@ -1353,7 +1449,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyupgrade}/bin/pyupgrade"
@@ -1414,10 +1510,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `rome` binary path.
+                  For example, if you want to use the `rome` binary from `node_modules`, use `"./node_modules/.bin/rome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
-                defaultText = "\${tools.biome}/bin/biome";
+                defaultText = lib.literalExpression ''
+                  "''${tools.rome}/bin/rome
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/rome"
+                '';
               };
 
             write =
@@ -1842,6 +1947,12 @@ in
                 default = "";
                 example = ".yamlfmt";
               };
+            lint-only =
+              mkOption {
+                type = types.bool;
+                description = "Only lint the files, do not format them in place.";
+                default = true;
+              };
           };
         };
       };
@@ -2198,6 +2309,28 @@ in
           package = tools.chktex;
           entry = "${hooks.chktex.package}/bin/chktex";
         };
+      circleci =
+        {
+          name = "circleci";
+          description = "Validate CircleCI config files.";
+          package = tools.circleci-cli;
+          entry = builtins.toString (pkgs.writeShellScript "precommit-circleci" ''
+            set -e
+            failed=false
+            for file in "$@"; do
+              if ! ${hooks.circleci.package}/bin/circleci config validate "$file" 2>&1
+              then
+                echo "Config file at $file is invalid, check the errors above."
+                failed=true
+              fi
+            done
+            if [[ $failed == "true" ]]; then
+              exit 1
+            fi
+          '');
+          files = "^.circleci/";
+          types = [ "yaml" ];
+        };
       clang-format =
         {
           name = "clang-format";
@@ -2328,6 +2461,20 @@ in
           package = tools.cspell;
           entry = "${hooks.cspell.package}/bin/cspell";
         };
+      dart-analyze = {
+        name = "dart analyze";
+        description = "Dart analyzer";
+        package = tools.dart;
+        entry = "${hooks.dart-analyze.package}/bin/dart analyze";
+        types = [ "dart" ];
+      };
+      dart-format = {
+        name = "dart format";
+        description = "Dart formatter";
+        package = tools.dart;
+        entry = "${hooks.dart-format.package}/bin/dart format";
+        types = [ "dart" ];
+      };
       deadnix =
         {
           name = "deadnix";
@@ -2607,6 +2754,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         types = [ "fortran " ];
         package = tools.fprettify;
         entry = "${hooks.fprettify.package}/bin/fprettify";
+      };
+      gitlint = {
+        name = "gitlint";
+        description = "Linting for your git commit messages";
+        package = tools.gitlint;
+        entry = "${hooks.gitlint.package}/bin/gitlint --staged --msg-filename";
+        stages = [ "commit-msg" ];
       };
       gofmt =
         {
@@ -2962,6 +3116,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
           files = "\\.md$";
         };
+      mdformat = {
+        name = "mdformat";
+        description = "CommonMark compliant Markdown formatter";
+        package = tools.mdformat;
+        entry = "${hooks.mdformat.package}/bin/mdformat";
+        types = [ "markdown" ];
+      };
       mdl =
         {
           name = "mdl";
@@ -3155,6 +3316,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.opam-lint.package}/bin/opam lint";
           files = "\\.opam$";
         };
+      openapi-spec-validator =
+        {
+          name = "openapi spec validator";
+          description = "A tool to validate OpenAPI spec files";
+          package = tools.openapi-spec-validator;
+          entry = "${hooks.openapi-spec-validator.package}/bin/openapi-spec-validator";
+          files = ".*openapi.*\\.(json|yaml|yml)$";
+        };
       ormolu =
         {
           name = "ormolu";
@@ -3213,14 +3382,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             in
             "${binPath} analyse";
           types = [ "php" ];
-        };
-      pretty-format-json =
-        {
-          name = "pretty-format-json";
-          description = "Formats JSON files.";
-          package = tools.pre-commit-hooks;
-          entry = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
-          types = [ "json" ];
         };
       poetry-check = {
         name = "poetry check";
@@ -3308,6 +3469,43 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                   ]);
             in
             "${binPath} ${cmdArgs}";
+        };
+      pretty-format-json =
+        {
+          name = "pretty-format-json";
+          description = "Formats JSON files.";
+          package = tools.pre-commit-hooks;
+          entry =
+            let
+              binPath = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
+              cmdArgs = mkCmdArgs (with hooks.pretty-format-json.settings; [
+                [ autofix "--autofix" ]
+                [ (indent != null) "--indent ${toString indent}" ]
+                [ no-ensure-ascii "--no-ensure-ascii" ]
+                [ no-sort-keys "--no-sort-keys" ]
+                [ (top-keys != [ ]) "--top-keys ${lib.strings.concatStringsSep "," top-keys}" ]
+              ]);
+            in
+            "${binPath} ${cmdArgs}";
+          types = [ "json" ];
+        };
+      proselint =
+        {
+          name = "proselint";
+          description = "A linter for prose.";
+          types = [ "text" ];
+          package = tools.proselint;
+          entry =
+            let
+              configFile = builtins.toFile "proselint-config.json" "${hooks.proselint.settings.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.proselint.settings; [
+                    [ (configPath != "") " --config ${configPath}" ]
+                    [ (config != "" && configPath == "") " --config ${configFile}" ]
+                  ]);
+            in
+            "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
         };
       psalm =
         {
@@ -3655,9 +3853,9 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
       terraform-format =
         {
           name = "terraform-format";
-          description = "Format terraform (`.tf`) files.";
-          package = tools.terraform-fmt;
-          entry = "${hooks.terraform-format.package}/bin/terraform-fmt";
+          description = "Format Terraform (`.tf`) files.";
+          package = tools.opentofu;
+          entry = "${lib.getExe hooks.terraform-format.package} fmt -check -diff";
           files = "\\.tf$";
         };
       terraform-validate =
@@ -3845,10 +4043,10 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               cmdArgs =
                 mkCmdArgs
                   (with hooks.yamlfmt.settings; [
-                    # Exit non-zero on changes
-                    [ true "-lint" ]
-                    # But do not print the diff
-                    [ true "-quiet" ]
+                    # Exit with non-zero status if the file is not formatted
+                    [ lint-only "-lint" ]
+                    # Do not print the diff
+                    [ lint-only "-quiet" ]
                     # See https://github.com/google/yamlfmt/blob/main/docs/config-file.md#config-file-discovery
                     [ (configPath != "") "-conf ${configPath}" ]
                   ]);
