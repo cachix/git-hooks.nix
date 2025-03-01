@@ -2361,6 +2361,20 @@ in
           package = tools.cspell;
           entry = "${hooks.cspell.package}/bin/cspell";
         };
+      dart-analyze = {
+        name = "dart analyze";
+        description = "Dart analyzer";
+        package = tools.dart;
+        entry = "${hooks.dart-analyze.package}/bin/dart analyze";
+        types = [ "dart" ];
+      };
+      dart-format = {
+        name = "dart format";
+        description = "Dart formatter";
+        package = tools.dart;
+        entry = "${hooks.dart-format.package}/bin/dart format";
+        types = [ "dart" ];
+      };
       deadnix =
         {
           name = "deadnix";

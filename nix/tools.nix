@@ -19,6 +19,7 @@
 , conform
 , convco
 , crystal
+, dart
 , deadnix
 , deno
 , dhall
@@ -114,6 +115,7 @@ in
     conform
     convco
     crystal
+    dart
     deadnix
     deno
     dhall
