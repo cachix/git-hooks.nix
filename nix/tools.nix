@@ -19,6 +19,7 @@
 , conform
 , convco
 , crystal
+, dart
 , deadnix
 , deno
 , dhall
@@ -30,6 +31,7 @@
 , flake-checker ? null
 , fprettify
 , git-annex
+, gitlint
 , gptcommit ? null
 , hadolint
 , haskellPackages
@@ -41,6 +43,7 @@
 , lua-language-server
 , lychee
 , julia-bin
+, mdformat
 , mdl
 , mdsh
 , nil
@@ -115,6 +118,7 @@ in
     conform
     convco
     crystal
+    dart
     deadnix
     deno
     dhall
@@ -123,6 +127,7 @@ in
     elixir
     flake-checker
     fprettify
+    gitlint
     go
     go-tools
     golangci-lint
@@ -135,6 +140,7 @@ in
     html-tidy
     lychee
     julia-bin
+    mdformat
     mdl
     mdsh
     nil

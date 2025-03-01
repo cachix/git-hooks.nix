@@ -1306,6 +1306,45 @@ in
           };
         };
       };
+      pretty-format-json = mkOption
+        {
+          description = "pretty-format-json hook";
+          type = types.submodule {
+            imports = [ hookModule ];
+            options.settings = {
+              autofix =
+                mkOption {
+                  type = types.bool;
+                  description = "Automatically format JSON files.";
+                  default = false;
+                };
+              indent =
+                mkOption {
+                  type = types.nullOr (types.oneOf [ types.int types.str ]);
+                  description = "Control the indentation (either a number for a number of spaces or a string of whitespace). Defaults to 2 spaces.";
+                  default = null;
+                };
+              no-ensure-ascii =
+                mkOption {
+                  type = types.bool;
+                  description = "Preserve unicode characters instead of converting to escape sequences.";
+                  default = false;
+                };
+              no-sort-keys =
+                mkOption {
+                  type = types.bool;
+                  description = "When autofixing, retain the original key ordering (instead of sorting the keys).";
+                  default = false;
+                };
+              top-keys =
+                mkOption {
+                  type = types.listOf types.str;
+                  description = "Keys to keep at the top of mappings.";
+                  default = [ ];
+                };
+            };
+          };
+        };
       proselint = mkOption {
         description = "proselint hook";
         type = types.submodule {
@@ -1908,6 +1947,12 @@ in
                 default = "";
                 example = ".yamlfmt";
               };
+            lint-only =
+              mkOption {
+                type = types.bool;
+                description = "Only lint the files, do not format them in place.";
+                default = true;
+              };
           };
         };
       };
@@ -2394,6 +2439,20 @@ in
           package = tools.cspell;
           entry = "${hooks.cspell.package}/bin/cspell";
         };
+      dart-analyze = {
+        name = "dart analyze";
+        description = "Dart analyzer";
+        package = tools.dart;
+        entry = "${hooks.dart-analyze.package}/bin/dart analyze";
+        types = [ "dart" ];
+      };
+      dart-format = {
+        name = "dart format";
+        description = "Dart formatter";
+        package = tools.dart;
+        entry = "${hooks.dart-format.package}/bin/dart format";
+        types = [ "dart" ];
+      };
       deadnix =
         {
           name = "deadnix";
@@ -2673,6 +2732,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         types = [ "fortran " ];
         package = tools.fprettify;
         entry = "${hooks.fprettify.package}/bin/fprettify";
+      };
+      gitlint = {
+        name = "gitlint";
+        description = "Linting for your git commit messages";
+        package = tools.gitlint;
+        entry = "${hooks.gitlint.package}/bin/gitlint --staged --msg-filename";
+        stages = [ "commit-msg" ];
       };
       gofmt =
         {
@@ -3028,6 +3094,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
           files = "\\.md$";
         };
+      mdformat = {
+        name = "mdformat";
+        description = "CommonMark compliant Markdown formatter";
+        package = tools.mdformat;
+        entry = "${hooks.mdformat.package}/bin/mdformat";
+        types = [ "markdown" ];
+      };
       mdl =
         {
           name = "mdl";
@@ -3280,32 +3353,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             "${binPath} analyse";
           types = [ "php" ];
         };
-      pretty-format-json =
-        {
-          name = "pretty-format-json";
-          description = "Formats JSON files.";
-          package = tools.pre-commit-hooks;
-          entry = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
-          types = [ "json" ];
-        };
-      proselint =
-        {
-          name = "proselint";
-          description = "A linter for prose.";
-          types = [ "text" ];
-          package = tools.proselint;
-          entry =
-            let
-              configFile = builtins.toFile "proselint-config.json" "${hooks.proselint.settings.config}";
-              cmdArgs =
-                mkCmdArgs
-                  (with hooks.proselint.settings; [
-                    [ (configPath != "") " --config ${configPath}" ]
-                    [ (config != "" && configPath == "") " --config ${configFile}" ]
-                  ]);
-            in
-            "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
-        };
       poetry-check = {
         name = "poetry check";
         description = "Check the Poetry config for errors";
@@ -3392,6 +3439,43 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                   ]);
             in
             "${binPath} ${cmdArgs}";
+        };
+      pretty-format-json =
+        {
+          name = "pretty-format-json";
+          description = "Formats JSON files.";
+          package = tools.pre-commit-hooks;
+          entry =
+            let
+              binPath = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
+              cmdArgs = mkCmdArgs (with hooks.pretty-format-json.settings; [
+                [ autofix "--autofix" ]
+                [ (indent != null) "--indent ${toString indent}" ]
+                [ no-ensure-ascii "--no-ensure-ascii" ]
+                [ no-sort-keys "--no-sort-keys" ]
+                [ (top-keys != [ ]) "--top-keys ${lib.strings.concatStringsSep "," top-keys}" ]
+              ]);
+            in
+            "${binPath} ${cmdArgs}";
+          types = [ "json" ];
+        };
+      proselint =
+        {
+          name = "proselint";
+          description = "A linter for prose.";
+          types = [ "text" ];
+          package = tools.proselint;
+          entry =
+            let
+              configFile = builtins.toFile "proselint-config.json" "${hooks.proselint.settings.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.proselint.settings; [
+                    [ (configPath != "") " --config ${configPath}" ]
+                    [ (config != "" && configPath == "") " --config ${configFile}" ]
+                  ]);
+            in
+            "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
         };
       psalm =
         {
@@ -3929,10 +4013,10 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               cmdArgs =
                 mkCmdArgs
                   (with hooks.yamlfmt.settings; [
-                    # Exit non-zero on changes
-                    [ true "-lint" ]
-                    # But do not print the diff
-                    [ true "-quiet" ]
+                    # Exit with non-zero status if the file is not formatted
+                    [ lint-only "-lint" ]
+                    # Do not print the diff
+                    [ lint-only "-quiet" ]
                     # See https://github.com/google/yamlfmt/blob/main/docs/config-file.md#config-file-discovery
                     [ (configPath != "") "-conf ${configPath}" ]
                   ]);
