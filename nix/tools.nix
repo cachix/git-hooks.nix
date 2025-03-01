@@ -11,6 +11,7 @@
 , callPackage
 , cargo
 , checkmake
+, circleci-cli
 , llvmPackages_latest
 , clippy
 , cljfmt
@@ -111,6 +112,7 @@ in
     cabal-fmt
     cabal-gild
     cargo
+    circleci-cli
     clippy
     cljfmt
     cmake-format
