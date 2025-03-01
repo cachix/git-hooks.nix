@@ -1,20 +1,20 @@
 { config, lib, pkgs, hookModule, ... }:
 let
   inherit (lib)
-    attrNames
     boolToString
     concatStringsSep
     compare
     filterAttrs
     literalExample
     mapAttrsToList
-    mkIf
     mkOption
     types
     remove
     ;
 
-  inherit (pkgs) runCommand writeText git;
+  inherit (pkgs) runCommand;
+  inherit (pkgs.rustPlatform) cargoSetupHook;
+  inherit (pkgs.stdenv) mkDerivation;
 
   cfg = config;
   install_stages = lib.unique (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks));
@@ -28,8 +28,39 @@ let
     if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
 
   enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
+  enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
   processedHooks =
-    mapAttrsToList (id: value: value.raw // { inherit id; }) enabledHooks;
+    let
+      sortedHooks = lib.toposort
+        (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
+        (builtins.attrValues enabledHooks);
+    in
+    if sortedHooks ? result then
+      builtins.map (value: value.raw) sortedHooks.result
+    else
+      let
+        getIds = builtins.map (value: value.id);
+
+        prettyPrintCycle = opts: cycle:
+          lib.pipe cycle [
+            (builtins.map (hook:
+              lib.nameValuePair hook.id { before = hook.before; after = hook.after; }
+            ))
+            lib.listToAttrs
+            (lib.generators.toPretty opts)
+          ];
+      in
+      throw ''
+        The hooks can't be sorted because of a cycle in the dependency graph:
+
+          ${concatStringsSep " -> " (getIds sortedHooks.cycle)}
+
+          which leads to a loop back to: ${concatStringsSep ", " (getIds sortedHooks.loops)}
+
+        Try removing the conflicting hook ids from the `before` and `after` attributes of these hooks:
+
+          ${prettyPrintCycle { indent = "  "; } sortedHooks.cycle}
+      '';
 
   configFile =
     performAssertions (
@@ -53,34 +84,38 @@ let
     );
 
   run =
-    runCommand "pre-commit-run" { buildInputs = [ git cfg.package ]; } ''
-      set +e
-      HOME=$PWD
-      # Use `chmod +w` instead of `cp --no-preserve=mode` to be able to write and to
-      # preserve the executable bit at the same time
-      cp -R ${cfg.rootSrc} src
-      chmod -R +w src
-      ln -fs ${cfg.configFile} src/.pre-commit-config.yaml
-      cd src
-      rm -rf .git
-      git init -q
-      git add .
-      git config --global user.email "you@example.com"
-      git config --global user.name "Your Name"
-      git commit -m "init" -q
-      if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
-      then
-        echo "Running: $ pre-commit run --hook-stage manual --all-files"
-        pre-commit run --hook-stage manual --all-files
-      else
-        echo "Running: $ pre-commit run --all-files"
-        pre-commit run --all-files
-      fi
-      exitcode=$?
-      git --no-pager diff --color
-      touch $out
-      [ $? -eq 0 ] && exit $exitcode
-    '';
+    mkDerivation {
+      name = "pre-commit-run";
+      src = cfg.rootSrc;
+      buildInputs = [ cfg.gitPackage cfg.package ];
+      nativeBuildInputs = enabledExtraPackages
+        ++ lib.optional (config.settings.rust.check.cargoDeps != null) cargoSetupHook;
+      cargoDeps = config.settings.rust.check.cargoDeps;
+      buildPhase = ''
+        set +e
+        # Set HOME to a temporary directory for pre-commit to create its cache files in.
+        HOME=$(mktemp -d)
+        ln -fs ${cfg.configFile} .pre-commit-config.yaml
+        git init -q
+        git add .
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git commit -m "init" -q
+        if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
+        then
+          echo "Running: $ pre-commit run --hook-stage manual --all-files"
+          pre-commit run --hook-stage manual --all-files
+        else
+          echo "Running: $ pre-commit run --all-files"
+          pre-commit run --all-files
+        fi
+        exitcode=$?
+        git --no-pager diff --color
+        # Derivations must produce an output
+        mkdir $out
+        [ $? -eq 0 ] && exit $exitcode
+      '';
+    };
 
   failedAssertions = builtins.map (x: x.message) (builtins.filter (x: !x.assertion) config.assertions);
 
@@ -114,6 +149,20 @@ in
           defaultText =
             lib.literalExpression or literalExample ''
               pkgs.pre-commit
+            '';
+        };
+
+      gitPackage =
+        mkOption {
+          type = types.package;
+          description =
+            ''
+              The `git` package to use.
+            '';
+          default = pkgs.gitMinimal;
+          defaultText =
+            lib.literalExpression or literalExample ''
+              pkgs.gitMinimal
             '';
         };
 
@@ -207,7 +256,7 @@ in
             '';
           readOnly = false;
           default = run;
-          defaultText = "<derivation>";
+          defaultText = lib.literalExpression "<derivation>";
         };
 
       installationScript =
@@ -361,10 +410,10 @@ in
           if ! type -t git >/dev/null; then
             # This happens in pure shells, including lorri
             echo 1>&2 "WARNING: git-hooks.nix: git command not found; skipping installation."
-          elif ! ${git}/bin/git rev-parse --git-dir &> /dev/null; then
+          elif ! ${cfg.gitPackage}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: git-hooks.nix: .git not found; skipping installation."
           else
-            GIT_WC=`${git}/bin/git rev-parse --show-toplevel`
+            GIT_WC=`${cfg.gitPackage}/bin/git rev-parse --show-toplevel`
 
             # These update procedures compare before they write, to avoid
             # filesystem churn. This improves performance with watch tools like lorri
@@ -392,7 +441,7 @@ in
                 for hook in $hooks; do
                   pre-commit uninstall -t $hook
                 done
-                ${git}/bin/git config --local core.hooksPath ""
+                ${cfg.gitPackage}/bin/git config --local core.hooksPath ""
                 # Add hooks for configured stages (only) ...
                 if [ ! -z "${concatStringsSep " " install_stages}" ]; then
                   for stage in ${concatStringsSep " " install_stages}; do
@@ -419,12 +468,12 @@ in
                 fi
 
                 # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
-                common_dir=''$(${git}/bin/git rev-parse --path-format=absolute --git-common-dir)
+                common_dir=''$(${cfg.gitPackage}/bin/git rev-parse --path-format=absolute --git-common-dir)
 
                 # Convert the absolute path to a path relative to the toplevel working directory.
                 common_dir=''${common_dir#''$GIT_WC/}
 
-                ${git}/bin/git config --local core.hooksPath "''$common_dir/hooks"
+                ${cfg.gitPackage}/bin/git config --local core.hooksPath "''$common_dir/hooks"
               fi
             fi
           fi

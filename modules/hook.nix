@@ -25,10 +25,39 @@ in
         '';
     };
 
+    id = mkOption {
+      type = types.str;
+      default = name;
+      defaultText = "the attribute name the hook submodule is bound to";
+      description =
+        ''
+          The unique identifier for the hook.
+
+          You do not need to set or modify this value.
+
+          The `id` is used to reference a hook when using `pre-commit run <id>`.
+          It can also be used to reference the hook in other hooks' `before` and `after` fields to define the order in which hooks run.
+
+          The `id` is set to the attribute name the hook submodule is bound to in the parent module.
+          For example, the `id` of following hook would be `my-hook`.
+
+          ```nix
+          {
+            hooks = {
+              my-hook = {
+                enable = true;
+                entry = "my-hook";
+              };
+            }
+          }
+          ```
+        '';
+    };
+
     name = mkOption {
       type = types.str;
-      defaultText = lib.literalMD "internal name, same as `id`";
       default = name;
+      defaultText = lib.literalMD "the attribute name the hook submodule is bound to, same as `id`";
       description =
         ''
           The name of the hook. Shown during hook execution.
@@ -184,13 +213,30 @@ in
         '';
       default = [ ];
     };
+
+    before = mkOption {
+      type = types.listOf types.str;
+      description =
+        ''
+          List of hooks that should run after this hook.
+        '';
+      default = [ ];
+    };
+
+    after = mkOption {
+      type = types.listOf types.str;
+      description =
+        ''
+          List of hooks that should run before this hook.
+        '';
+      default = [ ];
+    };
   };
 
   config = {
     raw =
       {
-        inherit (config) name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
-        id = config.name;
+        inherit (config) id name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
         exclude = mergeExcludes config.excludes;
       };
   };

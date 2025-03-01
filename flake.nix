@@ -2,7 +2,6 @@
   description = "Seamless integration of https://pre-commit.com git hooks with Nix.";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
   inputs.flake-compat = {
     url = "github:edolstra/flake-compat";
     flake = false;
@@ -12,7 +11,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, gitignore, nixpkgs-stable, ... }:
+  outputs = { self, nixpkgs, gitignore, ... }:
     let
       lib = nixpkgs.lib;
       defaultSystems = [
@@ -24,7 +23,6 @@
       depsFor = lib.genAttrs defaultSystems (system: {
         pkgs = nixpkgs.legacyPackages.${system};
         exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
-        exposed-stable = import ./nix { nixpkgs = nixpkgs-stable; inherit system; gitignore-nix-src = gitignore; isFlakes = true; };
       });
       forAllSystems = fn: lib.genAttrs defaultSystems (system: fn depsFor.${system});
     in
@@ -48,12 +46,10 @@
         };
       });
 
-      checks = forAllSystems ({ exposed, exposed-stable, ... }:
-        lib.filterAttrs (k: v: v != null)
-          (exposed.checks
-            // (lib.mapAttrs' (name: value: lib.nameValuePair "stable-${name}" value)
-            exposed-stable.checks)));
+      checks = forAllSystems ({ exposed, ... }: lib.filterAttrs (k: v: v != null) exposed.checks);
 
       lib = forAllSystems ({ exposed, ... }: { inherit (exposed) run; });
+
+      exposed = forAllSystems ({ exposed, ... }: exposed);
     };
 }

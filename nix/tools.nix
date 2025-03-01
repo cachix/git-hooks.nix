@@ -11,7 +11,8 @@
 , callPackage
 , cargo
 , checkmake
-, clang-tools
+, circleci-cli
+, llvmPackages_latest
 , clippy
 , cljfmt
 , cmake-format
@@ -19,6 +20,7 @@
 , conform
 , convco
 , crystal
+, dart
 , deadnix
 , deno
 , dhall
@@ -30,6 +32,7 @@
 , flake-checker ? null
 , fprettify
 , git-annex
+, gitlint
 , gptcommit ? null
 , hadolint
 , haskellPackages
@@ -41,6 +44,7 @@
 , lua-language-server
 , lychee
 , julia-bin
+, mdformat
 , mdl
 , mdsh
 , nil
@@ -51,6 +55,7 @@
 , nodePackages
 , ocamlPackages
 , opam
+, opentofu
 , ormolu
 , pkgsBuildBuild
 , poetry
@@ -74,6 +79,7 @@
 , texlive
 , topiary ? null ## Added in nixpkgs on Dec 2, 2022
 , treefmt
+, trufflehog
 , typos
 , typstfmt
 , typstyle ? null ## Add in nixpkgs added on commit 800ca60
@@ -83,6 +89,7 @@
 , go
 , go-tools
 , golangci-lint
+, golines
 , revive ? null
 , vale
 }:
@@ -94,6 +101,7 @@ let
   };
 in
 {
+  clang-tools = llvmPackages_latest.clang-tools;
   inherit
     actionlint
     alejandra
@@ -104,13 +112,14 @@ in
     cabal-fmt
     cabal-gild
     cargo
-    clang-tools
+    circleci-cli
     clippy
     cljfmt
     cmake-format
     conform
     convco
     crystal
+    dart
     deadnix
     deno
     dhall
@@ -119,9 +128,11 @@ in
     elixir
     flake-checker
     fprettify
+    gitlint
     go
     go-tools
     golangci-lint
+    golines
     gptcommit
     hadolint
     hindent
@@ -130,10 +141,12 @@ in
     html-tidy
     lychee
     julia-bin
+    mdformat
     mdl
     mdsh
     nil
     nixpkgs-fmt
+    opentofu
     ormolu
     pre-commit-hook-ensure-sops
     poetry
@@ -152,6 +165,7 @@ in
     taplo
     topiary
     treefmt
+    trufflehog
     typos
     typstfmt
     typstyle
@@ -166,7 +180,7 @@ in
   inherit (luaPackages) luacheck;
   inherit (nodePackages) eslint markdownlint-cli prettier cspell;
   inherit (ocamlPackages) ocp-indent;
-  inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy pre-commit-hooks pylint pyupgrade;
+  inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy openapi-spec-validator pre-commit-hooks pylint pyupgrade;
   inherit (php82Packages) php-cs-fixer psalm;
   # FIXME: workaround build failure
   phpstan = php82Packages.phpstan.overrideAttrs (old: {
@@ -181,7 +195,6 @@ in
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
   purty = callPackage ./purty { purty = nodePackages.purty; };
-  terraform-fmt = callPackage ./terraform-fmt { };
   terraform-validate = callPackage ./terraform-validate { };
   tflint = callPackage ./tflint { };
   dune-build-opam-files = callPackage ./dune-build-opam-files { dune = dune_3; inherit (pkgsBuildBuild) ocaml; };

@@ -5,7 +5,7 @@ builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, wr
 , hooks ? { }
 , excludes ? [ ]
 , tools ? { }
-, default_stages ? [ "commit" ]
+, default_stages ? [ "pre-commit" ]
 , addGcRoot ? true
 , imports ? [ ]
 }:
@@ -35,6 +35,7 @@ let
 
 in
 project.config.run // {
+  inherit (project) config;
+  inherit (project.config) enabledPackages;
   shellHook = installationScript;
-  enabledPackages = project.config.enabledPackages;
 }

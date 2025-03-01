@@ -69,6 +69,10 @@ To install pre-commit hooks developers would run:
 nix develop
 ```
 
+### flake-parts
+
+If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts module as well. Checkout [`./template/flake.nix`](https://github.com/cachix/git-hooks.nix/blob/master/template/flake.nix) for an example.
+
 ## Nix
 
 1. **Optionally** use binary caches to avoid compilation:
@@ -88,7 +92,7 @@ nix develop
       pre-commit-check = nix-pre-commit-hooks.run {
         src = ./.;
         # If your hooks are intrusive, avoid running on each commit with a default_states like this:
-        # default_stages = ["manual" "push"];
+        # default_stages = ["manual" "pre-push"];
         hooks = {
           elm-format.enable = true;
 
@@ -234,7 +238,8 @@ clang-format supports.
 - [pylint](https://github.com/PyCQA/pylint)
 - [pyright](https://github.com/microsoft/pyright)
 - [python-debug-statements](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/debug_statement_hook.py)
-- [poetry](https://python-poetry.org/docs/pre-commit-hooks)
+- [poetry-check](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry check`.
+- [poetry-lock](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry lock`.
 - [pyupgrade](https://github.com/asottile/pyupgrade)
 - [ruff](https://github.com/charliermarsh/ruff)
 - [ruff-format](https://github.com/charliermarsh/ruff)
@@ -346,6 +351,7 @@ clang-format supports.
 - [commitizen](https://github.com/commitizen-tools/commitizen)
 - [convco](https://github.com/convco/convco)
 - [forbid-new-submodules](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/forbid_new_submodules.py)
+- [gitlint](https://github.com/jorisroovers/gitlint)
 - [gptcommit](https://github.com/zurawiki/gptcommit)
 - [no-commit-to-branch](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/no_commit_to_branch.py)
 
@@ -372,12 +378,14 @@ clang-format supports.
 - [headache](https://github.com/frama-c/headache)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
+- [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)
 - [prettier](https://prettier.io)
 - [sort-file-contents](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/file_contents_sorter.py)
 - [tagref](https://github.com/stepchowfun/tagref)
 - [topiary](https://github.com/tweag/topiary)
 - [treefmt](https://github.com/numtide/treefmt)
 - [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
+- [trufflehog](https://github.com/trufflesecurity/trufflehog): Secret scanner
 
 ### Custom hooks
 

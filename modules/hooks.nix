@@ -67,10 +67,18 @@ in
 
   # PLEASE keep this sorted alphabetically.
   options.settings = {
-    rust.cargoManifestPath = mkOption {
-      type = types.nullOr types.str;
-      description = "Path to Cargo.toml";
-      default = null;
+    rust = {
+      check.cargoDeps = mkOption {
+        type = types.nullOr types.attrs;
+        description = "Cargo dependencies needed to run the checks.";
+        example = "pkgs.rustPlatform.importCargoLock { lockFile = ./Cargo.lock; }";
+        default = null;
+      };
+      cargoManifestPath = mkOption {
+        type = types.nullOr types.str;
+        description = "Path to Cargo.toml";
+        default = null;
+      };
     };
   };
 
@@ -164,10 +172,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "`biome` binary path. E.g. if you want to use the `biome` in `node_modules`, use `./node_modules/.bin/biome`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `biome` binary path.
+                  For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
-                defaultText = "\${tools.biome}/bin/biome";
+                defaultText = lib.literalExpression ''
+                  "''${tools.biome}/bin/biome"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/biome"
+                '';
               };
 
             write =
@@ -201,6 +218,20 @@ in
           };
         };
       };
+      cabal2nix = mkOption {
+        description = "cabal2nix hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            outputFilename =
+              mkOption {
+                type = types.str;
+                description = "The name of the output file generated after running `cabal2nix`.";
+                default = "default.nix";
+              };
+          };
+        };
+      };
       clippy = mkOption {
         description = "clippy hook";
         type = types.submodule
@@ -231,6 +262,11 @@ in
                 type = types.bool;
                 description = "Run clippy with --all-features";
                 default = false;
+              };
+              extraArgs = mkOption {
+                type = types.str;
+                description = "Additional arguments to pass to clippy";
+                default = "";
               };
             };
 
@@ -438,11 +474,19 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description =
-                  "`eslint` binary path. E.g. if you want to use the `eslint` in `node_modules`, use `./node_modules/.bin/eslint`.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `eslint` binary path.
+                  For example, if you want to use the `eslint` binary from `node_modules`, use `"./node_modules/.bin/eslint"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
                 default = null;
-                defaultText = lib.literalExpression "\${tools.eslint}/bin/eslint";
+                defaultText = lib.literalExpression ''
+                  "''${tools.eslint}/bin/eslint"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/eslint"
+                '';
               };
 
             extensions =
@@ -463,7 +507,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "flake8 binary path. Should be used to specify flake8 binary from your Nix-managed Python environment.";
+                description = "flake8 binary path. Should be used to specify flake8 binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.flake8}/bin/flake8"
@@ -501,7 +545,6 @@ in
                 type = types.nullOr types.str;
                 description = "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
                 default = null;
-                defaultText = "\${hooks.flynt.package}/bin/flynt";
               };
             dry-run =
               mkOption {
@@ -560,6 +603,20 @@ in
           };
         };
       };
+      golines = mkOption {
+        description = "golines hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Flags passed to golines. See all available [here](https://github.com/segmentio/golines?tab=readme-ov-file#options)";
+              default = "";
+              example = "-m 120";
+            };
+          };
+        };
+      };
       headache = mkOption {
         description = "headache hook";
         type = types.submodule {
@@ -580,7 +637,7 @@ in
           options.settings = {
             hintFile =
               mkOption {
-                type = types.nullOr types.path;
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 description = "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
                 default = null;
               };
@@ -783,8 +840,8 @@ in
           options.settings = {
             binPath =
               mkOption {
-                type = types.nullOr types.path;
-                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Nix-managed Python environment.";
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
@@ -846,7 +903,22 @@ in
         };
       };
       nixfmt = mkOption {
-        description = "nixfmt hook";
+        description = "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.";
+        visible = false;
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            width =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Line width.";
+                default = null;
+              };
+          };
+        };
+      };
+      nixfmt-classic = mkOption {
+        description = "nixfmt (classic) hook";
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
@@ -992,12 +1064,18 @@ in
           options.settings = {
             binPath =
               mkOption {
-                description =
-                  "`prettier` binary path. E.g. if you want to use the `prettier` in `node_modules`, use `./node_modules/.bin/prettier`.";
-                type = types.nullOr types.path;
+                description = ''
+                  `prettier` binary path.
+                  For example, if you want to use the `prettier` binary from `node_modules`, use `"./node_modules/.bin/prettier"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.prettier}/bin/prettier"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/prettier"
                 '';
               };
             allow-parens =
@@ -1083,7 +1161,7 @@ in
                 description = "Path to a file containing patterns that describe files to ignore.
                 By default, prettier looks for `./.gitignore` and `./.prettierignore`.
                 Multiple values are accepted.";
-                type = types.listOf types.path;
+                type = types.listOf (types.oneOf [ types.str types.path ]);
                 default = [ ];
               };
             ignore-unknown =
@@ -1228,6 +1306,45 @@ in
           };
         };
       };
+      pretty-format-json = mkOption
+        {
+          description = "pretty-format-json hook";
+          type = types.submodule {
+            imports = [ hookModule ];
+            options.settings = {
+              autofix =
+                mkOption {
+                  type = types.bool;
+                  description = "Automatically format JSON files.";
+                  default = false;
+                };
+              indent =
+                mkOption {
+                  type = types.nullOr (types.oneOf [ types.int types.str ]);
+                  description = "Control the indentation (either a number for a number of spaces or a string of whitespace). Defaults to 2 spaces.";
+                  default = null;
+                };
+              no-ensure-ascii =
+                mkOption {
+                  type = types.bool;
+                  description = "Preserve unicode characters instead of converting to escape sequences.";
+                  default = false;
+                };
+              no-sort-keys =
+                mkOption {
+                  type = types.bool;
+                  description = "When autofixing, retain the original key ordering (instead of sorting the keys).";
+                  default = false;
+                };
+              top-keys =
+                mkOption {
+                  type = types.listOf types.str;
+                  description = "Keys to keep at the top of mappings.";
+                  default = [ ];
+                };
+            };
+          };
+        };
       psalm = mkOption {
         description = "psalm hook";
         type = types.submodule {
@@ -1253,7 +1370,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "Pylint binary path. Should be used to specify Pylint binary from your Nix-managed Python environment.";
+                description = "Pylint binary path. Should be used to specify Pylint binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pylint}/bin/pylint"
@@ -1299,7 +1416,7 @@ in
             binPath =
               mkOption {
                 type = types.nullOr types.str;
-                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Nix-managed Python environment.";
+                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Python environment.";
                 default = null;
                 defaultText = lib.literalExpression ''
                   "''${tools.pyupgrade}/bin/pyupgrade"
@@ -1352,6 +1469,46 @@ in
           };
         };
       };
+      rome = mkOption {
+        description = "Deprecated rome hook. Use biome instead.";
+        visible = false;
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            binPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `rome` binary path.
+                  For example, if you want to use the `rome` binary from `node_modules`, use `"./node_modules/.bin/rome"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.rome}/bin/rome
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/rome"
+                '';
+              };
+
+            write =
+              mkOption {
+                type = types.bool;
+                description = "Whether to edit files inplace.";
+                default = true;
+              };
+
+            configPath = mkOption {
+              type = types.str;
+              description = "Path to the configuration JSON file";
+              # an empty string translates to use default configuration of the
+              # underlying biome binary (i.e biome.json if exists)
+              default = "";
+            };
+          };
+        };
+      };
       rustfmt = mkOption {
         description = ''
           Additional rustfmt settings
@@ -1363,10 +1520,10 @@ in
           hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
           ```
         '';
-        type = types.submodule
-          ({ config, ... }: {
-            imports = [ hookModule ];
-            options.packageOverrides = {
+        type = types.submodule ({ config, ... }: {
+          imports = [ hookModule ];
+          options = {
+            packageOverrides = {
               cargo = mkOption {
                 type = types.package;
                 description = "The cargo package to use.";
@@ -1376,12 +1533,84 @@ in
                 description = "The rustfmt package to use.";
               };
             };
-
-            config.extraPackages = [
-              config.packageOverrides.cargo
-              config.packageOverrides.rustfmt
-            ];
-          });
+            settings =
+              let
+                nameType = types.strMatching "[][*?!0-9A-Za-z_-]+";
+              in
+              {
+                all = mkOption {
+                  type = types.bool;
+                  description = "Format all packages, and also their local path-based dependencies";
+                  default = true;
+                };
+                check = mkOption {
+                  type = types.bool;
+                  description = "Run rustfmt in check mode";
+                  default = false;
+                };
+                color = mkOption {
+                  type = types.enum [ "auto" "always" "never" ];
+                  description = "Coloring the output";
+                  default = "always";
+                };
+                config = mkOption {
+                  type = types.attrs;
+                  description = "Override configuration values";
+                  default = { };
+                  apply = config:
+                    let
+                      config' = lib.mapAttrsToList
+                        (key: value: "${key}=${toString value}")
+                        config;
+                    in
+                    if config != { }
+                    then
+                      (builtins.concatStringsSep "," config')
+                    else
+                      null;
+                };
+                config-path = mkOption {
+                  type = types.nullOr types.str;
+                  description = "Path to rustfmt.toml config file";
+                  default = null;
+                };
+                emit = mkOption {
+                  type = types.nullOr (types.enum [ "files" "stdout" ]);
+                  description = "What data to emit and how";
+                  default = null;
+                };
+                files-with-diff = mkOption {
+                  type = types.bool;
+                  description = "";
+                  default = hooks.rustfmt.settings.message-format == "short";
+                };
+                manifest-path = mkOption {
+                  type = types.nullOr types.str;
+                  description = "Path to Cargo.toml";
+                  default = settings.rust.cargoManifestPath;
+                };
+                message-format = mkOption {
+                  type = types.nullOr (types.enum [ "human" "short" ]);
+                  description = "The output format of diagnostic messages";
+                  default = null;
+                };
+                package = mkOption {
+                  type = types.listOf nameType;
+                  description = "Package(s) to check";
+                  default = [ ];
+                };
+                verbose = mkOption {
+                  type = types.bool;
+                  description = "Use verbose output";
+                  default = false;
+                };
+              };
+          };
+          config.extraPackages = [
+            config.packageOverrides.cargo
+            config.packageOverrides.rustfmt
+          ];
+        });
       };
       shfmt = mkOption {
         description = "shfmt hook";
@@ -1401,6 +1630,13 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
+            config =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Path to statix.toml or its parent directory.";
+                default = null;
+              };
+
             format =
               mkOption {
                 type = types.enum [ "stderr" "errfmt" "json" ];
@@ -1414,6 +1650,14 @@ in
                 description = "Globs of file patterns to skip.";
                 default = [ ];
                 example = [ "flake.nix" "_*" ];
+              };
+
+            unrestricted =
+              mkOption {
+                type = types.bool;
+                description = "Don't respect .gitignore files.";
+                default = false;
+                example = true;
               };
           };
         };
@@ -1468,6 +1712,18 @@ in
                 };
               };
               options.settings = {
+                fail-on-change =
+                  mkOption {
+                    type = types.bool;
+                    description = "Fail if some files require re-formatting.";
+                    default = true;
+                  };
+                no-cache =
+                  mkOption {
+                    type = types.bool;
+                    description = "Ignore the evaluation cache entirely.";
+                    default = true;
+                  };
                 formatters = mkOption {
                   type = types.listOf types.package;
                   description = "The formatter packages configured by treefmt";
@@ -1658,6 +1914,12 @@ in
                 default = "";
                 example = ".yamlfmt";
               };
+            lint-only =
+              mkOption {
+                type = types.bool;
+                description = "Only lint the files, do not format them in place.";
+                default = true;
+              };
           };
         };
       };
@@ -1721,6 +1983,11 @@ in
   config.warnings =
     lib.optional cfg.hooks.rome.enable ''
       The hook `hooks.rome` has been renamed to `hooks.biome`.
+    ''
+    ++ lib.optional cfg.hooks.nixfmt.enable ''
+      The hook `hooks.nixfmt` has been renamed to `hooks.nixfmt-classic`.
+
+      The new RFC 166-style nixfmt is available as `hooks.nixfmt-rfc-style`.
     '';
 
   # PLEASE keep this sorted alphabetically.
@@ -1801,7 +2068,7 @@ in
               binPath = migrateBinPathToPackage hooks.biome "/bin/biome";
               cmdArgs =
                 mkCmdArgs [
-                  [ (hooks.biome.settings.write) "--apply" ]
+                  [ (hooks.biome.settings.write) "--write" ]
                   [ (hooks.biome.settings.configPath != "") "--config-path ${hooks.biome.settings.configPath}" ]
                 ];
             in
@@ -1859,10 +2126,11 @@ in
       cabal2nix =
         {
           name = "cabal2nix";
-          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `default.nix` files";
+          description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `.nix` files";
           package = tools.cabal2nix-dir;
-          entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir";
+          entry = "${hooks.cabal2nix.package}/bin/cabal2nix-dir --outputFileName=${hooks.cabal2nix.settings.outputFilename}";
           files = "\\.cabal$";
+          after = [ "hpack" ];
         };
       cargo-check =
         {
@@ -1892,7 +2160,7 @@ in
           description = "Prevent very large files to be committed (e.g. binaries).";
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-added-large-files.package}/bin/check-added-large-files";
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
         };
       check-builtin-literals =
         {
@@ -1925,7 +2193,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-executables-have-shebangs.package}/bin/check-executables-have-shebangs";
           types = [ "text" "executable" ];
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
         };
       check-json =
         {
@@ -1958,7 +2226,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-shebang-scripts-are-executable.package}/bin/check-shebang-scripts-are-executable";
           types = [ "text" ];
-          stages = [ "commit" "push" "manual" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
         };
       check-symlinks =
         {
@@ -1987,7 +2255,7 @@ in
       check-xml =
         {
           name = "check-xml";
-          description = "Check syntax of TOML files.";
+          description = "Check syntax of XML files.";
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-xml.package}/bin/check-xml";
           types = [ "xml" ];
@@ -2007,6 +2275,28 @@ in
           types = [ "file" "tex" ];
           package = tools.chktex;
           entry = "${hooks.chktex.package}/bin/chktex";
+        };
+      circleci =
+        {
+          name = "circleci";
+          description = "Validate CircleCI config files.";
+          package = tools.circleci-cli;
+          entry = builtins.toString (pkgs.writeShellScript "precommit-circleci" ''
+            set -e
+            failed=false
+            for file in "$@"; do
+              if ! ${hooks.circleci.package}/bin/circleci config validate "$file" 2>&1
+              then
+                echo "Config file at $file is invalid, check the errors above."
+                failed=true
+              fi
+            done
+            if [[ $failed == "true" ]]; then
+              exit 1
+            fi
+          '');
+          files = "^.circleci/";
+          types = [ "yaml" ];
         };
       clang-format =
         {
@@ -2053,7 +2343,7 @@ in
           description = "Lint Rust code.";
           package = wrapper;
           packageOverrides = { cargo = tools.cargo; clippy = tools.clippy; };
-          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
+          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} ${hooks.clippy.settings.extraArgs} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -2138,6 +2428,20 @@ in
           package = tools.cspell;
           entry = "${hooks.cspell.package}/bin/cspell";
         };
+      dart-analyze = {
+        name = "dart analyze";
+        description = "Dart analyzer";
+        package = tools.dart;
+        entry = "${hooks.dart-analyze.package}/bin/dart analyze";
+        types = [ "dart" ];
+      };
+      dart-format = {
+        name = "dart format";
+        description = "Dart formatter";
+        package = tools.dart;
+        entry = "${hooks.dart-format.package}/bin/dart format";
+        types = [ "dart" ];
+      };
       deadnix =
         {
           name = "deadnix";
@@ -2418,6 +2722,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         package = tools.fprettify;
         entry = "${hooks.fprettify.package}/bin/fprettify";
       };
+      gitlint = {
+        name = "gitlint";
+        description = "Linting for your git commit messages";
+        package = tools.gitlint;
+        entry = "${hooks.gitlint.package}/bin/gitlint --staged --msg-filename";
+        stages = [ "commit-msg" ];
+      };
       gofmt =
         {
           name = "gofmt";
@@ -2462,6 +2773,31 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         # all file names in a single run.
         require_serial = true;
       };
+      golines =
+        {
+          name = "golines";
+          description = "A golang formatter that fixes long lines";
+          package = tools.golines;
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-golines" ''
+                set -e
+                failed=false
+                for file in "$@"; do
+                    # redirect stderr so that violations and summaries are properly interleaved.
+                    if ! ${hooks.golines.package}/bin/golines ${hooks.golines.settings.flags} -w "$file" 2>&1
+                    then
+                        failed=true
+                    fi
+                done
+                if [[ $failed == "true" ]]; then
+                    exit 1
+                fi
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+        };
       gotest = {
         name = "gotest";
         description = "Run go tests";
@@ -2611,7 +2947,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           description = "Spell checker and morphological analyzer.";
           package = tools.hunspell;
           entry = "${hooks.hunspell.package}/bin/hunspell -l";
-          files = "\\.((txt)|(html)|(xml)|(md)|(rst)|(tex)|(odf)|\\d)$";
+          files = "\\.((txt)|(html)|(xml)|(md)|(org)|(rst)|(tex)|(odf)|\\d)$";
         };
       isort =
         {
@@ -2747,6 +3083,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
           files = "\\.md$";
         };
+      mdformat = {
+        name = "mdformat";
+        description = "CommonMark compliant Markdown formatter";
+        package = tools.mdformat;
+        entry = "${hooks.mdformat.package}/bin/mdformat";
+        types = [ "markdown" ];
+      };
       mdl =
         {
           name = "mdl";
@@ -2876,10 +3219,18 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         };
       nixfmt =
         {
-          name = "nixfmt";
-          description = "Nix code prettifier.";
-          package = tools.nixfmt-classic;
+          name = "nixfmt-deprecated";
+          description = "Deprecated Nix code prettifier. Use nixfmt-classic.";
+          package = tools.nixfmt;
           entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          files = "\\.nix$";
+        };
+      nixfmt-classic =
+        {
+          name = "nixfmt-classic";
+          description = "Nix code prettifier (classic).";
+          package = tools.nixfmt-classic;
+          entry = "${hooks.nixfmt-classic.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-classic.settings.width != null) "--width=${toString hooks.nixfmt-classic.settings.width}"}";
           files = "\\.nix$";
         };
       nixfmt-rfc-style =
@@ -2931,6 +3282,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           package = tools.opam;
           entry = "${hooks.opam-lint.package}/bin/opam lint";
           files = "\\.opam$";
+        };
+      openapi-spec-validator =
+        {
+          name = "openapi spec validator";
+          description = "A tool to validate OpenAPI spec files";
+          package = tools.openapi-spec-validator;
+          entry = "${hooks.openapi-spec-validator.package}/bin/openapi-spec-validator";
+          files = ".*openapi.*\\.(json|yaml|yml)$";
         };
       ormolu =
         {
@@ -2990,14 +3349,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             in
             "${binPath} analyse";
           types = [ "php" ];
-        };
-      pretty-format-json =
-        {
-          name = "pretty-format-json";
-          description = "Formats JSON files.";
-          package = tools.pre-commit-hooks;
-          entry = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
-          types = [ "json" ];
         };
       poetry-check = {
         name = "poetry check";
@@ -3085,6 +3436,25 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
                   ]);
             in
             "${binPath} ${cmdArgs}";
+        };
+      pretty-format-json =
+        {
+          name = "pretty-format-json";
+          description = "Formats JSON files.";
+          package = tools.pre-commit-hooks;
+          entry =
+            let
+              binPath = "${hooks.pretty-format-json.package}/bin/pretty-format-json";
+              cmdArgs = mkCmdArgs (with hooks.pretty-format-json.settings; [
+                [ autofix "--autofix" ]
+                [ (indent != null) "--indent ${toString indent}" ]
+                [ no-ensure-ascii "--no-ensure-ascii" ]
+                [ no-sort-keys "--no-sort-keys" ]
+                [ (top-keys != [ ]) "--top-keys ${lib.strings.concatStringsSep "," top-keys}" ]
+              ]);
+            in
+            "${binPath} ${cmdArgs}";
+          types = [ "json" ];
         };
       psalm =
         {
@@ -3214,7 +3584,23 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             "${hooks.ripsecrets.package}/bin/ripsecrets ${cmdArgs}";
           types = [ "text" ];
         };
-      rome = biome;
+      rome =
+        {
+          name = "rome-deprecated";
+          description = "";
+          types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+          package = tools.biome;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.rome "/bin/biome";
+              cmdArgs =
+                mkCmdArgs [
+                  [ (hooks.rome.settings.write) "--apply" ]
+                  [ (hooks.rome.settings.configPath != "") "--config-path ${hooks.rome.settings.configPath}" ]
+                ];
+            in
+            "${binPath} check ${cmdArgs}";
+        };
       ruff =
         {
           name = "ruff";
@@ -3233,6 +3619,8 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
         };
       rustfmt =
         let
+          mkAdditionalArgs = args: lib.optionalString (args != "") " -- ${args}";
+
           inherit (hooks.rustfmt) packageOverrides;
           wrapper = pkgs.symlinkJoin {
             name = "rustfmt-wrapped";
@@ -3240,7 +3628,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/cargo-fmt \
-              --prefix PATH : ${lib.makeBinPath [ packageOverrides.cargo packageOverrides.rustfmt ]}
+              --prefix PATH : ${lib.makeBinPath (builtins.attrValues packageOverrides)}
             '';
           };
         in
@@ -3248,8 +3636,19 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "rustfmt";
           description = "Format Rust code.";
           package = wrapper;
-          packageOverrides = { cargo = tools.cargo; rustfmt = tools.rustfmt; };
-          entry = "${hooks.rustfmt.package}/bin/cargo-fmt fmt ${cargoManifestPathArg} --all -- --color always";
+          packageOverrides = { inherit (tools) cargo rustfmt; };
+          entry =
+            let
+              inherit (hooks) rustfmt;
+              inherit (rustfmt) settings;
+              cargoArgs = lib.cli.toGNUCommandLineShell { } {
+                inherit (settings) all package verbose manifest-path;
+              };
+              rustfmtArgs = lib.cli.toGNUCommandLineShell { } {
+                inherit (settings) check emit config-path color files-with-diff config verbose;
+              };
+            in
+            "${rustfmt.package}/bin/cargo-fmt fmt ${cargoArgs}${mkAdditionalArgs rustfmtArgs}";
           files = "\\.rs$";
           pass_filenames = false;
         };
@@ -3346,8 +3745,22 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           name = "statix";
           description = "Lints and suggestions for the Nix programming language.";
           package = tools.statix;
-          entry = with hooks.statix.settings;
-            "${hooks.statix.package}/bin/statix check -o ${format} ${if (ignore != [ ]) then "-i ${lib.escapeShellArgs (lib.unique ignore)}" else ""}";
+          entry =
+            let
+              inherit (hooks.statix) package settings;
+              mkOptionName = k:
+                if builtins.stringLength k == 1
+                then "-${k}"
+                else "--${k}";
+              options = lib.cli.toGNUCommandLineShell
+                {
+                  # instead of repeating the option name for each element,
+                  # create a single option with a space-separated list of unique values.
+                  mkList = k: v: if v == [ ] then [ ] else [ (mkOptionName k) ] ++ lib.unique v;
+                }
+                settings;
+            in
+            "${package}/bin/statix check ${options}";
           files = "\\.nix$";
           pass_filenames = false;
         };
@@ -3389,9 +3802,9 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
       terraform-format =
         {
           name = "terraform-format";
-          description = "Format terraform (`.tf`) files.";
-          package = tools.terraform-fmt;
-          entry = "${hooks.terraform-format.package}/bin/terraform-fmt";
+          description = "Format Terraform (`.tf`) files.";
+          package = tools.opentofu;
+          entry = "${lib.getExe hooks.terraform-format.package} fmt -check -diff";
           files = "\\.tf$";
         };
       terraform-validate =
@@ -3439,15 +3852,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               );
           files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
         };
-      trim-trailing-whitespace =
-        {
-          name = "trim-trailing-whitespace";
-          description = "Trim trailing whitespace.";
-          types = [ "text" ];
-          stages = [ "commit" "push" "manual" ];
-          package = tools.pre-commit-hooks;
-          entry = "${hooks.trim-trailing-whitespace.package}/bin/trailing-whitespace-fixer";
-        };
       treefmt =
         let
           inherit (hooks.treefmt) packageOverrides settings;
@@ -3471,7 +3875,42 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
           pass_filenames = true;
           package = wrapper;
           packageOverrides = { treefmt = tools.treefmt; };
-          entry = "${hooks.treefmt.package}/bin/treefmt --fail-on-change";
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.treefmt.settings; [
+                    [ fail-on-change "--fail-on-change" ]
+                    [ no-cache "--no-cache" ]
+                  ]);
+            in
+            "${hooks.treefmt.package}/bin/treefmt ${cmdArgs}";
+        };
+      trim-trailing-whitespace =
+        {
+          name = "trim-trailing-whitespace";
+          description = "Trim trailing whitespace.";
+          types = [ "text" ];
+          stages = [ "pre-commit" "pre-push" "manual" ];
+          package = tools.pre-commit-hooks;
+          entry = "${hooks.trim-trailing-whitespace.package}/bin/trailing-whitespace-fixer";
+        };
+      trufflehog =
+        {
+          name = "trufflehog";
+          description = "Secrets scanner";
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-trufflehog" ''
+                set -e
+                ${hooks.trufflehog.package}/bin/trufflehog --no-update git "file://$(git rev-parse --show-top-level)" --since-commit HEAD --only-verified --fail
+              '';
+            in
+            builtins.toString script;
+          package = tools.trufflehog;
+
+          # trufflehog expects to run across the whole repo, not particular files
+          pass_filenames = false;
         };
       typos =
         {
@@ -3553,10 +3992,10 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
               cmdArgs =
                 mkCmdArgs
                   (with hooks.yamlfmt.settings; [
-                    # Exit non-zero on changes
-                    [ true "-lint" ]
-                    # But do not print the diff
-                    [ true "-quiet" ]
+                    # Exit with non-zero status if the file is not formatted
+                    [ lint-only "-lint" ]
+                    # Do not print the diff
+                    [ lint-only "-quiet" ]
                     # See https://github.com/google/yamlfmt/blob/main/docs/config-file.md#config-file-discovery
                     [ (configPath != "") "-conf ${configPath}" ]
                   ]);
