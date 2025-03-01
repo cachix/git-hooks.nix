@@ -1345,6 +1345,39 @@ in
             };
           };
         };
+      proselint = mkOption {
+        description = "proselint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            config =
+              mkOption {
+                type = types.str;
+                description = "Multiline-string configuration passed as config file.";
+                default = "";
+                example = ''
+                  {
+                    "checks": {
+                      "typography.diacritical_marks": false
+                    }
+                  }
+                '';
+              };
+            configPath =
+              mkOption {
+                type = types.str;
+                description = "Path to the config file.";
+                default = "";
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Flags passed to proselint.";
+                default = "";
+              };
+          };
+        };
+      };
       psalm = mkOption {
         description = "psalm hook";
         type = types.submodule {
@@ -3455,6 +3488,24 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormol
             in
             "${binPath} ${cmdArgs}";
           types = [ "json" ];
+        };
+      proselint =
+        {
+          name = "proselint";
+          description = "A linter for prose.";
+          types = [ "text" ];
+          package = tools.proselint;
+          entry =
+            let
+              configFile = builtins.toFile "proselint-config.json" "${hooks.proselint.settings.config}";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.proselint.settings; [
+                    [ (configPath != "") " --config ${configPath}" ]
+                    [ (config != "" && configPath == "") " --config ${configFile}" ]
+                  ]);
+            in
+            "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
         };
       psalm =
         {

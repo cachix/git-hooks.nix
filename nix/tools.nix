@@ -60,6 +60,7 @@
 , pkgsBuildBuild
 , poetry
 , pre-commit-hook-ensure-sops ? null
+, proselint
 , python3Packages
 , pyright ? nodePackages.pyright
 , php82Packages
@@ -150,6 +151,7 @@ in
     ormolu
     pre-commit-hook-ensure-sops
     poetry
+    proselint
     pyright
     reuse
     revive
