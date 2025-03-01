@@ -8,6 +8,7 @@ builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, wr
 , default_stages ? [ "pre-commit" ]
 , addGcRoot ? true
 , imports ? [ ]
+, configPath ? ".pre-commit-config.yaml"
 }:
 let
   project =
@@ -20,7 +21,7 @@ let
               {
                 _module.args.pkgs = pkgs;
                 _module.args.gitignore-nix-src = gitignore-nix-src;
-                inherit hooks excludes default_stages settings addGcRoot;
+                inherit hooks excludes default_stages settings addGcRoot configPath;
                 tools = builtinStuff.tools // tools;
                 package = pre-commit;
               } // (if isFlakes
