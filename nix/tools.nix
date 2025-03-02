@@ -91,6 +91,7 @@
 , go-tools
 , golangci-lint
 , golines
+, gotools ? null
 , revive ? null
 , vale
 }:
@@ -134,6 +135,7 @@ in
     go-tools
     golangci-lint
     golines
+    gotools
     gptcommit
     hadolint
     hindent
