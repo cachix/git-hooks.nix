@@ -603,6 +603,17 @@ in
           };
         };
       };
+      fourmolu = mkOption {
+        description = "fourmolu hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings.defaultExtensions = mkOption {
+            type = types.listOf types.str;
+            description = "Haskell language extensions to enable.";
+            default = [ ];
+          };
+        };
+      };
       golines = mkOption {
         description = "golines hook";
         type = types.submodule {
@@ -2744,7 +2755,7 @@ in
           package = tools.fourmolu;
           entry =
             "${hooks.fourmolu.package}/bin/fourmolu --mode inplace ${
-lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.ormolu.settings.defaultExtensions)
+lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourmolu.settings.defaultExtensions)
 }";
           files = "\\.l?hs(-boot)?$";
         };
