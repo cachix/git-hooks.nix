@@ -204,16 +204,65 @@ clang-format supports.
 - [mix-format](https://hexdocs.pm/mix/main/Mix.Tasks.Format.html)
 - [mix-test](https://hexdocs.pm/mix/1.13/Mix.Tasks.Test.html)
 
-### OCaml
+### Fortran
 
-- [dune-fmt](https://dune.build/)
-- [dune-opam-sync](https://dune.build/)
-- [ocp-indent](http://www.typerex.org/ocp-indent.html)
-- [opam-lint](https://opam.ocaml.org/)
+- [fprettify](https://github.com/pseewald/fprettify)
 
-### Purescript
+### Git
 
-- [purty](https://gitlab.com/joneshf/purty)
+- [annex](https://git-annex.branchable.com/)
+- [check-merge-conflicts](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_merge_conflict.py)
+- [commitizen](https://github.com/commitizen-tools/commitizen)
+- [convco](https://github.com/convco/convco)
+- [forbid-new-submodules](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/forbid_new_submodules.py)
+- [gitlint](https://github.com/jorisroovers/gitlint)
+- [gptcommit](https://github.com/zurawiki/gptcommit)
+- [no-commit-to-branch](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/no_commit_to_branch.py)
+
+### Golang
+
+- gofmt: Runs `go fmt`
+- [golangci-lint](https://golangci-lint.run/)
+- gotest: Runs `go test`
+- [govet](https://pkg.go.dev/cmd/vet)
+- [revive](https://github.com/mgechev/revive)
+- [staticcheck](https://github.com/dominikh/go-tools)
+
+### HTML
+
+- [html-tidy](https://github.com/htacg/tidy-html5)
+
+### JSON
+
+- [check-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_json.py)
+- [pretty-format-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/pretty_format_json.py)
+
+### Julia
+
+- [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
+
+### LaTeX
+
+- [chktex](https://www.nongnu.org/chktex/)
+- [lacheck](https://ctan.org/pkg/lacheck)
+- [latexindent](https://github.com/cmhughes/latexindent.pl)
+
+### Link checker
+
+- [lychee](https://github.com/lycheeverse/lychee)
+- [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
+
+### Lua
+
+- [luacheck](https://github.com/mpeterv/luacheck)
+- [lua-ls](https://github.com/LuaLS/lua-language-server)
+- [stylua](https://github.com/JohnnyMorganz/StyLua)
+
+### Markdown
+
+- [markdownlint](https://github.com/DavidAnson/markdownlint)
+- [mdl](https://github.com/markdownlint/markdownlint/)
+- [mdsh](https://zimbatm.github.io/mdsh/)
 
 ### JavaScript/TypeScript
 
@@ -222,6 +271,25 @@ clang-format supports.
 - denolint: Runs `deno lint`
 - [eslint](https://github.com/eslint/eslint)
 - rome: (alias to the biome hook)
+
+### OCaml
+
+- [dune-fmt](https://dune.build/)
+- [dune-opam-sync](https://dune.build/)
+- [ocp-indent](http://www.typerex.org/ocp-indent.html)
+- [opam-lint](https://opam.ocaml.org/)
+
+### PHP
+
+- [phpcbf](https://github.com/squizlabs/PHP_CodeSniffer)
+- [php-cs-fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
+- [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
+- [phpstan](https://github.com/phpstan/phpstan)
+- [psalm](https://github.com/vimeo/psalm)
+
+### Purescript
+
+- [purty](https://gitlab.com/joneshf/purty)
 
 ### Python
 
@@ -245,32 +313,11 @@ clang-format supports.
 - [ruff-format](https://github.com/charliermarsh/ruff)
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
 
-### PHP
-
-- [phpcbf](https://github.com/squizlabs/PHP_CodeSniffer)
-- [php-cs-fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
-- [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
-- [phpstan](https://github.com/phpstan/phpstan)
-- [psalm](https://github.com/vimeo/psalm)
-
 ### Rust
 
 - cargo-check: Runs `cargo check`
 - [clippy](https://github.com/rust-lang/rust-clippy)
 - [rustfmt](https://github.com/rust-lang/rustfmt)
-
-### Golang
-
-- gofmt: Runs `go fmt`
-- [golangci-lint](https://golangci-lint.run/)
-- gotest: Runs `go test`
-- [govet](https://pkg.go.dev/cmd/vet)
-- [revive](https://github.com/mgechev/revive)
-- [staticcheck](https://github.com/dominikh/go-tools)
-
-### Julia
-
-- [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
 
 ### Shell
 
@@ -279,27 +326,11 @@ clang-format supports.
 - [shellcheck](https://github.com/koalaman/shellcheck)
 - [shfmt](https://github.com/mvdan/sh)
 
-### LaTeX
+### Spell checker
 
-- [chktex](https://www.nongnu.org/chktex/)
-- [lacheck](https://ctan.org/pkg/lacheck)
-- [latexindent](https://github.com/cmhughes/latexindent.pl)
-
-### Lua
-
-- [luacheck](https://github.com/mpeterv/luacheck)
-- [lua-ls](https://github.com/LuaLS/lua-language-server)
-- [stylua](https://github.com/JohnnyMorganz/StyLua)
-
-### HTML
-
-- [html-tidy](https://github.com/htacg/tidy-html5)
-
-### Markdown
-
-- [markdownlint](https://github.com/DavidAnson/markdownlint)
-- [mdl](https://github.com/markdownlint/markdownlint/)
-- [mdsh](https://zimbatm.github.io/mdsh/)
+- [cspell](https://cspell.org/)
+- [hunspell](https://github.com/hunspell/hunspell)
+- [typos](https://github.com/crate-ci/typos)
 
 ### Terraform
 
@@ -307,53 +338,22 @@ clang-format supports.
 - `terraform-validate`: built-in validator (using [OpenTofu](https://opentofu.org/)'s [`validate`](https://opentofu.org/docs/cli/commands/validate/))
 - [tflint](https://github.com/terraform-linters/tflint)
 
-### YAML
-
-- [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
-- [sort-simple-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/sort_simple_yaml.py)
-- [yamlfmt](https://github.com/google/yamlfmt)
-- [yamllint](https://github.com/adrienverge/yamllint)
-
 ### TOML
 
 - [check-toml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_toml.py)
 - [taplo fmt](https://github.com/tamasfe/taplo)
-
-### JSON
-
-- [check-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_json.py)
-- [pretty-format-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/pretty_format_json.py)
 
 ### Typst
 
 - [typstfmt](https://github.com/astrale-sharp/typstfmt)
 - [typstyle](https://github.com/Enter-tainer/typstyle)
 
-### Fortran
+### YAML
 
-- [fprettify](https://github.com/pseewald/fprettify)
-
-### Spell checker
-
-- [cspell](https://cspell.org/)
-- [hunspell](https://github.com/hunspell/hunspell)
-- [typos](https://github.com/crate-ci/typos)
-
-### Link checker
-
-- [lychee](https://github.com/lycheeverse/lychee)
-- [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
-
-### Git
-
-- [annex](https://git-annex.branchable.com/)
-- [check-merge-conflicts](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_merge_conflict.py)
-- [commitizen](https://github.com/commitizen-tools/commitizen)
-- [convco](https://github.com/convco/convco)
-- [forbid-new-submodules](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/forbid_new_submodules.py)
-- [gitlint](https://github.com/jorisroovers/gitlint)
-- [gptcommit](https://github.com/zurawiki/gptcommit)
-- [no-commit-to-branch](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/no_commit_to_branch.py)
+- [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
+- [sort-simple-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/sort_simple_yaml.py)
+- [yamlfmt](https://github.com/google/yamlfmt)
+- [yamllint](https://github.com/adrienverge/yamllint)
 
 ### Various other hooks
 
