@@ -161,6 +161,8 @@ use nix
 ### Haskell
 
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
+- [cabal-gild](https://github.com/tfausak/cabal-gild)
+- [cabal2nix](https://github.com/NixOS/cabal2nix)
 - [fourmolu](https://github.com/parsonsmatt/fourmolu)
 - [hindent](https://github.com/chrisdone/hindent)
 - [hlint](https://github.com/ndmitchell/hlint)
@@ -186,10 +188,40 @@ clang-format = {
 Otherwise, the default internal list is used which includes everything that
 clang-format supports.
 
+### Ansible
+
+- [ansible-lint](https://github.com/ansible/ansible-lint)
+
+### C/C++
+
+- [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
+
 ### Clojure
 
 - [cljfmt](https://github.com/weavejester/cljfmt)
 - [zprint](https://github.com/kkinnear/zprint)
+
+### Crystal
+
+- [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
+
+### Dart
+
+- [dart analyze](https://dart.dev/tools/dart-analyze)
+- [dart format](https://dart.dev/tools/dart-format)
+
+### Dhall
+
+- [dhall format](https://github.com/dhall-lang/dhall-lang)
+
+### Dockerfile
+
+- [hadolint](https://github.com/hadolint/hadolint)
+
+### Editorconfig
+
+- [eclint](https://github.com/jednano/eclint)
+- [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 
 ### Elm
 
@@ -223,6 +255,7 @@ clang-format supports.
 
 - gofmt: Runs `go fmt`
 - [golangci-lint](https://golangci-lint.run/)
+- [golines](https://github.com/segmentio/golines)
 - gotest: Runs `go test`
 - [govet](https://pkg.go.dev/cmd/vet)
 - [revive](https://github.com/mgechev/revive)
@@ -261,14 +294,15 @@ clang-format supports.
 ### Markdown
 
 - [markdownlint](https://github.com/DavidAnson/markdownlint)
+- [mdformat](https://github.com/hukkin/mdformat)
 - [mdl](https://github.com/markdownlint/markdownlint/)
 - [mdsh](https://zimbatm.github.io/mdsh/)
 
 ### JavaScript/TypeScript
 
 - [biome](https://biomejs.dev/)
-- denofmt: Runs `deno fmt`
-- denolint: Runs `deno lint`
+- [denofmt](https://docs.deno.com/runtime/reference/cli/fmt/)
+- [denolint](https://docs.deno.com/runtime/reference/cli/lint/)
 - [eslint](https://github.com/eslint/eslint)
 - rome: (alias to the biome hook)
 
@@ -289,6 +323,7 @@ clang-format supports.
 
 ### Purescript
 
+- [purs-tidy](https://github.com/natefaubion/purescript-tidy)
 - [purty](https://gitlab.com/joneshf/purty)
 
 ### Python
@@ -300,24 +335,32 @@ clang-format supports.
 - [check-python](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_ast.py)
 - [fix-encoding-pragma](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_encoding_pragma.py)
 - [flake8](https://github.com/PyCQA/flake8)
+- [flynt](https://github.com/ikamensh/flynt)
 - [isort](https://github.com/PyCQA/isort)
 - [mypy](https://github.com/python/mypy)
 - [name-tests-test](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/tests_should_end_in_test.py)
+- [poetry-check](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry check`.
+- [poetry-lock](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry lock`.
 - [pylint](https://github.com/PyCQA/pylint)
 - [pyright](https://github.com/microsoft/pyright)
 - [python-debug-statements](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/debug_statement_hook.py)
-- [poetry-check](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry check`.
-- [poetry-lock](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry lock`.
 - [pyupgrade](https://github.com/asottile/pyupgrade)
 - [ruff](https://github.com/charliermarsh/ruff)
 - [ruff-format](https://github.com/charliermarsh/ruff)
+- [single-quoted-strings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/string_fixer.py)
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
 
 ### Rust
 
-- cargo-check: Runs `cargo check`
+- [cargo-check](https://doc.rust-lang.org/cargo/commands/cargo-check.html)
 - [clippy](https://github.com/rust-lang/rust-clippy)
 - [rustfmt](https://github.com/rust-lang/rustfmt)
+
+### Secret detection
+
+- [pre-commit-ensure-sops](https://github.com/yuvipanda/pre-commit-hook-ensure-sops)
+- [ripsecrets](https://github.com/sirwart/ripsecrets)
+- [trufflehog](https://github.com/trufflesecurity/trufflehog): Secret scanner
 
 ### Shell
 
@@ -330,7 +373,9 @@ clang-format supports.
 
 - [cspell](https://cspell.org/)
 - [hunspell](https://github.com/hunspell/hunspell)
+- [proselint](https://github.com/amperser/proselint)
 - [typos](https://github.com/crate-ci/typos)
+- [vale](https://github.com/errata-ai/vale)
 
 ### Terraform
 
@@ -366,26 +411,23 @@ clang-format supports.
 - [check-symlinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_symlinks.py)
 - [check-vcs-permalinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_vcs_permalinks.py)
 - [check-xml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_xml.py)
-- [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
-- [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
+- [circleci](https://circleci.com/)
+- [conform](https://github.com/edmundhung/conform)
 - [detect-aws-credentials](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_aws_credentials.py)
 - [detect-private-keys](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_private_key.py)
-- `dhall format`: built-in formatter
-- [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 - [end-of-file-fixer](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/end_of_file_fixer.py)
 - [fix-byte-order-marker](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_byte_order_marker.py)
-- [hadolint](https://github.com/hadolint/hadolint)
 - [headache](https://github.com/frama-c/headache)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)
 - [prettier](https://prettier.io)
+- [reuse](https://github.com/fsfe/reuse-tool)
 - [sort-file-contents](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/file_contents_sorter.py)
 - [tagref](https://github.com/stepchowfun/tagref)
 - [topiary](https://github.com/tweag/topiary)
 - [treefmt](https://github.com/numtide/treefmt)
 - [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
-- [trufflehog](https://github.com/trufflesecurity/trufflehog): Secret scanner
 
 ### Custom hooks
 
