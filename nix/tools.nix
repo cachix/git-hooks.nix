@@ -68,6 +68,7 @@
 , reuse
 , ruff ? null
 , rustfmt
+, selene
 , shellcheck
 , bats
 , shfmt
@@ -158,6 +159,7 @@ in
     ripsecrets
     ruff
     rustfmt
+    selene
     shellcheck
     shfmt
     statix
