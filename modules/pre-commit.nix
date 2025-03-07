@@ -441,7 +441,7 @@ in
               echo 1>&2 "git-hooks.nix: updating $PWD repo"
               [ -L ${cfg.configPath} ] && unlink ${cfg.configPath}
 
-              if [ -e "''${GIT_WC}/${cfg.configPath}" && ! ${boolToString cfg.overwriteConfig} ]; then
+              if [[ -e "''${GIT_WC}/${cfg.configPath}" && ! ${boolToString cfg.overwriteConfig} ]]; then
                 echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of an existing config at ${cfg.configPath}"
                 echo 1>&2 ""
                 echo 1>&2 "  To migrate the existing config to a Nix configuration:"
