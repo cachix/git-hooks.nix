@@ -147,53 +147,24 @@ use nix
 
 ## Hooks
 
-### Nix
-
-- [alejandra](https://github.com/kamadorueda/alejandra)
-- [deadnix](https://github.com/astro/deadnix)
-- [flake-checker](https://github.com/DeterminateSystems/flake-checker)
-- [nil](https://github.com/oxalica/nil)
-- [nixfmt-classic](https://github.com/NixOS/nixfmt/tree/v0.6.0)
-- [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)
-- [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
-- [statix](https://github.com/nerdypepper/statix)
-
-### Haskell
-
-- [cabal-fmt](https://github.com/phadej/cabal-fmt)
-- [cabal-gild](https://github.com/tfausak/cabal-gild)
-- [cabal2nix](https://github.com/NixOS/cabal2nix)
-- [fourmolu](https://github.com/parsonsmatt/fourmolu)
-- [hindent](https://github.com/chrisdone/hindent)
-- [hlint](https://github.com/ndmitchell/hlint)
-- [hpack](https://github.com/sol/hpack)
-- [ormolu](https://github.com/tweag/ormolu)
-- [stylish-haskell](https://github.com/jaspervdj/stylish-haskell)
-
-### C/C++/C#/ObjC
-
-- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
-- [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
-
-You may restrict which languages should be formatted by `clang-format` using
-`clang-format.types_or`. For example to check only C and C++ files:
-
-```nix
-clang-format = {
-  enable = true;
-  types_or = lib.mkForce [ "c" "c++" ];
-};
-```
-
-Otherwise, the default internal list is used which includes everything that
-clang-format supports.
-
 ### Ansible
 
 - [ansible-lint](https://github.com/ansible/ansible-lint)
 
-### C/C++
+### C/C++/C#/ObjC
 
+- [clang-format](https://clang.llvm.org/docs/ClangFormat.html).\
+  You may restrict which languages should be formatted by `clang-format` using
+  `clang-format.types_or`. For example to check only C and C++ files:
+  ```nix
+  clang-format = {
+    enable = true;
+    types_or = lib.mkForce [ "c" "c++" ];
+  };
+  ```
+  Otherwise, the default internal list is used which includes everything that
+  clang-format supports.
+- [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
 - [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
 
 ### Clojure
@@ -261,9 +232,29 @@ clang-format supports.
 - [revive](https://github.com/mgechev/revive)
 - [staticcheck](https://github.com/dominikh/go-tools)
 
+### Haskell
+
+- [cabal-fmt](https://github.com/phadej/cabal-fmt)
+- [cabal-gild](https://github.com/tfausak/cabal-gild)
+- [cabal2nix](https://github.com/NixOS/cabal2nix)
+- [fourmolu](https://github.com/parsonsmatt/fourmolu)
+- [hindent](https://github.com/chrisdone/hindent)
+- [hlint](https://github.com/ndmitchell/hlint)
+- [hpack](https://github.com/sol/hpack)
+- [ormolu](https://github.com/tweag/ormolu)
+- [stylish-haskell](https://github.com/jaspervdj/stylish-haskell)
+
 ### HTML
 
 - [html-tidy](https://github.com/htacg/tidy-html5)
+
+### JavaScript/TypeScript
+
+- [biome](https://biomejs.dev/)
+- [denofmt](https://docs.deno.com/runtime/reference/cli/fmt/)
+- [denolint](https://docs.deno.com/runtime/reference/cli/lint/)
+- [eslint](https://github.com/eslint/eslint)
+- rome: (alias to the biome hook)
 
 ### JSON
 
@@ -299,13 +290,16 @@ clang-format supports.
 - [mdl](https://github.com/markdownlint/markdownlint/)
 - [mdsh](https://zimbatm.github.io/mdsh/)
 
-### JavaScript/TypeScript
+### Nix
 
-- [biome](https://biomejs.dev/)
-- [denofmt](https://docs.deno.com/runtime/reference/cli/fmt/)
-- [denolint](https://docs.deno.com/runtime/reference/cli/lint/)
-- [eslint](https://github.com/eslint/eslint)
-- rome: (alias to the biome hook)
+- [alejandra](https://github.com/kamadorueda/alejandra)
+- [deadnix](https://github.com/astro/deadnix)
+- [flake-checker](https://github.com/DeterminateSystems/flake-checker)
+- [nil](https://github.com/oxalica/nil)
+- [nixfmt-classic](https://github.com/NixOS/nixfmt/tree/v0.6.0)
+- [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)
+- [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
+- [statix](https://github.com/nerdypepper/statix)
 
 ### OCaml
 
