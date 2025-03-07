@@ -286,7 +286,11 @@ in
         default = ".pre-commit-config.yaml";
         description =
           ''
-            The path to the generated pre-commit configuration file.
+            The path where to generate the pre-commit configuration file.
+
+            This path is relative to the root of the project. By default,
+            this is set to ".pre-commit-config.yaml", which is the standard
+            location expected by pre-commit.
           '';
       };
 
@@ -428,14 +432,16 @@ in
             if ! readlink "''${GIT_WC}/${cfg.configPath}" >/dev/null \
               || [[ $(readlink "''${GIT_WC}/${cfg.configPath}") != ${cfg.configFile} ]]; then
               echo 1>&2 "git-hooks.nix: updating $PWD repo"
-              [ -L ${cfg.configPath} ] && unlink ${cfg.configPath}
+              [ -L "''${GIT_WC}/${cfg.configPath}" ] && unlink "''${GIT_WC}/${cfg.configPath}"
 
               if [ -e "''${GIT_WC}/${cfg.configPath}" ]; then
-                echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of pre-existing ${cfg.configPath}"
-                echo 1>&2 "    1. Translate ${cfg.configPath} contents to the new syntax in your Nix file"
-                echo 1>&2 "        see https://github.com/cachix/git-hooks.nix#getting-started"
-                echo 1>&2 "    2. remove ${cfg.configPath}"
-                echo 1>&2 "    3. add ${cfg.configPath} to .gitignore"
+                echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of an existing config at ${cfg.configPath}"
+                echo 1>&2 ""
+                echo 1>&2 "  To migrate the existing config to a Nix configuration:"
+                echo 1>&2 "    1. Translate the contents of ${cfg.configPath} into a Nix configuration."
+                echo 1>&2 "       See https://github.com/cachix/git-hooks.nix#getting-started"
+                echo 1>&2 "    2. Remove ${cfg.configPath}"
+                echo 1>&2 "    3. Add ${cfg.configPath} to .gitignore"
               else
                 if ${boolToString cfg.addGcRoot}; then
                   nix-store --add-root "''${GIT_WC}/${cfg.configPath}" --indirect --realise ${cfg.configFile}

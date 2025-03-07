@@ -1,34 +1,30 @@
 builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, writeScript, lib, gitignore-nix-src }:
 
-{ src
-, settings ? { }
-, hooks ? { }
-, excludes ? [ ]
-, tools ? { }
-, default_stages ? [ "pre-commit" ]
-, addGcRoot ? true
+options@{ src
 , imports ? [ ]
-, configPath ? ".pre-commit-config.yaml"
+, tools ? { }
+, ...
 }:
 let
+  moduleOptions = builtins.removeAttrs options [ "imports" "tools" ];
+
   project =
     lib.evalModules {
       modules =
         [
           ../modules/all-modules.nix
           {
-            config =
-              {
-                _module.args.pkgs = pkgs;
-                _module.args.gitignore-nix-src = gitignore-nix-src;
-                inherit hooks excludes default_stages settings addGcRoot configPath;
-                tools = builtinStuff.tools // tools;
-                package = pre-commit;
-              } // (if isFlakes
-              then { rootSrc = src; }
-              else {
-                rootSrc = gitignore-nix-src.lib.gitignoreSource src;
-              });
+            config = moduleOptions //
+            {
+              _module.args.pkgs = pkgs;
+              _module.args.gitignore-nix-src = gitignore-nix-src;
+              package = lib.mkDefault pre-commit;
+              tools = lib.mkDefault (builtinStuff.tools // tools);
+            } // (if isFlakes
+            then { rootSrc = src; }
+            else {
+              rootSrc = gitignore-nix-src.lib.gitignoreSource src;
+            });
           }
         ] ++ imports;
     };
