@@ -12,9 +12,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        os:
-          - [self-hosted, linux, X64]
-          - [self-hosted, macOS, ARM64]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -29,9 +27,7 @@ jobs:
   tests-flakes:
     strategy:
       matrix:
-        os:
-          - [self-hosted, linux, X64]
-          - [self-hosted, macOS, ARM64]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -50,9 +46,7 @@ jobs:
   tests-flakes-stable:
     strategy:
       matrix:
-        os:
-          - [self-hosted, linux, X64]
-          - [self-hosted, macOS, ARM64]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
