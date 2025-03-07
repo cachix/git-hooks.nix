@@ -286,7 +286,11 @@ in
         default = ".pre-commit-config.yaml";
         description =
           ''
-            The path to the generated pre-commit configuration file.
+            The path where to generate the pre-commit configuration file.
+
+            This path is relative to the root of the project. By default,
+            this is set to ".pre-commit-config.yaml", which is the standard
+            location expected by pre-commit.
           '';
       };
 
