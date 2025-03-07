@@ -161,6 +161,8 @@ use nix
 ### Haskell
 
 - [cabal-fmt](https://github.com/phadej/cabal-fmt)
+- [cabal-gild](https://github.com/tfausak/cabal-gild)
+- [cabal2nix](https://github.com/NixOS/cabal2nix)
 - [fourmolu](https://github.com/parsonsmatt/fourmolu)
 - [hindent](https://github.com/chrisdone/hindent)
 - [hlint](https://github.com/ndmitchell/hlint)
@@ -186,10 +188,40 @@ clang-format = {
 Otherwise, the default internal list is used which includes everything that
 clang-format supports.
 
+### Ansible
+
+- [ansible-lint](https://github.com/ansible/ansible-lint)
+
+### C/C++
+
+- [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
+
 ### Clojure
 
 - [cljfmt](https://github.com/weavejester/cljfmt)
 - [zprint](https://github.com/kkinnear/zprint)
+
+### Crystal
+
+- [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
+
+### Dart
+
+- [dart analyze](https://dart.dev/tools/dart-analyze)
+- [dart format](https://dart.dev/tools/dart-format)
+
+### Dhall
+
+- [dhall format](https://github.com/dhall-lang/dhall-lang)
+
+### Dockerfile
+
+- [hadolint](https://github.com/hadolint/hadolint)
+
+### Editorconfig
+
+- [eclint](https://github.com/jednano/eclint)
+- [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 
 ### Elm
 
@@ -204,146 +236,9 @@ clang-format supports.
 - [mix-format](https://hexdocs.pm/mix/main/Mix.Tasks.Format.html)
 - [mix-test](https://hexdocs.pm/mix/1.13/Mix.Tasks.Test.html)
 
-### OCaml
-
-- [dune-fmt](https://dune.build/)
-- [dune-opam-sync](https://dune.build/)
-- [ocp-indent](http://www.typerex.org/ocp-indent.html)
-- [opam-lint](https://opam.ocaml.org/)
-
-### Purescript
-
-- [purty](https://gitlab.com/joneshf/purty)
-
-### JavaScript/TypeScript
-
-- [biome](https://biomejs.dev/)
-- denofmt: Runs `deno fmt`
-- denolint: Runs `deno lint`
-- [eslint](https://github.com/eslint/eslint)
-- rome: (alias to the biome hook)
-
-### Python
-
-- [autoflake](https://github.com/PyCQA/autoflake)
-- [black](https://github.com/psf/black)
-- [check-builtin-literals](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_builtin_literals.py)
-- [check-docstring-first](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_docstring_first.py)
-- [check-python](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_ast.py)
-- [fix-encoding-pragma](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_encoding_pragma.py)
-- [flake8](https://github.com/PyCQA/flake8)
-- [isort](https://github.com/PyCQA/isort)
-- [mypy](https://github.com/python/mypy)
-- [name-tests-test](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/tests_should_end_in_test.py)
-- [pylint](https://github.com/PyCQA/pylint)
-- [pyright](https://github.com/microsoft/pyright)
-- [python-debug-statements](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/debug_statement_hook.py)
-- [poetry-check](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry check`.
-- [poetry-lock](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry lock`.
-- [pyupgrade](https://github.com/asottile/pyupgrade)
-- [ruff](https://github.com/charliermarsh/ruff)
-- [ruff-format](https://github.com/charliermarsh/ruff)
-- [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
-
-### PHP
-
-- [phpcbf](https://github.com/squizlabs/PHP_CodeSniffer)
-- [php-cs-fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
-- [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
-- [phpstan](https://github.com/phpstan/phpstan)
-- [psalm](https://github.com/vimeo/psalm)
-
-### Rust
-
-- cargo-check: Runs `cargo check`
-- [clippy](https://github.com/rust-lang/rust-clippy)
-- [rustfmt](https://github.com/rust-lang/rustfmt)
-
-### Golang
-
-- gofmt: Runs `go fmt`
-- [golangci-lint](https://golangci-lint.run/)
-- gotest: Runs `go test`
-- [govet](https://pkg.go.dev/cmd/vet)
-- [revive](https://github.com/mgechev/revive)
-- [staticcheck](https://github.com/dominikh/go-tools)
-
-### Julia
-
-- [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
-
-### Shell
-
-- [bats](https://github.com/bats-core/bats-core)
-- [beautysh](https://github.com/lovesegfault/beautysh)
-- [shellcheck](https://github.com/koalaman/shellcheck)
-- [shfmt](https://github.com/mvdan/sh)
-
-### LaTeX
-
-- [chktex](https://www.nongnu.org/chktex/)
-- [lacheck](https://ctan.org/pkg/lacheck)
-- [latexindent](https://github.com/cmhughes/latexindent.pl)
-
-### Lua
-
-- [luacheck](https://github.com/mpeterv/luacheck)
-- [lua-ls](https://github.com/LuaLS/lua-language-server)
-- [selene](https://github.com/Kampfkarren/selene)
-- [stylua](https://github.com/JohnnyMorganz/StyLua)
-
-### HTML
-
-- [html-tidy](https://github.com/htacg/tidy-html5)
-
-### Markdown
-
-- [markdownlint](https://github.com/DavidAnson/markdownlint)
-- [mdl](https://github.com/markdownlint/markdownlint/)
-- [mdsh](https://zimbatm.github.io/mdsh/)
-
-### Terraform
-
-- `terraform-format`: built-in formatter (using [OpenTofu](https://opentofu.org/)'s [`fmt`](https://opentofu.org/docs/cli/commands/fmt/))
-- `terraform-validate`: built-in validator (using [OpenTofu](https://opentofu.org/)'s [`validate`](https://opentofu.org/docs/cli/commands/validate/))
-- [tflint](https://github.com/terraform-linters/tflint)
-
-### YAML
-
-- [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
-- [sort-simple-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/sort_simple_yaml.py)
-- [yamlfmt](https://github.com/google/yamlfmt)
-- [yamllint](https://github.com/adrienverge/yamllint)
-
-### TOML
-
-- [check-toml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_toml.py)
-- [taplo fmt](https://github.com/tamasfe/taplo)
-
-### JSON
-
-- [check-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_json.py)
-- [pretty-format-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/pretty_format_json.py)
-
-### Typst
-
-- [typstfmt](https://github.com/astrale-sharp/typstfmt)
-- [typstyle](https://github.com/Enter-tainer/typstyle)
-
 ### Fortran
 
 - [fprettify](https://github.com/pseewald/fprettify)
-
-### Spell checker
-
-- [cspell](https://cspell.org/)
-- [hunspell](https://github.com/hunspell/hunspell)
-- [typos](https://github.com/crate-ci/typos)
-
-### Link checker
-
-- [lychee](https://github.com/lycheeverse/lychee)
-- [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 
 ### Git
 
@@ -356,6 +251,156 @@ clang-format supports.
 - [gptcommit](https://github.com/zurawiki/gptcommit)
 - [no-commit-to-branch](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/no_commit_to_branch.py)
 
+### Golang
+
+- gofmt: Runs `go fmt`
+- [golangci-lint](https://golangci-lint.run/)
+- [golines](https://github.com/segmentio/golines)
+- gotest: Runs `go test`
+- [govet](https://pkg.go.dev/cmd/vet)
+- [revive](https://github.com/mgechev/revive)
+- [staticcheck](https://github.com/dominikh/go-tools)
+
+### HTML
+
+- [html-tidy](https://github.com/htacg/tidy-html5)
+
+### JSON
+
+- [check-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_json.py)
+- [pretty-format-json](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/pretty_format_json.py)
+
+### Julia
+
+- [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
+
+### LaTeX
+
+- [chktex](https://www.nongnu.org/chktex/)
+- [lacheck](https://ctan.org/pkg/lacheck)
+- [latexindent](https://github.com/cmhughes/latexindent.pl)
+
+### Link checker
+
+- [lychee](https://github.com/lycheeverse/lychee)
+- [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
+
+### Lua
+
+- [luacheck](https://github.com/mpeterv/luacheck)
+- [lua-ls](https://github.com/LuaLS/lua-language-server)
+- [selene](https://github.com/Kampfkarren/selene)
+- [stylua](https://github.com/JohnnyMorganz/StyLua)
+
+### Markdown
+
+- [markdownlint](https://github.com/DavidAnson/markdownlint)
+- [mdformat](https://github.com/hukkin/mdformat)
+- [mdl](https://github.com/markdownlint/markdownlint/)
+- [mdsh](https://zimbatm.github.io/mdsh/)
+
+### JavaScript/TypeScript
+
+- [biome](https://biomejs.dev/)
+- [denofmt](https://docs.deno.com/runtime/reference/cli/fmt/)
+- [denolint](https://docs.deno.com/runtime/reference/cli/lint/)
+- [eslint](https://github.com/eslint/eslint)
+- rome: (alias to the biome hook)
+
+### OCaml
+
+- [dune-fmt](https://dune.build/)
+- [dune-opam-sync](https://dune.build/)
+- [ocp-indent](http://www.typerex.org/ocp-indent.html)
+- [opam-lint](https://opam.ocaml.org/)
+
+### PHP
+
+- [phpcbf](https://github.com/squizlabs/PHP_CodeSniffer)
+- [php-cs-fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
+- [phpcs](https://github.com/squizlabs/PHP_CodeSniffer)
+- [phpstan](https://github.com/phpstan/phpstan)
+- [psalm](https://github.com/vimeo/psalm)
+
+### Purescript
+
+- [purs-tidy](https://github.com/natefaubion/purescript-tidy)
+- [purty](https://gitlab.com/joneshf/purty)
+
+### Python
+
+- [autoflake](https://github.com/PyCQA/autoflake)
+- [black](https://github.com/psf/black)
+- [check-builtin-literals](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_builtin_literals.py)
+- [check-docstring-first](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_docstring_first.py)
+- [check-python](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_ast.py)
+- [fix-encoding-pragma](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_encoding_pragma.py)
+- [flake8](https://github.com/PyCQA/flake8)
+- [flynt](https://github.com/ikamensh/flynt)
+- [isort](https://github.com/PyCQA/isort)
+- [mypy](https://github.com/python/mypy)
+- [name-tests-test](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/tests_should_end_in_test.py)
+- [poetry-check](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry check`.
+- [poetry-lock](https://python-poetry.org/docs/pre-commit-hooks): Run `poetry lock`.
+- [pylint](https://github.com/PyCQA/pylint)
+- [pyright](https://github.com/microsoft/pyright)
+- [python-debug-statements](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/debug_statement_hook.py)
+- [pyupgrade](https://github.com/asottile/pyupgrade)
+- [ruff](https://github.com/charliermarsh/ruff)
+- [ruff-format](https://github.com/charliermarsh/ruff)
+- [single-quoted-strings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/string_fixer.py)
+- [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
+
+### Rust
+
+- [cargo-check](https://doc.rust-lang.org/cargo/commands/cargo-check.html)
+- [clippy](https://github.com/rust-lang/rust-clippy)
+- [rustfmt](https://github.com/rust-lang/rustfmt)
+
+### Secret detection
+
+- [pre-commit-ensure-sops](https://github.com/yuvipanda/pre-commit-hook-ensure-sops)
+- [ripsecrets](https://github.com/sirwart/ripsecrets)
+- [trufflehog](https://github.com/trufflesecurity/trufflehog): Secret scanner
+
+### Shell
+
+- [bats](https://github.com/bats-core/bats-core)
+- [beautysh](https://github.com/lovesegfault/beautysh)
+- [shellcheck](https://github.com/koalaman/shellcheck)
+- [shfmt](https://github.com/mvdan/sh)
+
+### Spell checker
+
+- [cspell](https://cspell.org/)
+- [hunspell](https://github.com/hunspell/hunspell)
+- [proselint](https://github.com/amperser/proselint)
+- [typos](https://github.com/crate-ci/typos)
+- [vale](https://github.com/errata-ai/vale)
+
+### Terraform
+
+- `terraform-format`: built-in formatter (using [OpenTofu](https://opentofu.org/)'s [`fmt`](https://opentofu.org/docs/cli/commands/fmt/))
+- `terraform-validate`: built-in validator (using [OpenTofu](https://opentofu.org/)'s [`validate`](https://opentofu.org/docs/cli/commands/validate/))
+- [tflint](https://github.com/terraform-linters/tflint)
+
+### TOML
+
+- [check-toml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_toml.py)
+- [taplo fmt](https://github.com/tamasfe/taplo)
+
+### Typst
+
+- [typstfmt](https://github.com/astrale-sharp/typstfmt)
+- [typstyle](https://github.com/Enter-tainer/typstyle)
+
+### YAML
+
+- [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
+- [sort-simple-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/sort_simple_yaml.py)
+- [yamlfmt](https://github.com/google/yamlfmt)
+- [yamllint](https://github.com/adrienverge/yamllint)
+
 ### Various other hooks
 
 - [actionlint](https://github.com/rhysd/actionlint)
@@ -367,26 +412,23 @@ clang-format supports.
 - [check-symlinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_symlinks.py)
 - [check-vcs-permalinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_vcs_permalinks.py)
 - [check-xml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_xml.py)
-- [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
-- [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
+- [circleci](https://circleci.com/)
+- [conform](https://github.com/edmundhung/conform)
 - [detect-aws-credentials](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_aws_credentials.py)
 - [detect-private-keys](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_private_key.py)
-- `dhall format`: built-in formatter
-- [editorconfig-checker](https://github.com/editorconfig-checker/editorconfig-checker)
 - [end-of-file-fixer](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/end_of_file_fixer.py)
 - [fix-byte-order-marker](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_byte_order_marker.py)
-- [hadolint](https://github.com/hadolint/hadolint)
 - [headache](https://github.com/frama-c/headache)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)
 - [prettier](https://prettier.io)
+- [reuse](https://github.com/fsfe/reuse-tool)
 - [sort-file-contents](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/file_contents_sorter.py)
 - [tagref](https://github.com/stepchowfun/tagref)
 - [topiary](https://github.com/tweag/topiary)
 - [treefmt](https://github.com/numtide/treefmt)
 - [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
-- [trufflehog](https://github.com/trufflesecurity/trufflehog): Secret scanner
 
 ### Custom hooks
 
