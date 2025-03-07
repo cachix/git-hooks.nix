@@ -428,7 +428,7 @@ in
             if ! readlink "''${GIT_WC}/${cfg.configPath}" >/dev/null \
               || [[ $(readlink "''${GIT_WC}/${cfg.configPath}") != ${cfg.configFile} ]]; then
               echo 1>&2 "git-hooks.nix: updating $PWD repo"
-              [ -L ${cfg.configPath} ] && unlink ${cfg.configPath}
+              [ -L "''${GIT_WC}/${cfg.configPath}" ] && unlink "''${GIT_WC}/${cfg.configPath}"
 
               if [ -e "''${GIT_WC}/${cfg.configPath}" ]; then
                 echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of pre-existing ${cfg.configPath}"
