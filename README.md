@@ -289,6 +289,7 @@ clang-format supports.
 
 - [luacheck](https://github.com/mpeterv/luacheck)
 - [lua-ls](https://github.com/LuaLS/lua-language-server)
+- [selene](https://github.com/Kampfkarren/selene)
 - [stylua](https://github.com/JohnnyMorganz/StyLua)
 
 ### HTML
