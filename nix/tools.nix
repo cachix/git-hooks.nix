@@ -142,7 +142,6 @@ in
     hpack
     html-tidy
     lychee
-    julia-bin
     mdformat
     mdl
     mdsh
@@ -219,6 +218,9 @@ in
   checkmake = if stdenv.isLinux || checkmake.version >= "0.2.2" then checkmake else null;
 
   headache = callPackage ./headache { };
+
+  # Disable tests as these take way to long on our infra.
+  julia-bin = julia-bin.overrideAttrs (_: _: { doInstallCheck = false; });
 
   # nixfmt was renamed to nixfmt-classic in 24.05.
   # nixfmt may be replaced by nixfmt-rfc-style in the future.
