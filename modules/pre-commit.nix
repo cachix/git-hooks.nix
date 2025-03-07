@@ -416,10 +416,7 @@ in
       installationScript =
         ''
           export PATH=${cfg.package}/bin:$PATH
-          if ! type -t git >/dev/null; then
-            # This happens in pure shells, including lorri
-            echo 1>&2 "WARNING: git-hooks.nix: git command not found; skipping installation."
-          elif ! ${cfg.gitPackage}/bin/git rev-parse --git-dir &> /dev/null; then
+          if ! ${cfg.gitPackage}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: git-hooks.nix: .git not found; skipping installation."
           else
             GIT_WC=`${cfg.gitPackage}/bin/git rev-parse --show-toplevel`
