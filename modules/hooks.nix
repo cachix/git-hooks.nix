@@ -3714,6 +3714,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "\\.rs$";
           pass_filenames = false;
         };
+      selene = {
+        name = "selene";
+        description = "A blazing-fast modern Lua linter written in Rust.";
+        types = [ "lua" ];
+        package = tools.selene;
+        entry = "${hooks.selene.package}/bin/selene";
+      };
       shellcheck =
         {
           name = "shellcheck";
