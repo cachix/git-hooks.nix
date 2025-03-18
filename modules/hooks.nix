@@ -4039,7 +4039,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         entry =
           let
             # TODO: was .vale.ini, threw error in Nix
-            configFile = builtins.toFile "vale.ini" "${hooks.vale.settings.config}";
+            configFile = builtins.toFile "vale.ini" "${hooks.vale.settings.configuration}";
             cmdArgs =
               mkCmdArgs
                 (with hooks.vale.settings; [
