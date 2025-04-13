@@ -1837,6 +1837,14 @@ in
                 example = "*.nix";
               };
 
+            force-exclude =
+              mkOption {
+                type = types.bool;
+                description = "Respect excluded files even for paths passed explicitly.";
+                default = true;
+                example = false;
+              };
+
             format =
               mkOption {
                 type = types.enum [ "silent" "brief" "long" "json" ];
@@ -4000,7 +4008,8 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                     [ (config != { }) "--config ${configFile}" ]
                     [ (configPath != "" && config == { }) "--config ${configPath}" ]
                     [ diff "--diff" ]
-                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+                    [ (exclude != "") "--exclude ${exclude}" ]
+                    [ force-exclude "--force-exclude" ]
                     [ (format != "long") "--format ${format}" ]
                     [ hidden "--hidden" ]
                     [ (locale != "en") "--locale ${locale}" ]
