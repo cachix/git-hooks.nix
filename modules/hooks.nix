@@ -1831,10 +1831,10 @@ in
 
             exclude =
               mkOption {
-                type = types.str;
-                description = "Ignore files and directories matching the glob.";
-                default = "";
-                example = "*.nix";
+                type = with types; coercedTo str (s: [ s ]) (listOf str);
+                description = "Ignore files and directories matching one of the globs.";
+                default = [ ];
+                example = [ "*.nix" ];
               };
 
             force-exclude =
@@ -3998,8 +3998,10 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.typos;
           entry =
             let
-              inherit (hooks.typos.settings) config;
+              inherit (hooks.typos.settings) config exclude;
               configFile = toml.generate "typos-config.toml" config;
+              excludeFlags = lib.concatStringsSep " "
+                (lib.map (glob: "--exclude ${glob}") exclude);
               cmdArgs =
                 mkCmdArgs
                   (with hooks.typos.settings; [
@@ -4008,7 +4010,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                     [ (config != { }) "--config ${configFile}" ]
                     [ (configPath != "" && config == { }) "--config ${configPath}" ]
                     [ diff "--diff" ]
-                    [ (exclude != "") "--exclude ${exclude}" ]
+                    [ (exclude != [ ]) excludeFlags ]
                     [ force-exclude "--force-exclude" ]
                     [ (format != "long") "--format ${format}" ]
                     [ hidden "--hidden" ]
