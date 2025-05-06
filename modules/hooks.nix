@@ -3972,7 +3972,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             let
               script = pkgs.writeShellScript "precommit-trufflehog" ''
                 set -e
-                ${hooks.trufflehog.package}/bin/trufflehog --no-update git "file://$(git rev-parse --show-top-level)" --since-commit HEAD --only-verified --fail
+                ${hooks.trufflehog.package}/bin/trufflehog --no-update git "file://$(git rev-parse --show-toplevel)" --since-commit HEAD --only-verified --fail
               '';
             in
             builtins.toString script;
