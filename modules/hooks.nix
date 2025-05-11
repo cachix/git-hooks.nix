@@ -2,7 +2,7 @@
 let
   inherit (config) hooks tools settings;
   cfg = config;
-  inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRemovedOptionModule mkRenamedOptionModule types;
+  inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkEnableOption mkRemovedOptionModule mkRenamedOptionModule types;
 
   cargoManifestPathArg =
     lib.optionalString
@@ -1939,6 +1939,40 @@ in
                 description = "Flags passed to vale.";
                 default = "";
               };
+          };
+        };
+      };
+      woodpecker-cli-lint = mkOption {
+        description = "`woodpecker-cli lint` hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            workflowPath = mkOption {
+              type = types.str;
+              description = ''
+                Path to the workflow config file/directory. If not set, the program
+                looks for `.woodpecker.ya?ml` file or `.woodpecker` directory.
+              '';
+              default = "";
+              example = ".woodpecker.yml";
+            };
+            strict = mkEnableOption "" // {
+              description = "Whether to treat warnings as errors.";
+            };
+            pluginsPrivileged = mkOption {
+              type = types.commas;
+              description="List of plugins, allowed to run in privileged mode";
+              default="";
+            };
+            pluginsTrustedClone = mkOption {
+              type = types.commas;
+              description=''
+                List of plugins, that are trusted to handle Git credentials in cloning steps.
+                If not set, the program defaults to
+                "docker.io/woodpeckerci/plugin-git:2.6.3,docker.io/woodpeckerci/plugin-git,quay.io/woodpeckerci/plugin-git".
+              '';
+              default="";
+            };
           };
         };
       };
@@ -4049,6 +4083,24 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           in
           "${hooks.vale.package}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
         types = [ "text" ];
+      };
+      woodpecker-cli-lint = {
+        name = "woodpecker-cli-lint";
+        description = "Command line client for the Woodpecker Continuous Integration server (lint only).";
+        package = tools.woodpecker-cli;
+        entry = let
+          cmdArgs = mkCmdArgs (with hooks.woodpecker-cli-lint.settings; [
+            [ (workflowPath != "") workflowPath ]
+            # this check depends on the internet connection, without it
+            # the lint is lightning-fast
+            [ true "--disable-update-check" ]
+            [ strict "--strict" ]
+            [ (pluginsPrivileged != "") "--plugins-privileged=${pluginsPrivileged}" ]
+            [ (pluginsTrustedClone != "") "--plugins-trusted-clone=${pluginsTrustedClone}" ]
+          ]);
+        in
+        "${lib.getExe hooks.woodpecker-cli-lint.package} lint ${cmdArgs}";
+        types = [ "file" "yaml" ];
       };
       yamlfmt =
         {
