@@ -2894,7 +2894,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               script = pkgs.writeShellScript "precommit-govet" ''
                 set -e
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${hooks.govet.package}/bin/go vet ./"$dir"
+                  ${hooks.govet.package}/bin/go vet -C ./"$dir"
                 done
               '';
             in
