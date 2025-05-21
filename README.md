@@ -398,6 +398,7 @@ use nix
 ### Various other hooks
 
 - [actionlint](https://github.com/rhysd/actionlint)
+- [action-validator](https://github.com/mpalmer/action-validator)
 - [check-added-large-files](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_added_large_files.py)
 - [check-case-conflicts](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_case_conflict.py)
 - [check-executables-have-shebangs](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_executables_have_shebangs.py)
