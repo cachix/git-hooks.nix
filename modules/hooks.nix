@@ -2046,6 +2046,15 @@ in
           package = tools.actionlint;
           entry = "${hooks.actionlint.package}/bin/actionlint";
         };
+      action-validator =
+        {
+          name = "action-validator";
+          description = "Tool to validate GitHub Action and Workflow YAML files";
+          files = "^.github/(actions|workflows)/";
+          types = [ "yaml" ];
+          package = tools.action-validator;
+          entry = "${hooks.action-validator.package}/bin/action-validator";
+        };
       alejandra =
         {
           name = "alejandra";
