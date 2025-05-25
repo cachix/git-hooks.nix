@@ -61,7 +61,7 @@ in
 
   config.hookModule = {
     imports = [ ./hook.nix ];
-    config._module.args.default_stages = cfg.default_stages;
+    config._module.args = { inherit (cfg) default_stages tools; };
   };
   config._module.args.hookModule = config.hookModule;
 
