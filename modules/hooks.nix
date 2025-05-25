@@ -88,982 +88,242 @@ in
       alejandra = mkOption {
         description = "alejandra hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            check =
-              mkOption {
-                type = types.bool;
-                description = "Check if the input is already formatted and disable writing in-place the modified content";
-                default = false;
-                example = true;
-              };
-            exclude =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Files or directories to exclude from formatting.";
-                default = [ ];
-                example = [ "flake.nix" "./templates" ];
-              };
-            threads =
-              mkOption {
-                type = types.nullOr types.int;
-                description = "Number of formatting threads to spawn.";
-                default = null;
-                example = 8;
-              };
-            verbosity =
-              mkOption {
-                type = types.enum [ "normal" "quiet" "silent" ];
-                description = "Whether informational messages or all messages should be hidden or not.";
-                default = "normal";
-                example = "quiet";
-              };
-          };
+          imports = [ hookModule ./hooks/alejandra.nix ];
         };
       };
       ansible-lint = mkOption {
         description = "ansible-lint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configPath = mkOption {
-              type = types.str;
-              description = "Path to the YAML configuration file.";
-              # an empty string translates to use default configuration of the
-              # underlying ansible-lint binary
-              default = "";
-            };
-            subdir = mkOption {
-              type = types.str;
-              description = "Path to the Ansible subdirectory.";
-              default = "";
-            };
-          };
+          imports = [ hookModule ./hooks/ansible-lint.nix ];
         };
       };
       autoflake = mkOption {
         description = "autoflake hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "Path to autoflake binary.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.autoflake}/bin/autoflake"
-                '';
-              };
-
-            flags =
-              mkOption {
-                type = types.str;
-                description = "Flags passed to autoflake.";
-                default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
-              };
-          };
+          imports = [ hookModule ./hooks/autoflake.nix ];
         };
       };
       biome = mkOption {
         description = "biome hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr (types.oneOf [ types.str types.path ]);
-                description = ''
-                  `biome` binary path.
-                  For example, if you want to use the `biome` binary from `node_modules`, use `"./node_modules/.bin/biome"`.
-                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
-                '';
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.biome}/bin/biome"
-                '';
-                example = lib.literalExpression ''
-                  "./node_modules/.bin/biome"
-                '';
-              };
-
-            write =
-              mkOption {
-                type = types.bool;
-                description = "Whether to edit files inplace.";
-                default = true;
-              };
-
-            configPath = mkOption {
-              type = types.str;
-              description = "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying biome binary (i.e biome.json if exists)
-              default = "";
-            };
-          };
+          imports = [ hookModule ./hooks/biome.nix ];
         };
       };
       black = mkOption {
         description = "black hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            flags = mkOption {
-              type = types.str;
-              description = "Flags passed to black. See all available [here](https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#command-line-options).";
-              default = "";
-              example = "--skip-magic-trailing-comma";
-            };
-          };
+          imports = [ hookModule ./hooks/black.nix ];
         };
       };
       cabal2nix = mkOption {
         description = "cabal2nix hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            outputFilename =
-              mkOption {
-                type = types.str;
-                description = "The name of the output file generated after running `cabal2nix`.";
-                default = "default.nix";
-              };
-          };
+          imports = [ hookModule ./hooks/cabal2nix.nix ];
         };
       };
       clippy = mkOption {
         description = "clippy hook";
-        type = types.submodule
-          ({ config, ... }: {
-            imports = [ hookModule ];
-            options.packageOverrides = {
-              cargo = mkOption {
-                type = types.package;
-                description = "The cargo package to use";
-              };
-              clippy = mkOption {
-                type = types.package;
-                description = "The clippy package to use";
-              };
-            };
-            options.settings = {
-              denyWarnings = mkOption {
-                type = types.bool;
-                description = "Fail when warnings are present";
-                default = false;
-              };
-              offline = mkOption {
-                type = types.bool;
-                description = "Run clippy offline";
-                default = true;
-              };
-              allFeatures = mkOption {
-                type = types.bool;
-                description = "Run clippy with --all-features";
-                default = false;
-              };
-              extraArgs = mkOption {
-                type = types.str;
-                description = "Additional arguments to pass to clippy";
-                default = "";
-              };
-            };
-
-            config.extraPackages = [
-              config.packageOverrides.cargo
-              config.packageOverrides.clippy
-            ];
-          });
+        type = types.submodule {
+          imports = [ hookModule ./hooks/clippy.nix ];
+        };
       };
       cmake-format = mkOption {
         description = "cmake-format hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configPath = mkOption {
-              type = types.str;
-              description = "Path to the configuration file (.json,.python,.yaml)";
-              default = "";
-              example = ".cmake-format.json";
-            };
-          };
+          imports = [ hookModule ./hooks/cmake-format.nix ];
         };
       };
       credo = mkOption {
         description = "credo hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            strict =
-              mkOption {
-                type = types.bool;
-                description = "Whether to auto-promote the changes.";
-                default = true;
-              };
-          };
+          imports = [ hookModule ./hooks/credo.nix ];
         };
       };
       deadnix = mkOption {
         description = "deadnix hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            edit =
-              mkOption {
-                type = types.bool;
-                description = "Remove unused code and write to source file.";
-                default = false;
-              };
-
-            exclude =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Files to exclude from analysis.";
-                default = [ ];
-              };
-
-            hidden =
-              mkOption {
-                type = types.bool;
-                description = "Recurse into hidden subdirectories and process hidden .*.nix files.";
-                default = false;
-              };
-
-            noLambdaArg =
-              mkOption {
-                type = types.bool;
-                description = "Don't check lambda parameter arguments.";
-                default = false;
-              };
-
-            noLambdaPatternNames =
-              mkOption {
-                type = types.bool;
-                description = "Don't check lambda pattern names (don't break nixpkgs `callPackage`).";
-                default = false;
-              };
-
-            noUnderscore =
-              mkOption {
-                type = types.bool;
-                description = "Don't check any bindings that start with a `_`.";
-                default = false;
-              };
-
-            quiet =
-              mkOption {
-                type = types.bool;
-                description = "Don't print a dead code report.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/deadnix.nix ];
         };
       };
       denofmt = mkOption {
         description = "denofmt hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            write =
-              mkOption {
-                type = types.bool;
-                description = "Whether to edit files inplace.";
-                default = true;
-              };
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to the configuration JSON file";
-                # an empty string translates to use default configuration of the
-                # underlying deno binary (i.e deno.json or deno.jsonc)
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/denofmt.nix ];
         };
       };
       denolint = mkOption {
         description = "denolint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            format =
-              mkOption {
-                type = types.enum [ "default" "compact" "json" ];
-                description = "Output format.";
-                default = "default";
-              };
-
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to the configuration JSON file";
-                # an empty string translates to use default configuration of the
-                # underlying deno binary (i.e deno.json or deno.jsonc)
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/denolint.nix ];
         };
       };
       dune-fmt = mkOption {
         description = "dune-fmt hook";
-        type = types.submodule
-          ({ config, ... }: {
-            imports = [ hookModule ];
-            options.settings = {
-              auto-promote =
-                mkOption {
-                  type = types.bool;
-                  description = "Whether to auto-promote the changes.";
-                  default = true;
-                };
-
-              extraRuntimeInputs =
-                mkOption {
-                  type = types.listOf types.package;
-                  description = "Extra runtimeInputs to add to the environment, eg. `ocamlformat`.";
-                  default = [ ];
-                };
-            };
-
-            config.extraPackages = config.settings.extraRuntimeInputs;
-          });
+        type = types.submodule {
+          imports = [ hookModule ./hooks/dune-fmt.nix ];
+        };
       };
       eclint = mkOption {
         description = "eclint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            fix =
-              mkOption {
-                type = types.bool;
-                description = "Modify files in place rather than showing the errors.";
-                default = false;
-              };
-            summary =
-              mkOption {
-                type = types.bool;
-                description = "Only show number of errors per file.";
-                default = false;
-              };
-            color =
-              mkOption {
-                type = types.enum [ "auto" "always" "never" ];
-                description = "When to generate colored output.";
-                default = "auto";
-              };
-            exclude =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Filter to exclude files.";
-                default = [ ];
-              };
-            verbosity =
-              mkOption {
-                type = types.enum [ 0 1 2 3 4 ];
-                description = "Log level verbosity";
-                default = 0;
-              };
-          };
+          imports = [ hookModule ./hooks/eclint.nix ];
         };
       };
       eslint = mkOption {
         description = "eslint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr (types.oneOf [ types.str types.path ]);
-                description = ''
-                  `eslint` binary path.
-                  For example, if you want to use the `eslint` binary from `node_modules`, use `"./node_modules/.bin/eslint"`.
-                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
-                '';
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.eslint}/bin/eslint"
-                '';
-                example = lib.literalExpression ''
-                  "./node_modules/.bin/eslint"
-                '';
-              };
-
-            extensions =
-              mkOption {
-                type = types.str;
-                description =
-                  "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
-                default = "\\.js$";
-              };
-          };
+          imports = [ hookModule ./hooks/eslint.nix ];
         };
       };
       flake8 = mkOption {
         description = "flake8 hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "flake8 binary path. Should be used to specify flake8 binary from your Python environment.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.flake8}/bin/flake8"
-                '';
-              };
-            extendIgnore =
-              mkOption {
-                type = types.listOf types.str;
-                description = "List of additional ignore codes";
-                default = [ ];
-                example = [ "E501" ];
-              };
-            format =
-              mkOption {
-                type = types.str;
-                description = "Output format.";
-                default = "default";
-              };
-          };
+          imports = [ hookModule ./hooks/flake8.nix ];
         };
       };
       flynt = mkOption {
         description = "flynt hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            aggressive =
-              mkOption {
-                type = types.bool;
-                description = "Include conversions with potentially changed behavior.";
-                default = false;
-              };
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "flynt binary path. Can be used to specify the flynt binary from an existing Python environment.";
-                default = null;
-              };
-            dry-run =
-              mkOption {
-                type = types.bool;
-                description = "Do not change files in-place and print diff instead.";
-                default = false;
-              };
-            exclude =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Ignore files with given strings in their absolute path.";
-                default = [ ];
-              };
-            fail-on-change =
-              mkOption {
-                type = types.bool;
-                description = "Fail when diff is not empty (for linting purposes).";
-                default = true;
-              };
-            line-length =
-              mkOption {
-                type = types.nullOr types.int;
-                description = "Convert expressions spanning multiple lines, only if the resulting single line will fit into this line length limit.";
-                default = null;
-              };
-            no-multiline =
-              mkOption {
-                type = types.bool;
-                description = "Convert only single line expressions.";
-                default = false;
-              };
-            quiet =
-              mkOption {
-                type = types.bool;
-                description = "Run without output.";
-                default = false;
-              };
-            string =
-              mkOption {
-                type = types.bool;
-                description = "Interpret the input as a Python code snippet and print the converted version.";
-                default = false;
-              };
-            transform-concats =
-              mkOption {
-                type = types.bool;
-                description = "Replace string concatenations with f-strings.";
-                default = false;
-              };
-            verbose =
-              mkOption {
-                type = types.bool;
-                description = "Run with verbose output.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/flynt.nix ];
         };
       };
       fourmolu = mkOption {
         description = "fourmolu hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings.defaultExtensions = mkOption {
-            type = types.listOf types.str;
-            description = "Haskell language extensions to enable.";
-            default = [ ];
-          };
+          imports = [ hookModule ./hooks/fourmolu.nix ];
         };
       };
       golines = mkOption {
         description = "golines hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            flags = mkOption {
-              type = types.str;
-              description = "Flags passed to golines. See all available [here](https://github.com/segmentio/golines?tab=readme-ov-file#options)";
-              default = "";
-              example = "-m 120";
-            };
-          };
+          imports = [ hookModule ./hooks/golines.nix ];
         };
       };
       headache = mkOption {
         description = "headache hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            header-file = mkOption {
-              type = types.str;
-              description = "Path to the header file.";
-              default = ".header";
-            };
-          };
+          imports = [ hookModule ./hooks/headache.nix ];
         };
       };
       hlint = mkOption {
         description = "hlint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            hintFile =
-              mkOption {
-                type = types.nullOr (types.oneOf [ types.str types.path ]);
-                description = "Path to hlint.yaml. By default, hlint searches for .hlint.yaml in the project root.";
-                default = null;
-              };
-          };
+          imports = [ hookModule ./hooks/hlint.nix ];
         };
       };
       hpack = mkOption {
         description = "hpack hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            silent =
-              mkOption {
-                type = types.bool;
-                description = "Whether generation should be silent.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/hpack.nix ];
         };
       };
       isort = mkOption {
         description = "isort hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            profile =
-              mkOption {
-                type = types.enum [ "" "black" "django" "pycharm" "google" "open_stack" "plone" "attrs" "hug" "wemake" "appnexus" ];
-                description = "Built-in profiles to allow easy interoperability with common projects and code styles.";
-                default = "";
-              };
-            flags =
-              mkOption {
-                type = types.str;
-                description = "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/isort.nix ];
         };
       };
       latexindent = mkOption {
         description = "latexindent hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            flags =
-              mkOption {
-                type = types.str;
-                description = "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
-                default = "--local --silent --overwriteIfDifferent";
-              };
-          };
+          imports = [ hookModule ./hooks/latexindent.nix ];
         };
       };
       lacheck = mkOption {
         description = "lacheck hook";
         type = types.submodule {
-          imports = [ hookModule ];
+          imports = [ hookModule ./hooks/lacheck.nix ];
         };
       };
       lua-ls = mkOption {
         description = "lua-ls hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            checklevel = mkOption {
-              type = types.enum [ "Error" "Warning" "Information" "Hint" ];
-              description =
-                "The diagnostic check level";
-              default = "Warning";
-            };
-            configuration = mkOption {
-              type = types.attrs;
-              description =
-                "See https://github.com/LuaLS/lua-language-server/wiki/Configuration-File#luarcjson";
-              default = { };
-            };
-          };
+          imports = [ hookModule ./hooks/lua-ls.nix ];
         };
       };
       lychee = mkOption {
         description = "lychee hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to the config file.";
-                default = "";
-              };
-            flags =
-              mkOption {
-                type = types.str;
-                description = "Flags passed to lychee. See all available [here](https://lychee.cli.rs/#/usage/cli).";
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/lychee.nix ];
         };
       };
       markdownlint = mkOption {
         description = "markdownlint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configuration =
-              mkOption {
-                type = types.attrs;
-                description =
-                  "See https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc";
-                default = { };
-              };
-          };
+          imports = [ hookModule ./hooks/markdownlint.nix ];
         };
       };
       mdl = mkOption {
         description = "mdl hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "The configuration file to use.";
-                default = "";
-              };
-            git-recurse =
-              mkOption {
-                type = types.bool;
-                description = "Only process files known to git when given a directory.";
-                default = false;
-              };
-            ignore-front-matter =
-              mkOption {
-                type = types.bool;
-                description = "Ignore YAML front matter.";
-                default = false;
-              };
-            json =
-              mkOption {
-                type = types.bool;
-                description = "Format output as JSON.";
-                default = false;
-              };
-            rules =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Markdown rules to use for linting. Per default all rules are processed.";
-                default = [ ];
-              };
-            rulesets =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Specify additional ruleset files to load.";
-                default = [ ];
-              };
-            show-aliases =
-              mkOption {
-                type = types.bool;
-                description = "Show rule alias instead of rule ID when viewing rules.";
-                default = false;
-              };
-            warnings =
-              mkOption {
-                type = types.bool;
-                description = "Show Kramdown warnings.";
-                default = false;
-              };
-            skip-default-ruleset =
-              mkOption {
-                type = types.bool;
-                description = "Do not load the default markdownlint ruleset. Use this option if you only want to load custom rulesets.";
-                default = false;
-              };
-            style =
-              mkOption {
-                type = types.str;
-                description = "Select which style mdl uses.";
-                default = "default";
-              };
-            tags =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Markdown rules to use for linting containing the given tags. Per default all rules are processed.";
-                default = [ ];
-              };
-            verbose =
-              mkOption {
-                type = types.bool;
-                description = "Increase verbosity.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/mdl.nix ];
         };
       };
       mkdocs-linkcheck = mkOption {
         description = "mkdocs-linkcheck hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr (types.oneOf [ types.str types.path ]);
-                description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Python environment.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
-                '';
-              };
-
-            path =
-              mkOption {
-                type = types.str;
-                description = "Path to check";
-                default = "";
-              };
-
-            local-only =
-              mkOption {
-                type = types.bool;
-                description = "Whether to only check local links.";
-                default = false;
-              };
-
-            recurse =
-              mkOption {
-                type = types.bool;
-                description = "Whether to recurse directories under path.";
-                default = false;
-              };
-
-            extension =
-              mkOption {
-                type = types.str;
-                description = "File extension to scan for.";
-                default = "";
-              };
-
-            method =
-              mkOption {
-                type = types.enum [ "get" "head" ];
-                description = "HTTP method to use when checking external links.";
-                default = "get";
-              };
-          };
+          imports = [ hookModule ./hooks/mkdocs-linkcheck.nix ];
         };
       };
       mypy = mkOption {
         description = "mypy hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.mypy}/bin/mypy"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/mypy.nix ];
         };
       };
       nixfmt = mkOption {
         description = "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.";
         visible = false;
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            width =
-              mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
-                default = null;
-              };
-          };
+          imports = [ hookModule ./hooks/nixfmt.nix ];
         };
       };
       nixfmt-classic = mkOption {
         description = "nixfmt (classic) hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            width =
-              mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
-                default = null;
-              };
-          };
+          imports = [ hookModule ./hooks/nixfmt-classic.nix ];
         };
       };
       nixfmt-rfc-style = mkOption {
         description = "nixfmt (RFC 166 style) hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            width =
-              mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
-                default = null;
-              };
-          };
+          imports = [ hookModule ./hooks/nixfmt-rfc-style.nix ];
         };
       };
       no-commit-to-branch = mkOption {
         description = "no-commit-to-branch-hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            branch =
-              mkOption {
-                description = "Branches to disallow commits to.";
-                type = types.listOf types.str;
-                default = [ "main" ];
-                example = [ "main" "master" ];
-              };
-            pattern =
-              mkOption {
-                description = "RegEx patterns for branch names to disallow commits to.";
-                type = types.listOf types.str;
-                default = [ ];
-                example = [ "ma.*" ];
-              };
-          };
+          imports = [ hookModule ./hooks/no-commit-to-branch.nix ];
         };
       };
       ormolu = mkOption {
         description = "ormolu hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            defaultExtensions =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Haskell language extensions to enable.";
-                default = [ ];
-              };
-            cabalDefaultExtensions =
-              mkOption {
-                type = types.bool;
-                description = "Use `default-extensions` from `.cabal` files.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/ormolu.nix ];
         };
       };
       php-cs-fixer = mkOption {
         description = "php-cs-fixer hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "PHP-CS-Fixer binary path.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.php-cs-fixer}/bin/php-cs-fixer"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/php-cs-fixer.nix ];
         };
       };
       phpcbf = mkOption {
         description = "phpcbf hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "PHP_CodeSniffer binary path.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.phpcbf}/bin/phpcbf"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/phpcbf.nix ];
         };
       };
       phpcs = mkOption {
         description = "phpcs hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "PHP_CodeSniffer binary path.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.phpcs}/bin/phpcs"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/phpcs.nix ];
         };
       };
       phpstan = mkOption {
         description = "phpstan hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "PHPStan binary path.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.phpstan}/bin/phpstan"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/phpstan.nix ];
         };
       };
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
@@ -1071,486 +331,69 @@ in
       prettier = mkOption {
         description = "prettier hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                description = ''
-                  `prettier` binary path.
-                  For example, if you want to use the `prettier` binary from `node_modules`, use `"./node_modules/.bin/prettier"`.
-                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
-                '';
-                type = types.nullOr (types.oneOf [ types.str types.path ]);
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.prettier}/bin/prettier"
-                '';
-                example = lib.literalExpression ''
-                  "./node_modules/.bin/prettier"
-                '';
-              };
-            allow-parens =
-              mkOption {
-                description = "Include parentheses around a sole arrow function parameter.";
-                default = "always";
-                type = types.enum [ "always" "avoid" ];
-              };
-            bracket-same-line =
-              mkOption {
-                description = "Put > of opening tags on the last line instead of on a new line.";
-                type = types.bool;
-                default = false;
-              };
-            cache =
-              mkOption {
-                description = "Only format changed files.";
-                type = types.bool;
-                default = false;
-              };
-            cache-location =
-              mkOption {
-                description = "Path to the cache file location used by `--cache` flag.";
-                type = types.str;
-                default = "./node_modules/.cache/prettier/.prettier-cache";
-              };
-            cache-strategy =
-              mkOption {
-                description = "Strategy for the cache to use for detecting changed files.";
-                type = types.nullOr (types.enum [ "metadata" "content" ]);
-                default = null;
-              };
-            check =
-              mkOption {
-                description = "Output a human-friendly message and a list of unformatted files, if any.";
-                type = types.bool;
-                default = false;
-              };
-            list-different =
-              mkOption {
-                description = "Print the filenames of files that are different from Prettier formatting.";
-                type = types.bool;
-                default = true;
-              };
-            color =
-              mkOption {
-                description = "Colorize error messages.";
-                type = types.bool;
-                default = true;
-              };
-            configPath =
-              mkOption {
-                description = "Path to a Prettier configuration file (.prettierrc, package.json, prettier.config.js).";
-                type = types.str;
-                default = "";
-              };
-            config-precedence =
-              mkOption {
-                description = "Defines how config file should be evaluated in combination of CLI options.";
-                type = types.enum [ "cli-override" "file-override" "prefer-file" ];
-                default = "cli-override";
-              };
-            embedded-language-formatting =
-              mkOption {
-                description = "Control how Prettier formats quoted code embedded in the file.";
-                type = types.enum [ "auto" "off" ];
-                default = "auto";
-              };
-            end-of-line =
-              mkOption {
-                description = "Which end of line characters to apply.";
-                type = types.enum [ "lf" "crlf" "cr" "auto" ];
-                default = "lf";
-              };
-            html-whitespace-sensitivity =
-              mkOption {
-                description = "How to handle whitespaces in HTML.";
-                type = types.enum [ "css" "strict" "ignore" ];
-                default = "css";
-              };
-            ignore-path =
-              mkOption {
-                description = "Path to a file containing patterns that describe files to ignore.
-                By default, prettier looks for `./.gitignore` and `./.prettierignore`.
-                Multiple values are accepted.";
-                type = types.listOf (types.oneOf [ types.str types.path ]);
-                default = [ ];
-              };
-            ignore-unknown =
-              mkOption {
-                description = "Ignore unknown files.";
-                type = types.bool;
-                default = true;
-              };
-            insert-pragma =
-              mkOption {
-                description = "Insert @format pragma into file's first docblock comment.";
-                type = types.bool;
-                default = false;
-              };
-            jsx-single-quote =
-              mkOption {
-                description = "Use single quotes in JSX.";
-                type = types.bool;
-                default = false;
-              };
-            log-level =
-              mkOption {
-                description = "What level of logs to report.";
-                type = types.enum [ "silent" "error" "warn" "log" "debug" ];
-                default = "log";
-                example = "debug";
-              };
-            no-bracket-spacing =
-              mkOption {
-                description = "Do not print spaces between brackets.";
-                type = types.bool;
-                default = false;
-              };
-            no-config =
-              mkOption {
-                description = "Do not look for a configuration file.";
-                type = types.bool;
-                default = false;
-              };
-            no-editorconfig =
-              mkOption {
-                description = "Don't take .editorconfig into account when parsing configuration.";
-                type = types.bool;
-                default = false;
-              };
-            no-error-on-unmatched-pattern =
-              mkOption {
-                description = "Prevent errors when pattern is unmatched.";
-                type = types.bool;
-                default = false;
-              };
-            no-semi =
-              mkOption {
-                description = "Do not print semicolons, except at the beginning of lines which may need them.";
-                type = types.bool;
-                default = false;
-              };
-            parser =
-              mkOption {
-                description = "Which parser to use.";
-                type = types.enum [ "" "flow" "babel" "babel-flow" "babel-ts" "typescript" "acorn" "espree" "meriyah" "css" "less" "scss" "json" "json5" "json-stringify" "graphql" "markdown" "mdx" "vue" "yaml" "glimmer" "html" "angular" "lwc" ];
-                default = "";
-              };
-            print-width =
-              mkOption {
-                type = types.int;
-                description = "Line length that the printer will wrap on.";
-                default = 80;
-              };
-            prose-wrap =
-              mkOption {
-                description = "When to or if at all hard wrap prose to print width.";
-                type = types.enum [ "always" "never" "preserve" ];
-                default = "preserve";
-              };
-            plugins =
-              mkOption {
-                description = "Add plugins from paths.";
-                type = types.listOf types.str;
-                default = [ ];
-              };
-            quote-props =
-              mkOption {
-                description = "Change when properties in objects are quoted.";
-                type = types.enum [ "as-needed" "consistent" "preserve" ];
-                default = "as-needed";
-              };
-            require-pragma =
-              mkOption {
-                description = "Require either '@prettier' or '@format' to be present in the file's first docblock comment.";
-                type = types.bool;
-                default = false;
-              };
-            single-attribute-per-line =
-              mkOption {
-                description = "Enforce single attribute per line in HTML, Vue andJSX.";
-                type = types.bool;
-                default = false;
-              };
-            single-quote =
-              mkOption {
-                description = "Number of spaces per indentation-level.";
-                type = types.bool;
-                default = false;
-              };
-            tab-width =
-              mkOption {
-                description = "Line length that the printer will wrap on.";
-                type = types.int;
-                default = 2;
-              };
-            trailing-comma =
-              mkOption {
-                description = "Print trailing commas wherever possible in multi-line comma-separated syntactic structures.";
-                type = types.enum [ "all" "es5" "none" ];
-                default = "all";
-              };
-            use-tabs =
-              mkOption {
-                type = types.bool;
-                description = "Indent with tabs instead of spaces.";
-                default = false;
-              };
-            vue-indent-script-and-style =
-              mkOption {
-                description = "Indent script and style tags in Vue files.";
-                type = types.bool;
-                default = false;
-              };
-            with-node-modules =
-              mkOption {
-                type = types.bool;
-                description = "Process files inside 'node_modules' directory.";
-                default = false;
-              };
-            write =
-              mkOption {
-                description = "Edit files in-place.";
-                type = types.bool;
-                default = true;
-              };
-          };
+          imports = [ hookModule ./hooks/prettier.nix ];
         };
       };
       pretty-format-json = mkOption
         {
           description = "pretty-format-json hook";
           type = types.submodule {
-            imports = [ hookModule ];
-            options.settings = {
-              autofix =
-                mkOption {
-                  type = types.bool;
-                  description = "Automatically format JSON files.";
-                  default = false;
-                };
-              indent =
-                mkOption {
-                  type = types.nullOr (types.oneOf [ types.int types.str ]);
-                  description = "Control the indentation (either a number for a number of spaces or a string of whitespace). Defaults to 2 spaces.";
-                  default = null;
-                };
-              no-ensure-ascii =
-                mkOption {
-                  type = types.bool;
-                  description = "Preserve unicode characters instead of converting to escape sequences.";
-                  default = false;
-                };
-              no-sort-keys =
-                mkOption {
-                  type = types.bool;
-                  description = "When autofixing, retain the original key ordering (instead of sorting the keys).";
-                  default = false;
-                };
-              top-keys =
-                mkOption {
-                  type = types.listOf types.str;
-                  description = "Keys to keep at the top of mappings.";
-                  default = [ ];
-                };
-            };
+            imports = [ hookModule ./hooks/pretty-format-json.nix ];
           };
         };
       proselint = mkOption {
         description = "proselint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            config =
-              mkOption {
-                type = types.str;
-                description = "Multiline-string configuration passed as config file.";
-                default = "";
-                example = ''
-                  {
-                    "checks": {
-                      "typography.diacritical_marks": false
-                    }
-                  }
-                '';
-              };
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to the config file.";
-                default = "";
-              };
-            flags =
-              mkOption {
-                type = types.str;
-                description = "Flags passed to proselint.";
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/proselint.nix ];
         };
       };
       psalm = mkOption {
         description = "psalm hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "Psalm binary path.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.psalm}/bin/psalm"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/psalm.nix ];
         };
       };
       pylint = mkOption {
         description = "pylint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "Pylint binary path. Should be used to specify Pylint binary from your Python environment.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.pylint}/bin/pylint"
-                '';
-              };
-            reports =
-              mkOption {
-                type = types.bool;
-                description = "Whether to display a full report.";
-                default = false;
-              };
-            score =
-              mkOption {
-                type = types.bool;
-                description = "Whether to activate the evaluation score.";
-                default = true;
-              };
-          };
+          imports = [ hookModule ./hooks/pylint.nix ];
         };
       };
       pyright = mkOption {
         description = "pyright hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.pyright}/bin/pyright"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/pyright.nix ];
         };
       };
       pyupgrade = mkOption {
         description = "pyupgrade hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "pyupgrade binary path. Should be used to specify the pyupgrade binary from your Python environment.";
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.pyupgrade}/bin/pyupgrade"
-                '';
-              };
-          };
+          imports = [ hookModule ./hooks/pyupgrade.nix ];
         };
       };
       reuse = mkOption {
         description = "reuse hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            flags = mkOption {
-              type = types.str;
-              description = "Flags passed to reuse. For available options run 'reuse lint --help'";
-              default = "";
-              example = "--json";
-            };
-          };
+          imports = [ hookModule ./hooks/reuse.nix ];
         };
       };
       revive = mkOption {
         description = "revive hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to the configuration TOML file.";
-                # an empty string translates to use default configuration of the
-                # underlying revive binary
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/revive.nix ];
         };
       };
       ripsecrets = mkOption {
         description = "ripsecrets hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            additionalPatterns =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Additional regex patterns used to find secrets. If there is a matching group in the regex the matched group will be tested for randomness before being reported as a secret.";
-                default = [ ];
-              };
-          };
+          imports = [ hookModule ./hooks/ripsecrets.nix ];
         };
       };
       rome = mkOption {
         description = "Deprecated rome hook. Use biome instead.";
         visible = false;
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binPath =
-              mkOption {
-                type = types.nullOr (types.oneOf [ types.str types.path ]);
-                description = ''
-                  `rome` binary path.
-                  For example, if you want to use the `rome` binary from `node_modules`, use `"./node_modules/.bin/rome"`.
-                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
-                '';
-                default = null;
-                defaultText = lib.literalExpression ''
-                  "''${tools.rome}/bin/rome
-                '';
-                example = lib.literalExpression ''
-                  "./node_modules/.bin/rome"
-                '';
-              };
-
-            write =
-              mkOption {
-                type = types.bool;
-                description = "Whether to edit files inplace.";
-                default = true;
-              };
-
-            configPath = mkOption {
-              type = types.str;
-              description = "Path to the configuration JSON file";
-              # an empty string translates to use default configuration of the
-              # underlying biome binary (i.e biome.json if exists)
-              default = "";
-            };
-          };
+          imports = [ hookModule ./hooks/rome.nix ];
         };
       };
       rustfmt = mkOption {
@@ -1564,166 +407,27 @@ in
           hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
           ```
         '';
-        type = types.submodule ({ config, ... }: {
-          imports = [ hookModule ];
-          options = {
-            packageOverrides = {
-              cargo = mkOption {
-                type = types.package;
-                description = "The cargo package to use.";
-              };
-              rustfmt = mkOption {
-                type = types.package;
-                description = "The rustfmt package to use.";
-              };
-            };
-            settings =
-              let
-                nameType = types.strMatching "[][*?!0-9A-Za-z_-]+";
-              in
-              {
-                all = mkOption {
-                  type = types.bool;
-                  description = "Format all packages, and also their local path-based dependencies";
-                  default = true;
-                };
-                check = mkOption {
-                  type = types.bool;
-                  description = "Run rustfmt in check mode";
-                  default = false;
-                };
-                color = mkOption {
-                  type = types.enum [ "auto" "always" "never" ];
-                  description = "Coloring the output";
-                  default = "always";
-                };
-                config = mkOption {
-                  type = types.attrs;
-                  description = "Override configuration values";
-                  default = { };
-                  apply = config:
-                    let
-                      config' = lib.mapAttrsToList
-                        (key: value: "${key}=${toString value}")
-                        config;
-                    in
-                    if config != { }
-                    then
-                      (builtins.concatStringsSep "," config')
-                    else
-                      null;
-                };
-                config-path = mkOption {
-                  type = types.nullOr types.str;
-                  description = "Path to rustfmt.toml config file";
-                  default = null;
-                };
-                emit = mkOption {
-                  type = types.nullOr (types.enum [ "files" "stdout" ]);
-                  description = "What data to emit and how";
-                  default = null;
-                };
-                files-with-diff = mkOption {
-                  type = types.bool;
-                  description = "";
-                  default = hooks.rustfmt.settings.message-format == "short";
-                };
-                manifest-path = mkOption {
-                  type = types.nullOr types.str;
-                  description = "Path to Cargo.toml";
-                  default = settings.rust.cargoManifestPath;
-                };
-                message-format = mkOption {
-                  type = types.nullOr (types.enum [ "human" "short" ]);
-                  description = "The output format of diagnostic messages";
-                  default = null;
-                };
-                package = mkOption {
-                  type = types.listOf nameType;
-                  description = "Package(s) to check";
-                  default = [ ];
-                };
-                verbose = mkOption {
-                  type = types.bool;
-                  description = "Use verbose output";
-                  default = false;
-                };
-              };
-          };
-          config.extraPackages = [
-            config.packageOverrides.cargo
-            config.packageOverrides.rustfmt
-          ];
-        });
+        type = types.submoduleWith {
+          modules = [ hookModule ./hooks/rustfmt.nix ];
+          specialArgs = { rustSettings = config.settings.rust; };
+        };
       };
       shfmt = mkOption {
         description = "shfmt hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            simplify = mkOption {
-              type = types.bool;
-              description = "Simplify the code.";
-              default = true;
-            };
-          };
+          imports = [ hookModule ./hooks/shfmt.nix ];
         };
       };
       statix = mkOption {
         description = "statix hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            config =
-              mkOption {
-                type = types.nullOr types.str;
-                description = "Path to statix.toml or its parent directory.";
-                default = null;
-              };
-
-            format =
-              mkOption {
-                type = types.enum [ "stderr" "errfmt" "json" ];
-                description = "Error Output format.";
-                default = "errfmt";
-              };
-
-            ignore =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Globs of file patterns to skip.";
-                default = [ ];
-                example = [ "flake.nix" "_*" ];
-              };
-
-            unrestricted =
-              mkOption {
-                type = types.bool;
-                description = "Don't respect .gitignore files.";
-                default = false;
-                example = true;
-              };
-          };
+          imports = [ hookModule ./hooks/statix.nix ];
         };
       };
       sort-file-contents = mkOption {
         description = "sort-file-contents-hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            ignore-case =
-              mkOption {
-                type = types.bool;
-                description = "Fold lower case to upper case characters.";
-                default = false;
-              };
-            unique =
-              mkOption {
-                type = types.bool;
-                description = "Ensure each line is unique.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/sort-file-contents.nix ];
         };
       };
       treefmt = mkOption {
@@ -1745,281 +449,32 @@ in
           hooks.treefmt.packageOverrides.treefmt = pkgs.treefmt;
           ```
         '';
-        type = types.submodule
-          ({ config, ... }:
-            {
-              imports = [ hookModule ];
-              options.packageOverrides = {
-                treefmt = mkOption {
-                  type = types.package;
-                  description = "The treefmt package to use";
-                };
-              };
-              options.settings = {
-                fail-on-change =
-                  mkOption {
-                    type = types.bool;
-                    description = "Fail if some files require re-formatting.";
-                    default = true;
-                  };
-                no-cache =
-                  mkOption {
-                    type = types.bool;
-                    description = "Ignore the evaluation cache entirely.";
-                    default = true;
-                  };
-                formatters = mkOption {
-                  type = types.listOf types.package;
-                  description = "The formatter packages configured by treefmt";
-                  default = [ ];
-                };
-              };
-
-              config.extraPackages = config.settings.formatters;
-            });
+        type = types.submodule {
+          imports = [ hookModule ./hooks/treefmt.nix ];
+        };
       };
       typos = mkOption {
         description = "typos hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            binary =
-              mkOption {
-                type = types.bool;
-                description = "Whether to search binary files.";
-                default = false;
-              };
-            color =
-              mkOption {
-                type = types.enum [ "auto" "always" "never" ];
-                description = "When to use generate output.";
-                default = "auto";
-              };
-            configuration =
-              mkOption {
-                type = types.str;
-                description = "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
-                default = "";
-                example = ''
-                  [files]
-                  ignore-dot = true
-
-                  [default]
-                  binary = false
-
-                  [type.py]
-                  extend-glob = []
-                '';
-              };
-
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to a custom config file.";
-                default = "";
-                example = ".typos.toml";
-              };
-
-            diff =
-              mkOption {
-                type = types.bool;
-                description = "Print a diff of what would change.";
-                default = false;
-              };
-
-            exclude =
-              mkOption {
-                type = types.str;
-                description = "Ignore files and directories matching the glob.";
-                default = "";
-                example = "*.nix";
-              };
-
-            format =
-              mkOption {
-                type = types.enum [ "silent" "brief" "long" "json" ];
-                description = "Output format to use.";
-                default = "long";
-              };
-
-            hidden =
-              mkOption {
-                type = types.bool;
-                description = "Search hidden files and directories.";
-                default = false;
-              };
-
-            ignored-words =
-              mkOption {
-                type = types.listOf types.str;
-                description = "Spellings and words to ignore.";
-                default = [ ];
-                example = [
-                  "MQTT"
-                  "mosquitto"
-                ];
-              };
-
-            locale =
-              mkOption {
-                type = types.enum [ "en" "en-us" "en-gb" "en-ca" "en-au" ];
-                description = "Which language to use for spell checking.";
-                default = "en";
-              };
-
-            no-check-filenames =
-              mkOption {
-                type = types.bool;
-                description = "Skip verifying spelling in file names.";
-                default = false;
-              };
-
-            no-check-files =
-              mkOption {
-                type = types.bool;
-                description = "Skip verifying spelling in files.";
-                default = false;
-              };
-
-            no-unicode =
-              mkOption {
-                type = types.bool;
-                description = "Only allow ASCII characters in identifiers.";
-                default = false;
-              };
-
-            quiet =
-              mkOption {
-                type = types.bool;
-                description = "Less output per occurrence.";
-                default = false;
-              };
-
-            verbose =
-              mkOption {
-                type = types.bool;
-                description = "More output per occurrence.";
-                default = false;
-              };
-
-            write =
-              mkOption {
-                type = types.bool;
-                description = "Fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
-                default = false;
-              };
-          };
+          imports = [ hookModule ./hooks/typos.nix ];
         };
       };
       vale = mkOption {
         description = "vale hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configuration =
-              mkOption {
-                type = types.str;
-                description = "Multiline-string configuration passed as config file.";
-                default = "";
-                example = ''
-                  MinAlertLevel = suggestion
-                  [*]
-                  BasedOnStyles = Vale
-                '';
-              };
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to the config file.";
-                default = "";
-              };
-            flags =
-              mkOption {
-                type = types.str;
-                description = "Flags passed to vale.";
-                default = "";
-              };
-          };
+          imports = [ hookModule ./hooks/vale.nix ];
         };
       };
       yamlfmt = mkOption {
         description = "yamlfmt hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            configPath =
-              mkOption {
-                type = types.str;
-                description = "Path to a custom configuration file.";
-                # An empty string translates to yamlfmt looking for a configuration file in the
-                # following locations (by order of preference):
-                # a file named .yamlfmt, yamlfmt.yml, yamlfmt.yaml, .yamlfmt.yaml or .yamlfmt.yml in the current working directory
-                # See details [here](https://github.com/google/yamlfmt/blob/main/docs/config-file.md#config-file-discovery)
-                default = "";
-                example = ".yamlfmt";
-              };
-            lint-only =
-              mkOption {
-                type = types.bool;
-                description = "Only lint the files, do not format them in place.";
-                default = true;
-              };
-          };
+          imports = [ hookModule ./hooks/yamlfmt.nix ];
         };
       };
       yamllint = mkOption {
         description = "yamllint hook";
         type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            # `list-files` is not useful for a pre-commit hook as it always exits with exit code 0
-            # `no-warnings` is not useful for a pre-commit hook as it exits with exit code 2 and the hook
-            # therefore fails when warnings level problems are detected but there is no output
-            configuration = mkOption {
-              type = types.str;
-              description = "Multiline-string configuration passed as config file. If set, configuration file set in `yamllint.settings.configPath` gets ignored.";
-              default = "";
-              example = ''
-                ---
-
-                extends: relaxed
-
-                rules:
-                  indentation: enable
-              '';
-            };
-            configData = mkOption {
-              type = types.str;
-              description = "Serialized YAML object describing the configuration.";
-              default = "";
-              example = "{extends: relaxed, rules: {line-length: {max: 120}}}";
-            };
-            configPath = mkOption {
-              type = types.str;
-              description = "Path to a custom configuration file.";
-              # An empty string translates to yamllint looking for a configuration file in the
-              # following locations (by order of preference):
-              # a file named .yamllint, .yamllint.yaml or .yamllint.yml in the current working directory
-              # a filename referenced by $YAMLLINT_CONFIG_FILE, if set
-              # a file named $XDG_CONFIG_HOME/yamllint/config or ~/.config/yamllint/config, if present
-              default = "";
-            };
-            format = mkOption {
-              type = types.enum [ "parsable" "standard" "colored" "github" "auto" ];
-              description = "Format for parsing output.";
-              default = "auto";
-            };
-            preset = mkOption {
-              type = types.enum [ "default" "relaxed" ];
-              description = "The configuration preset to use.";
-              default = "default";
-            };
-            strict = mkOption {
-              type = types.bool;
-              description = "Return non-zero exit code on warnings as well as errors.";
-              default = true;
-            };
-          };
+          imports = [ hookModule ./hooks/yamllint.nix ];
         };
       };
     };
