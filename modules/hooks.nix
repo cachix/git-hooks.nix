@@ -288,6 +288,13 @@ in
         };
         default = { };
       };
+      cljfmt = mkOption {
+        description = "cljfmt hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/cljfmt.nix ];
+        };
+        default = { };
+      };
       circleci = mkOption {
         description = "circleci hook";
         type = types.submodule {
@@ -323,6 +330,27 @@ in
         };
         default = { };
       };
+      commitizen = mkOption {
+        description = "commitizen hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/commitizen.nix ];
+        };
+        default = { };
+      };
+      conform = mkOption {
+        description = "conform hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/conform.nix ];
+        };
+        default = { };
+      };
+      convco = mkOption {
+        description = "convco hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/convco.nix ];
+        };
+        default = { };
+      };
       credo = mkOption {
         description = "credo hook";
         type = types.submodule {
@@ -330,10 +358,66 @@ in
         };
         default = { };
       };
+      crystal = mkOption {
+        description = "crystal hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/crystal.nix ];
+        };
+        default = { };
+      };
+      cspell = mkOption {
+        description = "cspell hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/cspell.nix ];
+        };
+        default = { };
+      };
+      dart-analyze = mkOption {
+        description = "dart-analyze hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/dart-analyze.nix ];
+        };
+        default = { };
+      };
+      dart-format = mkOption {
+        description = "dart-format hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/dart-format.nix ];
+        };
+        default = { };
+      };
       deadnix = mkOption {
         description = "deadnix hook";
         type = types.submodule {
           imports = [ hookModule ./hooks/deadnix.nix ];
+        };
+        default = { };
+      };
+      detect-aws-credentials = mkOption {
+        description = "detect-aws-credentials hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/detect-aws-credentials.nix ];
+        };
+        default = { };
+      };
+      detect-private-keys = mkOption {
+        description = "detect-private-keys hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/detect-private-keys.nix ];
+        };
+        default = { };
+      };
+      dhall-format = mkOption {
+        description = "dhall-format hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/dhall-format.nix ];
+        };
+        default = { };
+      };
+      dialyzer = mkOption {
+        description = "dialyzer hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/dialyzer.nix ];
         };
         default = { };
       };
@@ -358,10 +442,52 @@ in
         };
         default = { };
       };
+      dune-opam-sync = mkOption {
+        description = "dune-opam-sync hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/dune-opam-sync.nix ];
+        };
+        default = { };
+      };
       eclint = mkOption {
         description = "eclint hook";
         type = types.submodule {
           imports = [ hookModule ./hooks/eclint.nix ];
+        };
+        default = { };
+      };
+      editorconfig-checker = mkOption {
+        description = "editorconfig-checker hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/editorconfig-checker.nix ];
+        };
+        default = { };
+      };
+      elm-format = mkOption {
+        description = "elm-format hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/elm-format.nix ];
+        };
+        default = { };
+      };
+      elm-review = mkOption {
+        description = "elm-review hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/elm-review.nix ];
+        };
+        default = { };
+      };
+      elm-test = mkOption {
+        description = "elm-test hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/elm-test.nix ];
+        };
+        default = { };
+      };
+      end-of-file-fixer = mkOption {
+        description = "end-of-file-fixer hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/end-of-file-fixer.nix ];
         };
         default = { };
       };
@@ -379,6 +505,27 @@ in
         };
         default = { };
       };
+      fix-byte-order-marker = mkOption {
+        description = "fix-byte-order-marker hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/fix-byte-order-marker.nix ];
+        };
+        default = { };
+      };
+      fix-encoding-pragma = mkOption {
+        description = "fix-encoding-pragma hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/fix-encoding-pragma.nix ];
+        };
+        default = { };
+      };
+      flake-checker = mkOption {
+        description = "flake-checker hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/flake-checker.nix ];
+        };
+        default = { };
+      };
       flynt = mkOption {
         description = "flynt hook";
         type = types.submodule {
@@ -393,10 +540,73 @@ in
         };
         default = { };
       };
+      forbid-new-submodules = mkOption {
+        description = "forbid-new-submodules hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/forbid-new-submodules.nix ];
+        };
+        default = { };
+      };
+      fprettify = mkOption {
+        description = "fprettify hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/fprettify.nix ];
+        };
+        default = { };
+      };
+      gitlint = mkOption {
+        description = "gitlint hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/gitlint.nix ];
+        };
+        default = { };
+      };
+      gofmt = mkOption {
+        description = "gofmt hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/gofmt.nix ];
+        };
+        default = { };
+      };
+      golangci-lint = mkOption {
+        description = "golangci-lint hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/golangci-lint.nix ];
+        };
+        default = { };
+      };
       golines = mkOption {
         description = "golines hook";
         type = types.submodule {
           imports = [ hookModule ./hooks/golines.nix ];
+        };
+        default = { };
+      };
+      gotest = mkOption {
+        description = "gotest hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/gotest.nix ];
+        };
+        default = { };
+      };
+      govet = mkOption {
+        description = "govet hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/govet.nix ];
+        };
+        default = { };
+      };
+      gptcommit = mkOption {
+        description = "gptcommit hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/gptcommit.nix ];
+        };
+        default = { };
+      };
+      hadolint = mkOption {
+        description = "hadolint hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/hadolint.nix ];
         };
         default = { };
       };
@@ -428,17 +638,17 @@ in
         };
         default = { };
       };
-      latexindent = mkOption {
-        description = "latexindent hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/latexindent.nix ];
-        };
-        default = { };
-      };
       lacheck = mkOption {
         description = "lacheck hook";
         type = types.submodule {
           imports = [ hookModule ./hooks/lacheck.nix ];
+        };
+        default = { };
+      };
+      latexindent = mkOption {
+        description = "latexindent hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/latexindent.nix ];
         };
         default = { };
       };
@@ -660,17 +870,17 @@ in
         };
         default = { };
       };
-      statix = mkOption {
-        description = "statix hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/statix.nix ];
-        };
-        default = { };
-      };
       sort-file-contents = mkOption {
         description = "sort-file-contents-hook";
         type = types.submodule {
           imports = [ hookModule ./hooks/sort-file-contents.nix ];
+        };
+        default = { };
+      };
+      statix = mkOption {
+        description = "statix hook";
+        type = types.submodule {
+          imports = [ hookModule ./hooks/statix.nix ];
         };
         default = { };
       };
@@ -723,217 +933,6 @@ in
         description = "yamllint hook";
         type = types.submodule {
           imports = [ hookModule ./hooks/yamllint.nix ];
-        };
-        default = { };
-      };
-      # Add missing hooks that were migrated but not yet added to options
-      cljfmt = mkOption {
-        description = "cljfmt hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/cljfmt.nix ];
-        };
-        default = { };
-      };
-      commitizen = mkOption {
-        description = "commitizen hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/commitizen.nix ];
-        };
-        default = { };
-      };
-      conform = mkOption {
-        description = "conform hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/conform.nix ];
-        };
-        default = { };
-      };
-      convco = mkOption {
-        description = "convco hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/convco.nix ];
-        };
-        default = { };
-      };
-      crystal = mkOption {
-        description = "crystal hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/crystal.nix ];
-        };
-        default = { };
-      };
-      cspell = mkOption {
-        description = "cspell hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/cspell.nix ];
-        };
-        default = { };
-      };
-      dart-analyze = mkOption {
-        description = "dart-analyze hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/dart-analyze.nix ];
-        };
-        default = { };
-      };
-      dart-format = mkOption {
-        description = "dart-format hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/dart-format.nix ];
-        };
-        default = { };
-      };
-      detect-aws-credentials = mkOption {
-        description = "detect-aws-credentials hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/detect-aws-credentials.nix ];
-        };
-        default = { };
-      };
-      detect-private-keys = mkOption {
-        description = "detect-private-keys hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/detect-private-keys.nix ];
-        };
-        default = { };
-      };
-      dhall-format = mkOption {
-        description = "dhall-format hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/dhall-format.nix ];
-        };
-        default = { };
-      };
-      dialyzer = mkOption {
-        description = "dialyzer hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/dialyzer.nix ];
-        };
-        default = { };
-      };
-      dune-opam-sync = mkOption {
-        description = "dune-opam-sync hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/dune-opam-sync.nix ];
-        };
-        default = { };
-      };
-      editorconfig-checker = mkOption {
-        description = "editorconfig-checker hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/editorconfig-checker.nix ];
-        };
-        default = { };
-      };
-      elm-format = mkOption {
-        description = "elm-format hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/elm-format.nix ];
-        };
-        default = { };
-      };
-      elm-review = mkOption {
-        description = "elm-review hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/elm-review.nix ];
-        };
-        default = { };
-      };
-      elm-test = mkOption {
-        description = "elm-test hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/elm-test.nix ];
-        };
-        default = { };
-      };
-      end-of-file-fixer = mkOption {
-        description = "end-of-file-fixer hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/end-of-file-fixer.nix ];
-        };
-        default = { };
-      };
-      fix-byte-order-marker = mkOption {
-        description = "fix-byte-order-marker hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/fix-byte-order-marker.nix ];
-        };
-        default = { };
-      };
-      fix-encoding-pragma = mkOption {
-        description = "fix-encoding-pragma hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/fix-encoding-pragma.nix ];
-        };
-        default = { };
-      };
-      flake-checker = mkOption {
-        description = "flake-checker hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/flake-checker.nix ];
-        };
-        default = { };
-      };
-      forbid-new-submodules = mkOption {
-        description = "forbid-new-submodules hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/forbid-new-submodules.nix ];
-        };
-        default = { };
-      };
-      fprettify = mkOption {
-        description = "fprettify hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/fprettify.nix ];
-        };
-        default = { };
-      };
-      gitlint = mkOption {
-        description = "gitlint hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/gitlint.nix ];
-        };
-        default = { };
-      };
-      gofmt = mkOption {
-        description = "gofmt hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/gofmt.nix ];
-        };
-        default = { };
-      };
-      golangci-lint = mkOption {
-        description = "golangci-lint hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/golangci-lint.nix ];
-        };
-        default = { };
-      };
-      gotest = mkOption {
-        description = "gotest hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/gotest.nix ];
-        };
-        default = { };
-      };
-      govet = mkOption {
-        description = "govet hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/govet.nix ];
-        };
-        default = { };
-      };
-      gptcommit = mkOption {
-        description = "gptcommit hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/gptcommit.nix ];
-        };
-        default = { };
-      };
-      hadolint = mkOption {
-        description = "hadolint hook";
-        type = types.submodule {
-          imports = [ hookModule ./hooks/hadolint.nix ];
         };
         default = { };
       };
