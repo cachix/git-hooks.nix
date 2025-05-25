@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,5 +10,13 @@ in
       default = "";
       example = "--skip-magic-trailing-comma";
     };
+  };
+
+  config = {
+    name = "black";
+    description = "The uncompromising Python code formatter";
+    package = tools.black;
+    entry = "${tools.black}/bin/black ${config.settings.flags}";
+    types = [ "file" "python" ];
   };
 }

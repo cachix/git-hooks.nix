@@ -1,6 +1,22 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, rustSettings, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (rustSettings) cargoManifestPath;
+  
+  cargoManifestPathArg =
+    lib.optionalString
+      (cargoManifestPath != null)
+      "--manifest-path ${lib.escapeShellArg cargoManifestPath}";
+
+  wrapper = pkgs.symlinkJoin {
+    name = "clippy-wrapped";
+    paths = [ config.packageOverrides.clippy ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/cargo-clippy \
+        --prefix PATH : ${lib.makeBinPath [ config.packageOverrides.cargo ]}
+    '';
+  };
 in
 {
   options = {
@@ -39,8 +55,17 @@ in
     };
   };
 
-  config.extraPackages = [
-    config.packageOverrides.cargo
-    config.packageOverrides.clippy
-  ];
+  config = {
+    name = "clippy";
+    description = "Lint Rust code.";
+    package = wrapper;
+    packageOverrides = { cargo = config.packageOverrides.cargo; clippy = config.packageOverrides.clippy; };
+    entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString config.settings.offline "--offline"} ${lib.optionalString config.settings.allFeatures "--all-features"} ${config.settings.extraArgs} -- ${lib.optionalString config.settings.denyWarnings "-D warnings"}";
+    files = "\\.rs$";
+    pass_filenames = false;
+    extraPackages = [
+      config.packageOverrides.cargo
+      config.packageOverrides.clippy
+    ];
+  };
 }

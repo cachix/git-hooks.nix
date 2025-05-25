@@ -1,6 +1,15 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  mkCmdArgs = predActionList:
+    lib.concatStringsSep
+      " "
+      (builtins.foldl'
+        (acc: entry:
+          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
+        [ ]
+        predActionList);
 in
 {
   options.settings = {
@@ -52,5 +61,26 @@ in
         description = "Don't print a dead code report.";
         default = false;
       };
+  };
+
+  config = {
+    name = "deadnix";
+    description = "Scan Nix files for dead code (unused variable bindings).";
+    package = tools.deadnix;
+    entry =
+      let
+        cmdArgs =
+          mkCmdArgs (with config.settings; [
+            [ noLambdaArg "--no-lambda-arg" ]
+            [ noLambdaPatternNames "--no-lambda-pattern-names" ]
+            [ noUnderscore "--no-underscore" ]
+            [ quiet "--quiet" ]
+            [ hidden "--hidden" ]
+            [ edit "--edit" ]
+            [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+          ]);
+      in
+      "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
+    files = "\\.nix$";
   };
 }

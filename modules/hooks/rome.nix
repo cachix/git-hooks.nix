@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, tools, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -35,5 +35,22 @@ in
       # underlying biome binary (i.e biome.json if exists)
       default = "";
     };
+  };
+
+  config = {
+    name = "rome-deprecated";
+    description = "";
+    types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+    package = tools.biome;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/biome";
+        cmdArgs =
+          mkCmdArgs [
+            [ (config.settings.write) "--apply" ]
+            [ (config.settings.configPath != "") "--config-path ${config.settings.configPath}" ]
+          ];
+      in
+      "${binPath} check ${cmdArgs}";
   };
 }

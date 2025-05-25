@@ -1,6 +1,20 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  mkCmdArgs = predActionList:
+    lib.concatStringsSep
+      " "
+      (builtins.foldl'
+        (acc: entry:
+          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
+        [ ]
+        predActionList);
+
+  migrateBinPathToPackage = hook: binPath:
+    if hook.settings.binPath == null
+    then "${hook.package}${binPath}"
+    else hook.settings.binPath;
 in
 {
   options.settings = {
@@ -70,5 +84,30 @@ in
         description = "Run with verbose output.";
         default = false;
       };
+  };
+
+  config = {
+    name = "flynt";
+    description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
+    package = tools.flynt;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/flynt";
+        cmdArgs =
+          mkCmdArgs (with config.settings; [
+            [ aggressive "--aggressive" ]
+            [ dry-run "--dry-run" ]
+            [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
+            [ fail-on-change "--fail-on-change" ]
+            [ (line-length != null) "--line-length ${toString line-length}" ]
+            [ no-multiline "--no-multiline" ]
+            [ quiet "--quiet" ]
+            [ string "--string" ]
+            [ transform-concats "--transform-concats" ]
+            [ verbose "--verbose" ]
+          ]);
+      in
+      "${binPath} ${cmdArgs}";
+    types = [ "python" ];
   };
 }

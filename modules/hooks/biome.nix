@@ -1,6 +1,20 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  mkCmdArgs = predActionList:
+    lib.concatStringsSep
+      " "
+      (builtins.foldl'
+        (acc: entry:
+          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
+        [ ]
+        predActionList);
+
+  migrateBinPathToPackage = hook: binPath:
+    if hook.settings.binPath == null
+    then "${hook.package}${binPath}"
+    else hook.settings.binPath;
 in
 {
   options.settings = {
@@ -35,5 +49,22 @@ in
       # underlying biome binary (i.e biome.json if exists)
       default = "";
     };
+  };
+
+  config = {
+    name = "biome";
+    description = "A toolchain for web projects, aimed to provide functionalities to maintain them";
+    types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
+    package = tools.biome;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/biome";
+        cmdArgs =
+          mkCmdArgs [
+            [ (config.settings.write) "--write" ]
+            [ (config.settings.configPath != "") "--config-path ${config.settings.configPath}" ]
+          ];
+      in
+      "${binPath} check ${cmdArgs}";
   };
 }

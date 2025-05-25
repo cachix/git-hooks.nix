@@ -1,6 +1,11 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  migrateBinPathToPackage = hook: binPath:
+    if hook.settings.binPath == null
+    then "${hook.package}${binPath}"
+    else hook.settings.binPath;
 in
 {
   options.settings = {
@@ -20,5 +25,17 @@ in
         description = "Flags passed to autoflake.";
         default = "--in-place --expand-star-imports --remove-duplicate-keys --remove-unused-variables";
       };
+  };
+
+  config = {
+    name = "autoflake";
+    description = "Remove unused imports and variables from Python code";
+    package = tools.autoflake;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/autoflake";
+      in
+      "${binPath} ${config.settings.flags}";
+    types = [ "python" ];
   };
 }

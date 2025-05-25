@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,5 +10,14 @@ in
         description = "The name of the output file generated after running `cabal2nix`.";
         default = "default.nix";
       };
+  };
+
+  config = {
+    name = "cabal2nix";
+    description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `.nix` files";
+    package = tools.cabal2nix-dir;
+    entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir --outputFileName=${config.settings.outputFilename}";
+    files = "\\.cabal$";
+    after = [ "hpack" ];
   };
 }

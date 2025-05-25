@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -9,5 +9,16 @@ in
       description = "Haskell language extensions to enable.";
       default = [ ];
     };
+  };
+
+  config = {
+    name = "fourmolu";
+    description = "Haskell code prettifier.";
+    package = tools.fourmolu;
+    entry =
+      "${tools.fourmolu}/bin/fourmolu --mode inplace ${
+    lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) config.settings.defaultExtensions)
+    }";
+    files = "\\.l?hs(-boot)?$";
   };
 }

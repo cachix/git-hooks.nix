@@ -1,6 +1,15 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  mkCmdArgs = predActionList:
+    lib.concatStringsSep
+      " "
+      (builtins.foldl'
+        (acc: entry:
+          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
+        [ ]
+        predActionList);
 in
 {
   options.settings = {
@@ -34,5 +43,25 @@ in
         description = "Log level verbosity";
         default = 0;
       };
+  };
+
+  config = {
+    name = "eclint";
+    description = "EditorConfig linter written in Go.";
+    types = [ "file" ];
+    package = tools.eclint;
+    entry =
+      let
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ fix "-fix" ]
+              [ summary "-summary" ]
+              [ (color != "auto") "-color ${color}" ]
+              [ (exclude != [ ]) "-exclude ${lib.escapeShellArgs exclude}" ]
+              [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
+            ]);
+      in
+      "${tools.eclint}/bin/eclint ${cmdArgs}";
   };
 }

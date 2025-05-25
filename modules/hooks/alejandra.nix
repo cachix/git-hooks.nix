@@ -1,6 +1,15 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  mkCmdArgs = predActionList:
+    lib.concatStringsSep
+      " "
+      (builtins.foldl'
+        (acc: entry:
+          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
+        [ ]
+        predActionList);
 in
 {
   options.settings = {
@@ -32,5 +41,24 @@ in
         default = "normal";
         example = "quiet";
       };
+  };
+
+  config = {
+    name = "alejandra";
+    description = "The Uncompromising Nix Code Formatter";
+    package = tools.alejandra;
+    entry =
+      let
+        cmdArgs =
+          mkCmdArgs (with config.settings; [
+            [ check "--check" ]
+            [ (exclude != [ ]) "--exclude ${lib.strings.concatStringsSep " --exclude " (map lib.escapeShellArg (lib.unique exclude))}" ]
+            [ (verbosity == "quiet") "-q" ]
+            [ (verbosity == "silent") "-qq" ]
+            [ (threads != null) "--threads ${toString threads}" ]
+          ]);
+      in
+      "${tools.alejandra}/bin/alejandra ${cmdArgs}";
+    files = "\\.nix$";
   };
 }

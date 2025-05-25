@@ -1,6 +1,11 @@
-{ lib, ... }:
+{ tools, config, lib, ... }:
 let
   inherit (lib) mkOption types;
+  
+  migrateBinPathToPackage = hook: binPath:
+    if hook.settings.binPath == null
+    then "${hook.package}${binPath}"
+    else hook.settings.binPath;
 in
 {
   options.settings = {
@@ -28,5 +33,17 @@ in
           "The pattern of files to run on, see [https://pre-commit.com/#hooks-files](https://pre-commit.com/#hooks-files).";
         default = "\\.js$";
       };
+  };
+
+  config = {
+    name = "eslint";
+    description = "Find and fix problems in your JavaScript code.";
+    package = tools.eslint;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/eslint";
+      in
+      "${binPath} --fix";
+    files = "${config.settings.extensions}";
   };
 }
