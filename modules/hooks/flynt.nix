@@ -1,20 +1,6 @@
-{ tools, config, lib, ... }:
+{ tools, config, lib, mkCmdArgs, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
-  
-  mkCmdArgs = predActionList:
-    lib.concatStringsSep
-      " "
-      (builtins.foldl'
-        (acc: entry:
-          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
-        [ ]
-        predActionList);
-
-  migrateBinPathToPackage = hook: binPath:
-    if hook.settings.binPath == null
-    then "${hook.package}${binPath}"
-    else hook.settings.binPath;
 in
 {
   options.settings = {

@@ -1,12 +1,7 @@
-{ tools, config, lib, ... }:
+{ tools, config, lib, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
-  
-  migrateBinPathToPackage = hook: binPath:
-    if hook.settings.binPath == null
-    then "${hook.package}${binPath}"
-    else hook.settings.binPath;
-    
+
   extendIgnoreStr =
     if lib.lists.length config.settings.extendIgnore > 0
     then "--extend-ignore " + builtins.concatStringsSep "," config.settings.extendIgnore

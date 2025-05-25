@@ -1,11 +1,6 @@
-{ tools, config, lib, ... }:
+{ tools, config, lib, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
-  
-  migrateBinPathToPackage = hook: binPath:
-    if hook.settings.binPath == null
-    then "${hook.package}${binPath}"
-    else hook.settings.binPath;
 in
 {
   options.settings = {

@@ -1,13 +1,7 @@
 { config, lib, pkgs, hookModule, ... }:
 let
-  inherit (config) hooks tools settings;
   cfg = config;
-  inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRemovedOptionModule mkRenamedOptionModule types;
-
-  cargoManifestPathArg =
-    lib.optionalString
-      (settings.rust.cargoManifestPath != null)
-      "--manifest-path ${lib.escapeShellArg settings.rust.cargoManifestPath}";
+  inherit (lib) flatten mapAttrsToList mkOption mkRemovedOptionModule mkRenamedOptionModule types;
 
   mkCmdArgs = predActionList:
     lib.concatStringsSep
@@ -61,7 +55,10 @@ in
 
   config.hookModule = {
     imports = [ ./hook.nix ];
-    config._module.args = { inherit (cfg) default_stages tools; };
+    config._module.args = {
+      inherit (cfg) default_stages tools;
+      inherit mkCmdArgs migrateBinPathToPackage;
+    };
   };
   config._module.args.hookModule = config.hookModule;
 

@@ -1,4 +1,4 @@
-{ config, lib, tools, ... }:
+{ config, lib, tools, mkCmdArgs, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
 in

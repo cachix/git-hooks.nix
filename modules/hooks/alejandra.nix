@@ -1,15 +1,6 @@
-{ tools, config, lib, ... }:
+{ tools, config, lib, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
-  
-  mkCmdArgs = predActionList:
-    lib.concatStringsSep
-      " "
-      (builtins.foldl'
-        (acc: entry:
-          acc ++ lib.optional (builtins.elemAt entry 0) (builtins.elemAt entry 1))
-        [ ]
-        predActionList);
 in
 {
   options.settings = {
