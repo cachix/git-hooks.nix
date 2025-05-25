@@ -14,7 +14,7 @@ in
         '';
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.rome}/bin/rome
+          "''${tools.rome}/bin/rome"
         '';
         example = lib.literalExpression ''
           "./node_modules/.bin/rome"
