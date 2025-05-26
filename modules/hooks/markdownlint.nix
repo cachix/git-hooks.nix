@@ -14,8 +14,6 @@ in
   };
 
   config = {
-    name = "markdownlint";
-    description = "Style checker and linter for markdown files.";
     package = tools.markdownlint-cli;
     entry = "${config.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON config.settings.configuration)}";
     files = "\\.md$";

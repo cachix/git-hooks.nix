@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "ripsecrets";
-    description = "Prevent committing secret keys into your source code";
     package = tools.ripsecrets;
     entry =
       let

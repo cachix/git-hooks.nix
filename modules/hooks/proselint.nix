@@ -32,8 +32,6 @@ in
   };
 
   config = {
-    name = "proselint";
-    description = "A linter for prose.";
     types = [ "text" ];
     package = tools.proselint;
     entry =

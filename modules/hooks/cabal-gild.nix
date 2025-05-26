@@ -1,8 +1,6 @@
 { tools, config, lib, pkgs, ... }:
 {
   config = {
-    name = "cabal-gild";
-    description = "Format Cabal files";
     package = tools.cabal-gild;
     entry =
       let

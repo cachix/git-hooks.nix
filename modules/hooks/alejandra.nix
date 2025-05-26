@@ -35,8 +35,6 @@ in
   };
 
   config = {
-    name = "alejandra";
-    description = "The Uncompromising Nix Code Formatter";
     package = tools.alejandra;
     entry =
       let

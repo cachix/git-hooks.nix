@@ -16,8 +16,6 @@ in
   };
 
   config = {
-    name = "pyupgrade";
-    description = "Upgrade syntax for newer versions of Python.";
     package = tools.pyupgrade;
     entry = migrateBinPathToPackage config "/bin/pyupgrade";
     types = [ "python" ];

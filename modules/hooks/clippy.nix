@@ -60,8 +60,6 @@ in
   };
 
   config = {
-    name = "clippy";
-    description = "Lint Rust code.";
     package = wrapper;
     entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString config.settings.offline "--offline"} ${lib.optionalString config.settings.allFeatures "--all-features"} ${config.settings.extraArgs} -- ${lib.optionalString config.settings.denyWarnings "-D warnings"}";
     files = "\\.rs$";

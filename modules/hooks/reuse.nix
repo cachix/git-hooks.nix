@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "reuse";
-    description = "reuse is a tool for compliance with the REUSE recommendations.";
     package = tools.reuse;
     entry = "${config.package}/bin/reuse lint ${config.settings.flags}";
     types = [ "file" ];

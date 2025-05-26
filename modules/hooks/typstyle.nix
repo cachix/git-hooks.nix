@@ -1,8 +1,6 @@
 { tools, lib, config, ... }:
 {
   config = {
-    name = "typstyle";
-    description = "Beautiful and reliable typst code formatter.";
     package = tools.typstyle;
     entry =
       lib.throwIf

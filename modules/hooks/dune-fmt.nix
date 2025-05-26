@@ -18,8 +18,6 @@ in
   };
 
   config = {
-    name = "dune-fmt";
-    description = "Runs Dune's formatters on the code tree.";
     package = tools.dune-fmt;
     entry =
       let

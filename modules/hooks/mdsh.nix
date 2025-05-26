@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "mdsh";
-    description = "Markdown shell pre-processor.";
     package = tools.mdsh;
     entry =
       let

@@ -54,8 +54,6 @@ in
       };
     in
     {
-      name = "lua-ls";
-      description = "Uses the lua-language-server CLI to statically type-check and lint Lua code.";
       package = tools.lua-language-server;
       entry = "${script}/bin/lua-ls-lint";
       files = "\\.lua$";

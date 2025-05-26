@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "cmake-format";
-    description = "A tool for formatting CMake-files.";
     package = tools.cmake-format;
     entry =
       let

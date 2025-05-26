@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "gotest";
-    description = "Run go tests";
     package = tools.go;
     entry =
       let

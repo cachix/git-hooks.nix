@@ -36,8 +36,6 @@ in
   };
 
   config = {
-    name = "statix";
-    description = "Lints and suggestions for the Nix programming language.";
     package = tools.statix;
     entry =
       let

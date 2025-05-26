@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "govet";
-    description = "Checks correctness of Go programs.";
     package = tools.go;
     entry =
       let

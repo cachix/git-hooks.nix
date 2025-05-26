@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "gptcommit";
-    description = "Generate a commit message using GPT3.";
     package = tools.gptcommit;
     entry =
       let

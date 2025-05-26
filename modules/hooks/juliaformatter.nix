@@ -1,8 +1,6 @@
 { config, tools, lib, ... }:
 {
   config = {
-    name = "juliaformatter";
-    description = "Run JuliaFormatter.jl against Julia source files";
     package = tools.julia-bin;
     entry = ''
       ${config.package}/bin/julia -e '

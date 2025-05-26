@@ -15,8 +15,6 @@ in
   };
 
   config = {
-    name = "revive";
-    description = "A linter for Go source code.";
     package = tools.revive;
     entry =
       let

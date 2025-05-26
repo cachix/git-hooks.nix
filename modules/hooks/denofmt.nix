@@ -21,8 +21,6 @@ in
   };
 
   config = {
-    name = "denofmt";
-    description = "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
     types_or = [ "javascript" "jsx" "ts" "tsx" "markdown" "json" ];
     package = tools.deno;
     entry =

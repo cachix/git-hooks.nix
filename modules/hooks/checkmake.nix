@@ -1,8 +1,6 @@
 { tools, config, lib, ... }:
 {
   config = {
-    name = "checkmake";
-    description = "Experimental linter/analyzer for Makefiles";
     types = [ "makefile" ];
     package = tools.checkmake;
     entry =

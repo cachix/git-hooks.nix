@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "black";
-    description = "The uncompromising Python code formatter";
     package = tools.black;
     entry = "${config.package}/bin/black ${config.settings.flags}";
     types = [ "file" "python" ];

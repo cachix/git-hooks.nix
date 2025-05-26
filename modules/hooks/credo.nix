@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "credo";
-    description = "Runs a static code analysis using Credo";
     package = tools.elixir;
     entry =
       let strict = if config.settings.strict then "--strict" else "";

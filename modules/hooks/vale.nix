@@ -30,8 +30,6 @@ in
   };
 
   config = {
-    name = "vale";
-    description = "A markup-aware linter for prose built with speed and extensibility in mind.";
     package = tools.vale;
     entry =
       let

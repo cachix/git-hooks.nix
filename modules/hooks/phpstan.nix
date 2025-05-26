@@ -16,8 +16,6 @@ in
   };
 
   config = {
-    name = "phpstan";
-    description = "Static Analysis of PHP files.";
     package = tools.phpstan;
     entry =
       let

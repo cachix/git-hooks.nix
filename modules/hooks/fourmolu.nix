@@ -12,8 +12,6 @@ in
   };
 
   config = {
-    name = "fourmolu";
-    description = "Haskell code prettifier.";
     package = tools.fourmolu;
     entry =
       "${config.package}/bin/fourmolu --mode inplace ${

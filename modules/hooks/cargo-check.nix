@@ -8,8 +8,6 @@ let
 in
 {
   config = {
-    name = "cargo-check";
-    description = "Check the cargo package for errors";
     package = tools.cargo;
     entry = "${config.package}/bin/cargo check ${cargoManifestPathArg}";
     files = "\\.rs$";

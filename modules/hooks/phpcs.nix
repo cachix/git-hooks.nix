@@ -16,8 +16,6 @@ in
   };
 
   config = {
-    name = "phpcs";
-    description = "Lint PHP files.";
     package = tools.phpcs;
     entry = migrateBinPathToPackage config "/bin/phpcs";
     types = [ "php" ];

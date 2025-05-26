@@ -19,8 +19,6 @@ in
   };
 
   config = {
-    name = "sort-file-contents";
-    description = "Sort the lines in specified files (defaults to alphabetical).";
     types = [ "text" ];
     package = tools.pre-commit-hooks;
     entry =

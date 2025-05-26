@@ -11,9 +11,8 @@ let
       type = types.submoduleWith ({
         modules = [ hookModule ] ++ [
           module
-          # TODO
           # Set name and description
-          # ({ name, ... }: { config = { inherit name description; }; })
+          ({ name, ... }: { config = { inherit name description; }; })
         ];
       });
       default = { };

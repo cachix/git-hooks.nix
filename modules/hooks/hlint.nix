@@ -12,8 +12,6 @@ in
       };
   };
   config = {
-    name = "hlint";
-    description = "HLint gives suggestions on how to improve your source code.";
     package = tools.hlint;
     entry = "${config.package}/bin/hlint${if config.settings.hintFile == null then "" else " --hint=${config.settings.hintFile}"}";
     files = "\\.l?hs(-boot)?$";

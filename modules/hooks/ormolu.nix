@@ -19,8 +19,6 @@ in
   };
 
   config = {
-    name = "ormolu";
-    description = "Haskell code prettifier.";
     package = tools.ormolu;
     entry =
       let

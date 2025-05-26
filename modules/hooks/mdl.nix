@@ -79,8 +79,6 @@ in
   };
 
   config = {
-    name = "mdl";
-    description = "A tool to check markdown files and flag style issues.";
     package = tools.mdl;
     entry =
       let

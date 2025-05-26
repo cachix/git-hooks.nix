@@ -34,8 +34,6 @@ in
   };
 
   config = {
-    name = "flake8";
-    description = "Check the style and quality of Python files.";
     package = tools.flake8;
     entry =
       let

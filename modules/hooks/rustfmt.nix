@@ -97,8 +97,6 @@ in
       };
     in
     {
-      name = "rustfmt";
-      description = "Format Rust code.";
       package = wrapper;
       packageOverrides = { inherit (tools) cargo rustfmt; };
       entry =

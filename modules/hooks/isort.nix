@@ -19,8 +19,6 @@ in
   };
 
   config = {
-    name = "isort";
-    description = "A Python utility / library to sort imports.";
     types = [ "file" "python" ];
     package = tools.isort;
     entry =

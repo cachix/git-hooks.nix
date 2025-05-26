@@ -1,8 +1,6 @@
 { tools, lib, config, pkgs, ... }:
 {
   config = {
-    name = "topiary";
-    description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
     package = tools.topiary;
     entry =
       let

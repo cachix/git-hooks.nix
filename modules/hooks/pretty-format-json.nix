@@ -37,8 +37,6 @@ in
   };
 
   config = {
-    name = "pretty-format-json";
-    description = "Pretty format JSON.";
     package = tools.pre-commit-hooks;
     entry =
       let

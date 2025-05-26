@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "golines";
-    description = "A golang formatter that fixes long lines";
     package = tools.golines;
     entry =
       let

@@ -19,8 +19,6 @@ in
   };
 
   config = {
-    name = "lychee";
-    description = "A fast, async, stream-based link checker that finds broken hyperlinks and mail addresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
     package = tools.lychee;
     entry =
       let

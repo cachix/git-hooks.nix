@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "hpack";
-    description = "`hpack` converts package definitions in the hpack format (`package.yaml`) to Cabal files.";
     package = tools.hpack-dir;
     entry = "${config.package}/bin/hpack-dir --${if config.settings.silent then "silent" else "verbose"}";
     files = "(\\.l?hs(-boot)?$)|(\\.cabal$)|((^|/)package\\.yaml$)";

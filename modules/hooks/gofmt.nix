@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "gofmt";
-    description = "A tool that automatically formats Go source code";
     package = tools.go;
     entry =
       let

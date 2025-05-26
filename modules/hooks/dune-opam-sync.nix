@@ -1,8 +1,6 @@
 { config, tools, lib, ... }:
 {
   config = {
-    name = "dune/opam sync";
-    description = "Check that Dune-generated OPAM files are in sync.";
     package = tools.dune-build-opam-files;
     entry = "${config.package}/bin/dune-build-opam-files";
     files = "(\.opam$)|(\.opam.template$)|((^|/)dune-project$)";

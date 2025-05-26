@@ -13,8 +13,6 @@ in
   };
 
   config = {
-    name = "latexindent";
-    description = "Perl script to add indentation to LaTeX files.";
     types = [ "file" "tex" ];
     package = tools.latexindent;
     entry = "${config.package}/bin/latexindent ${config.settings.flags}";

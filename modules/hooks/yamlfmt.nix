@@ -24,8 +24,6 @@ in
   };
 
   config = {
-    name = "yamlfmt";
-    description = "Formatter for YAML files.";
     types = [ "file" "yaml" ];
     package = tools.yamlfmt;
     entry =

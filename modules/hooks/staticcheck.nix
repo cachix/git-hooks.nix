@@ -1,8 +1,6 @@
 { tools, lib, config, pkgs, ... }:
 {
   config = {
-    name = "staticcheck";
-    description = "State of the art linter for the Go programming language";
     package = tools.go-tools;
     # staticheck works with directories.
     entry =

@@ -1,8 +1,6 @@
 { tools, lib, pkgs, config, ... }:
 {
   config = {
-    name = "trufflehog";
-    description = "Secrets scanner.";
     package = tools.trufflehog;
     entry =
       let

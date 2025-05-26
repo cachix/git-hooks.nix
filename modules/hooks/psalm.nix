@@ -16,8 +16,6 @@ in
   };
 
   config = {
-    name = "psalm";
-    description = "Static Analysis of PHP files.";
     package = tools.psalm;
     entry = migrateBinPathToPackage config "/bin/psalm";
     types = [ "php" ];

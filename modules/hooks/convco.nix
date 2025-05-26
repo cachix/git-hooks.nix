@@ -1,7 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "convco";
     package = tools.convco;
     entry =
       let

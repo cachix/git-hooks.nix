@@ -250,8 +250,6 @@ in
   };
 
   config = {
-    name = "prettier";
-    description = "Opinionated multi-language code formatter.";
     types = [ "text" ];
     package = tools.prettier;
     entry =

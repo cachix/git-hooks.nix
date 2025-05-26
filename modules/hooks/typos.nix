@@ -132,8 +132,6 @@ in
   };
 
   config = {
-    name = "typos";
-    description = "Source code spell checker";
     package = tools.typos;
     entry =
       let

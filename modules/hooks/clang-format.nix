@@ -1,8 +1,6 @@
 { config, tools, lib, ... }:
 {
   config = {
-    name = "clang-format";
-    description = "Format your code using `clang-format`.";
     package = tools.clang-tools;
     entry = "${config.package}/bin/clang-format -style=file -i";
     # Source:

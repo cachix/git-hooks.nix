@@ -37,8 +37,6 @@ in
   };
 
   config = {
-    name = "eclint";
-    description = "EditorConfig linter written in Go.";
     types = [ "file" ];
     package = tools.eclint;
     entry =

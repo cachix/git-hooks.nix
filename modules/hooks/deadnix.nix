@@ -55,8 +55,6 @@ in
   };
 
   config = {
-    name = "deadnix";
-    description = "Scan Nix files for dead code (unused variable bindings).";
     package = tools.deadnix;
     entry =
       let

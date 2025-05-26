@@ -16,8 +16,6 @@ in
   };
 
   config = {
-    name = "pyright";
-    description = "Static type checker for Python";
     package = tools.pyright;
     entry = migrateBinPathToPackage config "/bin/pyright";
     files = "\\.py$";

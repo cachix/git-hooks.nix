@@ -38,8 +38,6 @@ in
   };
 
   config = {
-    name = "rome-deprecated";
-    description = "";
     types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
     package = tools.biome;
     entry =

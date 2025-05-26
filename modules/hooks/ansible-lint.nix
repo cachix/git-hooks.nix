@@ -19,8 +19,6 @@ in
   };
 
   config = {
-    name = "ansible-lint";
-    description = "Ansible linter";
     package = tools.ansible-lint;
     entry =
       let

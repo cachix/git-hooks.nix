@@ -22,8 +22,6 @@ in
   };
 
   config = {
-    name = "denolint";
-    description = "Lint JavaScript/TypeScript source code.";
     types_or = [ "javascript" "jsx" "ts" "tsx" ];
     package = tools.deno;
     entry =

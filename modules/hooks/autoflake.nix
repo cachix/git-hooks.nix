@@ -23,8 +23,6 @@ in
   };
 
   config = {
-    name = "autoflake";
-    description = "Remove unused imports and variables from Python code";
     package = tools.autoflake;
     entry =
       let

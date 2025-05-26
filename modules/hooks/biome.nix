@@ -38,8 +38,6 @@ in
   };
 
   config = {
-    name = "biome";
-    description = "A toolchain for web projects, aimed to provide functionalities to maintain them";
     types_or = [ "javascript" "jsx" "ts" "tsx" "json" ];
     package = tools.biome;
     entry =

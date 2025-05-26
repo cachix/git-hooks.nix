@@ -12,8 +12,6 @@ in
   };
 
   config = {
-    name = "shfmt";
-    description = "Format shell files.";
     types = [ "shell" ];
     package = tools.shfmt;
     entry =

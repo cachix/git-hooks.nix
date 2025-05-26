@@ -51,8 +51,6 @@ in
   };
 
   config = {
-    name = "mkdocs-linkcheck";
-    description = "Validate links associated with markdown-based, statically generated websites.";
     package = tools.mkdocs-linkcheck;
     entry =
       let

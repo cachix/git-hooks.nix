@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "circleci";
-    description = "Validate CircleCI config files.";
     package = tools.circleci-cli;
     entry = builtins.toString (pkgs.writeShellScript "precommit-circleci" ''
       set -e

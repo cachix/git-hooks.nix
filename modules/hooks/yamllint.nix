@@ -54,8 +54,6 @@ in
   };
 
   config = {
-    name = "yamllint";
-    description = "Linter for YAML files.";
     types = [ "file" "yaml" ];
     package = tools.yamllint;
     entry =

@@ -31,8 +31,6 @@ in
   };
 
   config = {
-    name = "eslint";
-    description = "Find and fix problems in your JavaScript code.";
     package = tools.eslint;
     entry =
       let

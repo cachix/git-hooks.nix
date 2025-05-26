@@ -27,8 +27,6 @@ in
       '';
     in
     {
-      name = "lacheck";
-      description = "A consistency checker for LaTeX documents.";
       types = [ "file" "tex" ];
       package = tools.lacheck;
       entry = "${script}";

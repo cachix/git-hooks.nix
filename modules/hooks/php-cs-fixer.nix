@@ -16,8 +16,6 @@ in
   };
 
   config = {
-    name = "php-cs-fixer";
-    description = "Lint PHP files.";
     package = tools.php-cs-fixer;
     entry =
       let

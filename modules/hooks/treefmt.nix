@@ -47,8 +47,6 @@ in
         };
     in
     {
-      name = "treefmt";
-      description = "One CLI to format the code tree.";
       types = [ "file" ];
       pass_filenames = true;
       package = wrapper;

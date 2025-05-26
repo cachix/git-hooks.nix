@@ -28,8 +28,6 @@ in
   };
 
   config = {
-    name = "pylint";
-    description = "Lint Python files.";
     package = tools.pylint;
     entry =
       let

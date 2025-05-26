@@ -1,8 +1,6 @@
 { config, tools, lib, pkgs, ... }:
 {
   config = {
-    name = "golangci-lint";
-    description = "Fast linters runner for Go.";
     package = tools.golangci-lint;
     entry =
       let

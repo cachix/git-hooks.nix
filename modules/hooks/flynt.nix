@@ -73,8 +73,6 @@ in
   };
 
   config = {
-    name = "flynt";
-    description = "CLI tool to convert a python project's %-formatted strings to f-strings.";
     package = tools.flynt;
     entry =
       let

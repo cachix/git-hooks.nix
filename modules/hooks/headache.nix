@@ -12,8 +12,6 @@ in
   };
 
   config = {
-    name = "headache";
-    description = "Lightweight tool for managing headers in source code files.";
     ## NOTE: Supported `files` are taken from
     ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
     files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
