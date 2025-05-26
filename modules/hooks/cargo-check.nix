@@ -1,6 +1,6 @@
-{ tools, lib, rustSettings, ... }:
+{ tools, lib, settings, ... }:
 let
-  inherit (rustSettings) cargoManifestPath;
+  inherit (settings.rust) cargoManifestPath;
   cargoManifestPathArg =
     lib.optionalString
       (cargoManifestPath != null)

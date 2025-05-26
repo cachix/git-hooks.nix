@@ -1,8 +1,8 @@
-{ config, lib, pkgs, rustSettings, ... }:
+{ config, lib, pkgs, settings, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (rustSettings) cargoManifestPath;
-  
+  inherit (settings.rust) cargoManifestPath;
+
   cargoManifestPathArg =
     lib.optionalString
       (cargoManifestPath != null)

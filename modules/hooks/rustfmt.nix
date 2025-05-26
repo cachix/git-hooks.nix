@@ -1,4 +1,4 @@
-{ lib, config, rustSettings, ... }:
+{ lib, config, settings, ... }:
 let
   inherit (lib) mkOption types;
   nameType = types.strMatching "[][*?!0-9A-Za-z_-]+";
@@ -62,7 +62,7 @@ in
       manifest-path = mkOption {
         type = types.nullOr types.str;
         description = "Path to Cargo.toml";
-        default = rustSettings.cargoManifestPath;
+        default = settings.rust.cargoManifestPath;
       };
       message-format = mkOption {
         type = types.nullOr (types.enum [ "human" "short" ]);
