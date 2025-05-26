@@ -53,6 +53,6 @@ in
               [ (verbosity != 0) "-verbosity ${toString verbosity}" ]
             ]);
       in
-      "${tools.eclint}/bin/eclint ${cmdArgs}";
+      "${config.package}/bin/eclint ${cmdArgs}";
   };
 }

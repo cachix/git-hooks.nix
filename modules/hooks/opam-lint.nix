@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "opam lint";
-    description = "Lint opam package definition files.";
+    description = "OCaml package manager configuration checker";
     package = tools.opam;
-    entry = "${tools.opam}/bin/opam lint";
+    entry = "${config.package}/bin/opam lint";
     files = "opam$";
   };
 }

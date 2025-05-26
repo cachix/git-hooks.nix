@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,8 +10,20 @@ in
         description = "PHPStan binary path.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.phpstan}/bin/phpstan"
+          "''${config.package}/bin/phpstan"
         '';
       };
+  };
+
+  config = {
+    name = "phpstan";
+    description = "Static Analysis of PHP files.";
+    package = tools.phpstan;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/phpstan";
+      in
+      "${binPath} analyse";
+    types = [ "php" ];
   };
 }

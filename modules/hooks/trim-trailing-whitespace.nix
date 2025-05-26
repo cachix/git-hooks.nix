@@ -1,10 +1,11 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "trailing-whitespace";
     description = "Trim trailing whitespace.";
-    package = tools.pre-commit-hooks;
-    entry = "${tools.pre-commit-hooks}/bin/trailing-whitespace-fixer";
     types = [ "text" ];
+    stages = [ "pre-commit" "pre-push" "manual" ];
+    package = tools.pre-commit-hooks;
+    entry = "${config.package}/bin/trailing-whitespace-fixer";
   };
 }

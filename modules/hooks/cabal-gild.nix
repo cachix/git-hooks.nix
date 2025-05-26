@@ -8,7 +8,7 @@
       let
         script = pkgs.writeShellScript "precommit-cabal-gild" ''
           for file in "$@"; do
-              ${tools.cabal-gild}/bin/cabal-gild --io="$file"
+              ${config.package}/bin/cabal-gild --io="$file"
           done
         '';
       in

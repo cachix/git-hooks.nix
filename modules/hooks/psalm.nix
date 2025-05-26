@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,8 +10,16 @@ in
         description = "Psalm binary path.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.psalm}/bin/psalm"
+          "''${config.package}/bin/psalm"
         '';
       };
+  };
+
+  config = {
+    name = "psalm";
+    description = "Static Analysis of PHP files.";
+    package = tools.psalm;
+    entry = migrateBinPathToPackage config "/bin/psalm";
+    types = [ "php" ];
   };
 }

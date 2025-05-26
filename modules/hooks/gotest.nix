@@ -1,4 +1,4 @@
-{ tools, lib, pkgs, ... }:
+{ config, tools, lib, pkgs, ... }:
 {
   config = {
     name = "gotest";
@@ -31,7 +31,7 @@
 
           # test each directory one by one
           for dir in "''${sorted_dirs[@]}"; do
-              ${tools.go}/bin/go test "./$dir"
+              ${config.package}/bin/go test "./$dir"
           done
         '';
       in

@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "purs-tidy";
-    description = "Format PureScript files with purs-tidy.";
+    description = "Format purescript files.";
     package = tools.purs-tidy;
-    entry = "${tools.purs-tidy}/bin/purs-tidy format-in-place";
+    entry = "${config.package}/bin/purs-tidy format-in-place";
     files = "\.purs$";
   };
 }

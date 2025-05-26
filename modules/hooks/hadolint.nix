@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ config, tools, lib, ... }:
 {
   config = {
     name = "hadolint";
     description = "Dockerfile linter, validate inline bash.";
     package = tools.hadolint;
-    entry = "${tools.hadolint}/bin/hadolint";
+    entry = "${config.package}/bin/hadolint";
     files = "Dockerfile$";
   };
 }

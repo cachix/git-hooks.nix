@@ -1,4 +1,4 @@
-{ tools, lib, ... }:
+{ config, tools, lib, ... }:
 {
   config = {
     name = "actionlint";
@@ -6,6 +6,6 @@
     files = "^.github/workflows/";
     types = [ "yaml" ];
     package = tools.actionlint;
-    entry = "${tools.actionlint}/bin/actionlint";
+    entry = "${config.package}/bin/actionlint";
   };
 }

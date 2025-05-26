@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "sort-requirements-txt";
-    description = "Sort the lines in specified files (defaults to alphabetical).";
+    description = "Sort requirements in requirements.txt and constraints.txt files";
     package = tools.pre-commit-hooks;
-    entry = "${tools.pre-commit-hooks}/bin/requirements-txt-fixer";
-    files = "requirements.*\.txt$";
+    entry = "${config.package}/bin/requirements-txt-fixer";
+    files = "\\.*(requirements|constraints)\\.*\\.txt$";
   };
 }

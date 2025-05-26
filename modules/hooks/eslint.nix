@@ -14,7 +14,7 @@ in
         '';
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.eslint}/bin/eslint"
+          "''${config.package}/bin/eslint"
         '';
         example = lib.literalExpression ''
           "./node_modules/.bin/eslint"

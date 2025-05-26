@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, tools, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -16,5 +16,21 @@ in
         description = "Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).";
         default = "";
       };
+  };
+
+  config = {
+    name = "isort";
+    description = "A Python utility / library to sort imports.";
+    types = [ "file" "python" ];
+    package = tools.isort;
+    entry =
+      let
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ (profile != "") " --profile ${profile}" ]
+            ]);
+      in
+      "${config.package}/bin/isort${cmdArgs} ${config.settings.flags}";
   };
 }

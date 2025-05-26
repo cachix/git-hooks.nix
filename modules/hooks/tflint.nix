@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "tflint";
-    description = "A Pluggable Terraform Linter.";
+    description = "A pluggable Terraform linter.";
     package = tools.tflint;
-    entry = "${tools.tflint}/bin/tflint";
-    files = "\.tf$";
+    entry = "${config.package}/bin/tflint";
+    files = "\\.tf$";
   };
 }

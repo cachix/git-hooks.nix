@@ -1,4 +1,4 @@
-{ lib, config, settings, ... }:
+{ lib, config, settings, pkgs, tools, ... }:
 let
   inherit (lib) mkOption types;
   nameType = types.strMatching "[][*?!0-9A-Za-z_-]+";
@@ -82,32 +82,40 @@ in
     };
   };
 
-  config = {
-    name = "rustfmt";
-    description = "Format Rust code.";
-    package = config.packageOverrides.rustfmt;
-    entry =
-      let
-        cmdArgs =
-          lib.mkCmdArgs (with config.settings; [
-            [ (all) "--all" ]
-            [ (check) "--check" ]
-            [ (color != "auto") "--color ${color}" ]
-            [ (config != { }) config ]
-            [ (config-path != null) "--config-path ${lib.escapeShellArg config-path}" ]
-            [ (emit != "files") "--emit ${emit}" ]
-            [ (files-with-diff) "--files-with-diff" ]
-            [ (manifest-path != null) "--manifest-path ${lib.escapeShellArg manifest-path}" ]
-            [ (message-format != null) "--message-format ${message-format}" ]
-            [ (package != [ ]) "--package ${lib.strings.concatStringsSep " --package " package}" ]
-            [ verbose "-v" ]
-          ]);
-      in
-      "${config.packageOverrides.rustfmt}/bin/rustfmt ${cmdArgs}";
-    files = "\\.rs$";
-    extraPackages = [
-      config.packageOverrides.cargo
-      config.packageOverrides.rustfmt
-    ];
-  };
+  config =
+    let
+      mkAdditionalArgs = args: lib.optionalString (args != "") " -- ${args}";
+
+      wrapper = pkgs.symlinkJoin {
+        name = "rustfmt-wrapped";
+        paths = [ config.packageOverrides.rustfmt ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/cargo-fmt \
+          --prefix PATH : ${lib.makeBinPath (builtins.attrValues config.packageOverrides)}
+        '';
+      };
+    in
+    {
+      name = "rustfmt";
+      description = "Format Rust code.";
+      package = wrapper;
+      packageOverrides = { inherit (tools) cargo rustfmt; };
+      entry =
+        let
+          cargoArgs = lib.cli.toGNUCommandLineShell { } {
+            inherit (config.settings) all package verbose manifest-path;
+          };
+          rustfmtArgs = lib.cli.toGNUCommandLineShell { } {
+            inherit (config.settings) check emit config-path color files-with-diff config verbose;
+          };
+        in
+        "${config.package}/bin/cargo-fmt fmt ${cargoArgs}${mkAdditionalArgs rustfmtArgs}";
+      files = "\\.rs$";
+      pass_filenames = false;
+      extraPackages = [
+        config.packageOverrides.cargo
+        config.packageOverrides.rustfmt
+      ];
+    };
 }

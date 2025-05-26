@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ config, tools, lib, ... }:
 {
   config = {
     name = "clang-format";
     description = "Format your code using `clang-format`.";
     package = tools.clang-tools;
-    entry = "${tools.clang-tools}/bin/clang-format -style=file -i";
+    entry = "${config.package}/bin/clang-format -style=file -i";
     # Source:
     # https://github.com/pre-commit/mirrors-clang-format/blob/46516e8f532c8f2d55e801c34a740ebb8036365c/.pre-commit-hooks.yaml
     types_or = [

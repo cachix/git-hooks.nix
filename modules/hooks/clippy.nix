@@ -1,4 +1,4 @@
-{ config, lib, pkgs, settings, ... }:
+{ config, tools, lib, pkgs, settings, ... }:
 let
   inherit (lib) mkOption types;
   inherit (settings.rust) cargoManifestPath;
@@ -47,10 +47,14 @@ in
       cargo = mkOption {
         type = types.package;
         description = "The cargo package to use";
+        default = tools.cargo;
+        defaultText = "tools.cargo";
       };
       clippy = mkOption {
         type = types.package;
         description = "The clippy package to use";
+        default = tools.clippy;
+        defaultText = "tools.clippy";
       };
     };
   };
@@ -59,7 +63,6 @@ in
     name = "clippy";
     description = "Lint Rust code.";
     package = wrapper;
-    packageOverrides = { cargo = config.packageOverrides.cargo; clippy = config.packageOverrides.clippy; };
     entry = "${wrapper}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString config.settings.offline "--offline"} ${lib.optionalString config.settings.allFeatures "--all-features"} ${config.settings.extraArgs} -- ${lib.optionalString config.settings.denyWarnings "-D warnings"}";
     files = "\\.rs$";
     pass_filenames = false;

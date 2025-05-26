@@ -1,4 +1,4 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "bats";
@@ -6,6 +6,6 @@
     types = [ "shell" ];
     types_or = [ "bats" "bash" ];
     package = tools.bats;
-    entry = "${tools.bats}/bin/bats -p";
+    entry = "${config.package}/bin/bats -p";
   };
 }

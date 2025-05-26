@@ -1,4 +1,4 @@
-{ tools, lib, settings, ... }:
+{ tools, lib, settings, config, ... }:
 let
   inherit (settings.rust) cargoManifestPath;
   cargoManifestPathArg =
@@ -11,7 +11,7 @@ in
     name = "cargo-check";
     description = "Check the cargo package for errors";
     package = tools.cargo;
-    entry = "${tools.cargo}/bin/cargo check ${cargoManifestPathArg}";
+    entry = "${config.package}/bin/cargo check ${cargoManifestPathArg}";
     files = "\\.rs$";
     pass_filenames = false;
   };

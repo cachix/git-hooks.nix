@@ -18,7 +18,7 @@ in
     package = tools.elixir;
     entry =
       let strict = if config.settings.strict then "--strict" else "";
-      in "${tools.elixir}/bin/mix credo ${strict}";
+      in "${config.package}/bin/mix credo ${strict}";
     files = "\\.exs?$";
   };
 }

@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "single-quoted-strings";
     description = "Replace double quoted strings with single quoted strings.";
     package = tools.pre-commit-hooks;
-    entry = "${tools.pre-commit-hooks}/bin/single-quoted-strings";
+    entry = "${config.package}/bin/double-quote-string-fixer";
     types = [ "python" ];
   };
 }

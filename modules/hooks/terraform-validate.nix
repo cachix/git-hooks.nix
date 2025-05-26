@@ -1,10 +1,12 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "terraform-validate";
-    description = "Validate terraform files.";
+    description = "Validates terraform configuration files (`.tf`).";
     package = tools.terraform-validate;
-    entry = "${tools.terraform-validate}/bin/terraform-validate";
-    files = "\.tf$";
+    entry = "${config.package}/bin/terraform-validate";
+    files = "\\.(tf(vars)?|terraform\\.lock\\.hcl)$";
+    excludes = [ "\\.terraform/.*$" ];
+    require_serial = true;
   };
 }

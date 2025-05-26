@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,8 +10,16 @@ in
         description = "PHP_CodeSniffer binary path.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.phpcs}/bin/phpcs"
+          "''${config.package}/bin/phpcs"
         '';
       };
+  };
+
+  config = {
+    name = "phpcs";
+    description = "Lint PHP files.";
+    package = tools.phpcs;
+    entry = migrateBinPathToPackage config "/bin/phpcs";
+    types = [ "php" ];
   };
 }

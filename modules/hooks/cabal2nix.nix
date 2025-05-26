@@ -16,7 +16,7 @@ in
     name = "cabal2nix";
     description = "Run `cabal2nix` on all `*.cabal` files to generate corresponding `.nix` files";
     package = tools.cabal2nix-dir;
-    entry = "${tools.cabal2nix-dir}/bin/cabal2nix-dir --outputFileName=${config.settings.outputFilename}";
+    entry = "${config.package}/bin/cabal2nix-dir --outputFileName=${config.settings.outputFilename}";
     files = "\\.cabal$";
     after = [ "hpack" ];
   };

@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, tools, config, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -129,5 +129,38 @@ in
         description = "Fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
         default = false;
       };
+  };
+
+  config = {
+    name = "typos";
+    description = "Source code spell checker";
+    package = tools.typos;
+    entry =
+      let
+        # Concatenate config in config file with section for ignoring words generated from list of words to ignore
+        configuration = "${config.settings.configuration}" + lib.strings.optionalString (config.settings.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") config.settings.ignored-words;
+        configFile = builtins.toFile "typos-config.toml" configuration;
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ binary "--binary" ]
+              [ (color != "auto") "--color ${color}" ]
+              [ (configuration != "") "--config ${configFile}" ]
+              [ (configPath != "" && configuration == "") "--config ${configPath}" ]
+              [ diff "--diff" ]
+              [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+              [ (format != "long") "--format ${format}" ]
+              [ hidden "--hidden" ]
+              [ (locale != "en") "--locale ${locale}" ]
+              [ no-check-filenames "--no-check-filenames" ]
+              [ no-check-files "--no-check-files" ]
+              [ no-unicode "--no-unicode" ]
+              [ quiet "--quiet" ]
+              [ verbose "--verbose" ]
+              [ (write && !diff) "--write-changes" ]
+            ]);
+      in
+      "${config.package}/bin/typos ${cmdArgs}";
+    types = [ "text" ];
   };
 }

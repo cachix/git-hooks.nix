@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "terraform-format";
-    description = "Format terraform files.";
-    package = tools.terraform;
-    entry = "${tools.terraform}/bin/terraform fmt";
-    files = "\.tf$";
+    description = "Format Terraform (`.tf`) files.";
+    package = tools.opentofu;
+    entry = "${lib.getExe config.package} fmt -check -diff";
+    files = "\\.tf$";
   };
 }

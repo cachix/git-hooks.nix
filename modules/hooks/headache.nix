@@ -22,8 +22,8 @@ in
       ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
       ## next NixOS release, the following code will become irrelevant.
       lib.throwIf
-        (tools.headache == null)
+        (config.package == null)
         "The version of nixpkgs used by git-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
-        "${tools.headache}/bin/headache -h ${config.settings.header-file}";
+        "${config.package}/bin/headache -h ${config.settings.header-file}";
   };
 }

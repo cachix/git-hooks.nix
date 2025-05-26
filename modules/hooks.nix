@@ -57,6 +57,7 @@ in
   config.hookModule = {
     imports = [ ./hook.nix ];
     config._module.args = {
+      inherit pkgs;
       inherit (cfg) default_stages settings tools;
       mkCmdArgs = predActionList:
         lib.concatStringsSep
@@ -125,11 +126,11 @@ in
       check-yaml = mkHook ./hooks/check-yaml.nix "Check syntax of YAML files.";
       checkmake = mkHook ./hooks/checkmake.nix "Experimental linter/analyzer for Makefiles";
       chktex = mkHook ./hooks/chktex.nix "LaTeX semantic checker";
-      cljfmt = mkHook ./hooks/cljfmt.nix "A tool for formatting Clojure code.";
       circleci = mkHook ./hooks/circleci.nix "Validate CircleCI config files.";
       clang-format = mkHook ./hooks/clang-format.nix "Format your code using `clang-format`.";
       clang-tidy = mkHook ./hooks/clang-tidy.nix "Static analyzer for C++ code.";
       clippy = mkHook ./hooks/clippy.nix "Lint Rust code.";
+      cljfmt = mkHook ./hooks/cljfmt.nix "A tool for formatting Clojure code.";
       cmake-format = mkHook ./hooks/cmake-format.nix "A tool for formatting CMake-files.";
       commitizen = mkHook ./hooks/commitizen.nix "Check whether the current commit message follows committing rules.";
       conform = mkHook ./hooks/conform.nix "Policy enforcement for commits.";
@@ -140,12 +141,12 @@ in
       dart-analyze = mkHook ./hooks/dart-analyze.nix "Dart analyzer";
       dart-format = mkHook ./hooks/dart-format.nix "Dart formatter";
       deadnix = mkHook ./hooks/deadnix.nix "Scan Nix files for dead code (unused variable bindings).";
+      denofmt = mkHook ./hooks/denofmt.nix "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
+      denolint = mkHook ./hooks/denolint.nix "Lint JavaScript/TypeScript source code.";
       detect-aws-credentials = mkHook ./hooks/detect-aws-credentials.nix "Detect AWS credentials from the AWS cli credentials file.";
       detect-private-keys = mkHook ./hooks/detect-private-keys.nix "Detect the presence of private keys.";
       dhall-format = mkHook ./hooks/dhall-format.nix "Dhall code formatter.";
       dialyzer = mkHook ./hooks/dialyzer.nix "Runs a static code analysis using Dialyzer";
-      denofmt = mkHook ./hooks/denofmt.nix "Auto-format JavaScript, TypeScript, Markdown, and JSON files.";
-      denolint = mkHook ./hooks/denolint.nix "Lint JavaScript/TypeScript source code.";
       dune-fmt = mkHook ./hooks/dune-fmt.nix "Runs dune-build-opam-files to ensure OCaml and Dune are in sync";
       dune-opam-sync = mkHook ./hooks/dune-opam-sync.nix "Check that Dune-generated OPAM files are in sync.";
       eclint = mkHook ./hooks/eclint.nix "EditorConfig linter written in Go.";
@@ -155,13 +156,13 @@ in
       elm-test = mkHook ./hooks/elm-test.nix "Run unit tests and fuzz tests for Elm code.";
       end-of-file-fixer = mkHook ./hooks/end-of-file-fixer.nix "Ensures that a file is either empty, or ends with a single newline.";
       eslint = mkHook ./hooks/eslint.nix "Find and fix problems in your JavaScript code.";
-      flake8 = mkHook ./hooks/flake8.nix "Check the style and quality of Python files.";
       fix-byte-order-marker = mkHook ./hooks/fix-byte-order-marker.nix "Remove UTF-8 byte order marker.";
       fix-encoding-pragma = mkHook ./hooks/fix-encoding-pragma.nix "Adds # -*- coding: utf-8 -*- to the top of Python files.";
+      flake8 = mkHook ./hooks/flake8.nix "Check the style and quality of Python files.";
       flake-checker = mkHook ./hooks/flake-checker.nix "Run health checks on your flake-powered Nix projects.";
       flynt = mkHook ./hooks/flynt.nix "CLI tool to convert a python project's %-formatted strings to f-strings.";
-      fourmolu = mkHook ./hooks/fourmolu.nix "Haskell code prettifier.";
       forbid-new-submodules = mkHook ./hooks/forbid-new-submodules.nix "Prevent addition of new Git submodules.";
+      fourmolu = mkHook ./hooks/fourmolu.nix "Haskell code prettifier.";
       fprettify = mkHook ./hooks/fprettify.nix "Auto-formatter for modern Fortran code.";
       gitlint = mkHook ./hooks/gitlint.nix "Linting for your git commit messages";
       gofmt = mkHook ./hooks/gofmt.nix "A tool that automatically formats Go source code";
@@ -174,38 +175,58 @@ in
       headache = mkHook ./hooks/headache.nix "Lightweight tool for managing headers in source code files.";
       hlint = mkHook ./hooks/hlint.nix "Haskell linter";
       hpack = mkHook ./hooks/hpack.nix "A modern format for Haskell packages";
+      html-tidy = mkHook ./hooks/html-tidy.nix "HTML linter.";
+      hunspell = mkHook ./hooks/hunspell.nix "Spell checker and morphological analyzer.";
       isort = mkHook ./hooks/isort.nix "A Python utility/library to sort imports.";
+      juliaformatter = mkHook ./hooks/juliaformatter.nix "Run JuliaFormatter.jl against Julia source files";
       lacheck = mkHook ./hooks/lacheck.nix "LaTeX checker";
       latexindent = mkHook ./hooks/latexindent.nix "Perl script to add indentation to LaTeX files";
       lua-ls = mkHook ./hooks/lua-ls.nix "Lua language server";
-      lychee = mkHook ./hooks/lychee.nix "Fast, async, stream-based link checker";
-      markdownlint = mkHook ./hooks/markdownlint.nix "Markdown linter";
-      mdl = mkHook ./hooks/mdl.nix "Markdown linter";
-      mkdocs-linkcheck = mkHook ./hooks/mkdocs-linkcheck.nix "MkDocs link checker";
-      mypy = mkHook ./hooks/mypy.nix "Optional static type checker for Python";
-      nixfmt = (mkHook ./hooks/nixfmt.nix "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.") // { visible = false; };
-      nixfmt-classic = mkHook ./hooks/nixfmt-classic.nix "nixfmt (classic)";
-      nixfmt-rfc-style = mkHook ./hooks/nixfmt-rfc-style.nix "nixfmt (RFC 166 style)";
-      nixpkgs-fmt = mkHook ./hooks/nixpkgs-fmt.nix "Nix code formatter for nixpkgs.";
-      no-commit-to-branch = mkHook ./hooks/no-commit-to-branch.nix "Protect specific branches from direct checkins";
+      luacheck = mkHook ./hooks/luacheck.nix "A tool for linting and static analysis of Lua code.";
+      lychee = mkHook ./hooks/lychee.nix "A fast, async, stream-based link checker that finds broken hyperlinks and mail addresses inside Markdown, HTML, reStructuredText, or any other text file or website.";
+      markdownlint = mkHook ./hooks/markdownlint.nix "Style checker and linter for markdown files.";
+      mdformat = mkHook ./hooks/mdformat.nix "CommonMark compliant Markdown formatter";
+      mdl = mkHook ./hooks/mdl.nix "A tool to check markdown files and flag style issues.";
+      mdsh = mkHook ./hooks/mdsh.nix "Markdown shell pre-processor.";
+      mix-format = mkHook ./hooks/mix-format.nix "Runs the built-in Elixir syntax formatter";
+      mix-test = mkHook ./hooks/mix-test.nix "Runs the built-in Elixir test framework";
+      mixed-line-endings = mkHook ./hooks/mixed-line-endings.nix "Resolve mixed line endings.";
+      mkdocs-linkcheck = mkHook ./hooks/mkdocs-linkcheck.nix "Validate links associated with markdown-based, statically generated websites";
+      mypy = mkHook ./hooks/mypy.nix "Static type checker for Python";
+      name-tests-test = mkHook ./hooks/name-tests-test.nix "Verify that Python test files are named correctly.";
+      nil = mkHook ./hooks/nil.nix "Incremental analysis assistant for writing in Nix.";
+      nixfmt = (mkHook ./hooks/nixfmt.nix "Deprecated Nix code prettifier. Use nixfmt-classic or nixfmt-rfc-style instead.") // { visible = false; };
+      nixfmt-classic = mkHook ./hooks/nixfmt-classic.nix "Nix code prettifier (classic)";
+      nixfmt-rfc-style = mkHook ./hooks/nixfmt-rfc-style.nix "Nix code prettifier (RFC 166 style).";
+      nixpkgs-fmt = mkHook ./hooks/nixpkgs-fmt.nix "Nix code prettifier.";
+      no-commit-to-branch = mkHook ./hooks/no-commit-to-branch.nix "Disallow committing to certain branch/branches.";
+      ocp-indent = mkHook ./hooks/ocp-indent.nix "A tool to indent OCaml code.";
+      opam-lint = mkHook ./hooks/opam-lint.nix "OCaml package manager configuration checker";
+      openapi-spec-validator = mkHook ./hooks/openapi-spec-validator.nix "Validate OpenAPI specifications.";
       ormolu = mkHook ./hooks/ormolu.nix "Haskell source code formatter";
-      php-cs-fixer = mkHook ./hooks/php-cs-fixer.nix "PHP coding standards fixer";
-      phpcbf = mkHook ./hooks/phpcbf.nix "PHP code beautifier and fixer";
-      phpcs = mkHook ./hooks/phpcs.nix "PHP code sniffer";
-      phpstan = mkHook ./hooks/phpstan.nix "PHP static analysis tool";
-      # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
-      # See all options for prettier [here](https://prettier.io/docs/en/options.html).
-      prettier = mkHook ./hooks/prettier.nix "Prettier code formatter";
+      php-cs-fixer = mkHook ./hooks/php-cs-fixer.nix "Lint PHP files.";
+      phpcbf = mkHook ./hooks/phpcbf.nix "Lint PHP files.";
+      phpcs = mkHook ./hooks/phpcs.nix "Lint PHP files.";
+      phpstan = mkHook ./hooks/phpstan.nix "Static analysis of PHP files.";
+      poetry-check = mkHook ./hooks/poetry-check.nix "Check the validity of the pyproject.toml file.";
+      poetry-lock = mkHook ./hooks/poetry-lock.nix "Update the poetry.lock file.";
+      pre-commit-hook-ensure-sops = mkHook ./hooks/pre-commit-hook-ensure-sops.nix "Ensure that sops files are encrypted.";
+      prettier = mkHook ./hooks/prettier.nix "Opinionated multi-language code formatter.";
       pretty-format-json = mkHook ./hooks/pretty-format-json.nix "Pretty format JSON";
       proselint = mkHook ./hooks/proselint.nix "A linter for prose";
       psalm = mkHook ./hooks/psalm.nix "PHP static analysis tool";
-      pylint = mkHook ./hooks/pylint.nix "Python static code analysis tool";
+      purs-tidy = mkHook ./hooks/purs-tidy.nix "Format purescript files.";
+      purty = mkHook ./hooks/purty.nix "Format purescript files";
+      pylint = mkHook ./hooks/pylint.nix "Lint Python files.";
       pyright = mkHook ./hooks/pyright.nix "Static type checker for Python";
-      pyupgrade = mkHook ./hooks/pyupgrade.nix "Upgrade syntax for newer versions of Python";
-      reuse = mkHook ./hooks/reuse.nix "REUSE is a tool for compliance with the REUSE recommendations";
-      revive = mkHook ./hooks/revive.nix "Fast, configurable, extensible, flexible, and beautiful linter for Go";
+      python-debug-statements = mkHook ./hooks/python-debug-statements.nix "Check for debugger imports and py37+ `breakpoint()` calls in python source.";
+      pyupgrade = mkHook ./hooks/pyupgrade.nix "Upgrade syntax for newer versions of Python.";
+      reuse = mkHook ./hooks/reuse.nix "reuse is a tool for compliance with the REUSE recommendations.";
+      revive = mkHook ./hooks/revive.nix "A linter for Go source code.";
       ripsecrets = mkHook ./hooks/ripsecrets.nix "Prevent committing secret keys into your source code";
       rome = (mkHook ./hooks/rome.nix "Deprecated rome hook. Use biome instead.") // { visible = false; };
+      ruff = mkHook ./hooks/ruff.nix "An extremely fast Python linter, written in Rust.";
+      ruff-format = mkHook ./hooks/ruff-format.nix "An extremely fast Python code formatter, written in Rust.";
       rustfmt = mkHook ./hooks/rustfmt.nix ''
         Rust code formatter
 
@@ -216,9 +237,23 @@ in
         hooks.rustfmt.packageOverrides.rustfmt = pkgs.rustfmt;
         ```
       '';
-      shfmt = mkHook ./hooks/shfmt.nix "A shell parser, formatter, and interpreter";
-      sort-file-contents = mkHook ./hooks/sort-file-contents.nix "Sort file contents";
+      selene = mkHook ./hooks/selene.nix "A blazing-fast modern Lua linter written in Rust.";
+      shellcheck = mkHook ./hooks/shellcheck.nix "Format shell files.";
+      shfmt = mkHook ./hooks/shfmt.nix "Format shell files.";
+      single-quoted-strings = mkHook ./hooks/single-quoted-strings.nix "Replace double quoted strings with single quoted strings.";
+      sort-file-contents = mkHook ./hooks/sort-file-contents.nix "Sort the lines in specified files (defaults to alphabetical).";
+      sort-requirements-txt = mkHook ./hooks/sort-requirements-txt.nix "Sort requirements in requirements.txt and constraints.txt files.";
+      sort-simple-yaml = mkHook ./hooks/sort-simple-yaml.nix "Sort simple YAML files which consist only of top-level keys, preserving comments and blocks.";
+      staticcheck = mkHook ./hooks/staticcheck.nix "State of the art linter for the Go programming language.";
       statix = mkHook ./hooks/statix.nix "Lints and suggestions for the Nix programming language";
+      stylish-haskell = mkHook ./hooks/stylish-haskell.nix "A simple Haskell code prettifier.";
+      stylua = mkHook ./hooks/stylua.nix "An opinionated code formatter for Lua.";
+      tagref = mkHook ./hooks/tagref.nix "Have tagref check all references and tags.";
+      taplo = mkHook ./hooks/taplo.nix "Format TOML files with taplo fmt";
+      terraform-format = mkHook ./hooks/terraform-format.nix "Format Terraform (`.tf`) files.";
+      terraform-validate = mkHook ./hooks/terraform-validate.nix "Validates terraform configuration files (`.tf`).";
+      tflint = mkHook ./hooks/tflint.nix "A pluggable Terraform linter.";
+      topiary = mkHook ./hooks/topiary.nix "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
       treefmt = mkHook ./hooks/treefmt.nix ''
         One CLI to format the code tree
 
@@ -237,10 +272,15 @@ in
         hooks.treefmt.packageOverrides.treefmt = pkgs.treefmt;
         ```
       '';
+      trim-trailing-whitespace = mkHook ./hooks/trim-trailing-whitespace.nix "Trim trailing whitespace.";
+      trufflehog = mkHook ./hooks/trufflehog.nix "Secrets scanner.";
       typos = mkHook ./hooks/typos.nix "Source code spell checker";
-      vale = mkHook ./hooks/vale.nix "A command-line tool that brings code-like linting to prose";
-      yamlfmt = mkHook ./hooks/yamlfmt.nix "YAML formatter";
-      yamllint = mkHook ./hooks/yamllint.nix "YAML linter";
+      typstfmt = mkHook ./hooks/typstfmt.nix "Format Typst files.";
+      typstyle = mkHook ./hooks/typstyle.nix "Beautiful and reliable typst code formatter.";
+      vale = mkHook ./hooks/vale.nix "A markup-aware linter for prose built with speed and extensibility in mind.";
+      yamlfmt = mkHook ./hooks/yamlfmt.nix "Formatter for YAML files.";
+      yamllint = mkHook ./hooks/yamllint.nix "Linter for YAML files.";
+      zprint = mkHook ./hooks/zprint.nix "Beautifully format Clojure and Clojurescript source code and s-expressions.";
     };
 
   config.warnings =

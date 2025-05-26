@@ -1,4 +1,4 @@
-{ tools, lib, pkgs, ... }:
+{ config, tools, lib, pkgs, ... }:
 {
   config = {
     name = "gofmt";
@@ -11,7 +11,7 @@
           failed=false
           for file in "$@"; do
               # redirect stderr so that violations and summaries are properly interleaved.
-              if ! ${tools.go}/bin/gofmt -l -w "$file" 2>&1
+              if ! ${config.package}/bin/gofmt -l -w "$file" 2>&1
               then
                   failed=true
               fi

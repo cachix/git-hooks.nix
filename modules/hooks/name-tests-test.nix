@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "name-tests-test";
-    description = "Verify Python test files are named correctly.";
+    description = "Verify that Python test files are named correctly.";
     package = tools.pre-commit-hooks;
-    entry = "${tools.pre-commit-hooks}/bin/name-tests-test";
-    files = "(^|/)tests/.+\.py$";
+    entry = "${config.package}/bin/tests_should_end_in_test.py";
+    files = "(^|/)tests/\.+\\.py$";
   };
 }

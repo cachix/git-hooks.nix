@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,7 +10,7 @@ in
         description = "mkdocs-linkcheck binary path. Should be used to specify the mkdocs-linkcheck binary from your Python environment.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.mkdocs-linkcheck}/bin/mkdocs-linkcheck"
+          "''${config.package}/bin/mkdocs-linkcheck"
         '';
       };
 
@@ -49,4 +49,26 @@ in
         default = "get";
       };
   };
+
+  config = {
+    name = "mkdocs-linkcheck";
+    description = "Validate links associated with markdown-based, statically generated websites.";
+    package = tools.mkdocs-linkcheck;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/mkdocs-linkcheck";
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ local-only " --local" ]
+              [ recurse " --recurse" ]
+              [ (extension != "") " --ext ${extension}" ]
+              [ (method != "") " --method ${method}" ]
+              [ (path != "") " ${path}" ]
+            ]);
+      in
+      "${binPath}${cmdArgs}";
+    types = [ "text" "markdown" ];
+  };
+
 }

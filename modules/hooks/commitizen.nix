@@ -1,4 +1,4 @@
-{ tools, lib, ... }:
+{ config, tools, lib, ... }:
 {
   config = {
     name = "commitizen check";
@@ -6,7 +6,7 @@
       Check whether the current commit message follows committing rules.
     '';
     package = tools.commitizen;
-    entry = "${tools.commitizen}/bin/cz check --allow-abort --commit-msg-file";
+    entry = "${config.package}/bin/cz check --allow-abort --commit-msg-file";
     stages = [ "commit-msg" ];
   };
 }

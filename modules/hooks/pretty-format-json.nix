@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -34,5 +34,24 @@ in
         description = "Keys to keep at the top of mappings.";
         default = [ ];
       };
+  };
+
+  config = {
+    name = "pretty-format-json";
+    description = "Pretty format JSON.";
+    package = tools.pre-commit-hooks;
+    entry =
+      let
+        binPath = "${config.package}/bin/pretty-format-json";
+        cmdArgs = mkCmdArgs (with config.settings; [
+          [ autofix "--autofix" ]
+          [ (indent != null) "--indent ${toString indent}" ]
+          [ no-ensure-ascii "--no-ensure-ascii" ]
+          [ no-sort-keys "--no-sort-keys" ]
+          [ (top-keys != [ ]) "--top-keys ${lib.strings.concatStringsSep "," top-keys}" ]
+        ]);
+      in
+      "${binPath} ${cmdArgs}";
+    types = [ "json" ];
   };
 }

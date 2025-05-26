@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "zprint";
-    description = "Clojure/ClojureScript source code formatting.";
+    description = "Beautifully format Clojure and Clojurescript source code and s-expressions.";
     package = tools.zprint;
-    entry = "${tools.zprint}/bin/zprint '{:search-config? true}' -w";
+    entry = "${config.package}/bin/zprint '{:search-config? true}' -w";
     types_or = [ "clojure" "clojurescript" "edn" ];
   };
 }

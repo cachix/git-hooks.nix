@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "ocp-indent";
-    description = "A simple tool and library to indent OCaml code.";
+    description = "A tool to indent OCaml code.";
     package = tools.ocp-indent;
-    entry = "${tools.ocp-indent}/bin/ocp-indent --inplace";
+    entry = "${config.package}/bin/ocp-indent --inplace";
     files = "\.mli?$";
   };
 }

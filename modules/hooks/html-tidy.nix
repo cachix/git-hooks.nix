@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ config, tools, lib, ... }:
 {
   config = {
     name = "html-tidy";
-    description = "Tidy HTML files.";
+    description = "HTML linter";
     package = tools.html-tidy;
-    entry = "${tools.html-tidy}/bin/tidy -modify -indent -quiet";
+    entry = "${config.package}/bin/tidy -modify -indent -quiet";
     types = [ "html" ];
   };
 }

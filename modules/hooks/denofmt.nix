@@ -33,6 +33,6 @@ in
             [ (config.settings.configPath != "") "-c ${config.settings.configPath}" ]
           ];
       in
-      "${tools.deno}/bin/deno fmt ${cmdArgs}";
+      "${config.package}/bin/deno fmt ${cmdArgs}";
   };
 }

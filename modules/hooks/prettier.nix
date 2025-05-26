@@ -1,8 +1,10 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
 {
+  # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
+  # See all options for prettier [here](https://prettier.io/docs/en/options.html).
   options.settings = {
     binPath =
       mkOption {
@@ -14,7 +16,7 @@ in
         type = types.nullOr (types.oneOf [ types.str types.path ]);
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.prettier}/bin/prettier"
+          "''${config.package}/bin/prettier"
         '';
         example = lib.literalExpression ''
           "./node_modules/.bin/prettier"
@@ -245,5 +247,58 @@ in
         type = types.bool;
         default = true;
       };
+  };
+
+  config = {
+    name = "prettier";
+    description = "Opinionated multi-language code formatter.";
+    types = [ "text" ];
+    package = tools.prettier;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/prettier";
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ (allow-parens != "always") "--allow-parens ${allow-parens}" ]
+              [ bracket-same-line "--bracket-same-line" ]
+              [ cache "--cache" ]
+              [ (cache-location != "./node_modules/.cache/prettier/.prettier-cache") "--cache-location ${cache-location}" ]
+              [ (cache-strategy != null) "--cache-strategy ${cache-strategy}" ]
+              [ check "--check" ]
+              [ (!color) "--no-color" ]
+              [ (configPath != "") "--config ${configPath}" ]
+              [ (config-precedence != "cli-override") "--config-precedence ${config-precedence}" ]
+              [ (embedded-language-formatting != "auto") "--embedded-language-formatting ${embedded-language-formatting}" ]
+              [ (end-of-line != "lf") "--end-of-line ${end-of-line}" ]
+              [ (html-whitespace-sensitivity != "css") "--html-whitespace-sensitivity ${html-whitespace-sensitivity}" ]
+              [ (ignore-path != [ ]) "--ignore-path ${lib.escapeShellArgs ignore-path}" ]
+              [ ignore-unknown "--ignore-unknown" ]
+              [ insert-pragma "--insert-pragma" ]
+              [ jsx-single-quote "--jsx-single-quote" ]
+              [ list-different "--list-different" ]
+              [ (log-level != "log") "--log-level ${log-level}" ]
+              [ no-bracket-spacing "--no-bracket-spacing" ]
+              [ no-config "--no-config" ]
+              [ no-editorconfig "--no-editorconfig" ]
+              [ no-error-on-unmatched-pattern "--no-error-on-unmatched-pattern" ]
+              [ no-semi "--no-semi" ]
+              [ (parser != "") "--parser ${parser}" ]
+              [ (print-width != 80) "--print-width ${toString print-width}" ]
+              [ (prose-wrap != "preserve") "--prose-wrap ${prose-wrap}" ]
+              [ (plugins != [ ]) "--plugin ${lib.strings.concatStringsSep " --plugin " plugins}" ]
+              [ (quote-props != "as-needed") "--quote-props ${quote-props}" ]
+              [ require-pragma "--require-pragma" ]
+              [ single-attribute-per-line "--single-attribute-per-line" ]
+              [ single-quote "--single-quote" ]
+              [ (tab-width != 2) "--tab-width ${toString tab-width}" ]
+              [ (trailing-comma != "all") "--trailing-comma ${trailing-comma}" ]
+              [ use-tabs "--use-tabs" ]
+              [ vue-indent-script-and-style "--vue-indent-script-and-style" ]
+              [ with-node-modules "--with-node-modules" ]
+              [ write "--write" ]
+            ]);
+      in
+      "${binPath} ${cmdArgs}";
   };
 }

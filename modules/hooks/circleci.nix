@@ -1,4 +1,4 @@
-{ tools, lib, pkgs, ... }:
+{ config, tools, lib, pkgs, ... }:
 {
   config = {
     name = "circleci";
@@ -8,7 +8,7 @@
       set -e
       failed=false
       for file in "$@"; do
-        if ! ${tools.circleci-cli}/bin/circleci config validate "$file" 2>&1
+        if ! ${config.package}/bin/circleci config validate "$file" 2>&1
         then
           echo "Config file at $file is invalid, check the errors above."
           failed=true

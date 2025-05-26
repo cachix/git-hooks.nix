@@ -14,7 +14,7 @@ in
         '';
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.biome}/bin/biome"
+          "''${config.package}/bin/biome"
         '';
         example = lib.literalExpression ''
           "./node_modules/.bin/biome"

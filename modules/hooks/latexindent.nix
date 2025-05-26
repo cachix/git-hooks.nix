@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, tools, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,5 +10,13 @@ in
         description = "Flags passed to latexindent. See available flags [here](https://latexindentpl.readthedocs.io/en/latest/sec-how-to-use.html#from-the-command-line)";
         default = "--local --silent --overwriteIfDifferent";
       };
+  };
+
+  config = {
+    name = "latexindent";
+    description = "Perl script to add indentation to LaTeX files.";
+    types = [ "file" "tex" ];
+    package = tools.latexindent;
+    entry = "${config.package}/bin/latexindent ${config.settings.flags}";
   };
 }

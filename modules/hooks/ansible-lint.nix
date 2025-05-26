@@ -29,7 +29,7 @@ in
             [ (config.settings.configPath != "") "-c ${config.settings.configPath}" ]
           ];
       in
-      "${tools.ansible-lint}/bin/ansible-lint ${cmdArgs}";
+      "${config.package}/bin/ansible-lint ${cmdArgs}";
     files = if config.settings.subdir != "" then "${config.settings.subdir}/" else "";
   };
 }

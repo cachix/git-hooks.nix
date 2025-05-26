@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,5 +10,14 @@ in
       default = "";
       example = "--json";
     };
+  };
+
+  config = {
+    name = "reuse";
+    description = "reuse is a tool for compliance with the REUSE recommendations.";
+    package = tools.reuse;
+    entry = "${config.package}/bin/reuse lint ${config.settings.flags}";
+    types = [ "file" ];
+    pass_filenames = false;
   };
 }

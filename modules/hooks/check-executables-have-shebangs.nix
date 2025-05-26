@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "check-executables-have-shebangs";
     description = "Ensure that all non-binary executables have shebangs.";
     package = tools.pre-commit-hooks;
-    entry = "${tools.pre-commit-hooks}/bin/check-executables-have-shebangs";
+    entry = "${config.package}/bin/check-executables-have-shebangs";
     types = [ "text" "executable" ];
     stages = [ "pre-commit" "pre-push" "manual" ];
   };

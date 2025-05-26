@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, pkgs, tools, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -17,4 +17,20 @@ in
       default = { };
     };
   };
+
+  config =
+    let
+      script = pkgs.writeShellScript "precommit-mdsh" ''
+        for file in $(echo "$@"); do
+            "${config.package}/bin/lacheck" "$file"
+        done
+      '';
+    in
+    {
+      name = "lacheck";
+      description = "A consistency checker for LaTeX documents.";
+      types = [ "file" "tex" ];
+      package = tools.lacheck;
+      entry = "${script}";
+    };
 }

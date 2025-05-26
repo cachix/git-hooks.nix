@@ -35,6 +35,6 @@ in
             [ (config.settings.configPath != "") "-c ${config.settings.configPath}" ]
           ];
       in
-      "${tools.deno}/bin/deno lint ${cmdArgs}";
+      "${config.package}/bin/deno lint ${cmdArgs}";
   };
 }

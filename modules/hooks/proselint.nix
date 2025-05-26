@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -29,5 +29,23 @@ in
         description = "Flags passed to proselint.";
         default = "";
       };
+  };
+
+  config = {
+    name = "proselint";
+    description = "A linter for prose.";
+    types = [ "text" ];
+    package = tools.proselint;
+    entry =
+      let
+        configFile = builtins.toFile "proselint-config.json" "${config.settings.config}";
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ (configPath != "") " --config ${configPath}" ]
+              [ (config != "" && configPath == "") " --config ${configFile}" ]
+            ]);
+      in
+      "${config.package}/bin/proselint${cmdArgs} ${config.settings.flags}";
   };
 }

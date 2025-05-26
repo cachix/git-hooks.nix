@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "hindent";
     description = "Haskell code prettifier.";
     package = tools.hindent;
-    entry = "${tools.hindent}/bin/hindent";
+    entry = "${config.package}/bin/hindent";
     files = "\.l?hs$";
   };
 }

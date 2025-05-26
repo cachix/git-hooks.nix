@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,8 +10,16 @@ in
         description = "Pyright binary path. Should be used to specify the pyright executable in an environment containing your typing stubs.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.pyright}/bin/pyright"
+          "''${config.package}/bin/pyright"
         '';
       };
+  };
+
+  config = {
+    name = "pyright";
+    description = "Static type checker for Python";
+    package = tools.pyright;
+    entry = migrateBinPathToPackage config "/bin/pyright";
+    files = "\\.py$";
   };
 }

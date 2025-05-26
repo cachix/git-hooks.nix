@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, tools, config, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -51,5 +51,28 @@ in
       description = "Return non-zero exit code on warnings as well as errors.";
       default = true;
     };
+  };
+
+  config = {
+    name = "yamllint";
+    description = "Linter for YAML files.";
+    types = [ "file" "yaml" ];
+    package = tools.yamllint;
+    entry =
+      let
+        configFile = builtins.toFile "yamllint.yaml" "${config.settings.configuration}";
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              # Priorize multiline configuration over serialized configuration and configuration file
+              [ (configuration != "") "--config-file ${configFile}" ]
+              [ (configData != "" && configuration == "") "--config-data \"${configData}\"" ]
+              [ (configPath != "" && configData == "" && configuration == "" && preset == "default") "--config-file ${configPath}" ]
+              [ (format != "auto") "--format ${format}" ]
+              [ (preset != "default" && configuration == "") "--config-data ${preset}" ]
+              [ strict "--strict" ]
+            ]);
+      in
+      "${config.package}/bin/yamllint ${cmdArgs}";
   };
 }

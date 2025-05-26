@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,7 +10,7 @@ in
         description = "Mypy binary path. Should be used to specify the mypy executable in an environment containing your typing stubs.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.mypy}/bin/mypy"
+          "''${config.package}/bin/mypy"
         '';
       };
   };

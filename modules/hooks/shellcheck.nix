@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "shellcheck";
-    description = "ShellCheck is a static analysis tool for shell scripts.";
+    description = "Format shell files";
     package = tools.shellcheck;
-    entry = "${tools.shellcheck}/bin/shellcheck";
+    entry = "${config.package}/bin/shellcheck";
     types = [ "shell" ];
   };
 }

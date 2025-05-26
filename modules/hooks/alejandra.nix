@@ -49,7 +49,7 @@ in
             [ (threads != null) "--threads ${toString threads}" ]
           ]);
       in
-      "${tools.alejandra}/bin/alejandra ${cmdArgs}";
+      "${config.package}/bin/alejandra ${cmdArgs}";
     files = "\\.nix$";
   };
 }

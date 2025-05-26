@@ -1,4 +1,4 @@
-{ tools, lib, pkgs, ... }:
+{ config, tools, lib, pkgs, ... }:
 {
   config = {
     name = "golangci-lint";
@@ -9,7 +9,7 @@
         script = pkgs.writeShellScript "precommit-golangci-lint" ''
           set -e
           for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-            ${tools.golangci-lint}/bin/golangci-lint run ./"$dir"
+            ${config.package}/bin/golangci-lint run ./"$dir"
           done
         '';
       in

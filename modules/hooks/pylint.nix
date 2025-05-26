@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, tools, migrateBinPathToPackage, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,7 +10,7 @@ in
         description = "Pylint binary path. Should be used to specify Pylint binary from your Python environment.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.pylint}/bin/pylint"
+          "''${config.package}/bin/pylint"
         '';
       };
     reports =
@@ -25,5 +25,23 @@ in
         description = "Whether to activate the evaluation score.";
         default = true;
       };
+  };
+
+  config = {
+    name = "pylint";
+    description = "Lint Python files.";
+    package = tools.pylint;
+    entry =
+      let
+        binPath = migrateBinPathToPackage config "/bin/pylint";
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ reports "-ry" ]
+              [ (! score) "-sn" ]
+            ]);
+      in
+      "${binPath} ${cmdArgs}";
+    types = [ "python" ];
   };
 }

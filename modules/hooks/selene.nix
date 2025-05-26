@@ -1,10 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "selene";
-    description = "A blazing-fast modern Lua linter.";
+    description = "A blazing-fast modern Lua linter written in Rust.";
     package = tools.selene;
-    entry = "${tools.selene}/bin/selene";
+    entry = "${config.package}/bin/selene";
     types = [ "lua" ];
   };
 }

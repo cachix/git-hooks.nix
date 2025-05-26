@@ -1,16 +1,18 @@
-{ tools, lib, pkgs, ... }:
+{ tools, lib, pkgs, config, ... }:
 {
   config = {
     name = "trufflehog";
-    description = "Detect secrets in your data.";
+    description = "Secrets scanner.";
     package = tools.trufflehog;
     entry =
       let
         script = pkgs.writeShellScript "precommit-trufflehog" ''
-          trufflehog git file://$(git rev-parse --show-toplevel) --since-commit HEAD --only-verified --fail
+          set -e
+          ${config.package}/bin/trufflehog --no-update git "file://$(git rev-parse --show-toplevel)" --since-commit HEAD --only-verified --fail
         '';
       in
-      "${tools.trufflehog}/bin/trufflehog git file://$(git rev-parse --show-toplevel) --since-commit HEAD --only-verified --fail";
-    types = [ "text" ];
+      builtins.toString script;
+    # trufflehog expects to run across the whole repo, not particular files
+    pass_filenames = false;
   };
 }

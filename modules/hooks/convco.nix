@@ -1,11 +1,11 @@
-{ tools, lib, pkgs, ... }:
+{ config, tools, lib, pkgs, ... }:
 {
   config = {
     name = "convco";
     package = tools.convco;
     entry =
       let
-        convco = tools.convco;
+        convco = config.package;
         script = pkgs.writeShellScript "precommit-convco" ''
           cat $1 | ${convco}/bin/convco check --from-stdin
         '';

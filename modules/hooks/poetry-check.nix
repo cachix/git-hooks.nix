@@ -1,11 +1,11 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
-    name = "poetry-check";
+    name = "poetry check";
     description = "Check the validity of the pyproject.toml file.";
     package = tools.poetry;
-    entry = "${tools.poetry}/bin/poetry check";
-    files = "pyproject\.toml$";
+    entry = "${config.package}/bin/poetry check";
+    files = "^(poetry\\.lock$|pyproject\\.toml)$";
     pass_filenames = false;
   };
 }

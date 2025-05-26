@@ -10,7 +10,7 @@ in
         description = "Path to autoflake binary.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.autoflake}/bin/autoflake"
+          "''${config.package}/bin/autoflake"
         '';
       };
 

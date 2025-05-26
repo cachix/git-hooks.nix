@@ -16,7 +16,7 @@ in
     description = "Haskell code prettifier.";
     package = tools.fourmolu;
     entry =
-      "${tools.fourmolu}/bin/fourmolu --mode inplace ${
+      "${config.package}/bin/fourmolu --mode inplace ${
     lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) config.settings.defaultExtensions)
     }";
     files = "\\.l?hs(-boot)?$";

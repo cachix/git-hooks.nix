@@ -1,10 +1,14 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "typstyle";
-    description = "Format Typst files with typstyle.";
+    description = "Beautiful and reliable typst code formatter.";
     package = tools.typstyle;
-    entry = "${tools.typstyle}/bin/typstyle";
-    files = "\.typ$";
+    entry =
+      lib.throwIf
+        (config.package == null)
+        "The version of nixpkgs used by git-hooks.nix must contain typstyle"
+        "${config.package}/bin/typstyle -i";
+    files = "\\.typ$";
   };
 }

@@ -23,7 +23,7 @@ in
           failed=false
           for file in "$@"; do
               # redirect stderr so that violations and summaries are properly interleaved.
-              if ! ${tools.golines}/bin/golines ${config.settings.flags} -w "$file" 2>&1
+              if ! ${config.package}/bin/golines ${config.settings.flags} -w "$file" 2>&1
               then
                   failed=true
               fi

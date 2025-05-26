@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, tools, config, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -33,5 +33,29 @@ in
         default = false;
         example = true;
       };
+  };
+
+  config = {
+    name = "statix";
+    description = "Lints and suggestions for the Nix programming language.";
+    package = tools.statix;
+    entry =
+      let
+        inherit (config) package settings;
+        mkOptionName = k:
+          if builtins.stringLength k == 1
+          then "-${k}"
+          else "--${k}";
+        options = lib.cli.toGNUCommandLineShell
+          {
+            # instead of repeating the option name for each element,
+            # create a single option with a space-separated list of unique values.
+            mkList = k: v: if v == [ ] then [ ] else [ (mkOptionName k) ] ++ lib.unique v;
+          }
+          settings;
+      in
+      "${package}/bin/statix check ${options}";
+    files = "\\.nix$";
+    pass_filenames = false;
   };
 }

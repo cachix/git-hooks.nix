@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, tools, mkCmdArgs, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -76,5 +76,32 @@ in
         description = "Increase verbosity.";
         default = false;
       };
+  };
+
+  config = {
+    name = "mdl";
+    description = "A tool to check markdown files and flag style issues.";
+    package = tools.mdl;
+    entry =
+      let
+        cmdArgs =
+          mkCmdArgs
+            (with config.settings; [
+              [ (configPath != "") "--config ${configPath}" ]
+              [ git-recurse "--git-recurse" ]
+              [ ignore-front-matter "--ignore-front-matter" ]
+              [ json "--json" ]
+              [ (rules != [ ]) "--rules ${lib.strings.concatStringsSep "," rules}" ]
+              [ (rulesets != [ ]) "--rulesets ${lib.strings.concatStringsSep "," rulesets}" ]
+              [ show-aliases "--show-aliases" ]
+              [ warnings "--warnings" ]
+              [ skip-default-ruleset "--skip-default-ruleset" ]
+              [ (style != "") "--style ${style}" ]
+              [ (tags != [ ]) "--tags ${lib.strings.concatStringsSep "," tags}" ]
+              [ verbose "--verbose" ]
+            ]);
+      in
+      "${config.package}/bin/mdl ${cmdArgs}";
+    files = "\\.md$";
   };
 }

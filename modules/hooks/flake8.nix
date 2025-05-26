@@ -15,7 +15,7 @@ in
         description = "flake8 binary path. Should be used to specify flake8 binary from your Python environment.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.flake8}/bin/flake8"
+          "''${config.package}/bin/flake8"
         '';
       };
     extendIgnore =

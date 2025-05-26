@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   inherit (lib) mkOption types;
 in
@@ -10,7 +10,7 @@ in
         description = "PHP_CodeSniffer binary path.";
         default = null;
         defaultText = lib.literalExpression ''
-          "''${tools.phpcbf}/bin/phpcbf"
+          "''${config.package}/bin/phpcbf"
         '';
       };
   };

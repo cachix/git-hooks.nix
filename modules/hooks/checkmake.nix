@@ -11,6 +11,6 @@
       lib.throwIf
         (config.package == null)
         "The version of nixpkgs used by git-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
-        "${tools.checkmake}/bin/checkmake";
+        "${config.package}/bin/checkmake";
   };
 }

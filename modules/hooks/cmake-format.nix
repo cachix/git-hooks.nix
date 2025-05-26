@@ -24,7 +24,7 @@ in
           then ""
           else "-C ${config.settings.configPath}";
       in
-      "${tools.cmake-format}/bin/cmake-format --check ${maybeConfigPath}";
+      "${config.package}/bin/cmake-format --check ${maybeConfigPath}";
     files = "\\.cmake$|CMakeLists.txt";
   };
 }

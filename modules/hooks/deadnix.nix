@@ -71,7 +71,7 @@ in
             [ (exclude != [ ]) "--exclude ${lib.escapeShellArgs exclude}" ]
           ]);
       in
-      "${tools.deadnix}/bin/deadnix ${cmdArgs} --fail";
+      "${config.package}/bin/deadnix ${cmdArgs} --fail";
     files = "\\.nix$";
   };
 }

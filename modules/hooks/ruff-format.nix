@@ -1,11 +1,10 @@
-{ tools, lib, ... }:
+{ tools, lib, config, ... }:
 {
   config = {
     name = "ruff-format";
-    description = "An extremely fast Python formatter, written in Rust.";
+    description = "An extremely fast Python code formatter, written in Rust.";
     package = tools.ruff;
-    entry = "${tools.ruff}/bin/ruff format";
+    entry = "${config.package}/bin/ruff format";
     types = [ "python" ];
-    require_serial = true;
   };
 }
