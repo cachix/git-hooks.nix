@@ -82,8 +82,32 @@ in
     };
   };
 
-  config.extraPackages = [
-    config.packageOverrides.cargo
-    config.packageOverrides.rustfmt
-  ];
+  config = {
+    name = "rustfmt";
+    description = "Format Rust code.";
+    package = config.packageOverrides.rustfmt;
+    entry =
+      let
+        cmdArgs =
+          lib.mkCmdArgs (with config.settings; [
+            [ (all) "--all" ]
+            [ (check) "--check" ]
+            [ (color != "auto") "--color ${color}" ]
+            [ (config != { }) config ]
+            [ (config-path != null) "--config-path ${lib.escapeShellArg config-path}" ]
+            [ (emit != "files") "--emit ${emit}" ]
+            [ (files-with-diff) "--files-with-diff" ]
+            [ (manifest-path != null) "--manifest-path ${lib.escapeShellArg manifest-path}" ]
+            [ (message-format != null) "--message-format ${message-format}" ]
+            [ (package != [ ]) "--package ${lib.strings.concatStringsSep " --package " package}" ]
+            [ verbose "-v" ]
+          ]);
+      in
+      "${config.packageOverrides.rustfmt}/bin/rustfmt ${cmdArgs}";
+    files = "\\.rs$";
+    extraPackages = [
+      config.packageOverrides.cargo
+      config.packageOverrides.rustfmt
+    ];
+  };
 }
