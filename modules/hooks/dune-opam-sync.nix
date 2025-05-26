@@ -1,0 +1,12 @@
+{ config, tools, lib, ... }:
+{
+  config = {
+    package = tools.dune-build-opam-files;
+    entry = "${config.package}/bin/dune-build-opam-files";
+    files = "(\.opam$)|(\.opam.template$)|((^|/)dune-project$)";
+    ## We don't pass filenames because they can only be misleading. Indeed,
+    ## we need to re-run `dune build` for every `*.opam` file, but also when
+    ## the `dune-project` file has changed.
+    pass_filenames = false;
+  };
+}
