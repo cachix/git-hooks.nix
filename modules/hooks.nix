@@ -3873,7 +3873,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "terraform-format";
           description = "Format Terraform (`.tf`) files.";
           package = tools.opentofu;
-          entry = "${lib.getExe hooks.terraform-format.package} fmt -check -diff";
+          entry = "${lib.getExe hooks.terraform-format.package} fmt";
           files = "\\.tf$";
         };
       terraform-validate =
