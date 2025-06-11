@@ -17,7 +17,33 @@
 
 ### devenv.sh
 
-https://devenv.sh/pre-commit-hooks/
+```nix
+{ inputs, ... }:
+
+{
+  git-hooks.hooks = {
+    # lint shell scripts
+    shellcheck.enable = true;
+    # execute example shell from Markdown files
+    mdsh.enable = true;
+    # format Python code
+    black.enable = true;
+
+    # override a package with a different version
+    ormolu.enable = true;
+    ormolu.package = pkgs.haskellPackages.ormolu;
+
+    # some hooks have more than one package, like clippy:
+    clippy.enable = true;
+    clippy.packageOverrides.cargo = pkgs.cargo;
+    clippy.packageOverrides.clippy = pkgs.clippy;
+    # some hooks provide settings
+    clippy.settings.allFeatures = true;
+  };
+}
+```
+
+See [getting started](https://devenv.sh/getting-started/).
 
 ## Flakes support
 
