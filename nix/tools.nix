@@ -93,6 +93,7 @@
 , golangci-lint
 , golines
 , revive ? null
+, uv
 , vale
 }:
 
@@ -172,6 +173,7 @@ in
     typos
     typstfmt
     typstyle
+    uv
     vale
     yamlfmt
     yamllint

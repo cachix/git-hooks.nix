@@ -1911,6 +1911,37 @@ in
           };
         };
       };
+      uv-export = mkOption {
+        description = "uv export hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            format =
+              mkOption {
+                type = types.enum [ "requirements.txt" "pylock.toml" ];
+                description = "Output format of the project's lockfile.";
+                # Most useful for compliance with PEP 751
+                default = "pylock.toml";
+                example = "requirements.txt";
+              };
+            locked =
+              mkOption {
+                type = types.bool;
+                description = ''
+                  Assert that the `uv.lock` will remain unchanged.
+                  Requires that the lockfile is up-to-date. If the lockfile is missing or needs to be updated, uv will exit with an error.
+                '';
+                default = true;
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Flags passed to `uv export`";
+                default = "";
+              };
+          };
+        };
+      };
       vale = mkOption {
         description = "vale hook";
         type = types.submodule {
@@ -4031,6 +4062,39 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             "The version of nixpkgs used by git-hooks.nix must contain typstyle"
             "${hooks.typstyle.package}/bin/typstyle -i";
         files = "\\.typ$";
+      };
+      uv-check = {
+        name = "uv check";
+        description = "Check if uv's lockfile is up-to-date.";
+        package = tools.uv;
+        entry = "${hooks.uv-check.package}/bin/uv lock --check";
+        files = "^(uv\\.lock$|pyproject\\.toml)$";
+        pass_filenames = false;
+      };
+      uv-lock = {
+        name = "uv lock";
+        description = "Update uv's lockfile.";
+        package = tools.uv;
+        entry = "${hooks.uv-lock.package}/bin/uv lock";
+        files = "^(uv\\.lock$|pyproject\\.toml)$";
+        pass_filenames = false;
+      };
+      uv-export = {
+        name = "uv export";
+        description = "Export uv's lockfile.";
+        package = tools.uv;
+        files = "^(uv\\.lock$|pyproject\\.toml)$";
+        pass_filenames = false;
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with hooks.uv-export.settings; [
+                  [ (format != "requirements") " --format ${format} --output-file ${format}" ]
+                  [ locked " --locked" ]
+                ]);
+          in
+          "${hooks.uv-export.package}/bin/uv export${cmdArgs} ${hooks.uv-export.settings.flags}";
       };
       vale = {
         name = "vale";
