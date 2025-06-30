@@ -1327,7 +1327,7 @@ in
                 mkOption {
                   type = types.bool;
                   description = "Automatically format JSON files.";
-                  default = false;
+                  default = true;
                 };
               indent =
                 mkOption {
