@@ -4158,6 +4158,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.yamllint.package}/bin/yamllint ${cmdArgs}";
         };
+      zizmor = {
+        name = "zizmor";
+        description = "Static analysis for GitHub Actions";
+        files = "^.github/workflows/";
+        types = [ "yaml" ];
+        package = tools.zizmor;
+        entry = "${hooks.zizmor.package}/bin/zizmor";
+      };
       zprint =
         {
           name = "zprint";

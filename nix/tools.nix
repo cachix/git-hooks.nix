@@ -95,6 +95,7 @@
 , revive ? null
 , uv
 , vale
+, zizmor
 }:
 
 
@@ -177,6 +178,7 @@ in
     vale
     yamlfmt
     yamllint
+    zizmor
     zprint
     ;
   inherit (elmPackages) elm-format elm-review elm-test;
