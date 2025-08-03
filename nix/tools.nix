@@ -115,6 +115,7 @@ in
     cabal-fmt
     cabal-gild
     cargo
+    checkmake
     circleci-cli
     clippy
     cljfmt
@@ -214,10 +215,6 @@ in
   git-annex = if stdenv.isDarwin then null else git-annex;
   # Note: Only broken in stable nixpkgs, works fine on latest master.
   opam = if stdenv.isDarwin then null else opam;
-
-  ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once this gets
-  ## into a NixOS release, the following code will be useless.
-  checkmake = if stdenv.isLinux || checkmake.version >= "0.2.2" then checkmake else null;
 
   headache = callPackage ./headache { };
 
