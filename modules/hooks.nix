@@ -290,6 +290,20 @@ in
           };
         };
       };
+      convco = mkOption {
+        description = "convco hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Path to the configuration file (YAML or JSON)";
+                default = null;
+              };
+          };
+        };
+      };
       credo = mkOption {
         description = "credo hook";
         type = types.submodule {
@@ -2462,9 +2476,13 @@ in
         package = tools.convco;
         entry =
           let
+            cmdArgs =
+              mkCmdArgs (with hooks.convco.settings; [
+                [ (configPath != null) "--config ${configPath}" ]
+              ]);
             convco = hooks.convco.package;
             script = pkgs.writeShellScript "precommit-convco" ''
-              cat $1 | ${convco}/bin/convco check --from-stdin
+              cat $1 | ${convco}/bin/convco check --from-stdin ${cmdArgs}
             '';
             # need version >= 0.4.0 for the --from-stdin flag
             toolVersionCheck = lib.versionAtLeast convco.version "0.4.0";
