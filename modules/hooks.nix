@@ -628,6 +628,20 @@ in
           };
         };
       };
+      gotest = mkOption {
+        description = "gotest hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Flags passed to gotest. See all available [here](https://pkg.go.dev/cmd/go#hdr-Test_packages).";
+              default = "";
+              example = "-tags integration";
+            };
+          };
+        };
+      };
       headache = mkOption {
         description = "headache hook";
         type = types.submodule {
@@ -2898,7 +2912,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
 
               # test each directory one by one
               for dir in "''${sorted_dirs[@]}"; do
-                  ${hooks.gotest.package}/bin/go test "./$dir"
+                  ${hooks.gotest.package}/bin/go test ${hooks.gotest.settings.flags} "./$dir"
               done
             '';
           in
