@@ -97,6 +97,12 @@ in
                 default = false;
                 example = true;
               };
+            configPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "(experimental) Path to the alejandra.toml configuration file.";
+                default = null;
+              };
             exclude =
               mkOption {
                 type = types.listOf types.str;
@@ -2087,6 +2093,7 @@ in
               cmdArgs =
                 mkCmdArgs (with hooks.alejandra.settings; [
                   [ check "--check" ]
+                  [ (configPath != null) "--experimental-config ${configPath}" ]
                   [ (exclude != [ ]) "--exclude ${lib.strings.concatStringsSep " --exclude " (map lib.escapeShellArg (lib.unique exclude))}" ]
                   [ (verbosity == "quiet") "-q" ]
                   [ (verbosity == "silent") "-qq" ]
