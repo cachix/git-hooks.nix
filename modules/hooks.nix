@@ -3745,6 +3745,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         types = [ "lua" ];
         package = tools.selene;
         entry = "${hooks.selene.package}/bin/selene";
+        args = [ "--no-summary" ];
       };
       shellcheck =
         {
