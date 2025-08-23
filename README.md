@@ -90,14 +90,17 @@ Enter a development shell with pre-commit hooks enabled:
 nix develop
 ```
 
-Run all hooks sandboxed (no internet access):
+Run all hooks sandboxed:
 
 ```shell
 nix flake check
 ```
 
-Some hooks require access to the internet or local filesystem, which is not possible when using `nix flake check`.
-If the hook doesn't expose options to pre-package its impure access or it's too cumbersome to do so, you can run `pre-commit` through `nix develop` instead:
+Keep in mind that `nix flake check` runs in a sandbox.
+It doesn't have access to the internet and cannot modify files.
+This makes it a poor choice for formatting hooks that attempt to fix files automatically, or hooks that cannot easily be packaged to avoid impure access to the internet.
+
+A better alternative in such cases is to run `pre-commit` through `nix develop`:
 
 ```shell
 nix develop -c pre-commit run -a
