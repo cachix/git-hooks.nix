@@ -9,9 +9,9 @@
 - Provide a low-overhead build of all the tooling available for the hooks to use
   (naive implementation of calling nix-shell does bring some latency when committing)
 
-- **Common hooks for languages** like Python, Haskell, Elm, etc. [see all hook options](https://devenv.sh/?q=pre-commit.hooks)
+- **Common hooks for languages** like Python, Haskell, Elm, etc. [See all hook options](https://devenv.sh/?q=git-hooks.hooks)
 
-- Run hooks **as part of development** and **on during CI**
+- Run hooks **as part of development** and **during CI**
 
 ## Getting started
 
@@ -81,18 +81,26 @@ Given the following `flake.nix` example:
 }
 ```
 
-Add `/.pre-commit-config.yaml` to the `.gitignore`.
+Add `/.pre-commit-config.yaml` to `.gitignore`.
+This file is auto-generated from the Nix configuration and doesn't need to be committed.
 
-To run the all the hooks on CI:
+Enter a development shell with pre-commit hooks enabled:
 
-```bash
+```shell
+nix develop
+```
+
+Run all hooks sandboxed (no internet access):
+
+```shell
 nix flake check
 ```
 
-To install pre-commit hooks developers would run:
+Some hooks require access to the internet or local filesystem, which is not possible when using `nix flake check`.
+If the hook doesn't expose options to pre-package its impure access or it's too cumbersome to do so, you can run `pre-commit` through `nix develop` instead:
 
-```bash
-nix develop
+```shell
+nix develop -c pre-commit run -a
 ```
 
 ### flake-parts
