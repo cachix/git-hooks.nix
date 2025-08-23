@@ -51,31 +51,62 @@ Given the following `flake.nix` example:
 
 ```nix
 {
-  description = "An example project.";
+  description = "An example project";
 
-  inputs.pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+  inputs = {
+    systems.url = "github:nix-systems/default";
+    git-hooks.url = "github:cachix/git-hooks.nix";
+  };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs =
+    {
+      self,
+      systems,
+      nixpkgs,
+      ...
+    }@inputs:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
     in
     {
-      checks = forAllSystems (system: {
-        pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+      # Run the hooks with `nix fmt`.
+      formatter = forEachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          config = self.checks.${system}.pre-commit-check.config;
+          inherit (config) package configFile;
+          script = ''
+            ${package}/bin/pre-commit run --all-files --config ${configFile}
+          '';
+        in
+        pkgs.writeShellScriptBin "pre-commit-run" script
+      );
+
+      # Run the hooks in a sandbox with `nix flake check`.
+      # Read-only filesystem and no internet access.
+      checks = forEachSystem (system: {
+        pre-commit-check = inputs.git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
-            nixpkgs-fmt.enable = true;
+            nixfmt-rfc-style.enable = true;
           };
         };
       });
 
-      devShells = forAllSystems (system: {
-        default = nixpkgs.legacyPackages.${system}.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-        };
+      # Enter a development shell with `nix develop`.
+      # The hooks will be installed automatically.
+      # Or run pre-commit manually with `nix develop -c pre-commit run --all-files`
+      devShells = forEachSystem (system: {
+        default =
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+            inherit (self.checks.${system}.pre-commit-check) shellHook enabledPackages;
+          in
+          pkgs.mkShell {
+            inherit shellHook;
+            buildInputs = enabledPackages;
+          };
       });
     };
 }
@@ -104,6 +135,12 @@ A better alternative in such cases is to run `pre-commit` through `nix develop`:
 
 ```shell
 nix develop -c pre-commit run -a
+```
+
+Or configure a `formatter` like in the example above and use `nix fmt`:
+
+```shell
+nix fmt
 ```
 
 ### flake-parts
