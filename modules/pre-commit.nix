@@ -368,7 +368,7 @@ in
 
       rawConfig =
         mkOption {
-          type = types.attrs;
+          type = types.attrsOf types.unspecified;
           description =
             ''
               The raw configuration before writing to file.
