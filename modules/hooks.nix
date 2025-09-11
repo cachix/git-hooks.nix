@@ -4,6 +4,8 @@ let
   cfg = config;
   inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkRemovedOptionModule mkRenamedOptionModule types;
 
+  toml = pkgs.formats.toml { };
+
   cargoManifestPathArg =
     lib.optionalString
       (settings.rust.cargoManifestPath != null)
@@ -32,6 +34,9 @@ in
     ++ [
       (mkRemovedOptionModule [ "settings" "yamllint" "relaxed" ] ''
         This option has been removed. Use `hooks.yamllint.settings.preset = "relaxed"`.
+      '')
+      (mkRemovedOptionModule [ "typos" "settings" "configuration" ] ''
+        This option has been removed. Use `hooks.typos.settings.config`, which is a structured attrs, instead.
       '')
     ]
     # Manually rename options that had a package or a config option
@@ -1803,33 +1808,30 @@ in
                 description = "Whether to search binary files.";
                 default = false;
               };
+
             color =
               mkOption {
                 type = types.enum [ "auto" "always" "never" ];
                 description = "When to use generate output.";
                 default = "auto";
               };
-            configuration =
+
+            config =
               mkOption {
-                type = types.str;
-                description = "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
-                default = "";
-                example = ''
-                  [files]
-                  ignore-dot = true
-
-                  [default]
-                  binary = false
-
-                  [type.py]
-                  extend-glob = []
-                '';
+                type = toml.type;
+                description = "Configuration as in https://github.com/crate-ci/typos/blob/master/docs/reference.md.";
+                default = { };
+                example = {
+                  files.ignore-dot = true;
+                  default.binary = false;
+                  type.py.extend-glob = [ ];
+                };
               };
 
             configPath =
               mkOption {
                 type = types.str;
-                description = "Path to a custom config file.";
+                description = "Path to a custom config file. Ignored if `typos.settings.config` is set.";
                 default = "";
                 example = ".typos.toml";
               };
@@ -1843,10 +1845,18 @@ in
 
             exclude =
               mkOption {
-                type = types.str;
-                description = "Ignore files and directories matching the glob.";
-                default = "";
-                example = "*.nix";
+                type = with types; coercedTo str (s: [ s ]) (listOf str);
+                description = "Ignore files and directories matching one of the globs.";
+                default = [ ];
+                example = [ "*.nix" ];
+              };
+
+            force-exclude =
+              mkOption {
+                type = types.bool;
+                description = "Respect excluded files even for paths passed explicitly.";
+                default = true;
+                example = false;
               };
 
             format =
@@ -4027,18 +4037,20 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.typos;
           entry =
             let
-              # Concatenate config in config file with section for ignoring words generated from list of words to ignore
-              configuration = "${hooks.typos.settings.configuration}" + lib.strings.optionalString (hooks.typos.settings.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") hooks.typos.settings.ignored-words;
-              configFile = builtins.toFile "typos-config.toml" configuration;
+              inherit (hooks.typos.settings) config exclude;
+              configFile = toml.generate "typos-config.toml" config;
+              excludeFlags = lib.concatStringsSep " "
+                (lib.map (glob: "--exclude ${glob}") exclude);
               cmdArgs =
                 mkCmdArgs
                   (with hooks.typos.settings; [
                     [ binary "--binary" ]
                     [ (color != "auto") "--color ${color}" ]
-                    [ (configuration != "") "--config ${configFile}" ]
-                    [ (configPath != "" && configuration == "") "--config ${configPath}" ]
+                    [ (config != { }) "--config ${configFile}" ]
+                    [ (configPath != "" && config == { }) "--config ${configPath}" ]
                     [ diff "--diff" ]
-                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+                    [ (exclude != [ ]) excludeFlags ]
+                    [ force-exclude "--force-exclude" ]
                     [ (format != "long") "--format ${format}" ]
                     [ hidden "--hidden" ]
                     [ (locale != "en") "--locale ${locale}" ]
@@ -4051,6 +4063,9 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.typos.package}/bin/typos ${cmdArgs}";
+          settings.config.default.extend-words = lib.mkIf
+            (hooks.typos.settings.ignored-words != [ ])
+            (lib.genAttrs hooks.typos.settings.ignored-words lib.id);
           types = [ "text" ];
         };
       typstfmt = {
