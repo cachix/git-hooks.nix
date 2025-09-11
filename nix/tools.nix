@@ -47,6 +47,7 @@
 , mdformat
 , mdl
 , mdsh
+, nbstripout
 , nil
 , nixfmt
 , nixfmt-classic ? null
@@ -148,6 +149,7 @@ in
     mdformat
     mdl
     mdsh
+    nbstripout
     nil
     nixpkgs-fmt
     opentofu
