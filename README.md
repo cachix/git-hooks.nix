@@ -359,6 +359,7 @@ use nix
 
 ### Markdown
 
+- [comrak](https://github.com/kivikakk/comrak)
 - [markdownlint](https://github.com/DavidAnson/markdownlint)
 - [mdformat](https://github.com/hukkin/mdformat)
 - [mdl](https://github.com/markdownlint/markdownlint/)
