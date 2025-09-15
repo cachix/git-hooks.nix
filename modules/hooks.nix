@@ -3400,15 +3400,17 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         };
       nixfmt =
         let
+          inherit (hooks) nixfmt;
+          exec = "${nixfmt.package}/bin/nixfmt";
           arg = name:
-            let opt = hooks.nixfmt.settings.${name}; in
+            let opt = nixfmt.settings.${name}; in
             lib.optionalString (opt != null) "--${name}=${toString opt}";
         in
         {
           name = "nixfmt-deprecated";
           description = "Deprecated Nix code prettifier. Use nixfmt-classic.";
           package = tools.nixfmt;
-          entry = "${hooks.nixfmt.package}/bin/nixfmt ${arg "width"}";
+          entry = "${exec} ${arg "width"}";
           files = "\\.nix$";
         };
       nixfmt-classic =
