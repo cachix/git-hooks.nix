@@ -9,15 +9,41 @@
 - Provide a low-overhead build of all the tooling available for the hooks to use
   (naive implementation of calling nix-shell does bring some latency when committing)
 
-- **Common hooks for languages** like Python, Haskell, Elm, etc. [see all hook options](https://devenv.sh/?q=pre-commit.hooks)
+- **Common hooks for languages** like Python, Haskell, Elm, etc. [See all hook options](https://devenv.sh/?q=git-hooks.hooks)
 
-- Run hooks **as part of development** and **on during CI**
+- Run hooks **as part of development** and **during CI**
 
 ## Getting started
 
 ### devenv.sh
 
-https://devenv.sh/pre-commit-hooks/
+```nix
+{ inputs, ... }:
+
+{
+  git-hooks.hooks = {
+    # lint shell scripts
+    shellcheck.enable = true;
+    # execute example shell from Markdown files
+    mdsh.enable = true;
+    # format Python code
+    black.enable = true;
+
+    # override a package with a different version
+    ormolu.enable = true;
+    ormolu.package = pkgs.haskellPackages.ormolu;
+
+    # some hooks have more than one package, like clippy:
+    clippy.enable = true;
+    clippy.packageOverrides.cargo = pkgs.cargo;
+    clippy.packageOverrides.clippy = pkgs.clippy;
+    # some hooks provide settings
+    clippy.settings.allFeatures = true;
+  };
+}
+```
+
+See [getting started](https://devenv.sh/getting-started/).
 
 ## Flakes support
 
@@ -25,48 +51,96 @@ Given the following `flake.nix` example:
 
 ```nix
 {
-  description = "An example project.";
+  description = "An example project";
 
-  inputs.pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+  inputs = {
+    systems.url = "github:nix-systems/default";
+    git-hooks.url = "github:cachix/git-hooks.nix";
+  };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs =
+    {
+      self,
+      systems,
+      nixpkgs,
+      ...
+    }@inputs:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
     in
     {
-      checks = forAllSystems (system: {
-        pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+      # Run the hooks with `nix fmt`.
+      formatter = forEachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          config = self.checks.${system}.pre-commit-check.config;
+          inherit (config) package configFile;
+          script = ''
+            ${package}/bin/pre-commit run --all-files --config ${configFile}
+          '';
+        in
+        pkgs.writeShellScriptBin "pre-commit-run" script
+      );
+
+      # Run the hooks in a sandbox with `nix flake check`.
+      # Read-only filesystem and no internet access.
+      checks = forEachSystem (system: {
+        pre-commit-check = inputs.git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
-            nixpkgs-fmt.enable = true;
+            nixfmt-rfc-style.enable = true;
           };
         };
       });
 
-      devShells = forAllSystems (system: {
-        default = nixpkgs.legacyPackages.${system}.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-        };
+      # Enter a development shell with `nix develop`.
+      # The hooks will be installed automatically.
+      # Or run pre-commit manually with `nix develop -c pre-commit run --all-files`
+      devShells = forEachSystem (system: {
+        default =
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+            inherit (self.checks.${system}.pre-commit-check) shellHook enabledPackages;
+          in
+          pkgs.mkShell {
+            inherit shellHook;
+            buildInputs = enabledPackages;
+          };
       });
     };
 }
 ```
 
-Add `/.pre-commit-config.yaml` to the `.gitignore`.
+Add `/.pre-commit-config.yaml` to `.gitignore`.
+This file is auto-generated from the Nix configuration and doesn't need to be committed.
 
-To run the all the hooks on CI:
+Enter a development shell with pre-commit hooks enabled:
 
-```bash
+```shell
+nix develop
+```
+
+Run all hooks sandboxed:
+
+```shell
 nix flake check
 ```
 
-To install pre-commit hooks developers would run:
+Keep in mind that `nix flake check` runs in a sandbox.
+It doesn't have access to the internet and cannot modify files.
+This makes it a poor choice for formatting hooks that attempt to fix files automatically, or hooks that cannot easily be packaged to avoid impure access to the internet.
 
-```bash
-nix develop
+A better alternative in such cases is to run `pre-commit` through `nix develop`:
+
+```shell
+nix develop -c pre-commit run -a
+```
+
+Or configure a `formatter` like in the example above and use `nix fmt`:
+
+```shell
+nix fmt
 ```
 
 ### flake-parts
@@ -344,6 +418,7 @@ use nix
 - [ruff-format](https://github.com/charliermarsh/ruff)
 - [single-quoted-strings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/string_fixer.py)
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
+- [uv](https://github.com/astral-sh/uv)
 
 ### Rust
 
@@ -424,6 +499,7 @@ use nix
 - [treefmt](https://github.com/numtide/treefmt)
 - [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
 - [woodpecker-cli-lint](https://woodpecker-ci.org/docs/cli#lint)
+- [zizmor](https://github.com/zizmorcore/zizmor)
 
 ### Custom hooks
 

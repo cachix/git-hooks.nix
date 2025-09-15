@@ -139,6 +139,29 @@ in
   options =
     {
 
+      enable = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          Whether to enable the pre-commit hooks module.
+          
+          When set to false, this disables the entire module.
+        '';
+      };
+
+      install = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+          description = ''
+            Whether to enable automatic installation of pre-commit hooks.
+            
+            When set to false, hooks will not be installed into the git repository,
+            but all other module functionality (like configuration generation) will still work.
+          '';
+        };
+      };
+
       package =
         mkOption {
           type = types.package;
@@ -345,7 +368,7 @@ in
 
       rawConfig =
         mkOption {
-          type = types.attrs;
+          type = types.attrsOf types.unspecified;
           description =
             ''
               The raw configuration before writing to file.
@@ -399,96 +422,97 @@ in
       };
     };
 
-  config =
-    {
+  config = lib.mkIf cfg.enable {
 
-      rawConfig =
-        {
-          repos =
-            [
-              {
-                repo = "local";
-                hooks = processedHooks;
-              }
-            ];
-        } // lib.optionalAttrs (cfg.excludes != [ ]) {
-          exclude = mergeExcludes cfg.excludes;
-        } // lib.optionalAttrs (cfg.default_stages != [ ]) {
-          default_stages = cfg.default_stages;
-        };
+    rawConfig =
+      {
+        repos =
+          [
+            {
+              repo = "local";
+              hooks = processedHooks;
+            }
+          ];
+      } // lib.optionalAttrs (cfg.excludes != [ ]) {
+        exclude = mergeExcludes cfg.excludes;
+      } // lib.optionalAttrs (cfg.default_stages != [ ]) {
+        default_stages = cfg.default_stages;
+      };
 
-      installationScript =
-        ''
-          export PATH=${cfg.package}/bin:$PATH
+    installationScript =
+      ''
+        export PATH=${cfg.package}/bin:$PATH
+        if ${boolToString cfg.install.enable}; then
           if ! ${cfg.gitPackage}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: git-hooks.nix: .git not found; skipping installation."
           else
-            GIT_WC=`${cfg.gitPackage}/bin/git rev-parse --show-toplevel`
+          GIT_WC=`${cfg.gitPackage}/bin/git rev-parse --show-toplevel`
 
-            # These update procedures compare before they write, to avoid
-            # filesystem churn. This improves performance with watch tools like lorri
-            # and prevents installation loops by lorri.
+          # These update procedures compare before they write, to avoid
+          # filesystem churn. This improves performance with watch tools like lorri
+          # and prevents installation loops by lorri.
 
-            if ! readlink "''${GIT_WC}/${cfg.configPath}" >/dev/null \
-              || [[ $(readlink "''${GIT_WC}/${cfg.configPath}") != ${cfg.configFile} ]]; then
-              echo 1>&2 "git-hooks.nix: updating $PWD repo"
-              [ -L "''${GIT_WC}/${cfg.configPath}" ] && unlink "''${GIT_WC}/${cfg.configPath}"
+          if ! readlink "''${GIT_WC}/${cfg.configPath}" >/dev/null \
+            || [[ $(readlink "''${GIT_WC}/${cfg.configPath}") != ${cfg.configFile} ]]; then
+            echo 1>&2 "git-hooks.nix: updating $PWD repo"
+            [ -L "''${GIT_WC}/${cfg.configPath}" ] && unlink "''${GIT_WC}/${cfg.configPath}"
 
-              if [ -e "''${GIT_WC}/${cfg.configPath}" ]; then
-                echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of an existing config at ${cfg.configPath}"
-                echo 1>&2 ""
-                echo 1>&2 "  To migrate the existing config to a Nix configuration:"
-                echo 1>&2 "    1. Translate the contents of ${cfg.configPath} into a Nix configuration."
-                echo 1>&2 "       See https://github.com/cachix/git-hooks.nix#getting-started"
-                echo 1>&2 "    2. Remove ${cfg.configPath}"
-                echo 1>&2 "    3. Add ${cfg.configPath} to .gitignore"
+            if [ -e "''${GIT_WC}/${cfg.configPath}" ]; then
+              echo 1>&2 "git-hooks.nix: WARNING: Refusing to install because of an existing config at ${cfg.configPath}"
+              echo 1>&2 ""
+              echo 1>&2 "  To migrate the existing config to a Nix configuration:"
+              echo 1>&2 "    1. Translate the contents of ${cfg.configPath} into a Nix configuration."
+              echo 1>&2 "       See https://github.com/cachix/git-hooks.nix#getting-started"
+              echo 1>&2 "    2. Remove ${cfg.configPath}"
+              echo 1>&2 "    3. Add ${cfg.configPath} to .gitignore"
+            else
+              if ${boolToString cfg.addGcRoot}; then
+                nix-store --add-root "''${GIT_WC}/${cfg.configPath}" --indirect --realise ${cfg.configFile}
               else
-                if ${boolToString cfg.addGcRoot}; then
-                  nix-store --add-root "''${GIT_WC}/${cfg.configPath}" --indirect --realise ${cfg.configFile}
-                else
-                  ln -fs ${cfg.configFile} "''${GIT_WC}/${cfg.configPath}"
-                fi
-                # Remove any previously installed hooks (since pre-commit itself has no convergent design)
-                hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
-                for hook in $hooks; do
-                  pre-commit uninstall -t $hook
-                done
-                ${cfg.gitPackage}/bin/git config --local core.hooksPath ""
-                # Add hooks for configured stages (only) ...
-                if [ ! -z "${concatStringsSep " " install_stages}" ]; then
-                  for stage in ${concatStringsSep " " install_stages}; do
-                    case $stage in
-                      manual)
-                        ;;
-                      # if you amend these switches please also review $hooks above
-                      commit | merge-commit | push)
-                        stage="pre-"$stage
-                        pre-commit install -c ${cfg.configPath} -t $stage
-                        ;;
-                      ${concatStringsSep "|" supportedHooksLib.supportedHooks})
-                        pre-commit install -c ${cfg.configPath} -t $stage
-                        ;;
-                      *)
-                        echo 1>&2 "ERROR: git-hooks.nix: either $stage is not a valid stage or git-hooks.nix doesn't yet support it."
-                        exit 1
-                        ;;
-                    esac
-                  done
-                # ... or default 'pre-commit' hook
-                else
-                  pre-commit install -c ${cfg.configPath}
-                fi
-
-                # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
-                common_dir=''$(${cfg.gitPackage}/bin/git rev-parse --path-format=absolute --git-common-dir)
-
-                # Convert the absolute path to a path relative to the toplevel working directory.
-                common_dir=''${common_dir#''$GIT_WC/}
-
-                ${cfg.gitPackage}/bin/git config --local core.hooksPath "''$common_dir/hooks"
+                ln -fs ${cfg.configFile} "''${GIT_WC}/${cfg.configPath}"
               fi
+              # Remove any previously installed hooks (since pre-commit itself has no convergent design)
+              hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
+              for hook in $hooks; do
+                pre-commit uninstall -t $hook
+              done
+              ${cfg.gitPackage}/bin/git config --local core.hooksPath ""
+              # Add hooks for configured stages (only) ...
+              if [ ! -z "${concatStringsSep " " install_stages}" ]; then
+                for stage in ${concatStringsSep " " install_stages}; do
+                  case $stage in
+                    manual)
+                      ;;
+                    # if you amend these switches please also review $hooks above
+                    commit | merge-commit | push)
+                      stage="pre-"$stage
+                      pre-commit install -c ${cfg.configPath} -t $stage
+                      ;;
+                    ${concatStringsSep "|" supportedHooksLib.supportedHooks})
+                      pre-commit install -c ${cfg.configPath} -t $stage
+                      ;;
+                    *)
+                      echo 1>&2 "ERROR: git-hooks.nix: either $stage is not a valid stage or git-hooks.nix doesn't yet support it."
+                      exit 1
+                      ;;
+                  esac
+                done
+              # ... or default 'pre-commit' hook
+              else
+                pre-commit install -c ${cfg.configPath}
+              fi
+
+              # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
+              common_dir=''$(${cfg.gitPackage}/bin/git rev-parse --path-format=absolute --git-common-dir)
+
+              # Convert the absolute path to a path relative to the toplevel working directory.
+              common_dir=''${common_dir#''$GIT_WC/}
+
+              ${cfg.gitPackage}/bin/git config --local core.hooksPath "''$common_dir/hooks"
             fi
           fi
-        '';
-    };
+        fi
+        fi
+      '';
+  };
 }

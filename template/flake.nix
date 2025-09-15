@@ -30,6 +30,9 @@
               ${config.pre-commit.installationScript}
               echo 1>&2 "Welcome to the development shell!"
             '';
+
+            # Equivalent to self.checks.${system}.pre-commit-check.enabledPackages;
+            packages = config.pre-commit.settings.enabledPackages;
           };
         };
         flake = {

@@ -47,6 +47,7 @@
 , mdformat
 , mdl
 , mdsh
+, nbstripout
 , nil
 , nixfmt
 , nixfmt-classic ? null
@@ -94,7 +95,9 @@
 , golangci-lint
 , golines
 , revive ? null
+, uv
 , vale
+, zizmor
 }:
 
 
@@ -115,6 +118,7 @@ in
     cabal-fmt
     cabal-gild
     cargo
+    checkmake
     circleci-cli
     clippy
     cljfmt
@@ -146,6 +150,7 @@ in
     mdformat
     mdl
     mdsh
+    nbstripout
     nil
     nixpkgs-fmt
     opentofu
@@ -173,10 +178,12 @@ in
     typos
     typstfmt
     typstyle
+    uv
     vale
     woodpecker-cli
     yamlfmt
     yamllint
+    zizmor
     zprint
     ;
   inherit (elmPackages) elm-format elm-review elm-test;
@@ -214,10 +221,6 @@ in
   git-annex = if stdenv.isDarwin then null else git-annex;
   # Note: Only broken in stable nixpkgs, works fine on latest master.
   opam = if stdenv.isDarwin then null else opam;
-
-  ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once this gets
-  ## into a NixOS release, the following code will be useless.
-  checkmake = if stdenv.isLinux || checkmake.version >= "0.2.2" then checkmake else null;
 
   headache = callPackage ./headache { };
 

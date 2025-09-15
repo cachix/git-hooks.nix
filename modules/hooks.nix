@@ -4,6 +4,8 @@ let
   cfg = config;
   inherit (lib) flatten mapAttrs mapAttrsToList mkDefault mkOption mkEnableOption mkRemovedOptionModule mkRenamedOptionModule types;
 
+  toml = pkgs.formats.toml { };
+
   cargoManifestPathArg =
     lib.optionalString
       (settings.rust.cargoManifestPath != null)
@@ -32,6 +34,9 @@ in
     ++ [
       (mkRemovedOptionModule [ "settings" "yamllint" "relaxed" ] ''
         This option has been removed. Use `hooks.yamllint.settings.preset = "relaxed"`.
+      '')
+      (mkRemovedOptionModule [ "typos" "settings" "configuration" ] ''
+        This option has been removed. Use `hooks.typos.settings.config`, which is a structured attrs, instead.
       '')
     ]
     # Manually rename options that had a package or a config option
@@ -628,6 +633,20 @@ in
           };
         };
       };
+      gotest = mkOption {
+        description = "gotest hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Flags passed to gotest. See all available [here](https://pkg.go.dev/cmd/go#hdr-Test_packages).";
+              default = "";
+              example = "-tags integration";
+            };
+          };
+        };
+      };
       headache = mkOption {
         description = "headache hook";
         type = types.submodule {
@@ -911,6 +930,12 @@ in
                 '';
               };
           };
+        };
+      };
+      nbstripout = mkOption {
+        description = "nbstripout hook";
+        type = types.submodule {
+          imports = [ hookModule ];
         };
       };
       nixfmt = mkOption {
@@ -1789,33 +1814,30 @@ in
                 description = "Whether to search binary files.";
                 default = false;
               };
+
             color =
               mkOption {
                 type = types.enum [ "auto" "always" "never" ];
                 description = "When to use generate output.";
                 default = "auto";
               };
-            configuration =
+
+            config =
               mkOption {
-                type = types.str;
-                description = "Multiline-string configuration passed as config file. If set, config set in `typos.settings.configPath` gets ignored.";
-                default = "";
-                example = ''
-                  [files]
-                  ignore-dot = true
-
-                  [default]
-                  binary = false
-
-                  [type.py]
-                  extend-glob = []
-                '';
+                type = toml.type;
+                description = "Configuration as in https://github.com/crate-ci/typos/blob/master/docs/reference.md.";
+                default = { };
+                example = {
+                  files.ignore-dot = true;
+                  default.binary = false;
+                  type.py.extend-glob = [ ];
+                };
               };
 
             configPath =
               mkOption {
                 type = types.str;
-                description = "Path to a custom config file.";
+                description = "Path to a custom config file. Ignored if `typos.settings.config` is set.";
                 default = "";
                 example = ".typos.toml";
               };
@@ -1829,10 +1851,18 @@ in
 
             exclude =
               mkOption {
-                type = types.str;
-                description = "Ignore files and directories matching the glob.";
-                default = "";
-                example = "*.nix";
+                type = with types; coercedTo str (s: [ s ]) (listOf str);
+                description = "Ignore files and directories matching one of the globs.";
+                default = [ ];
+                example = [ "*.nix" ];
+              };
+
+            force-exclude =
+              mkOption {
+                type = types.bool;
+                description = "Respect excluded files even for paths passed explicitly.";
+                default = true;
+                example = false;
               };
 
             format =
@@ -1907,6 +1937,37 @@ in
                 type = types.bool;
                 description = "Fix spelling in files by writing them. Cannot be used with `typos.settings.diff`.";
                 default = false;
+              };
+          };
+        };
+      };
+      uv-export = mkOption {
+        description = "uv export hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            format =
+              mkOption {
+                type = types.enum [ "requirements.txt" "pylock.toml" ];
+                description = "Output format of the project's lockfile.";
+                # Most useful for compliance with PEP 751
+                default = "pylock.toml";
+                example = "requirements.txt";
+              };
+            locked =
+              mkOption {
+                type = types.bool;
+                description = ''
+                  Assert that the `uv.lock` will remain unchanged.
+                  Requires that the lockfile is up-to-date. If the lockfile is missing or needs to be updated, uv will exit with an error.
+                '';
+                default = true;
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Flags passed to `uv export`";
+                default = "";
               };
           };
         };
@@ -2224,13 +2285,7 @@ in
         description = "Experimental linter/analyzer for Makefiles";
         types = [ "makefile" ];
         package = tools.checkmake;
-        entry =
-          ## NOTE: `checkmake` 0.2.2 landed in nixpkgs on 12 April 2023. Once
-          ## this gets into a NixOS release, the following code will be useless.
-          lib.throwIf
-            (hooks.checkmake.package == null)
-            "The version of nixpkgs used by git-hooks.nix must have `checkmake` in version at least 0.2.2 for it to work on non-Linux systems."
-            "${hooks.checkmake.package}/bin/checkmake";
+        entry = "${hooks.checkmake.package}/bin/checkmake";
       };
       check-added-large-files =
         {
@@ -2907,7 +2962,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
 
               # test each directory one by one
               for dir in "''${sorted_dirs[@]}"; do
-                  ${hooks.gotest.package}/bin/go test "./$dir"
+                  ${hooks.gotest.package}/bin/go test ${hooks.gotest.settings.flags} "./$dir"
               done
             '';
           in
@@ -2928,7 +2983,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               script = pkgs.writeShellScript "precommit-govet" ''
                 set -e
                 for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                  ${hooks.govet.package}/bin/go vet ./"$dir"
+                  ${hooks.govet.package}/bin/go vet -C ./"$dir"
                 done
               '';
             in
@@ -3267,6 +3322,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pre-commit-hooks;
           entry = "${hooks.name-tests-test.package}/bin/tests_should_end_in_test.py";
           files = "(^|/)tests/\.+\\.py$";
+        };
+      nbstripout =
+        {
+          name = "nbstripout";
+          description = "Strip output from Jupyter notebooks";
+          package = tools.nbstripout;
+          entry = "${hooks.nbstripout.package}/bin/nbstripout";
+          files = "\\.ipynb$";
         };
       nil =
         {
@@ -3754,6 +3817,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         types = [ "lua" ];
         package = tools.selene;
         entry = "${hooks.selene.package}/bin/selene";
+        args = [ "--no-summary" ];
       };
       shellcheck =
         {
@@ -3907,7 +3971,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "terraform-format";
           description = "Format Terraform (`.tf`) files.";
           package = tools.opentofu;
-          entry = "${lib.getExe hooks.terraform-format.package} fmt -check -diff";
+          entry = "${lib.getExe hooks.terraform-format.package} fmt";
           files = "\\.tf$";
         };
       terraform-validate =
@@ -4006,7 +4070,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             let
               script = pkgs.writeShellScript "precommit-trufflehog" ''
                 set -e
-                ${hooks.trufflehog.package}/bin/trufflehog --no-update git "file://$(git rev-parse --show-toplevel)" --since-commit HEAD --only-verified --fail
+                ${hooks.trufflehog.package}/bin/trufflehog git "file://$(git rev-parse --show-toplevel)" --since-commit HEAD --only-verified --fail
               '';
             in
             builtins.toString script;
@@ -4022,18 +4086,20 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.typos;
           entry =
             let
-              # Concatenate config in config file with section for ignoring words generated from list of words to ignore
-              configuration = "${hooks.typos.settings.configuration}" + lib.strings.optionalString (hooks.typos.settings.ignored-words != [ ]) "\n\[default.extend-words\]" + lib.strings.concatMapStrings (x: "\n${x} = \"${x}\"") hooks.typos.settings.ignored-words;
-              configFile = builtins.toFile "typos-config.toml" configuration;
+              inherit (hooks.typos.settings) config exclude;
+              configFile = toml.generate "typos-config.toml" config;
+              excludeFlags = lib.concatStringsSep " "
+                (lib.map (glob: "--exclude ${glob}") exclude);
               cmdArgs =
                 mkCmdArgs
                   (with hooks.typos.settings; [
                     [ binary "--binary" ]
                     [ (color != "auto") "--color ${color}" ]
-                    [ (configuration != "") "--config ${configFile}" ]
-                    [ (configPath != "" && configuration == "") "--config ${configPath}" ]
+                    [ (config != { }) "--config ${configFile}" ]
+                    [ (configPath != "" && config == { }) "--config ${configPath}" ]
                     [ diff "--diff" ]
-                    [ (exclude != "") "--exclude ${exclude} --force-exclude" ]
+                    [ (exclude != [ ]) excludeFlags ]
+                    [ force-exclude "--force-exclude" ]
                     [ (format != "long") "--format ${format}" ]
                     [ hidden "--hidden" ]
                     [ (locale != "en") "--locale ${locale}" ]
@@ -4046,6 +4112,9 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.typos.package}/bin/typos ${cmdArgs}";
+          settings.config.default.extend-words = lib.mkIf
+            (hooks.typos.settings.ignored-words != [ ])
+            (lib.genAttrs hooks.typos.settings.ignored-words lib.id);
           types = [ "text" ];
         };
       typstfmt = {
@@ -4065,6 +4134,39 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             "The version of nixpkgs used by git-hooks.nix must contain typstyle"
             "${hooks.typstyle.package}/bin/typstyle -i";
         files = "\\.typ$";
+      };
+      uv-check = {
+        name = "uv check";
+        description = "Check if uv's lockfile is up-to-date.";
+        package = tools.uv;
+        entry = "${hooks.uv-check.package}/bin/uv lock --check";
+        files = "^(uv\\.lock$|pyproject\\.toml)$";
+        pass_filenames = false;
+      };
+      uv-lock = {
+        name = "uv lock";
+        description = "Update uv's lockfile.";
+        package = tools.uv;
+        entry = "${hooks.uv-lock.package}/bin/uv lock";
+        files = "^(uv\\.lock$|pyproject\\.toml)$";
+        pass_filenames = false;
+      };
+      uv-export = {
+        name = "uv export";
+        description = "Export uv's lockfile.";
+        package = tools.uv;
+        files = "^(uv\\.lock$|pyproject\\.toml)$";
+        pass_filenames = false;
+        entry =
+          let
+            cmdArgs =
+              mkCmdArgs
+                (with hooks.uv-export.settings; [
+                  [ (format != "requirements") " --format ${format} --output-file ${format}" ]
+                  [ locked " --locked" ]
+                ]);
+          in
+          "${hooks.uv-export.package}/bin/uv export${cmdArgs} ${hooks.uv-export.settings.flags}";
       };
       vale = {
         name = "vale";
@@ -4146,6 +4248,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.yamllint.package}/bin/yamllint ${cmdArgs}";
         };
+      zizmor = {
+        name = "zizmor";
+        description = "Static analysis for GitHub Actions";
+        files = "^.github/workflows/";
+        types = [ "yaml" ];
+        package = tools.zizmor;
+        entry = "${hooks.zizmor.package}/bin/zizmor";
+      };
       zprint =
         {
           name = "zprint";
