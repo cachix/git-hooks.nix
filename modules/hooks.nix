@@ -998,6 +998,12 @@ in
                 description = "Line width.";
                 default = null;
               };
+            indent =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Line indent.";
+                default = null;
+              };
           };
         };
       };
@@ -3413,7 +3419,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "nixfmt-rfc-style";
           description = "Nix code prettifier (RFC 166 style).";
           package = tools.nixfmt-rfc-style;
-          entry = "${hooks.nixfmt-rfc-style.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-rfc-style.settings.width != null) "--width=${toString hooks.nixfmt-rfc-style.settings.width}"}";
+          entry = "${hooks.nixfmt-rfc-style.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-rfc-style.settings.width != null) "--width=${toString hooks.nixfmt-rfc-style.settings.width}"} ${lib.optionalString (hooks.nixfmt-rfc-style.settings.indent != null) "--indent=${toString hooks.nixfmt-rfc-style.settings.indent}"}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
