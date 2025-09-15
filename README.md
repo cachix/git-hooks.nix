@@ -498,6 +498,7 @@ use nix
 - [topiary](https://github.com/tweag/topiary)
 - [treefmt](https://github.com/numtide/treefmt)
 - [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
+- [woodpecker-cli-lint](https://woodpecker-ci.org/docs/cli#lint)
 - [zizmor](https://github.com/zizmorcore/zizmor)
 
 ### Custom hooks

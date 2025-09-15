@@ -86,6 +86,7 @@
 , typos
 , typstfmt
 , typstyle ? null ## Add in nixpkgs added on commit 800ca60
+, woodpecker-cli
 , zprint
 , yamlfmt
 , yamllint
@@ -179,6 +180,7 @@ in
     typstyle
     uv
     vale
+    woodpecker-cli
     yamlfmt
     yamllint
     zizmor
