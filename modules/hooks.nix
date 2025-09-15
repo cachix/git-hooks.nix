@@ -2022,17 +2022,17 @@ in
             };
             pluginsPrivileged = mkOption {
               type = types.commas;
-              description="List of plugins, allowed to run in privileged mode";
-              default="";
+              description = "List of plugins, allowed to run in privileged mode";
+              default = "";
             };
             pluginsTrustedClone = mkOption {
               type = types.commas;
-              description=''
+              description = ''
                 List of plugins, that are trusted to handle Git credentials in cloning steps.
                 If not set, the program defaults to
                 "docker.io/woodpeckerci/plugin-git:2.6.3,docker.io/woodpeckerci/plugin-git,quay.io/woodpeckerci/plugin-git".
               '';
-              default="";
+              default = "";
             };
           };
         };
@@ -4190,18 +4190,19 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         name = "woodpecker-cli-lint";
         description = "Command line client for the Woodpecker Continuous Integration server (lint only).";
         package = tools.woodpecker-cli;
-        entry = let
-          cmdArgs = mkCmdArgs (with hooks.woodpecker-cli-lint.settings; [
-            [ (workflowPath != "") workflowPath ]
-            # this check depends on the internet connection, without it
-            # the lint is lightning-fast
-            [ true "--disable-update-check" ]
-            [ strict "--strict" ]
-            [ (pluginsPrivileged != "") "--plugins-privileged=${pluginsPrivileged}" ]
-            [ (pluginsTrustedClone != "") "--plugins-trusted-clone=${pluginsTrustedClone}" ]
-          ]);
-        in
-        "${lib.getExe hooks.woodpecker-cli-lint.package} lint ${cmdArgs}";
+        entry =
+          let
+            cmdArgs = mkCmdArgs (with hooks.woodpecker-cli-lint.settings; [
+              [ (workflowPath != "") workflowPath ]
+              # this check depends on the internet connection, without it
+              # the lint is lightning-fast
+              [ true "--disable-update-check" ]
+              [ strict "--strict" ]
+              [ (pluginsPrivileged != "") "--plugins-privileged=${pluginsPrivileged}" ]
+              [ (pluginsTrustedClone != "") "--plugins-trusted-clone=${pluginsTrustedClone}" ]
+            ]);
+          in
+          "${lib.getExe hooks.woodpecker-cli-lint.package} lint ${cmdArgs}";
         types = [ "file" "yaml" ];
       };
       yamlfmt =
