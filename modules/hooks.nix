@@ -3399,11 +3399,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "\\.nix$";
         };
       nixfmt =
+        let
+          inherit (hooks.nixfmt) settings;
+          width = lib.optionalString (settings.width != null) "--width=${toString settings.width}";
+        in
         {
           name = "nixfmt-deprecated";
           description = "Deprecated Nix code prettifier. Use nixfmt-classic.";
           package = tools.nixfmt;
-          entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          entry = "${hooks.nixfmt.package}/bin/nixfmt ${width}";
           files = "\\.nix$";
         };
       nixfmt-classic =
