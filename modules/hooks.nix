@@ -2545,6 +2545,13 @@ in
           entry = "${hooks.commitizen.package}/bin/cz check --allow-abort --commit-msg-file";
           stages = [ "commit-msg" ];
         };
+      comrak = {
+        name = "comrak";
+        description = "A 100% CommonMark-compatible GitHub Flavored Markdown formatter";
+        package = tools.comrak;
+        entry = "${lib.getExe hooks.comrak.package} --inplace";
+        types = [ "markdown" ];
+      };
       conform = {
         name = "conform enforce";
         description = "Policy enforcement for commits.";

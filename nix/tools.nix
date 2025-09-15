@@ -18,6 +18,7 @@
 , cljfmt
 , cmake-format
 , commitizen
+, comrak
 , conform
 , convco
 , crystal
@@ -125,6 +126,7 @@ in
     clippy
     cljfmt
     cmake-format
+    comrak
     conform
     convco
     crystal
