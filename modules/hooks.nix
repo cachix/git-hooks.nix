@@ -2211,6 +2211,7 @@ in
             in
             "${hooks.ansible-lint.package}/bin/ansible-lint ${cmdArgs}";
           files = if hooks.ansible-lint.settings.subdir != "" then "${hooks.ansible-lint.settings.subdir}/" else "";
+          pass_filenames = false;
         };
       autoflake =
         {
