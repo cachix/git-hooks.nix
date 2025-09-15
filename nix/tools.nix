@@ -2,6 +2,7 @@
 , lib
 
 , actionlint
+, action-validator
 , alejandra
 , ansible-lint
 , biome
@@ -110,6 +111,7 @@ in
   clang-tools = llvmPackages_latest.clang-tools;
   inherit
     actionlint
+    action-validator
     alejandra
     ansible-lint
     beautysh
