@@ -932,6 +932,12 @@ in
           };
         };
       };
+      nbstripout = mkOption {
+        description = "nbstripout hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+        };
+      };
       nixfmt = mkOption {
         description = "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.";
         visible = false;
@@ -3282,6 +3288,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pre-commit-hooks;
           entry = "${hooks.name-tests-test.package}/bin/tests_should_end_in_test.py";
           files = "(^|/)tests/\.+\\.py$";
+        };
+      nbstripout =
+        {
+          name = "nbstripout";
+          description = "Strip output from Jupyter notebooks";
+          package = tools.nbstripout;
+          entry = "${hooks.nbstripout.package}/bin/nbstripout";
+          files = "\\.ipynb$";
         };
       nil =
         {
