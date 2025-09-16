@@ -2311,6 +2311,15 @@ in
           files = "\\.rs$";
           pass_filenames = false;
         };
+      chart-testing =
+        {
+          name = "chart-testing";
+          description = "CLI tool for linting and testing Helm charts";
+          files = "^charts/";
+          package = tools.chart-testing;
+          entry = "${pkgs.chart-testing}/bin/ct lint --all --skip-helm-dependencies";
+          pass_filenames = false;
+        };
       checkmake = {
         name = "checkmake";
         description = "Experimental linter/analyzer for Makefiles";

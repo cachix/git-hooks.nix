@@ -11,6 +11,7 @@
 , cabal2nix
 , callPackage
 , cargo
+, chart-testing
 , checkmake
 , circleci-cli
 , llvmPackages_latest
@@ -121,6 +122,7 @@ in
     cabal-fmt
     cabal-gild
     cargo
+    chart-testing
     checkmake
     circleci-cli
     clippy
