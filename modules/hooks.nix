@@ -2317,7 +2317,7 @@ in
           description = "CLI tool for linting and testing Helm charts";
           files = "^charts/";
           package = tools.chart-testing;
-          entry = "${pkgs.chart-testing}/bin/ct lint --all --skip-helm-dependencies";
+          entry = "${hooks.chart-testing.package}/bin/ct lint --all --skip-helm-dependencies";
           pass_filenames = false;
         };
       checkmake = {
