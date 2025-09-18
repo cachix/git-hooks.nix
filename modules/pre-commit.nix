@@ -224,7 +224,7 @@ in
       hooks =
         mkOption {
           type = types.submodule {
-            freeformType = types.attrsOf hookType;
+            freeformType = types.lazyAttrsOf hookType;
           };
           description =
             ''
