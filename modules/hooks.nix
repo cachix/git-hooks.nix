@@ -3161,6 +3161,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             end'
           '';
         };
+      keep-sorted =
+        {
+          name = "keep-sorted";
+          description = "Language-agnostic formatter that sorts lines between two markers in a larger file.";
+          types = [ "text" ];
+          package = tools.keep-sorted;
+          entry = "${hooks.keep-sorted.package}/bin/keep-sorted";
+        };
       latexindent =
         {
           name = "latexindent";
