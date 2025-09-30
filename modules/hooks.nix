@@ -639,6 +639,20 @@ in
           };
         };
       };
+      golangci-lint = mkOption {
+        description = "golangci-lint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Flags passed to golangci-lint run command. See all available [here](https://golangci-lint.run/docs/configuration/cli/#run)";
+              default = "";
+              example = "--fix";
+            };
+          };
+        };
+      };
       golines = mkOption {
         description = "golines hook";
         type = types.submodule {
@@ -2938,7 +2952,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             script = pkgs.writeShellScript "precommit-golangci-lint" ''
               set -e
               for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${hooks.golangci-lint.package}/bin/golangci-lint run ./"$dir"
+                ${hooks.golangci-lint.package}/bin/golangci-lint run ${hooks.golangci-lint.settings.flags} ./"$dir"
               done
             '';
           in
