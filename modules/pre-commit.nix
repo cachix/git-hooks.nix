@@ -104,10 +104,10 @@ let
         if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
         then
           echo "Running: $ pre-commit run --hook-stage manual --all-files"
-          pre-commit run -c ${cfg.configPath} --hook-stage manual --all-files
+          ${lib.getExe cfg.package} run -c ${cfg.configPath} --hook-stage manual --all-files
         else
           echo "Running: $ pre-commit run --all-files"
-          pre-commit run -c ${cfg.configPath} --all-files
+          ${lib.getExe cfg.package}  run -c ${cfg.configPath} --all-files
         fi
         exitcode=$?
         git --no-pager diff --color
@@ -144,7 +144,7 @@ in
         default = true;
         description = ''
           Whether to enable the pre-commit hooks module.
-          
+
           When set to false, this disables the entire module.
         '';
       };
@@ -155,7 +155,7 @@ in
           default = true;
           description = ''
             Whether to enable automatic installation of pre-commit hooks.
-            
+
             When set to false, hooks will not be installed into the git repository,
             but all other module functionality (like configuration generation) will still work.
           '';
@@ -441,12 +441,11 @@ in
 
     installationScript =
       ''
-        export PATH=${cfg.package}/bin:$PATH
         if ${boolToString cfg.install.enable}; then
           if ! ${cfg.gitPackage}/bin/git rev-parse --git-dir &> /dev/null; then
             echo 1>&2 "WARNING: git-hooks.nix: .git not found; skipping installation."
           else
-          GIT_WC=`${cfg.gitPackage}/bin/git rev-parse --show-toplevel`
+          GIT_WC=`${lib.getExe cfg.gitPackage} rev-parse --show-toplevel`
 
           # These update procedures compare before they write, to avoid
           # filesystem churn. This improves performance with watch tools like lorri
@@ -474,9 +473,9 @@ in
               # Remove any previously installed hooks (since pre-commit itself has no convergent design)
               hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
               for hook in $hooks; do
-                pre-commit uninstall -t $hook
+                ${lib.getExe cfg.package} uninstall -t $hook
               done
-              ${cfg.gitPackage}/bin/git config --local core.hooksPath ""
+              ${lib.getExe cfg.gitPackage} config --local core.hooksPath ""
               # Add hooks for configured stages (only) ...
               if [ ! -z "${concatStringsSep " " install_stages}" ]; then
                 for stage in ${concatStringsSep " " install_stages}; do
@@ -486,10 +485,10 @@ in
                     # if you amend these switches please also review $hooks above
                     commit | merge-commit | push)
                       stage="pre-"$stage
-                      pre-commit install -c ${cfg.configPath} -t $stage
+                      ${lib.getExe cfg.package} install -c ${cfg.configPath} -t $stage
                       ;;
                     ${concatStringsSep "|" supportedHooksLib.supportedHooks})
-                      pre-commit install -c ${cfg.configPath} -t $stage
+                      ${lib.getExe cfg.package}  install -c ${cfg.configPath} -t $stage
                       ;;
                     *)
                       echo 1>&2 "ERROR: git-hooks.nix: either $stage is not a valid stage or git-hooks.nix doesn't yet support it."
@@ -499,7 +498,7 @@ in
                 done
               # ... or default 'pre-commit' hook
               else
-                pre-commit install -c ${cfg.configPath}
+                ${lib.getExe cfg.package}  install -c ${cfg.configPath}
               fi
 
               # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
@@ -508,7 +507,7 @@ in
               # Convert the absolute path to a path relative to the toplevel working directory.
               common_dir=''${common_dir#''$GIT_WC/}
 
-              ${cfg.gitPackage}/bin/git config --local core.hooksPath "''$common_dir/hooks"
+              ${lib.getExe cfg.gitPackage} config --local core.hooksPath "''$common_dir/hooks"
             fi
           fi
         fi

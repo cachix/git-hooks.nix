@@ -77,7 +77,7 @@ Given the following `flake.nix` example:
           config = self.checks.${system}.pre-commit-check.config;
           inherit (config) package configFile;
           script = ''
-            ${package}/bin/pre-commit run --all-files --config ${configFile}
+            ${pkgs.lib.getExe package} run --all-files --config ${configFile}
           '';
         in
         pkgs.writeShellScriptBin "pre-commit-run" script
