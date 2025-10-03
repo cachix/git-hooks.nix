@@ -18,7 +18,7 @@ let
             {
               _module.args.pkgs = pkgs;
               _module.args.gitignore-nix-src = gitignore-nix-src;
-              package = lib.mkDefault (if builtins.hasAttr "prek" pkgs then pkgs.prek else pkgs.pre-commit);
+              package = lib.mkDefault pre-commit;
               tools = lib.mkDefault (builtinStuff.tools // tools);
             } // (if isFlakes
             then { rootSrc = src; }
