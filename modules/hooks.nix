@@ -4280,7 +4280,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               cmdArgs =
                 mkCmdArgs
                   (with hooks.yamllint.settings; [
-                    # Priorize multiline configuration over serialized configuration and configuration file
+                    # Prioritize multiline configuration over serialized configuration and configuration file
                     [ (configuration != "") "--config-file ${configFile}" ]
                     [ (configData != "" && configuration == "") "--config-data \"${configData}\"" ]
                     [ (configPath != "" && configData == "" && configuration == "" && preset == "default") "--config-file ${configPath}" ]
