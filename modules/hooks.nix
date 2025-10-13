@@ -680,6 +680,20 @@ in
           };
         };
       };
+      hledger-fmt = mkOption {
+        description = "hledger-fmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            fix =
+              mkOption {
+                type = types.bool;
+                description = "Fix the files in place.";
+                default = false;
+              };
+          };
+        };
+      };
       hlint = mkOption {
         description = "hlint hook";
         type = types.submodule {
@@ -3082,6 +3096,22 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.hindent;
           entry = "${hooks.hindent.package}/bin/hindent";
           files = "\\.l?hs(-boot)?$";
+        };
+      hledger-fmt =
+        {
+          name = "hledger-fmt";
+          description = "Opinionated hledger's journal files formatter.";
+          package = tools.hledger-fmt;
+          entry =
+            let
+              cmdArgs = mkCmdArgs (
+                with hooks.hledger-fmt.settings; [
+                  [ fix "--fix" ]
+                ]
+              );
+            in
+            "${hooks.hledger-fmt.package}/bin/hledger-fmt ${cmdArgs}";
+          files = "\\.(hledger|journal|j)$";
         };
       hlint =
         {
