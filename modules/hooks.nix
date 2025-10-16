@@ -4149,7 +4149,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               inherit (hooks.typos.settings) config exclude;
               configFile = toml.generate "typos-config.toml" config;
               excludeFlags = lib.concatStringsSep " "
-                (lib.map (glob: "--exclude ${glob}") exclude);
+                (lib.map (glob: "--exclude '${glob}'") exclude);
               cmdArgs =
                 mkCmdArgs
                   (with hooks.typos.settings; [
