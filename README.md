@@ -22,23 +22,34 @@
 
 {
   git-hooks.hooks = {
-    # lint shell scripts
-    shellcheck.enable = true;
-    # execute example shell from Markdown files
-    mdsh.enable = true;
-    # format Python code
+    # Format Nix code
+    nixfmt.enable = true;
+
+    # Format Python code
     black.enable = true;
 
-    # override a package with a different version
+    # Lint shell scripts
+    shellcheck.enable = true;
+
+    # Execute shell examples in Markdown files
+    mdsh.enable = true;
+
+    # Override a package with a different version
     ormolu.enable = true;
     ormolu.package = pkgs.haskellPackages.ormolu;
 
-    # some hooks have more than one package, like clippy:
+    # Some hooks have more than one package, like clippy:
     clippy.enable = true;
     clippy.packageOverrides.cargo = pkgs.cargo;
     clippy.packageOverrides.clippy = pkgs.clippy;
-    # some hooks provide settings
+    # Some hooks provide settings
     clippy.settings.allFeatures = true;
+
+    # Define your own custom hooks
+    my-custom-hook = {
+      name = "My own hook";
+      exec = "on-pre-commit.sh";
+    };
   };
 }
 ```
@@ -89,7 +100,7 @@ Given the following `flake.nix` example:
         pre-commit-check = inputs.git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
-            nixfmt-rfc-style.enable = true;
+            nixfmt.enable = true;
           };
         };
       });
@@ -371,6 +382,7 @@ use nix
 - [deadnix](https://github.com/astro/deadnix)
 - [flake-checker](https://github.com/DeterminateSystems/flake-checker)
 - [nil](https://github.com/oxalica/nil)
+- [nixfmt](https://github.com/NixOS/nixfmt/) (supports `nixfmt` >=v1.0)
 - [nixfmt-classic](https://github.com/NixOS/nixfmt/tree/v0.6.0)
 - [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
