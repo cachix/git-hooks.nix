@@ -169,10 +169,8 @@ in
             ''
               The `pre-commit` package to use.
             '';
-          defaultText =
-            lib.literalExpression or literalExample ''
-              pkgs.pre-commit
-            '';
+          defaultText = lib.literalExpression "pkgs.pre-commit";
+          example = lib.literalExpression "pkgs.prek";
         };
 
       gitPackage =

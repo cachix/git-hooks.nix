@@ -13,6 +13,8 @@
 
 - Run hooks **as part of development** and **during CI**
 
+- Support for alternative `pre-commit` implementations, like [prek](https://github.com/j178/prek).
+
 ## Getting started
 
 ### devenv.sh
@@ -51,6 +53,9 @@
       exec = "on-pre-commit.sh";
     };
   };
+
+  # Use alternative pre-commit implementations
+  git-hooks.package = pkgs.prek;
 }
 ```
 
