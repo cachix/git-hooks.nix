@@ -1012,6 +1012,12 @@ in
                 description = "Line width.";
                 default = null;
               };
+            indent =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Line indent.";
+                default = null;
+              };
           };
         };
       };
@@ -3457,27 +3463,48 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "\\.nix$";
         };
       nixfmt =
+        let
+          inherit (hooks) nixfmt;
+          exec = "${nixfmt.package}/bin/nixfmt";
+          arg = name:
+            let opt = nixfmt.settings.${name}; in
+            lib.optionalString (opt != null) "--${name}=${toString opt}";
+        in
         {
           name = "nixfmt";
           description = "Official Nix code formatter.";
           package = tools.nixfmt;
-          entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          entry = "${exec} ${arg "width"}";
           files = "\\.nix$";
         };
       nixfmt-classic =
+        let
+          nixfmt = hooks.nixfmt-classic;
+          exec = "${nixfmt.package}/bin/nixfmt";
+          arg = name:
+            let opt = nixfmt.settings.${name}; in
+            lib.optionalString (opt != null) "--${name}=${toString opt}";
+        in
         {
           name = "nixfmt-classic";
           description = "Nix code prettifier (classic).";
           package = tools.nixfmt-classic;
-          entry = "${hooks.nixfmt-classic.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-classic.settings.width != null) "--width=${toString hooks.nixfmt-classic.settings.width}"}";
+          entry = "${exec} ${arg "width"}";
           files = "\\.nix$";
         };
       nixfmt-rfc-style =
+        let
+          nixfmt = hooks.nixfmt-rfc-style;
+          exec = "${nixfmt.package}/bin/nixfmt";
+          arg = name:
+            let opt = nixfmt.settings.${name}; in
+            lib.optionalString (opt != null) "--${name}=${toString opt}";
+        in
         {
           name = "nixfmt-rfc-style";
           description = "Nix code prettifier (RFC 166 style).";
           package = tools.nixfmt-rfc-style;
-          entry = "${hooks.nixfmt-rfc-style.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-rfc-style.settings.width != null) "--width=${toString hooks.nixfmt-rfc-style.settings.width}"}";
+          entry = "${exec} ${arg "width"} ${arg "indent"}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
