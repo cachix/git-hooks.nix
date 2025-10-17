@@ -448,8 +448,8 @@ in
 
     shellHook =
       ''
-        ${config.installationScript}
-        export PATH=${config.package}/bin:$PATH
+        ${cfg.installationScript}
+        export PATH=${cfg.package}/bin:$PATH
       '';
 
     installationScript =
