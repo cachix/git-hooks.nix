@@ -37,7 +37,7 @@ in
                 Nixpkgs to use in the pre-commit [`settings`](#opt-perSystem.pre-commit.settings).
               '';
               default = pkgs;
-              defaultText = lib.literalMD "`pkgs` (module argument)";
+              defaultText = lib.literalExpression "`pkgs` (module argument)";
             };
             settings = mkOption {
               type = types.submoduleWith {
@@ -49,16 +49,23 @@ in
                 The git-hooks.nix configuration.
               '';
             };
+            shellHook = mkOption {
+              type = types.str;
+              description = "A shell hook that installs up the git hooks in a development shell.";
+              default = cfg.settings.installationScript;
+              defaultText = lib.literalExpression "bash statements";
+              readOnly = true;
+            };
             installationScript = mkOption {
               type = types.str;
-              description = "A bash fragment that sets up [pre-commit](https://pre-commit.com/).";
+              description = "A bash snippet that sets up the git hooks in the current repository.";
               default = cfg.settings.installationScript;
-              defaultText = lib.literalMD "bash statements";
+              defaultText = lib.literalExpression "bash statements";
               readOnly = true;
             };
             devShell = mkOption {
               type = types.package;
-              description = "A development shell with pre-commit installed and setup.";
+              description = "A development shell with the git hooks installed and all the packages made available.";
               readOnly = true;
             };
           };
@@ -72,8 +79,8 @@ in
             hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
           };
           pre-commit.devShell = pkgs.mkShell {
-            nativeBuildInputs = cfg.settings.enabledPackages ++ [ cfg.settings.package ];
-            shellHook = cfg.installationScript;
+            inherit (cfg.settings) shellHook;
+            nativeBuildInputs = cfg.settings.enabledPackages;
           };
         };
       });
