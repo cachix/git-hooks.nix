@@ -680,6 +680,20 @@ in
           };
         };
       };
+      hledger-fmt = mkOption {
+        description = "hledger-fmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            fix =
+              mkOption {
+                type = types.bool;
+                description = "Fix the files in place.";
+                default = false;
+              };
+          };
+        };
+      };
       hlint = mkOption {
         description = "hlint hook";
         type = types.submodule {
@@ -959,7 +973,7 @@ in
         };
       };
       nixfmt = mkOption {
-        description = "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.";
+        description = "nixfmt hook";
         visible = false;
         type = types.submodule {
           imports = [ hookModule ];
@@ -2143,10 +2157,19 @@ in
     lib.optional cfg.hooks.rome.enable ''
       The hook `hooks.rome` has been renamed to `hooks.biome`.
     ''
-    ++ lib.optional cfg.hooks.nixfmt.enable ''
+    ++ lib.optional (cfg.hooks.nixfmt.enable && lib.versionOlder cfg.hooks.nixfmt.package.version "1.0") ''
       The hook `hooks.nixfmt` has been renamed to `hooks.nixfmt-classic`.
 
       The new RFC 166-style nixfmt is available as `hooks.nixfmt-rfc-style`.
+    ''
+    ++ lib.optional (cfg.hooks.nixfmt-classic.enable && lib.versionAtLeast cfg.hooks.nixfmt-classic.package.version "1.0") ''
+      The hook `hooks.nixfmt-classic` is using an incompatible version of `nixfmt`.
+
+        Found: ${cfg.hooks.nixfmt-classic.package.version}.
+        Expected: < v1.0
+
+      `hooks.nixfmt-classic` supports versions of `nixfmt` up to `v1.0`.
+      For `nixfmt` `v1.0` and newer, switch to `hooks.nixfmt`.
     '';
 
   # PLEASE keep this sorted alphabetically.
@@ -2309,6 +2332,15 @@ in
           package = tools.cargo;
           entry = "${hooks.cargo-check.package}/bin/cargo check ${cargoManifestPathArg}";
           files = "\\.rs$";
+          pass_filenames = false;
+        };
+      chart-testing =
+        {
+          name = "chart-testing";
+          description = "CLI tool for linting and testing Helm charts";
+          files = "^charts/";
+          package = tools.chart-testing;
+          entry = "${hooks.chart-testing.package}/bin/ct lint --all --skip-helm-dependencies";
           pass_filenames = false;
         };
       checkmake = {
@@ -3083,6 +3115,22 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry = "${hooks.hindent.package}/bin/hindent";
           files = "\\.l?hs(-boot)?$";
         };
+      hledger-fmt =
+        {
+          name = "hledger-fmt";
+          description = "Opinionated hledger's journal files formatter.";
+          package = tools.hledger-fmt;
+          entry =
+            let
+              cmdArgs = mkCmdArgs (
+                with hooks.hledger-fmt.settings; [
+                  [ fix "--fix" ]
+                ]
+              );
+            in
+            "${hooks.hledger-fmt.package}/bin/hledger-fmt ${cmdArgs}";
+          files = "\\.(hledger|journal|j)$";
+        };
       hlint =
         {
           name = "hlint";
@@ -3410,8 +3458,8 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         };
       nixfmt =
         {
-          name = "nixfmt-deprecated";
-          description = "Deprecated Nix code prettifier. Use nixfmt-classic.";
+          name = "nixfmt";
+          description = "Official Nix code formatter.";
           package = tools.nixfmt;
           entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
           files = "\\.nix$";
@@ -4139,7 +4187,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               inherit (hooks.typos.settings) config exclude;
               configFile = toml.generate "typos-config.toml" config;
               excludeFlags = lib.concatStringsSep " "
-                (lib.map (glob: "--exclude ${glob}") exclude);
+                (lib.map (glob: "--exclude '${glob}'") exclude);
               cmdArgs =
                 mkCmdArgs
                   (with hooks.typos.settings; [
