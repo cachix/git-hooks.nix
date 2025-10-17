@@ -14,17 +14,18 @@ let
         [
           ../modules/all-modules.nix
           {
-            config = moduleOptions //
-            {
-              _module.args.pkgs = pkgs;
-              _module.args.gitignore-nix-src = gitignore-nix-src;
-              package = lib.mkDefault pre-commit;
-              tools = lib.mkDefault (builtinStuff.tools // tools);
-            } // (if isFlakes
-            then { rootSrc = src; }
-            else {
-              rootSrc = gitignore-nix-src.lib.gitignoreSource src;
-            });
+            config = lib.mkMerge [
+              moduleOptions
+              {
+                _module.args = { inherit pkgs gitignore-nix-src; };
+                package = lib.mkDefault pre-commit;
+                tools = lib.mkDefault (builtinStuff.tools // tools);
+                rootSrc =
+                  if isFlakes
+                  then src
+                  else gitignore-nix-src.lib.gitignoreSource src;
+              }
+            ];
           }
         ] ++ imports;
     };
