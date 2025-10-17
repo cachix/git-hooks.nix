@@ -2933,7 +2933,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         name = "gitleaks";
         description = "Find secrets with Gitleaks";
         entry = lib.getExe tools.gitleaks;
-        args = [ "git" ];
+        args = [ "git" "-v" ];
         always_run = true;
         stages = [ "post-commit" ];
       };
