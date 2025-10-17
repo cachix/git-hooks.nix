@@ -5,7 +5,6 @@ let
     concatStringsSep
     compare
     filterAttrs
-    literalExample
     mapAttrsToList
     mkOption
     types
@@ -181,10 +180,7 @@ in
               The `git` package to use.
             '';
           default = pkgs.gitMinimal;
-          defaultText =
-            lib.literalExpression or literalExample ''
-              pkgs.gitMinimal
-            '';
+          defaultText = lib.literalExpression "pkgs.gitMinimal";
         };
 
       tools =
@@ -196,8 +192,9 @@ in
 
               `nix-pre-commit-hooks` comes with its own set of packages for this purpose.
             '';
-          defaultText =
-            lib.literalExpression or literalExample ''git-hooks.nix-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }'';
+          defaultText = lib.literalExpression ''
+            git-hooks.nix-pkgs.callPackage tools-dot-nix { inherit (pkgs) system; }
+          '';
         };
 
       enabledPackages = mkOption {
@@ -351,7 +348,7 @@ in
               If you use the `flakeModule`, the default is `self.outPath`; the whole flake
               sources.
             '';
-          defaultText = lib.literalExpression or literalExample ''gitignoreSource config.src'';
+          defaultText = lib.literalExpression ''gitignoreSource config.src'';
         };
 
       excludes =

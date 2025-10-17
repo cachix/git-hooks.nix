@@ -186,7 +186,7 @@ in
         Confines the hook to run at a particular stage.
       '';
       default = default_stages;
-      defaultText = (lib.literalExpression or lib.literalExample) "default_stages";
+      defaultText = lib.literalExpression "default_stages";
     };
 
     verbose = mkOption {
