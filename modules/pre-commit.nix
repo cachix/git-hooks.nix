@@ -168,6 +168,7 @@ in
             ''
               The `pre-commit` package to use.
             '';
+          default = pkgs.pre-commit;
           defaultText = lib.literalExpression "pkgs.pre-commit";
           example = lib.literalExpression "pkgs.prek";
         };

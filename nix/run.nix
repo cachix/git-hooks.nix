@@ -1,6 +1,7 @@
-builtinStuff@{ pkgs, tools, isFlakes, pre-commit, git, runCommand, writeText, writeScript, lib, gitignore-nix-src }:
+builtinStuff@{ lib, pkgs, tools, gitignore-nix-src, isFlakes }:
 
-options@{ src
+options@
+{ src
 , imports ? [ ]
 , tools ? { }
 , ...
@@ -18,7 +19,6 @@ let
               moduleOptions
               {
                 _module.args = { inherit pkgs gitignore-nix-src; };
-                package = lib.mkDefault pre-commit;
                 tools = lib.mkDefault (builtinStuff.tools // tools);
                 rootSrc =
                   if isFlakes
