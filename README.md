@@ -503,6 +503,7 @@ use nix
 - [end-of-file-fixer](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/end_of_file_fixer.py)
 - [fix-byte-order-marker](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_byte_order_marker.py)
 - [headache](https://github.com/frama-c/headache)
+- [hledger-fmt](https://github.com/mondeja/hledger-fmt)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)

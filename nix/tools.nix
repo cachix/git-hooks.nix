@@ -40,6 +40,7 @@
 , hadolint
 , haskellPackages
 , hindent
+, hledger-fmt ? null
 , hlint
 , hpack
 , html-tidy
@@ -149,6 +150,7 @@ in
     gptcommit
     hadolint
     hindent
+    hledger-fmt
     hlint
     hpack
     html-tidy
