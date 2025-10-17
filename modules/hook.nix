@@ -57,7 +57,7 @@ in
     name = mkOption {
       type = types.str;
       default = name;
-      defaultText = lib.literalMD "the attribute name the hook submodule is bound to, same as `id`";
+      defaultText = lib.literalExpression "the attribute name the hook submodule is bound to, same as `id`";
       description =
         ''
           The name of the hook. Shown during hook execution.
