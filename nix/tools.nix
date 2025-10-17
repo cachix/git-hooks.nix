@@ -35,6 +35,7 @@
 , flake-checker ? null
 , fprettify
 , git-annex
+, gitleaks
 , gitlint
 , gptcommit ? null
 , hadolint
@@ -143,6 +144,7 @@ in
     elixir
     flake-checker
     fprettify
+    gitleaks
     gitlint
     go
     go-tools

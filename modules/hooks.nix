@@ -2929,6 +2929,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.fprettify;
         entry = "${hooks.fprettify.package}/bin/fprettify";
       };
+      gitleaks = {
+        name = "gitleaks";
+        description = "Find secrets with Gitleaks";
+        entry = lib.getExe tools.gitleaks;
+        args = [ "git" ];
+        always_run = true;
+        stages = [ "post-commit" ];
+      };
       gitlint = {
         name = "gitlint";
         description = "Linting for your git commit messages";
