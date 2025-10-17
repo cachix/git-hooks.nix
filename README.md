@@ -504,6 +504,7 @@ use nix
 - [fix-byte-order-marker](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_byte_order_marker.py)
 - [headache](https://github.com/frama-c/headache)
 - [hledger-fmt](https://github.com/mondeja/hledger-fmt)
+- [keep-sorted](https://github.com/google/keep-sorted)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)
