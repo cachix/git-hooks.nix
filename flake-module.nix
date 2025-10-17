@@ -49,6 +49,13 @@ in
                 The git-hooks.nix configuration.
               '';
             };
+            shellHook = mkOption {
+              type = types.str;
+              description = "A shell hook that sets up the git hooks in a development shell.";
+              default = cfg.settings.installationScript;
+              defaultText = lib.literalExpression "bash statements";
+              readOnly = true;
+            };
             installationScript = mkOption {
               type = types.str;
               description = "A bash fragment that sets up [pre-commit](https://pre-commit.com/).";
@@ -72,8 +79,8 @@ in
             hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
           };
           pre-commit.devShell = pkgs.mkShell {
-            nativeBuildInputs = cfg.settings.enabledPackages ++ [ cfg.settings.package ];
-            shellHook = cfg.installationScript;
+            inherit (cfg.settings) shellHook;
+            nativeBuildInputs = cfg.settings.enabledPackages;
           };
         };
       });

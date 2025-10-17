@@ -28,11 +28,9 @@ let
           }
         ] ++ imports;
     };
-  inherit (project.config) installationScript;
 
 in
 project.config.run // {
   inherit (project) config;
-  inherit (project.config) enabledPackages;
-  shellHook = installationScript;
+  inherit (project.config) enabledPackages shellHook;
 }

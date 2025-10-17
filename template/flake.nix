@@ -27,7 +27,7 @@
           # NOTE: You can also use `config.pre-commit.devShell`
           devShells.default = pkgs.mkShell {
             shellHook = ''
-              ${config.pre-commit.installationScript}
+              ${config.pre-commit.shellHook}
               echo 1>&2 "Welcome to the development shell!"
             '';
 

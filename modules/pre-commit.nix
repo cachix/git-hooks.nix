@@ -282,12 +282,24 @@ in
           defaultText = lib.literalExpression "<derivation>";
         };
 
+      shellHook =
+        mkOption {
+          type = types.str;
+          description =
+            ''
+              A shell hook that sets up the git hooks in a development shell.
+
+              Pass to `mkShell` as `shellHook` to use.
+            '';
+          readOnly = true;
+        };
+
       installationScript =
         mkOption {
           type = types.str;
           description =
             ''
-              A bash snippet that installs nix-pre-commit-hooks in the current directory
+              A bash snippet that installs the git hooks in the current repository.
             '';
           readOnly = true;
         };
@@ -438,6 +450,12 @@ in
       } // lib.optionalAttrs (cfg.default_stages != [ ]) {
         default_stages = cfg.default_stages;
       };
+
+    shellHook =
+      ''
+        ${config.installationScript}
+        export PATH=${config.package}/bin:$PATH
+      '';
 
     installationScript =
       ''
