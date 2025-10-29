@@ -960,7 +960,6 @@ in
       };
       nixfmt = mkOption {
         description = "Deprecated nixfmt hook. Use nixfmt-classic or nixfmt-rfc-style instead.";
-        visible = false;
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
