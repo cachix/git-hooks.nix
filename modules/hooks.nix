@@ -3404,48 +3404,54 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "\\.nix$";
         };
       nixfmt =
-        let
-          inherit (hooks) nixfmt;
-          exec = "${nixfmt.package}/bin/nixfmt";
-          arg = name:
-            let opt = nixfmt.settings.${name}; in
-            lib.optionalString (opt != null) "--${name}=${toString opt}";
-        in
         {
-          name = "nixfmt-deprecated";
-          description = "Deprecated Nix code prettifier. Use nixfmt-classic.";
+          name = "nixfmt";
+          description = "Official Nix code formatter.";
           package = tools.nixfmt;
-          entry = "${exec} ${arg "width"}";
+          entry =
+            let
+              nixfmt = hooks.nixfmt.package;
+              hasIndent = lib.versionAtLeast nixfmt.version "1.0.0";
+              cmdArgs = mkCmdArgs (with hooks.nixfmt.settings; [
+                [ (width != null) "--width=${builtins.toString width}" ]
+                [ (indent != null) "--indent=${builtins.toString indent}" ]
+              ]);
+            in
+            lib.throwIf (hooks.nixfmt.settings.indent != null && !hasIndent) "`indent` option in `nixfmt` hook can only be used with version >= 1.0.0"
+              "${nixfmt}/bin/nixfmt ${cmdArgs}";
           files = "\\.nix$";
         };
       nixfmt-classic =
-        let
-          nixfmt = hooks.nixfmt-classic;
-          exec = "${nixfmt.package}/bin/nixfmt";
-          arg = name:
-            let opt = nixfmt.settings.${name}; in
-            lib.optionalString (opt != null) "--${name}=${toString opt}";
-        in
         {
           name = "nixfmt-classic";
           description = "Nix code prettifier (classic).";
           package = tools.nixfmt-classic;
-          entry = "${exec} ${arg "width"}";
+          entry =
+            let
+              nixfmt-classic = hooks.nixfmt-classic.package;
+              cmdArgs = mkCmdArgs (with hooks.nixfmt-classic.settings; [
+                [ (width != null) "--width=${builtins.toString width}" ]
+              ]);
+            in
+            "${nixfmt-classic}/bin/nixfmt ${cmdArgs}";
           files = "\\.nix$";
         };
       nixfmt-rfc-style =
-        let
-          nixfmt = hooks.nixfmt-rfc-style;
-          exec = "${nixfmt.package}/bin/nixfmt";
-          arg = name:
-            let opt = nixfmt.settings.${name}; in
-            lib.optionalString (opt != null) "--${name}=${toString opt}";
-        in
         {
           name = "nixfmt-rfc-style";
           description = "Nix code prettifier (RFC 166 style).";
           package = tools.nixfmt-rfc-style;
-          entry = "${exec} ${arg "width"} ${arg "indent"}";
+          entry =
+            let
+              nixfmt-rfc-style = hooks.nixfmt-rfc-style.package;
+              hasIndent = lib.versionAtLeast nixfmt-rfc-style.version "1.0.0";
+              cmdArgs = mkCmdArgs (with hooks.nixfmt-rfc-style.settings; [
+                [ (width != null) "--width=${builtins.toString width}" ]
+                [ (indent != null) "--indent=${builtins.toString indent}" ]
+              ]);
+            in
+            lib.throwIf (hooks.nixfmt-rfc-style.settings.indent != null && !hasIndent) "`indent` option in `nixfmt-rfc-style` hook can only be used with version >= 1.0.0"
+              "${nixfmt-rfc-style}/bin/nixfmt ${cmdArgs}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
