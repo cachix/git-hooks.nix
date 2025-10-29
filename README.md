@@ -13,6 +13,8 @@
 
 - Run hooks **as part of development** and **during CI**
 
+- Support for alternative `pre-commit` implementations, like [prek](https://github.com/j178/prek).
+
 ## Getting started
 
 ### devenv.sh
@@ -22,24 +24,38 @@
 
 {
   git-hooks.hooks = {
-    # lint shell scripts
-    shellcheck.enable = true;
-    # execute example shell from Markdown files
-    mdsh.enable = true;
-    # format Python code
+    # Format Nix code
+    nixfmt.enable = true;
+
+    # Format Python code
     black.enable = true;
 
-    # override a package with a different version
+    # Lint shell scripts
+    shellcheck.enable = true;
+
+    # Execute shell examples in Markdown files
+    mdsh.enable = true;
+
+    # Override a package with a different version
     ormolu.enable = true;
     ormolu.package = pkgs.haskellPackages.ormolu;
 
-    # some hooks have more than one package, like clippy:
+    # Some hooks have more than one package, like clippy:
     clippy.enable = true;
     clippy.packageOverrides.cargo = pkgs.cargo;
     clippy.packageOverrides.clippy = pkgs.clippy;
-    # some hooks provide settings
+    # Some hooks provide settings
     clippy.settings.allFeatures = true;
+
+    # Define your own custom hooks
+    my-custom-hook = {
+      name = "My own hook";
+      exec = "on-pre-commit.sh";
+    };
   };
+
+  # Use alternative pre-commit implementations
+  git-hooks.package = pkgs.prek;
 }
 ```
 
@@ -77,7 +93,7 @@ Given the following `flake.nix` example:
           config = self.checks.${system}.pre-commit-check.config;
           inherit (config) package configFile;
           script = ''
-            ${package}/bin/pre-commit run --all-files --config ${configFile}
+            ${pkgs.lib.getExe package} run --all-files --config ${configFile}
           '';
         in
         pkgs.writeShellScriptBin "pre-commit-run" script
@@ -89,7 +105,7 @@ Given the following `flake.nix` example:
         pre-commit-check = inputs.git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
-            nixfmt-rfc-style.enable = true;
+            nixfmt.enable = true;
           };
         };
       });
@@ -359,6 +375,7 @@ use nix
 
 ### Markdown
 
+- [comrak](https://github.com/kivikakk/comrak)
 - [markdownlint](https://github.com/DavidAnson/markdownlint)
 - [mdformat](https://github.com/hukkin/mdformat)
 - [mdl](https://github.com/markdownlint/markdownlint/)
@@ -370,6 +387,7 @@ use nix
 - [deadnix](https://github.com/astro/deadnix)
 - [flake-checker](https://github.com/DeterminateSystems/flake-checker)
 - [nil](https://github.com/oxalica/nil)
+- [nixfmt](https://github.com/NixOS/nixfmt/) (supports `nixfmt` >=v1.0)
 - [nixfmt-classic](https://github.com/NixOS/nixfmt/tree/v0.6.0)
 - [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
@@ -474,6 +492,7 @@ use nix
 
 - [actionlint](https://github.com/rhysd/actionlint)
 - [action-validator](https://github.com/mpalmer/action-validator)
+- [chart-testing](https://github.com/helm/chart-testing)
 - [check-added-large-files](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_added_large_files.py)
 - [check-case-conflicts](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_case_conflict.py)
 - [check-executables-have-shebangs](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_executables_have_shebangs.py)
@@ -489,6 +508,8 @@ use nix
 - [end-of-file-fixer](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/end_of_file_fixer.py)
 - [fix-byte-order-marker](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/fix_byte_order_marker.py)
 - [headache](https://github.com/frama-c/headache)
+- [hledger-fmt](https://github.com/mondeja/hledger-fmt)
+- [keep-sorted](https://github.com/google/keep-sorted)
 - [mixed-line-endings](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/mixed_line_ending.py)
 - [mkdocs-linkcheck](https://github.com/byrnereese/linkchecker-mkdocs)
 - [openapi-spec-validator](https://github.com/python-openapi/openapi-spec-validator)

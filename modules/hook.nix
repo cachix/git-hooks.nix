@@ -57,7 +57,7 @@ in
     name = mkOption {
       type = types.str;
       default = name;
-      defaultText = lib.literalMD "the attribute name the hook submodule is bound to, same as `id`";
+      defaultText = lib.literalExpression "the attribute name the hook submodule is bound to, same as `id`";
       description =
         ''
           The name of the hook. Shown during hook execution.
@@ -186,7 +186,7 @@ in
         Confines the hook to run at a particular stage.
       '';
       default = default_stages;
-      defaultText = (lib.literalExpression or lib.literalExample) "default_stages";
+      defaultText = lib.literalExpression "default_stages";
     };
 
     verbose = mkOption {

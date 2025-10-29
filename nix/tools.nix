@@ -11,6 +11,7 @@
 , cabal2nix
 , callPackage
 , cargo
+, chart-testing
 , checkmake
 , circleci-cli
 , llvmPackages_latest
@@ -18,6 +19,7 @@
 , cljfmt
 , cmake-format
 , commitizen
+, comrak
 , conform
 , convco
 , crystal
@@ -38,9 +40,11 @@
 , hadolint
 , haskellPackages
 , hindent
+, hledger-fmt ? null
 , hlint
 , hpack
 , html-tidy
+, keep-sorted
 , luaPackages
 , lua-language-server
 , lychee
@@ -120,11 +124,13 @@ in
     cabal-fmt
     cabal-gild
     cargo
+    chart-testing
     checkmake
     circleci-cli
     clippy
     cljfmt
     cmake-format
+    comrak
     conform
     convco
     crystal
@@ -145,9 +151,11 @@ in
     gptcommit
     hadolint
     hindent
+    hledger-fmt
     hlint
     hpack
     html-tidy
+    keep-sorted
     lychee
     mdformat
     mdl
@@ -229,8 +237,16 @@ in
   # Disable tests as these take way to long on our infra.
   julia-bin = julia-bin.overrideAttrs (_: _: { doInstallCheck = false; });
 
-  # nixfmt was renamed to nixfmt-classic in 24.05.
-  # nixfmt may be replaced by nixfmt-rfc-style in the future.
-  nixfmt = if nixfmt-classic == null then nixfmt else nixfmt-classic;
+  # nixfmt 1.0 is now the official Nix formatter as of 25.11.
+  #
+  # In 24.05, the `nixfmt` package was deprecated and replaced with two separate packages:
+  #   - nixfmt-classic
+  #   - nixfmt-rfc-style
+  #
+  # Remove this block in 26.05
+  nixfmt =
+    if lib.versionOlder nixfmt.version "1.0" && nixfmt-classic != null
+    then nixfmt-classic
+    else nixfmt;
   inherit nixfmt-classic nixfmt-rfc-style;
 }
