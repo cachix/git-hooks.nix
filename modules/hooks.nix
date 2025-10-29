@@ -965,8 +965,14 @@ in
           options.settings = {
             width =
               mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
+                type = with types; nullOr int;
+                description = "Maximum width in characters.";
+                default = null;
+              };
+            indent =
+              mkOption {
+                type = with types; nullOr int;
+                description = "Number of spaces to use for indentation.";
                 default = null;
               };
           };
