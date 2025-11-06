@@ -69,7 +69,7 @@
 , proselint
 , python3Packages
 , pyright ? nodePackages.pyright
-, php82Packages
+, phpPackages
 , ripsecrets ? null
 , reuse
 , ruff ? null
@@ -203,14 +203,14 @@ in
   inherit (nodePackages) eslint markdownlint-cli prettier cspell;
   inherit (ocamlPackages) ocp-indent;
   inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy openapi-spec-validator pre-commit-hooks pylint pyupgrade;
-  inherit (php82Packages) php-cs-fixer psalm;
+  inherit (phpPackages) php-cs-fixer psalm;
   # FIXME: workaround build failure
-  phpstan = php82Packages.phpstan.overrideAttrs (old: {
+  phpstan = phpPackages.phpstan.overrideAttrs (old: {
     composerStrictValidation = false;
   });
   # these two are for backwards compatibility
-  phpcbf = php82Packages.php-codesniffer or php82Packages.phpcbf;
-  phpcs = php82Packages.php-codesniffer or php82Packages.phpcs;
+  phpcbf = phpPackages.php-codesniffer or phpPackages.phpcbf;
+  phpcs = phpPackages.php-codesniffer or phpPackages.phpcs;
   lua-language-server = lua-language-server;
   purs-tidy = nodePackages.purs-tidy or null;
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
