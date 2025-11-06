@@ -2,6 +2,7 @@
 , nixpkgs
 , gitignore-nix-src
 , isFlakes ? false
+,
 }:
 let
   overlay =
@@ -9,12 +10,22 @@ let
     let
       inherit (pkgs) lib;
       tools = import ./call-tools.nix pkgs;
-      run = pkgs.callPackage ./run.nix { inherit pkgs tools isFlakes gitignore-nix-src; };
+      run = pkgs.callPackage ./run.nix {
+        inherit
+          pkgs
+          tools
+          isFlakes
+          gitignore-nix-src
+          ;
+      };
+
+      # Filter out any broken or missing packages from our tests.
+      filterBrokenPackages = n: package: package != null && !(package.meta.broken or false);
     in
     {
       inherit tools run;
       # Flake style attributes
-      packages = (lib.filterAttrs (_name: value: value != null) tools) // {
+      packages = (lib.filterAttrs filterBrokenPackages tools) // {
         inherit (pkgs) pre-commit;
       };
       checks = self.packages // {
@@ -39,23 +50,31 @@ let
               specialArgs = { inherit pkgs; };
             };
             allHooks = config.config.hooks;
+
+            getEntry = n: v: v.entry;
+            getPackage =
+              f: n: h:
+              f n h.package;
+
             allEntryPoints = lib.pipe allHooks [
-              (lib.filterAttrs (_name: value: value.package != null))
-              (lib.mapAttrsToList (_: value: value.entry))
+              (lib.filterAttrs (getPackage filterBrokenPackages))
+              (lib.mapAttrsToList getEntry)
             ];
           in
           pkgs.runCommand "all-tools-eval"
             {
               inherit allEntryPoints;
-            } ''
-            touch $out
-          '';
+            }
+            ''
+              touch $out
+            '';
         doc-check =
           let
             # We might add that it keeps rendering fast and robust,
             # and we want to teach `defaultText` which is more broadly applicable,
             # but the message is long enough.
-            failPkgAttr = name: _v:
+            failPkgAttr =
+              name: _v:
               throw ''
                 While generating documentation, we found that `pkgs` was used. To avoid rendering store paths in the documentation, this is forbidden.
 
@@ -78,20 +97,21 @@ let
                       _type = "pkgs";
                       inherit lib;
                       formats = lib.mapAttrs
-                        (formatName: formatFn:
-                          formatArgs:
-                          let
-                            result = formatFn formatArgs;
-                            stubs =
-                              lib.mapAttrs
-                                (name: _:
-                                  throw "The attribute `(pkgs.formats.${lib.strings.escapeNixIdentifier formatName} x).${lib.strings.escapeNixIdentifier name}` is not supported during documentation generation. Please check with `--show-trace` to see which option leads to this `${lib.strings.escapeNixIdentifier name}` reference. Often it can be cut short with a `defaultText` argument to `lib.mkOption`, or by escaping an option `example` using `lib.literalExpression`."
+                        (
+                          formatName: formatFn: formatArgs:
+                            let
+                              result = formatFn formatArgs;
+                              stubs = lib.mapAttrs
+                                (
+                                  name: _:
+                                    throw "The attribute `(pkgs.formats.${lib.strings.escapeNixIdentifier formatName} x).${lib.strings.escapeNixIdentifier name}` is not supported during documentation generation. Please check with `--show-trace` to see which option leads to this `${lib.strings.escapeNixIdentifier name}` reference. Often it can be cut short with a `defaultText` argument to `lib.mkOption`, or by escaping an option `example` using `lib.literalExpression`."
                                 )
                                 result;
-                          in
-                          stubs // {
-                            inherit (result) type;
-                          }
+                            in
+                            stubs
+                              // {
+                              inherit (result) type;
+                            }
                         )
                         pkgs.formats;
                     };
@@ -110,6 +130,8 @@ in
 import nixpkgs {
   overlays = [ overlay ];
   # broken is needed for hindent to build
-  config = { allowBroken = true; };
+  config = {
+    allowBroken = true;
+  };
   inherit system;
 }
