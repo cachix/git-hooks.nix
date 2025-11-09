@@ -52,7 +52,7 @@ in
             shellHook = mkOption {
               type = types.str;
               description = "A shell hook that installs up the git hooks in a development shell.";
-              default = cfg.settings.installationScript;
+              default = cfg.settings.shellHook;
               defaultText = lib.literalExpression "bash statements";
               readOnly = true;
             };
