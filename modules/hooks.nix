@@ -972,6 +972,12 @@ in
           imports = [ hookModule ];
         };
       };
+      nixf-diagnose = mkOption {
+        description = "nixf-diagnose hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+        };
+      };
       nixfmt = mkOption {
         description = "nixfmt hook";
         type = types.submodule {
@@ -3457,6 +3463,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               '';
             in
             builtins.toString script;
+          files = "\\.nix$";
+        };
+      nixf-diagnose =
+        {
+          name = "nixf-diagnose";
+          description = "wrapper for nixf-tidy.";
+          package = tools.nixf-diagnose;
+          entry = "${hooks.nixf-diagnose.package}/bin/nixf-diagnose";
           files = "\\.nix$";
         };
       nixfmt =
