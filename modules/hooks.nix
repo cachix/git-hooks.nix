@@ -3467,6 +3467,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             builtins.toString script;
           files = "\\.nix$";
         };
+      nix-fmt =
+        {
+          name = "nix-fmt";
+          description = "Format Nix files using the formatter specified in your flake.";
+          package = tools.nix;
+          entry = "${hooks.nix-fmt.package}/bin/nix fmt";
+        };
       nixfmt =
         {
           name = "nixfmt";

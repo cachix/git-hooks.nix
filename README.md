@@ -387,6 +387,7 @@ use nix
 - [deadnix](https://github.com/astro/deadnix)
 - [flake-checker](https://github.com/DeterminateSystems/flake-checker)
 - [nil](https://github.com/oxalica/nil)
+- [nix-fmt](https://nix.dev/manual/nix/latest/command-ref/new-cli/nix3-fmt)
 - [nixfmt](https://github.com/NixOS/nixfmt/) (supports `nixfmt` >=v1.0)
 - [nixfmt-classic](https://github.com/NixOS/nixfmt/tree/v0.6.0)
 - [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)

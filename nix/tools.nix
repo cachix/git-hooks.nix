@@ -54,6 +54,7 @@
 , mdsh
 , nbstripout
 , nil
+, nix
 , nixfmt
 , nixfmt-classic ? null
 , nixfmt-rfc-style ? null
@@ -162,6 +163,7 @@ in
     mdsh
     nbstripout
     nil
+    nix
     nixpkgs-fmt
     opentofu
     ormolu
