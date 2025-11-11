@@ -974,14 +974,19 @@ in
       };
       nixfmt = mkOption {
         description = "nixfmt hook";
-        visible = false;
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
             width =
               mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
+                type = with types; nullOr int;
+                description = "Maximum width in characters.";
+                default = null;
+              };
+            indent =
+              mkOption {
+                type = with types; nullOr int;
+                description = "Number of spaces to use for indentation.";
                 default = null;
               };
           };
@@ -1008,8 +1013,14 @@ in
           options.settings = {
             width =
               mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
+                type = with types; nullOr int;
+                description = "Maximum width in characters.";
+                default = null;
+              };
+            indent =
+              mkOption {
+                type = with types; nullOr int;
+                description = "Number of spaces to use for indentation.";
                 default = null;
               };
           };
@@ -3461,7 +3472,17 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "nixfmt";
           description = "Official Nix code formatter.";
           package = tools.nixfmt;
-          entry = "${hooks.nixfmt.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt.settings.width != null) "--width=${toString hooks.nixfmt.settings.width}"}";
+          entry =
+            let
+              nixfmt = hooks.nixfmt.package;
+              hasIndent = lib.versionAtLeast nixfmt.version "1.0.0";
+              cmdArgs = mkCmdArgs (with hooks.nixfmt.settings; [
+                [ (width != null) "--width=${builtins.toString width}" ]
+                [ (indent != null) "--indent=${builtins.toString indent}" ]
+              ]);
+            in
+            lib.throwIf (hooks.nixfmt.settings.indent != null && !hasIndent) "`indent` option in `nixfmt` hook can only be used with version >= 1.0.0"
+              "${nixfmt}/bin/nixfmt ${cmdArgs}";
           files = "\\.nix$";
         };
       nixfmt-classic =
@@ -3469,7 +3490,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "nixfmt-classic";
           description = "Nix code prettifier (classic).";
           package = tools.nixfmt-classic;
-          entry = "${hooks.nixfmt-classic.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-classic.settings.width != null) "--width=${toString hooks.nixfmt-classic.settings.width}"}";
+          entry =
+            let
+              nixfmt-classic = hooks.nixfmt-classic.package;
+              cmdArgs = mkCmdArgs (with hooks.nixfmt-classic.settings; [
+                [ (width != null) "--width=${builtins.toString width}" ]
+              ]);
+            in
+            "${nixfmt-classic}/bin/nixfmt ${cmdArgs}";
           files = "\\.nix$";
         };
       nixfmt-rfc-style =
@@ -3477,7 +3505,17 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "nixfmt-rfc-style";
           description = "Nix code prettifier (RFC 166 style).";
           package = tools.nixfmt-rfc-style;
-          entry = "${hooks.nixfmt-rfc-style.package}/bin/nixfmt ${lib.optionalString (hooks.nixfmt-rfc-style.settings.width != null) "--width=${toString hooks.nixfmt-rfc-style.settings.width}"}";
+          entry =
+            let
+              nixfmt-rfc-style = hooks.nixfmt-rfc-style.package;
+              hasIndent = lib.versionAtLeast nixfmt-rfc-style.version "1.0.0";
+              cmdArgs = mkCmdArgs (with hooks.nixfmt-rfc-style.settings; [
+                [ (width != null) "--width=${builtins.toString width}" ]
+                [ (indent != null) "--indent=${builtins.toString indent}" ]
+              ]);
+            in
+            lib.throwIf (hooks.nixfmt-rfc-style.settings.indent != null && !hasIndent) "`indent` option in `nixfmt-rfc-style` hook can only be used with version >= 1.0.0"
+              "${nixfmt-rfc-style}/bin/nixfmt ${cmdArgs}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
