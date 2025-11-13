@@ -478,7 +478,6 @@ use nix
 
 ### Typst
 
-- [typstfmt](https://github.com/astrale-sharp/typstfmt)
 - [typstyle](https://github.com/Enter-tainer/typstyle)
 
 ### YAML
