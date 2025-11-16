@@ -63,6 +63,7 @@
 , opam
 , opentofu
 , ormolu
+, oxlint
 , pkgsBuildBuild
 , poetry
 , pre-commit-hook-ensure-sops ? null
@@ -165,6 +166,7 @@ in
     nixpkgs-fmt
     opentofu
     ormolu
+    oxlint
     pre-commit-hook-ensure-sops
     poetry
     proselint
