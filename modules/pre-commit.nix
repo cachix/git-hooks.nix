@@ -3,7 +3,7 @@ let
   inherit (lib)
     boolToString
     concatStringsSep
-    compare
+    elem
     filterAttrs
     mapAttrsToList
     mkOption
@@ -100,7 +100,7 @@ let
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
         git commit -m "init" -q
-        if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
+        if [[ '${toString (elem "manual" cfg.installStages)}' -eq '1' ]]
         then
           echo "Running: $ pre-commit run --hook-stage manual --all-files"
           ${lib.getExe cfg.package} run -c ${cfg.configPath} --hook-stage manual --all-files
