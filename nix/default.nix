@@ -19,8 +19,14 @@ let
           ;
       };
 
+      removeInvalidPackage = removeInvalidPackageWith { };
+      removeInvalidPackageQuiet = removeInvalidPackageWith { warn = false; };
+
       # Filter out broken and placeholder packages.
-      filterPackageForCheck =
+      removeInvalidPackageWith =
+        { warn ? true
+        ,
+        }:
         name: package:
         let
           isPlaceholder = package.meta.isPlaceholder or false;
@@ -46,19 +52,18 @@ let
               ""; # Not used
 
         in
-        lib.warnIf (!result) message result;
+        if warn then lib.warnIfNot result message result else result;
     in
     {
       inherit tools run;
 
       # Flake-style attributes
-      # Do not remove: these are exposed in the flake.
-      # Each should also be a valid derivation.
-      packages = tools // {
+      # Each should strictly be a valid derivation that evaluates.
+      packages = (lib.filterAttrs removeInvalidPackageQuiet tools) // {
         inherit (pkgs) pre-commit;
       };
 
-      checks = (lib.filterAttrs filterPackageForCheck tools) // {
+      checks = (lib.filterAttrs removeInvalidPackage tools) // {
         # A pre-commit-check for nix-pre-commit itself
         pre-commit-check = run {
           src = ../.;
@@ -87,7 +92,7 @@ let
               f n h.package;
 
             allEntryPoints = lib.pipe allHooks [
-              (lib.filterAttrs (getPackage filterPackageForCheck))
+              (lib.filterAttrs (getPackage (removeInvalidPackageQuiet)))
               (lib.mapAttrsToList getEntry)
             ];
           in

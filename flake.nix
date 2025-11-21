@@ -40,11 +40,16 @@
         '';
       };
 
-      legacyPackages = self.packages;
-
       # The set of tools exposed by git-hooks.
-      # Each entry is guaranteed to be a derivation, but broken packages are not filtered out.
-      # `nix flake check` will likely not work.
+      # We use legacyPackages because not all tools are derivations that evaluate.
+      legacyPackages = forAllSystems ({ pkgs, exposed, ... }: exposed.tools // {
+        pre-commit = pkgs.pre-commit;
+      });
+
+      # WARN: use `legacyPackages` instead to get error messages for deprecated packages
+      #
+      # Each entry is guaranteed to be a derivation that evaluates.
+      # TODO: this should be deprecated as it exposes a subset of nixpkgs, which is incompatbile with the packages output.
       packages = forAllSystems ({ exposed, ... }: exposed.packages // {
         default = exposed.packages.pre-commit;
       });
@@ -59,6 +64,7 @@
 
       lib = forAllSystems ({ exposed, ... }: { inherit (exposed) run; });
 
+      # TODO: remove and expose a `lib` function is needed
       exposed = forAllSystems ({ exposed, ... }: exposed);
     };
 }
