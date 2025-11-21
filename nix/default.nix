@@ -19,16 +19,46 @@ let
           ;
       };
 
-      # Filter out any broken or missing packages from our tests.
-      filterBrokenPackages = n: package: package != null && !(package.meta.broken or false);
+      # Filter out broken and placeholder packages.
+      filterPackageForCheck =
+        name: package:
+        let
+          isPlaceholder = package.meta.isPlaceholder or false;
+          isBroken = package.meta.broken or false;
+
+          check = builtins.tryEval (!(isPlaceholder || isBroken));
+          result = check.success && check.value;
+
+          message =
+            if !check.success then
+              ''
+                Skipping ${name} because it failed to evaluate.
+              ''
+            else if !check.value && isPlaceholder then
+              ''
+                Skipping ${name} because it is missing from this nixpkgs revision.
+              ''
+            else if !check.value && isBroken then
+              ''
+                Skipping ${name} because it is marked as broken.
+              ''
+            else
+              ""; # Not used
+
+        in
+        lib.warnIf (!result) message result;
     in
     {
       inherit tools run;
-      # Flake style attributes
-      packages = (lib.filterAttrs filterBrokenPackages tools) // {
+
+      # Flake-style attributes
+      # Do not remove: these are exposed in the flake.
+      # Each should also be a valid derivation.
+      packages = tools // {
         inherit (pkgs) pre-commit;
       };
-      checks = self.packages // {
+
+      checks = (lib.filterAttrs filterPackageForCheck tools) // {
         # A pre-commit-check for nix-pre-commit itself
         pre-commit-check = run {
           src = ../.;
@@ -57,7 +87,7 @@ let
               f n h.package;
 
             allEntryPoints = lib.pipe allHooks [
-              (lib.filterAttrs (getPackage filterBrokenPackages))
+              (lib.filterAttrs (getPackage filterPackageForCheck))
               (lib.mapAttrsToList getEntry)
             ];
           in

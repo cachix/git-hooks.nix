@@ -1,13 +1,11 @@
 { stdenv
 , lib
-
+, placeholder
 , actionlint
 , action-validator
 , alejandra
 , ansible-lint
 , biome
-, cabal-fmt
-, cabal-gild
 , cabal2nix
 , callPackage
 , cargo
@@ -32,15 +30,15 @@
 , editorconfig-checker
 , elixir
 , elmPackages
-, flake-checker ? null
+, flake-checker ? placeholder "flake-checker"
 , fprettify
 , git-annex
 , gitlint
-, gptcommit ? null
+, gptcommit ? placeholder "gptcommit"
 , hadolint
+, haskell
 , haskellPackages
-, hindent
-, hledger-fmt ? null
+, hledger-fmt ? placeholder "hledger-fmt"
 , hlint
 , hpack
 , html-tidy
@@ -55,8 +53,8 @@
 , nbstripout
 , nil
 , nixfmt
-, nixfmt-classic ? null
-, nixfmt-rfc-style ? null
+, nixfmt-classic ? placeholder "nixfmt-classic"
+, nixfmt-rfc-style ? placeholder "nixfmt-rfc-style"
 , nixpkgs-fmt
 , nodePackages
 , ocamlPackages
@@ -65,14 +63,14 @@
 , ormolu
 , pkgsBuildBuild
 , poetry
-, pre-commit-hook-ensure-sops ? null
+, pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops"
 , proselint
 , python3Packages
 , pyright ? nodePackages.pyright
 , phpPackages
-, ripsecrets ? null
+, ripsecrets ? placeholder "ripsecrets"
 , reuse
-, ruff ? null
+, ruff ? placeholder "ruff"
 , rustfmt
 , selene
 , shellcheck
@@ -85,11 +83,13 @@
 , tagref
 , taplo
 , texlive
-, topiary ? null ## Added in nixpkgs on Dec 2, 2022
+, # Added in nixpkgs on Dec 2, 2022
+  topiary ? placeholder "topiary"
 , treefmt
 , trufflehog
 , typos
-, typstyle ? null ## Add in nixpkgs added on commit 800ca60
+, # Added in nixpkgs in commit 800ca60
+  typstyle ? placeholder "typstyle"
 , woodpecker-cli
 , zprint
 , yamlfmt
@@ -98,12 +98,12 @@
 , go-tools
 , golangci-lint
 , golines
-, revive ? null
+, revive ? placeholder "revive"
 , uv
 , vale
 , zizmor
+,
 }:
-
 
 let
   tex = texlive.combine {
@@ -120,8 +120,6 @@ in
     beautysh
     biome
     cabal2nix
-    cabal-fmt
-    cabal-gild
     cargo
     chart-testing
     checkmake
@@ -149,7 +147,6 @@ in
     golines
     gptcommit
     hadolint
-    hindent
     hledger-fmt
     hlint
     hpack
@@ -198,9 +195,26 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages) eslint markdownlint-cli prettier cspell;
+  inherit (nodePackages)
+    eslint
+    markdownlint-cli
+    prettier
+    cspell
+    ;
   inherit (ocamlPackages) ocp-indent;
-  inherit (python3Packages) autoflake black flake8 flynt isort mkdocs-linkcheck mypy openapi-spec-validator pre-commit-hooks pylint pyupgrade;
+  inherit (python3Packages)
+    autoflake
+    black
+    flake8
+    flynt
+    isort
+    mkdocs-linkcheck
+    mypy
+    openapi-spec-validator
+    pre-commit-hooks
+    pylint
+    pyupgrade
+    ;
   inherit (phpPackages) php-cs-fixer psalm;
   # FIXME: workaround build failure
   phpstan = phpPackages.phpstan.overrideAttrs (old: {
@@ -210,30 +224,48 @@ in
   phpcbf = phpPackages.php-codesniffer or phpPackages.phpcbf;
   phpcs = phpPackages.php-codesniffer or phpPackages.phpcs;
   lua-language-server = lua-language-server;
-  purs-tidy = nodePackages.purs-tidy or null;
+  purs-tidy = nodePackages.purs-tidy or (placeholder "purs-tidy");
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
   purty = callPackage ./purty { purty = nodePackages.purty; };
   terraform-validate = callPackage ./terraform-validate { };
   tflint = callPackage ./tflint { };
-  dune-build-opam-files = callPackage ./dune-build-opam-files { dune = dune_3; inherit (pkgsBuildBuild) ocaml; };
-  dune-fmt = callPackage ./dune-fmt { dune = dune_3; inherit (pkgsBuildBuild) ocaml; };
+  dune-build-opam-files = callPackage ./dune-build-opam-files {
+    dune = dune_3;
+    inherit (pkgsBuildBuild) ocaml;
+  };
+  dune-fmt = callPackage ./dune-fmt {
+    dune = dune_3;
+    inherit (pkgsBuildBuild) ocaml;
+  };
   latexindent = tex;
   lacheck = texlive.combine {
     inherit (texlive) lacheck scheme-basic;
   };
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
-  bats = if bats ? withLibraries then (bats.withLibraries (p: [ p.bats-support p.bats-assert p.bats-file ])) else bats;
-  git-annex = if stdenv.isDarwin then null else git-annex;
+  bats =
+    if bats ? withLibraries then
+      (bats.withLibraries (p: [
+        p.bats-support
+        p.bats-assert
+        p.bats-file
+      ]))
+    else
+      bats;
+  git-annex = if stdenv.isDarwin then (placeholder "git-annex") else git-annex;
   # Note: Only broken in stable nixpkgs, works fine on latest master.
-  opam = if stdenv.isDarwin then null else opam;
+  opam = if stdenv.isDarwin then (placeholder "opam") else opam;
 
   headache = callPackage ./headache { };
 
   # Disable tests as these take way to long on our infra.
   julia-bin = julia-bin.overrideAttrs (_: _: { doInstallCheck = false; });
+
+  cabal-fmt = (haskell.lib.enableSeparateBinOutput haskellPackages.cabal-fmt).bin;
+  cabal-gild = (haskell.lib.enableSeparateBinOutput haskellPackages.cabal-gild).bin;
+  hindent = haskell.lib.enableSeparateBinOutput haskellPackages.hindent;
 
   # nixfmt 1.0 is now the official Nix formatter as of 25.11.
   #
@@ -243,8 +275,9 @@ in
   #
   # Remove this block in 26.05
   nixfmt =
-    if lib.versionOlder nixfmt.version "1.0" && nixfmt-classic != null
-    then nixfmt-classic
-    else nixfmt;
+    if lib.versionOlder nixfmt.version "1.0" && (nixfmt-classic.meta.isPlaceholder or false) then
+      nixfmt-classic
+    else
+      nixfmt;
   inherit nixfmt-classic nixfmt-rfc-style;
 }

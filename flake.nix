@@ -40,6 +40,11 @@
         '';
       };
 
+      legacyPackages = self.packages;
+
+      # The set of tools exposed by git-hooks.
+      # Each entry is guaranteed to be a derivation, but broken packages are not filtered out.
+      # `nix flake check` will likely not work.
       packages = forAllSystems ({ exposed, ... }: exposed.packages // {
         default = exposed.packages.pre-commit;
       });
@@ -50,7 +55,7 @@
         };
       });
 
-      checks = forAllSystems ({ exposed, ... }: lib.filterAttrs (k: v: v != null) exposed.checks);
+      checks = forAllSystems ({ exposed, ... }: exposed.checks);
 
       lib = forAllSystems ({ exposed, ... }: { inherit (exposed) run; });
 
