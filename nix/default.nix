@@ -19,16 +19,51 @@ let
           ;
       };
 
-      # Filter out any broken or missing packages from our tests.
-      filterBrokenPackages = n: package: package != null && !(package.meta.broken or false);
+      removeInvalidPackage = removeInvalidPackageWith { };
+      removeInvalidPackageQuiet = removeInvalidPackageWith { warn = false; };
+
+      # Filter out broken and placeholder packages.
+      removeInvalidPackageWith =
+        { warn ? true
+        ,
+        }:
+        name: package:
+        let
+          isPlaceholder = package.meta.isPlaceholder or false;
+          isBroken = package.meta.broken or false;
+
+          check = builtins.tryEval (!(isPlaceholder || isBroken));
+          result = check.success && check.value;
+
+          message =
+            if !check.success then
+              ''
+                Skipping ${name} because it failed to evaluate.
+              ''
+            else if !check.value && isPlaceholder then
+              ''
+                Skipping ${name} because it is missing from this nixpkgs revision.
+              ''
+            else if !check.value && isBroken then
+              ''
+                Skipping ${name} because it is marked as broken.
+              ''
+            else
+              ""; # Not used
+
+        in
+        if warn then lib.warnIfNot result message result else result;
     in
     {
       inherit tools run;
-      # Flake style attributes
-      packages = (lib.filterAttrs filterBrokenPackages tools) // {
+
+      # Flake-style attributes
+      # Each should strictly be a valid derivation that evaluates.
+      packages = (lib.filterAttrs removeInvalidPackageQuiet tools) // {
         inherit (pkgs) pre-commit;
       };
-      checks = self.packages // {
+
+      checks = (lib.filterAttrs removeInvalidPackage tools) // {
         # A pre-commit-check for nix-pre-commit itself
         pre-commit-check = run {
           src = ../.;
@@ -57,7 +92,7 @@ let
               f n h.package;
 
             allEntryPoints = lib.pipe allHooks [
-              (lib.filterAttrs (getPackage filterBrokenPackages))
+              (lib.filterAttrs (getPackage (removeInvalidPackageQuiet)))
               (lib.mapAttrsToList getEntry)
             ];
           in
