@@ -4253,13 +4253,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             (lib.genAttrs hooks.typos.settings.ignored-words lib.id);
           types = [ "text" ];
         };
-      typstfmt = {
-        name = "typstfmt";
-        description = "format typst";
-        package = tools.typstfmt;
-        entry = "${hooks.typstfmt.package}/bin/typstfmt";
-        files = "\\.typ$";
-      };
       typstyle = {
         name = "typstyle";
         description = "Beautiful and reliable typst code formatter";
