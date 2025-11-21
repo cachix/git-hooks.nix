@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "An internal test flake for git-hooks.nix";
 
   inputs = {
     git-hooks.url = "path:..";
