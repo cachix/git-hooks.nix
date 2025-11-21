@@ -20,11 +20,15 @@
         "x86_64-darwin"
         "x86_64-linux"
       ];
-      depsFor = lib.genAttrs defaultSystems (system: {
-        pkgs = nixpkgs.legacyPackages.${system};
-        exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
-      });
-      forAllSystems = fn: lib.genAttrs defaultSystems (system: fn depsFor.${system});
+      genDepsFor = fn: system:
+        let
+          args = {
+            pkgs = nixpkgs.legacyPackages.${system};
+            exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
+          };
+        in
+        fn args;
+      forAllSystems = fn: lib.genAttrs defaultSystems (genDepsFor fn);
     in
     {
       flakeModule = ./flake-module.nix;
