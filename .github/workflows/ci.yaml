@@ -22,7 +22,8 @@ jobs:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: rm -rf /opt&
-    - run: nix-build --keep-going
+    - name: Evaluate flake-compat default.nix
+      run: nix-instantiate --eval --attr run
 
   tests-flakes:
     strategy:
