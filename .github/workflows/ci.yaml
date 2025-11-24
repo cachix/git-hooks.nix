@@ -23,7 +23,7 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: rm -rf /opt&
     - name: Evaluate flake-compat default.nix
-      run: nix-instantiate --eval --attr run
+      run: nix eval --show-trace --file ./default.nix run
 
   tests-flakes:
     strategy:
