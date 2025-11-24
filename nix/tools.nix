@@ -89,7 +89,6 @@
 , treefmt
 , trufflehog
 , typos
-, typstfmt
 , typstyle ? null ## Add in nixpkgs added on commit 800ca60
 , woodpecker-cli
 , zprint
@@ -186,7 +185,6 @@ in
     treefmt
     trufflehog
     typos
-    typstfmt
     typstyle
     uv
     vale
