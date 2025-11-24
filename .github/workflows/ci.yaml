@@ -22,7 +22,8 @@ jobs:
         name: pre-commit-hooks
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: rm -rf /opt&
-    - run: nix-build --keep-going
+    - name: Evaluate flake-compat default.nix
+      run: nix eval --show-trace --file ./default.nix run
 
   tests-flakes:
     strategy:
@@ -39,7 +40,8 @@ jobs:
     - run: rm -rf /opt&
 
     - name: Check nixpkgs-unstable
-      run: nix flake check -L --show-trace
+      working-directory: ./dev
+      run: nix flake check -L --show-trace --no-write-lock-file
 
     - run: nix eval .#lib.x86_64-linux.run --show-trace
 
@@ -58,4 +60,5 @@ jobs:
     - run: rm -rf /opt&
 
     - name: Check nixpkgs-stable
+      working-directory: ./dev
       run: nix flake check -L --show-trace --override-input nixpkgs github:NixOS/nixpkgs/nixos-25.05

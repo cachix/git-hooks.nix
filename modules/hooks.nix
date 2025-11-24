@@ -2618,7 +2618,7 @@ in
             # need version >= 0.4.0 for the --from-stdin flag
             toolVersionCheck = lib.versionAtLeast convco.version "0.4.0";
           in
-          lib.throwIf (convco == null || !toolVersionCheck) "The version of Nixpkgs used by git-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
+          lib.throwIfNot toolVersionCheck "The version of Nixpkgs used by git-hooks.nix does not have the `convco` package (>=0.4.0). Please use a more recent version of Nixpkgs."
             builtins.toString
             script;
         stages = [ "commit-msg" ];
@@ -3089,9 +3089,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                 "$PRE_COMMIT_COMMIT_MSG_SOURCE" --commit-msg-file "$1"
             '';
           in
-          lib.throwIf (hooks.gptcommit.package == null) "The version of Nixpkgs used by git-hooks.nix does not have the `gptcommit` package. Please use a more recent version of Nixpkgs."
-            toString
-            script;
+          toString script;
         stages = [ "prepare-commit-msg" ];
       };
       hadolint =
@@ -3110,13 +3108,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           ## https://github.com/Frama-C/headache/blob/master/config_builtin.txt
           files = "(\\.ml[ily]?$)|(\\.fmli?$)|(\\.[chy]$)|(\\.tex$)|(Makefile)|(README)|(LICENSE)";
           package = tools.headache;
-          entry =
-            ## NOTE: `headache` made into in nixpkgs on 12 April 2023. At the
-            ## next NixOS release, the following code will become irrelevant.
-            lib.throwIf
-              (hooks.headache.package == null)
-              "The version of nixpkgs used by git-hooks.nix does not have `ocamlPackages.headache`. Please use a more recent version of nixpkgs."
-              "${hooks.headache.package}/bin/headache -h ${hooks.headache.settings.header-file}";
+          entry = "${hooks.headache.package}/bin/headache -h ${hooks.headache.settings.header-file}";
         };
       hindent =
         {
@@ -3646,16 +3638,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
       pre-commit-hook-ensure-sops = {
         name = "pre-commit-hook-ensure-sops";
         package = tools.pre-commit-hook-ensure-sops;
-        entry =
-          ## NOTE: pre-commit-hook-ensure-sops landed in nixpkgs on 8 July 2022. Once it reaches a
-          ## release of NixOS, the `throwIf` piece of code below will become
-          ## useless.
-          lib.throwIf
-            (hooks.pre-commit-hook-ensure-sops.package == null)
-            "The version of nixpkgs used by git-hooks.nix does not have the `pre-commit-hook-ensure-sops` package. Please use a more recent version of nixpkgs."
-            ''
-              ${hooks.pre-commit-hook-ensure-sops.package}/bin/pre-commit-hook-ensure-sops
-            '';
+        entry = "${hooks.pre-commit-hook-ensure-sops.package}/bin/pre-commit-hook-ensure-sops";
         files = "^secrets";
       };
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
@@ -4134,25 +4117,17 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           description = "A universal formatter engine within the Tree-sitter ecosystem, with support for many languages.";
           package = tools.topiary;
           entry =
-            ## NOTE: Topiary landed in nixpkgs on 2 Dec 2022. Once it reaches a
-            ## release of NixOS, the `throwIf` piece of code below will become
-            ## useless.
-            lib.throwIf
-              (hooks.topiary.package == null)
-              "The version of nixpkgs used by git-hooks.nix does not have the `topiary` package. Please use a more recent version of nixpkgs."
-              (
-                let
-                  topiary-inplace = pkgs.writeShellApplication {
-                    name = "topiary-inplace";
-                    text = ''
-                      for file; do
-                        ${hooks.topiary.package}/bin/topiary --in-place --input-file "$file"
-                      done
-                    '';
-                  };
-                in
-                "${topiary-inplace}/bin/topiary-inplace"
-              );
+            let
+              topiary-inplace = pkgs.writeShellApplication {
+                name = "topiary-inplace";
+                text = ''
+                  for file; do
+                    ${hooks.topiary.package}/bin/topiary --in-place --input-file "$file"
+                  done
+                '';
+              };
+            in
+            "${topiary-inplace}/bin/topiary-inplace";
           files = "(\\.json$)|(\\.toml$)|(\\.mli?$)";
         };
       treefmt =
@@ -4257,11 +4232,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         name = "typstyle";
         description = "Beautiful and reliable typst code formatter";
         package = tools.typstyle;
-        entry =
-          lib.throwIf
-            (hooks.typstyle.package == null)
-            "The version of nixpkgs used by git-hooks.nix must contain typstyle"
-            "${hooks.typstyle.package}/bin/typstyle -i";
+        entry = "${hooks.typstyle.package}/bin/typstyle -i";
         files = "\\.typ$";
       };
       uv-check = {
