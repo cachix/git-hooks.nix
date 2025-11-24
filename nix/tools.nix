@@ -140,6 +140,7 @@ in
     elixir
     flake-checker
     fprettify
+    git-annex
     gitlint
     go
     go-tools
@@ -159,6 +160,7 @@ in
     nbstripout
     nil
     nixpkgs-fmt
+    opam
     opentofu
     ormolu
     pre-commit-hook-ensure-sops
@@ -254,9 +256,6 @@ in
       ]))
     else
       bats;
-  git-annex = if stdenv.isDarwin then (placeholder "git-annex") else git-annex;
-  # Note: Only broken in stable nixpkgs, works fine on latest master.
-  opam = if stdenv.isDarwin then (placeholder "opam") else opam;
 
   headache = callPackage ./headache { };
 
