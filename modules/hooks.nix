@@ -657,6 +657,12 @@ in
         description = "gotest hook";
         type = types.submodule {
           imports = [ hookModule ];
+          options.packageOverrides = {
+            go = mkOption {
+              type = types.package;
+              description = "The go package to use";
+            };
+          };
           options.settings = {
             flags = mkOption {
               type = types.str;
@@ -3016,34 +3022,43 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             builtins.toString script;
           files = "\\.go$";
         };
-      gotest = {
-        name = "gotest";
-        description = "Run go tests";
-        package = tools.go;
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-gotest" ''
-              set -e
-              # find all directories that contain tests
-              dirs=()
-              for file in "$@"; do
-                # either the file is a test
-                if [[ "$file" = *_test.go ]]; then
-                  dirs+=("$(dirname "$file")")
-                  continue
-                fi
+      gotest =
+        let
+          inherit (hooks.gotest) packageOverrides settings;
+          wrapper = pkgs.runCommand "go-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+            makeWrapper ${packageOverrides.go}/bin/go $out/bin/go \
+              --prefix PATH : ${cfg.package}/bin
+          '';
+        in
+        {
+          name = "gotest";
+          description = "Run go tests";
+          package = wrapper;
+          packageOverrides = { go = tools.go; };
+          entry =
+            let
+              script = pkgs.writeShellScript "precommit-gotest" ''
+                set -e
+                # find all directories that contain tests
+                dirs=()
+                for file in "$@"; do
+                  # either the file is a test
+                  if [[ "$file" = *_test.go ]]; then
+                    dirs+=("$(dirname "$file")")
+                    continue
+                  fi
 
-                # or the file has an associated test
-                filename="''${file%.go}"
-                test_file="''${filename}_test.go"
-                if [[ -f "$test_file"  ]]; then
-                  dirs+=("$(dirname "$test_file")")
-                  continue
-                fi
-              done
+                  # or the file has an associated test
+                  filename="''${file%.go}"
+                  test_file="''${filename}_test.go"
+                  if [[ -f "$test_file"  ]]; then
+                    dirs+=("$(dirname "$test_file")")
+                    continue
+                  fi
+                done
 
-              # ensure we are not duplicating dir entries
-              IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
+                # ensure we are not duplicating dir entries
+                IFS=$'\n' sorted_dirs=($(sort -u <<<"''${dirs[*]}")); unset IFS
 
               # test each directory one by one
               for dir in "''${sorted_dirs[@]}"; do
@@ -3057,6 +3072,16 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         # all file names in a single run.
         require_serial = true;
       };
+                # test each directory one by one
+                for dir in "''${sorted_dirs[@]}"; do
+                    ${hooks.gotest.package}/bin/go test ${hooks.gotest.settings.flags} "./$dir"
+                done
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+          require_serial = true;
+        };
       govet =
         {
           name = "govet";
