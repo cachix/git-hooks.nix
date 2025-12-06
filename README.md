@@ -246,14 +246,17 @@ use nix
 - [clang-format](https://clang.llvm.org/docs/ClangFormat.html).\
   You may restrict which languages should be formatted by `clang-format` using
   `clang-format.types_or`. For example to check only C and C++ files:
+
   ```nix
   clang-format = {
     enable = true;
     types_or = lib.mkForce [ "c" "c++" ];
   };
   ```
+
   Otherwise, the default internal list is used which includes everything that
   clang-format supports.
+
 - [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
 - [cmake-format](https://cmake-format.readthedocs.io/en/latest/)
 
@@ -380,6 +383,7 @@ use nix
 - [mdformat](https://github.com/hukkin/mdformat)
 - [mdl](https://github.com/markdownlint/markdownlint/)
 - [mdsh](https://zimbatm.github.io/mdsh/)
+- [rumdl](https://github.com/rvben/rumdl)
 
 ### Nix
 
