@@ -52,6 +52,7 @@
 , mdsh
 , nbstripout
 , nil
+, nixf-diagnose
 , nixfmt
 , nixfmt-classic ? placeholder "nixfmt-classic"
 , nixfmt-rfc-style ? placeholder "nixfmt-rfc-style"
@@ -160,6 +161,7 @@ in
     mdsh
     nbstripout
     nil
+    nixf-diagnose
     nixpkgs-fmt
     opam
     opentofu
