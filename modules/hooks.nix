@@ -817,6 +817,28 @@ in
           };
         };
       };
+      rumdl = mkOption {
+        description = "rumdl hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configuration =
+              mkOption {
+                type = types.attrs;
+                description =
+                  "See https://github.com/rvben/rumdl?tab=readme-ov-file#configuration";
+                default = { };
+                example = {
+                  configuration = {
+                    MD013 = {
+                      line-length = 100;
+                    };
+                  };
+                };
+              };
+          };
+        };
+      };
       mdl = mkOption {
         description = "mdl hook";
         type = types.submodule {
@@ -2185,7 +2207,7 @@ in
 
   # PLEASE keep this sorted alphabetically.
   config.hooks = mapAttrs (_: mapAttrs (_: mkDefault))
-    rec {
+    {
       actionlint =
         {
           name = "actionlint";
@@ -3315,6 +3337,21 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           description = "Style checker and linter for markdown files.";
           package = tools.markdownlint-cli;
           entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
+          files = "\\.md$";
+        };
+      rumdl =
+        let
+          cmdArgs =
+            mkCmdArgs
+              (with hooks.rumdl.settings; [
+                [ (configuration != { }) " --config ${toml.generate ".rumdl.toml" configuration}" ]
+              ]);
+        in
+        {
+          name = "rumdl";
+          description = "Style checker and linter for rumdl files.";
+          package = tools.rumdl;
+          entry = "${hooks.rumdl.package}/bin/rumdl check ${cmdArgs}";
           files = "\\.md$";
         };
       mdformat = {
