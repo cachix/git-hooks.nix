@@ -21,6 +21,7 @@
 , conform
 , convco
 , crystal
+, cue
 , dart
 , deadnix
 , deno
@@ -132,6 +133,7 @@ in
     conform
     convco
     crystal
+    cue
     dart
     deadnix
     deno
