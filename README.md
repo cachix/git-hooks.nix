@@ -467,8 +467,16 @@ use nix
 
 ### Terraform
 
-- `terraform-format`: built-in formatter (using [OpenTofu](https://opentofu.org/)'s [`fmt`](https://opentofu.org/docs/cli/commands/fmt/))
-- `terraform-validate`: built-in validator (using [OpenTofu](https://opentofu.org/)'s [`validate`](https://opentofu.org/docs/cli/commands/validate/))
+- `terraform-format`: built-in formatter (using
+  [OpenTofu](https://opentofu.org/)'s
+  [`fmt`](https://opentofu.org/docs/cli/commands/fmt/) or
+  [Terraform](https://developer.hashicorp.com/terraform)'s
+  [`fmt`](https://developer.hashicorp.com/terraform/cli/commands/fmt))
+- `terraform-validate`: built-in validator (using
+  [OpenTofu](https://opentofu.org/)'s
+  [`validate`](https://opentofu.org/docs/cli/commands/validate/)
+  [Terraform](https://developer.hashicorp.com/terraform)'s
+  [`validate`](https://developer.hashicorp.com/terraform/cli/commands/validate))
 - [tflint](https://github.com/terraform-linters/tflint)
 
 ### TOML
