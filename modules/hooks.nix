@@ -4134,8 +4134,24 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         {
           name = "terraform-validate";
           description = "Validates terraform configuration files (`.tf`).";
-          package = tools.terraform-validate;
-          entry = "${hooks.terraform-validate.package}/bin/terraform-validate";
+          package = tools.opentofu;
+          entry =
+            let
+              terraform-validate = pkgs.writeScriptBin "terraform-validate" ''
+              #!/usr/bin/env bash
+              set -x
+              for arg in "$@"; do
+                dirname "$arg"
+              done \
+                | sort \
+                | uniq \
+                | while read dir; do
+                    ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init
+                    ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" validate
+                  done
+              '';
+            in
+            "${terraform-validate}/bin/terraform-validate";
           files = "\\.(tf(vars)?|terraform\\.lock\\.hcl)$";
           excludes = [ "\\.terraform/.*$" ];
           require_serial = true;
