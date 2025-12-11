@@ -83,6 +83,7 @@
 , stylua
 , tagref
 , taplo
+, terraform
 , texlive
 , # Added in nixpkgs on Dec 2, 2022
   topiary ? placeholder "topiary"
@@ -182,6 +183,7 @@ in
     stylua
     tagref
     taplo
+    terraform
     topiary
     treefmt
     trufflehog
@@ -232,7 +234,6 @@ in
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
-  terraform-validate = callPackage ./terraform-validate { };
   tflint = callPackage ./tflint { };
   dune-build-opam-files = callPackage ./dune-build-opam-files {
     dune = dune_3;
