@@ -3773,14 +3773,6 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry = "${hooks.purs-tidy.package}/bin/purs-tidy format-in-place";
           files = "\\.purs$";
         };
-      purty =
-        {
-          name = "purty";
-          description = "Format purescript files.";
-          package = tools.purty;
-          entry = "${hooks.purty.package}/bin/purty";
-          files = "\\.purs$";
-        };
       pylint =
         {
           name = "pylint";

@@ -415,7 +415,6 @@ use nix
 ### Purescript
 
 - [purs-tidy](https://github.com/natefaubion/purescript-tidy)
-- [purty](https://gitlab.com/joneshf/purty)
 
 ### Python
 
