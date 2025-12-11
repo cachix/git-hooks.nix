@@ -71,7 +71,7 @@
 , ripsecrets ? placeholder "ripsecrets"
 , reuse
 , ruff ? placeholder "ruff"
-, rumdl
+, rumdl ? placeholder "rumdl"
 , rustfmt
 , selene
 , shellcheck
