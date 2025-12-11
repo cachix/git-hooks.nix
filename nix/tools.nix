@@ -71,7 +71,7 @@
 , ripsecrets ? placeholder "ripsecrets"
 , reuse
 , ruff ? placeholder "ruff"
-, rumdl
+, rumdl ? placeholder "rumdl"
 , rustfmt
 , selene
 , shellcheck
@@ -234,7 +234,6 @@ in
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
-  purty = callPackage ./purty { purty = nodePackages.purty; };
   tflint = callPackage ./tflint { };
   dune-build-opam-files = callPackage ./dune-build-opam-files {
     dune = dune_3;

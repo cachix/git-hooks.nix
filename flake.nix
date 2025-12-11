@@ -49,7 +49,7 @@
       # WARN: use `legacyPackages` instead to get error messages for deprecated packages
       #
       # Each entry is guaranteed to be a derivation that evaluates.
-      # TODO: this should be deprecated as it exposes a subset of nixpkgs, which is incompatbile with the packages output.
+      # TODO: this should be deprecated as it exposes a subset of nixpkgs, which is incompatiile with the packages output.
       packages = forAllSystems ({ exposed, ... }: exposed.packages // {
         default = exposed.packages.pre-commit;
       });

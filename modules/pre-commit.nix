@@ -431,6 +431,13 @@ in
     };
 
   config = lib.mkIf cfg.enable {
+    # Hook removal notices should be defined here
+    assertions = [
+      {
+        assertion = !(cfg.hooks ? purty);
+        message = "The `purty` hook has been removed because the project is unmaintained. Consider using `purs-tidy` instead.";
+      }
+    ];
 
     rawConfig =
       {
