@@ -2661,6 +2661,13 @@ in
         entry = "${hooks.crystal.package}/bin/crystal tool format";
         files = "\\.cr$";
       };
+      cue-fmt = {
+        name = "cue fmt";
+        description = "Format CUE files";
+        package = tools.cue;
+        entry = "${hooks.cue-fmt.package}/bin/cue fmt";
+        files = "\\.cue$";
+      };
       cspell =
         {
           name = "cspell";
