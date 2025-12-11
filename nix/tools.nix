@@ -183,6 +183,7 @@ in
     stylua
     tagref
     taplo
+    terraform
     topiary
     treefmt
     trufflehog
