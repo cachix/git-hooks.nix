@@ -4130,17 +4130,17 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry =
             let
               terraform-validate = pkgs.writeScriptBin "terraform-validate" ''
-              #!/usr/bin/env bash
-              set -x
-              for arg in "$@"; do
-                dirname "$arg"
-              done \
-                | sort \
-                | uniq \
-                | while read dir; do
-                    ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init
-                    ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" validate
-                  done
+                #!/usr/bin/env bash
+                set -x
+                for arg in "$@"; do
+                  dirname "$arg"
+                done \
+                  | sort \
+                  | uniq \
+                  | while read dir; do
+                      ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init
+                      ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" validate
+                    done
               '';
             in
             "${terraform-validate}/bin/terraform-validate";
