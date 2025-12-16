@@ -269,6 +269,10 @@ use nix
 
 - [crystal](https://crystal-lang.org/reference/man/crystal#crystal-tool-format)
 
+### CUE
+
+- [cue-fmt](https://github.com/cue-lang/cue)
+
 ### Dart
 
 - [dart analyze](https://dart.dev/tools/dart-analyze)
