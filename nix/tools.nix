@@ -232,7 +232,6 @@ in
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
-  terraform-validate = callPackage ./terraform-validate { };
   tflint = callPackage ./tflint { };
   dune-build-opam-files = callPackage ./dune-build-opam-files {
     dune = dune_3;
