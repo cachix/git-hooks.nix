@@ -3,7 +3,7 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.flake-compat = {
-    url = "github:edolstra/flake-compat";
+    url = "github:NixOS/flake-compat";
     flake = false;
   };
   inputs.gitignore = {
