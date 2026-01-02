@@ -1753,10 +1753,45 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
+            language-dialect = mkOption {
+              type = types.enum [ "auto" "bash" "posix" "mksh" "bats" ];
+              description = lib.mdDoc "Shell language dialect.";
+              default = "auto";
+            };
             simplify = mkOption {
               type = types.bool;
               description = "Simplify the code.";
               default = true;
+            };
+            indent = mkOption {
+              type = types.int;
+              description = lib.mdDoc "0 for tabs, >0 for number of spaces.";
+              default = 0;
+            };
+            binary-next-line = mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Binary ops like && and | may start a line.";
+              default = false;
+            };
+            case-indent = mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Switch cases will be indented.";
+              default = false;
+            };
+            space-redirects = mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Redirect operators will be followed by a space.";
+              default = false;
+            };
+            keep-padding = mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Keep column alignment paddings.";
+              default = false;
+            };
+            func-next-line = mkOption {
+              type = types.bool;
+              description = lib.mdDoc "Function opening braces are placed on a separate line.";
+              default = false;
             };
           };
         };
@@ -3983,9 +4018,20 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.shfmt;
           entry =
             let
-              simplify = if hooks.shfmt.settings.simplify then "-s" else "";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.shfmt.settings; [
+                    [ true "-ln ${language-dialect}" ]
+                    [ simplify "-s" ]
+                    [ true "-i ${indent}" ]
+                    [ binary-next-line "-bn" ]
+                    [ case-indent "-ci" ]
+                    [ space-redirects "-sr" ]
+                    [ keep-padding "-kp" ]
+                    [ func-next-line "-fn" ]
+                  ]);
             in
-            "${hooks.shfmt.package}/bin/shfmt -w -l ${simplify}";
+            "${hooks.shfmt.package}/bin/shfmt -w -l ${cmdArgs}";
         };
       single-quoted-strings =
         {
