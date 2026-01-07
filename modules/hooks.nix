@@ -1764,9 +1764,9 @@ in
               default = true;
             };
             indent = mkOption {
-              type = types.int;
+              type = types.nullOr (types.oneOf [ types.int types.str ]);
               description = lib.mdDoc "0 for tabs, >0 for number of spaces.";
-              default = 0;
+              default = null;
             };
             binary-next-line = mkOption {
               type = types.bool;
@@ -4023,7 +4023,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   (with hooks.shfmt.settings; [
                     [ true "-ln ${language-dialect}" ]
                     [ simplify "-s" ]
-                    [ true "-i ${indent}" ]
+                    [ (indent != null) "-i ${builtins.toString indent}" ]
                     [ binary-next-line "-bn" ]
                     [ case-indent "-ci" ]
                     [ space-redirects "-sr" ]
