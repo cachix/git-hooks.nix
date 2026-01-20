@@ -108,7 +108,7 @@ in
         ''
           The language of the hook - tells pre-commit how to install the hook.
         '';
-      default = "system";
+      default = "unsupported";
     };
 
     files = mkOption {
