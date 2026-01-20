@@ -4070,16 +4070,21 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry =
             let
               inherit (hooks.statix) package settings;
-              options = lib.cli.toCommandLineShellGNU
-                { }
+              optionFormat = optionName: {
+                option = "--${optionName}";
+                sep = null;
+                explicitBool = false;
+              };
+              options = lib.cli.toCommandLine
+                optionFormat
                 (lib.mapAttrs
                   (_: v:
                     if builtins.isList v
-                    then builtins.concatStringsSep "," (lib.unique v)
+                    then builtins.concatStringsSep " " (lib.unique v)
                     else v)
                   settings);
             in
-            "${package}/bin/statix check ${options}";
+            "${package}/bin/statix check ${toString options}";
           files = "\\.nix$";
           pass_filenames = false;
         };
