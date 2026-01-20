@@ -1560,9 +1560,9 @@ in
 
             ignore =
               mkOption {
-                type = types.listOf types.str;
+                type = types.nullOr (types.listOf types.str);
                 description = "Globs of file patterns to skip.";
-                default = [ ];
+                default = null;
                 example = [ "flake.nix" "_*" ];
               };
 
