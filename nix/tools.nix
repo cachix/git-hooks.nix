@@ -63,6 +63,7 @@
 , opam
 , opentofu
 , ormolu
+, oxlint
 , pkgsBuildBuild
 , poetry
 , pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops"
@@ -168,6 +169,7 @@ in
     opam
     opentofu
     ormolu
+    oxlint
     pre-commit-hook-ensure-sops
     poetry
     proselint
