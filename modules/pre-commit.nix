@@ -1,8 +1,9 @@
 { config, lib, pkgs, hookModule, ... }:
 let
+  inherit (builtins)
+    concatStringsSep;
   inherit (lib)
     boolToString
-    concatStringsSep
     compare
     filterAttrs
     mapAttrsToList
@@ -27,12 +28,14 @@ let
     if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
 
   enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
+  enabledPrekBuiltinHooks = filterAttrs (id: value: value.enable) cfg.prek-builtin-hooks;
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
-  processedHooks =
+  usingPrek = cfg.package.pname == "prek";
+  sortAndProcessHooks = hooks:
     let
       sortedHooks = lib.toposort
         (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
-        (builtins.attrValues enabledHooks);
+        (builtins.attrValues hooks);
     in
     if sortedHooks ? result then
       builtins.map (value: value.raw) sortedHooks.result
@@ -61,6 +64,8 @@ let
           ${prettyPrintCycle { indent = "  "; } sortedHooks.cycle}
       '';
 
+  processedHooks = sortAndProcessHooks enabledHooks;
+  processedPrekBuiltinHooks = sortAndProcessHooks enabledPrekBuiltinHooks;
   configFile =
     performAssertions (
       runCommand "pre-commit-config.json"
@@ -265,6 +270,26 @@ in
           default = { };
         };
 
+      prek-builtin-hooks =
+        mkOption {
+          type = types.submodule {
+            freeformType = types.attrsOf hookType;
+          };
+          description =
+            ''
+              The builtin hook definitions, similar to hooks but these ones don't take entry as they are implemented by prek itself.
+
+              Be sure to looke at  https://prek.j178.dev/builtin/#supported-hooks
+              and only refer to those as the module does not validate them (as new ones are added)
+
+              ```nix
+              prek-builtin-hooks.check-json.enable = true;
+              ```
+
+            '';
+          default = { };
+        };
+
       run =
         mkOption {
           type = types.package;
@@ -437,6 +462,51 @@ in
         assertion = !(cfg.hooks ? purty);
         message = "The `purty` hook has been removed because the project is unmaintained. Consider using `purs-tidy` instead.";
       }
+      {
+      assertion = ((lib.length processedPrekBuiltinHooks) > 0) -> usingPrek;
+      message = ''
+          You can't use prek's builtin hooks unless you use prek as `{options}.package`
+      '';
+
+
+      }
+      {
+        assertion = lib.all (hook: !(hook ? entry)) processedPrekBuiltinHooks;
+        message =
+          let
+            hooksWithEntry = lib.filter (hook: hook ? entry) processedPrekBuiltinHooks;
+            hookNames = lib.concatMapStringsSep ", " (hook: hook.id) hooksWithEntry;
+          in
+          ''
+            Prek builtin hooks should not have an `entry` field defined.
+            The following hooks have entry fields: ${hookNames}
+          '';
+      }
+      {
+        assertion = lib.all (hook: hook ? entry) processedHooks;
+        message =
+          let
+            hooksWithoutEntry = lib.filter (hook: !(hook ? entry)) processedHooks;
+            hookNames = lib.concatMapStringsSep ", " (hook: hook.id) hooksWithoutEntry;
+          in
+          ''
+            Local hooks must have an `entry` field defined.
+            The following hooks are missing entry fields: ${hookNames}
+          '';
+      }
+      {
+        assertion = usingPrek || (lib.all (hook: !(hook ? priority)) processedHooks);
+        message =
+          let
+            hooksWithPriority = lib.filter (hook: hook ? priority) processedHooks;
+            hookNames = lib.concatMapStringsSep ", " (hook: hook.id) hooksWithPriority;
+          in
+          ''
+            The `priority` field is only supported when using prek as the package.
+            The following hooks have priority defined: ${hookNames}
+          '';
+      }
+
     ];
 
     rawConfig =
@@ -447,7 +517,10 @@ in
               repo = "local";
               hooks = processedHooks;
             }
-          ];
+          ] ++ lib.optional usingPrek {
+            repo = "builtin";
+            hooks = processedPrekBuiltinHooks;
+          };
       } // lib.optionalAttrs (cfg.excludes != [ ]) {
         exclude = mergeExcludes cfg.excludes;
       } // lib.optionalAttrs (cfg.default_stages != [ ]) {

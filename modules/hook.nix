@@ -1,10 +1,10 @@
 { config, name, lib, default_stages, ... }:
 
 let
-  inherit (lib) concatStringsSep mkOption types;
+  inherit (lib) mkOption types;
   mergeExcludes =
     excludes:
-    if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
+    if excludes == [ ] then "^$" else "(${builtins.concatStringsSep "|" excludes})";
 in
 {
   options = {
@@ -95,11 +95,12 @@ in
     };
 
     entry = mkOption {
-      type = types.str;
+      type = types.nullOr types.str;
       description =
         ''
           The entry point - the executable to run. {option}`entry` can also contain arguments that will not be overridden, such as `entry = "autopep8 -i";`.
         '';
+      default = null;
     };
 
     language = mkOption {
@@ -231,13 +232,28 @@ in
         '';
       default = [ ];
     };
+
+
+
+    priority = mkOption {
+      type = types.nullOr types.ints.u32;
+      description = ''
+        Defines the order in which the hooks are executed. Default priority is set by the order in the list of hooks.
+        Evaluation goes from 0 and up.
+        If two hooks have the same priority.
+        This works only if cfg.package is set to prek.
+      '';
+      default = null;
+    };
   };
 
   config = {
     raw =
       {
-        inherit (config) id name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
+        inherit (config) id name language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
         exclude = mergeExcludes config.excludes;
+        priority = lib.mkIf (config.priority != null) config.priority;
+        entry = lib.mkIf (config.entry != null) config.entry;
       };
   };
 }
