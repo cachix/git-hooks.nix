@@ -972,6 +972,20 @@ in
           imports = [ hookModule ];
         };
       };
+      nil = mkOption {
+        description = "nil hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            denyWarnings =
+              mkOption {
+                type = types.bool;
+                description = "Treat warnings as errors.";
+                default = false;
+              };
+          };
+        };
+      };
       nixf-diagnose = mkOption {
         description = "nixf-diagnose hook";
         type = types.submodule {
@@ -3474,11 +3488,12 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.nil;
           entry =
             let
+              denyWarningsArg = lib.optionalString hooks.nil.settings.denyWarnings "--deny-warnings";
               script = pkgs.writeShellScript "precommit-nil" ''
                 errors=false
                 echo Checking: $@
                 for file in $(echo "$@"); do
-                  ${hooks.nil.package}/bin/nil diagnostics "$file"
+                  ${hooks.nil.package}/bin/nil diagnostics ${denyWarningsArg} "$file"
                   exit_code=$?
 
                   if [[ $exit_code -ne 0 ]]; then
