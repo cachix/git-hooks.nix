@@ -446,6 +446,10 @@ use nix
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
 - [uv](https://github.com/astral-sh/uv)
 
+### Rego (Open Policy Agent)
+
+- [regal](https://www.openpolicyagent.org/projects/regal)
+
 ### Rust
 
 - [cargo-check](https://doc.rust-lang.org/cargo/commands/cargo-check.html)
