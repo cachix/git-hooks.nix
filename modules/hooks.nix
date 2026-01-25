@@ -1545,6 +1545,20 @@ in
           };
         };
       };
+      regal = mkOption {
+        description = "regal hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Flags passed to regal. For available options run 'regal lint --help'";
+              default = "";
+              example = "--disable-category style";
+            };
+          };
+        };
+      };
       reuse = mkOption {
         description = "reuse hook";
         type = types.submodule {
@@ -3838,6 +3852,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pyupgrade;
           entry = migrateBinPathToPackage hooks.pyupgrade "/bin/pyupgrade";
           types = [ "python" ];
+        };
+      regal =
+        {
+          name = "regal";
+          description = "A linter for Rego policies";
+          package = tools.regal;
+          entry = "${tools.regal.package}/bin/regal lint ${hooks.regal.settings.flags}";
+          files = "\\.rego$";
+          pass_filenames = true;
         };
       reuse =
         {
