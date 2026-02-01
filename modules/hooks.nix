@@ -2892,7 +2892,7 @@ in
       fix-encoding-pragma =
         {
           name = "fix-encoding-pragma";
-          description = "Adds \# -*- coding: utf-8 -*- to the top of Python files.'";
+          description = "Adds # -*- coding: utf-8 -*- to the top of Python files.'";
           package = tools.pre-commit-hooks;
           entry = "${hooks.fix-encoding-pragma.package}/bin/fix-encoding-pragma";
           types = [ "python" ];
@@ -3457,7 +3457,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           description = "Verify that Python test files are named correctly.";
           package = tools.pre-commit-hooks;
           entry = "${hooks.name-tests-test.package}/bin/tests_should_end_in_test.py";
-          files = "(^|/)tests/\.+\\.py$";
+          files = "(^|/)tests/.+\\.py$";
         };
       nbstripout =
         {
