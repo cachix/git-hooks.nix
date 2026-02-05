@@ -68,7 +68,7 @@ let
         pre-commit-check = run {
           src = ../.;
           hooks = {
-            nixpkgs-fmt.enable = true;
+            nixfmt.enable = true;
             typos.enable = true;
           };
         };
