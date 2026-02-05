@@ -6,8 +6,9 @@
   };
 
   outputs =
-    { git-hooks
-    , ...
+    {
+      git-hooks,
+      ...
     }:
     {
       inherit (git-hooks) legacyPackages checks;

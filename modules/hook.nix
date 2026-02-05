@@ -1,10 +1,14 @@
-{ config, name, lib, default_stages, ... }:
+{
+  config,
+  name,
+  lib,
+  default_stages,
+  ...
+}:
 
 let
   inherit (lib) concatStringsSep mkOption types;
-  mergeExcludes =
-    excludes:
-    if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
+  mergeExcludes = excludes: if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
 in
 {
   options = {
@@ -16,143 +20,130 @@ in
 
     raw = mkOption {
       type = types.attrsOf types.unspecified;
-      description =
-        ''
-          Raw fields of a pre-commit hook. This is mostly for internal use but
-          exposed in case you need to work around something.
+      description = ''
+        Raw fields of a pre-commit hook. This is mostly for internal use but
+        exposed in case you need to work around something.
 
-          Default: taken from the other hook options.
-        '';
+        Default: taken from the other hook options.
+      '';
     };
 
     id = mkOption {
       type = types.str;
       default = name;
       defaultText = "the attribute name the hook submodule is bound to";
-      description =
-        ''
-          The unique identifier for the hook.
+      description = ''
+        The unique identifier for the hook.
 
-          You do not need to set or modify this value.
+        You do not need to set or modify this value.
 
-          The `id` is used to reference a hook when using `pre-commit run <id>`.
-          It can also be used to reference the hook in other hooks' `before` and `after` fields to define the order in which hooks run.
+        The `id` is used to reference a hook when using `pre-commit run <id>`.
+        It can also be used to reference the hook in other hooks' `before` and `after` fields to define the order in which hooks run.
 
-          The `id` is set to the attribute name the hook submodule is bound to in the parent module.
-          For example, the `id` of following hook would be `my-hook`.
+        The `id` is set to the attribute name the hook submodule is bound to in the parent module.
+        For example, the `id` of following hook would be `my-hook`.
 
-          ```nix
-          {
-            hooks = {
-              my-hook = {
-                enable = true;
-                entry = "my-hook";
-              };
-            }
+        ```nix
+        {
+          hooks = {
+            my-hook = {
+              enable = true;
+              entry = "my-hook";
+            };
           }
-          ```
-        '';
+        }
+        ```
+      '';
     };
 
     name = mkOption {
       type = types.str;
       default = name;
       defaultText = lib.literalExpression "the attribute name the hook submodule is bound to, same as `id`";
-      description =
-        ''
-          The name of the hook. Shown during hook execution.
-        '';
+      description = ''
+        The name of the hook. Shown during hook execution.
+      '';
     };
 
     description = mkOption {
       type = types.str;
-      description =
-        ''
-          Description of the hook. Used for metadata purposes only.
-        '';
+      description = ''
+        Description of the hook. Used for metadata purposes only.
+      '';
       default = "";
     };
 
     package = mkOption {
       type = types.nullOr types.package;
       default = null;
-      description =
-        ''
-          An optional package that provides the hook.
-        '';
+      description = ''
+        An optional package that provides the hook.
+      '';
     };
 
     extraPackages = mkOption {
       type = types.listOf types.package;
       default = [ ];
-      description =
-        ''
-          Additional packages required to run the hook.
+      description = ''
+        Additional packages required to run the hook.
 
-          These are propagated to `enabledPackages` for constructing developer
-          environments.
-        '';
+        These are propagated to `enabledPackages` for constructing developer
+        environments.
+      '';
     };
 
     entry = mkOption {
       type = types.str;
-      description =
-        ''
-          The entry point - the executable to run. {option}`entry` can also contain arguments that will not be overridden, such as `entry = "autopep8 -i";`.
-        '';
+      description = ''
+        The entry point - the executable to run. {option}`entry` can also contain arguments that will not be overridden, such as `entry = "autopep8 -i";`.
+      '';
     };
 
     language = mkOption {
       type = types.str;
-      description =
-        ''
-          The language of the hook - tells pre-commit how to install the hook.
-        '';
+      description = ''
+        The language of the hook - tells pre-commit how to install the hook.
+      '';
       default = "system";
     };
 
     files = mkOption {
       type = types.str;
-      description =
-        ''
-          The pattern of files to run on.
-        '';
+      description = ''
+        The pattern of files to run on.
+      '';
       default = "";
     };
 
     types = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          List of file types to run on. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
-        '';
+      description = ''
+        List of file types to run on. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
+      '';
       default = [ "file" ];
     };
 
     types_or = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          List of file types to run on, where only a single type needs to match.
-        '';
+      description = ''
+        List of file types to run on, where only a single type needs to match.
+      '';
       default = [ ];
     };
 
     excludes = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          Exclude files that were matched by these patterns.
-        '';
+      description = ''
+        Exclude files that were matched by these patterns.
+      '';
       default = [ ];
     };
 
     exclude_types = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          List of file types to exclude. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
-        '';
+      description = ''
+        List of file types to exclude. See [Filtering files with types](https://pre-commit.com/#filtering-files-with-types).
+      '';
       default = [ ];
     };
 
@@ -207,37 +198,49 @@ in
 
     args = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          List of additional parameters to pass to the hook.
-        '';
+      description = ''
+        List of additional parameters to pass to the hook.
+      '';
       default = [ ];
     };
 
     before = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          List of hooks that should run after this hook.
-        '';
+      description = ''
+        List of hooks that should run after this hook.
+      '';
       default = [ ];
     };
 
     after = mkOption {
       type = types.listOf types.str;
-      description =
-        ''
-          List of hooks that should run before this hook.
-        '';
+      description = ''
+        List of hooks that should run before this hook.
+      '';
       default = [ ];
     };
   };
 
   config = {
-    raw =
-      {
-        inherit (config) id name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
-        exclude = mergeExcludes config.excludes;
-      };
+    raw = {
+      inherit (config)
+        id
+        name
+        entry
+        language
+        files
+        types
+        types_or
+        exclude_types
+        pass_filenames
+        fail_fast
+        require_serial
+        stages
+        verbose
+        always_run
+        args
+        ;
+      exclude = mergeExcludes config.excludes;
+    };
   };
 }

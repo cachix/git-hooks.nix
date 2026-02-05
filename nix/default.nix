@@ -1,8 +1,8 @@
-{ system ? builtins.currentSystem
-, nixpkgs
-, gitignore-nix-src
-, isFlakes ? false
-,
+{
+  system ? builtins.currentSystem,
+  nixpkgs,
+  gitignore-nix-src,
+  isFlakes ? false,
 }:
 let
   overlay =
@@ -24,8 +24,8 @@ let
 
       # Filter out broken and placeholder packages.
       removeInvalidPackageWith =
-        { warn ? true
-        ,
+        {
+          warn ? true,
         }:
         name: package:
         let
@@ -131,24 +131,20 @@ let
                     _module.args.pkgs = pkgsStub // {
                       _type = "pkgs";
                       inherit lib;
-                      formats = lib.mapAttrs
-                        (
-                          formatName: formatFn: formatArgs:
-                            let
-                              result = formatFn formatArgs;
-                              stubs = lib.mapAttrs
-                                (
-                                  name: _:
-                                    throw "The attribute `(pkgs.formats.${lib.strings.escapeNixIdentifier formatName} x).${lib.strings.escapeNixIdentifier name}` is not supported during documentation generation. Please check with `--show-trace` to see which option leads to this `${lib.strings.escapeNixIdentifier name}` reference. Often it can be cut short with a `defaultText` argument to `lib.mkOption`, or by escaping an option `example` using `lib.literalExpression`."
-                                )
-                                result;
-                            in
-                            stubs
-                              // {
-                              inherit (result) type;
-                            }
-                        )
-                        pkgs.formats;
+                      formats = lib.mapAttrs (
+                        formatName: formatFn: formatArgs:
+                        let
+                          result = formatFn formatArgs;
+                          stubs = lib.mapAttrs (
+                            name: _:
+                            throw "The attribute `(pkgs.formats.${lib.strings.escapeNixIdentifier formatName} x).${lib.strings.escapeNixIdentifier name}` is not supported during documentation generation. Please check with `--show-trace` to see which option leads to this `${lib.strings.escapeNixIdentifier name}` reference. Often it can be cut short with a `defaultText` argument to `lib.mkOption`, or by escaping an option `example` using `lib.literalExpression`."
+                          ) result;
+                        in
+                        stubs
+                        // {
+                          inherit (result) type;
+                        }
+                      ) pkgs.formats;
                     };
                   };
                 }
