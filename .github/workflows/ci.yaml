@@ -61,4 +61,4 @@ jobs:
 
     - name: Check nixpkgs-stable
       working-directory: ./dev
-      run: nix flake check -L --show-trace --override-input git-hooks/nixpkgs github:NixOS/nixpkgs/nixos-25.05
+      run: nix flake check -L --show-trace --override-input git-hooks/nixpkgs github:NixOS/nixpkgs/nixos-25.11
