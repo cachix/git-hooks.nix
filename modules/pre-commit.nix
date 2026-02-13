@@ -100,14 +100,13 @@ let
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
         git commit -m "init" -q
-        if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
-        then
-          echo "Running: $ pre-commit run --hook-stage manual --all-files"
-          ${lib.getExe cfg.package} run -c ${cfg.configPath} --hook-stage manual --all-files
-        else
+        ${if cfg.runHookStage != null then ''
+          echo "Running: $ pre-commit run --hook-stage ${cfg.runHookStage} --all-files"
+          ${lib.getExe cfg.package} run -c ${cfg.configPath} --hook-stage ${cfg.runHookStage} --all-files
+        '' else ''
           echo "Running: $ pre-commit run --all-files"
-          ${lib.getExe cfg.package}  run -c ${cfg.configPath} --all-files
-        fi
+          ${lib.getExe cfg.package} run -c ${cfg.configPath} --all-files
+        ''}
         exitcode=$?
         git --no-pager diff --color
         # Derivations must produce an output
@@ -276,6 +275,21 @@ in
           readOnly = false;
           default = run;
           defaultText = lib.literalExpression "<derivation>";
+        };
+
+      runHookStage =
+        mkOption {
+          type = types.nullOr types.str;
+          description =
+            ''
+              The hook stage to run in the `run` derivation.
+
+              If set to `null` (default), pre-commit will run all hooks.
+              If set to a specific stage (e.g., "manual", "pre-commit", "pre-push"),
+              only hooks configured for that stage will run.
+            '';
+          default = null;
+          example = "manual";
         };
 
       shellHook =
