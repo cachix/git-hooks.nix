@@ -284,7 +284,7 @@ in
             ''
               The hook stage to run in the `run` derivation.
 
-              If set to `null` (default), pre-commit will run all hooks.
+              If set to `null` (default), pre-commit will run the default hook stage.
               If set to a specific stage (e.g., "manual", "pre-commit", "pre-push"),
               only hooks configured for that stage will run.
             '';
