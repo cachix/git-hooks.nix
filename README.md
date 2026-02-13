@@ -576,9 +576,9 @@ Example configuration:
          excludes = [ "irrelevant\\.c" ];
 
          # The language of the hook - tells pre-commit
-         # how to install the hook (default: "system")
+         # how to install the hook (default: "unsupported")
          # see also https://pre-commit.com/#supported-languages
-         language = "system";
+         language = "unsupported";
 
          # Set this to false to not pass the changed files
          # to the command (default: true):
