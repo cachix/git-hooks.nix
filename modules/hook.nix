@@ -231,6 +231,17 @@ in
         '';
       default = [ ];
     };
+
+    priority = mkOption {
+      type = types.nullOr types.ints.u32;
+      description = ''
+        Defines the order in which the hooks are executed. Default priority is set by the order in the list of hooks.
+        Evaluation goes from 0 and up.
+        If two hooks have the same priority, they’ll run in parallel.
+        This works only if cfg.package is set to prek.
+      '';
+      default = null;
+    };
   };
 
   config = {
@@ -238,6 +249,7 @@ in
       {
         inherit (config) id name entry language files types types_or exclude_types pass_filenames fail_fast require_serial stages verbose always_run args;
         exclude = mergeExcludes config.excludes;
+        priority = lib.mkIf (config.priority != null) config.priority;
       };
   };
 }

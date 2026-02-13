@@ -28,6 +28,7 @@ let
 
   enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
+  usingPrek = cfg.package.pname == "prek";
   processedHooks =
     let
       sortedHooks = lib.toposort
@@ -437,6 +438,19 @@ in
         assertion = !(cfg.hooks ? purty);
         message = "The `purty` hook has been removed because the project is unmaintained. Consider using `purs-tidy` instead.";
       }
+      {
+        assertion = usingPrek || (lib.all (hook: !(hook ? priority)) processedHooks);
+        message =
+          let
+            hooksWithPriority = lib.filter (hook: hook ? priority) processedHooks;
+            hookNames = lib.concatMapStringsSep ", " (hook: hook.id) hooksWithPriority;
+          in
+          ''
+            The `priority` field is only supported when using prek as the package.
+            The following hooks have priority defined: ${hookNames}
+          '';
+      }
+
     ];
 
     rawConfig =
