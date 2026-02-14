@@ -5,7 +5,12 @@
   https://flake.parts/options/pre-commit-hooks-nix
 */
 
-{ lib, self, flake-parts-lib, ... }:
+{
+  lib,
+  self,
+  flake-parts-lib,
+  ...
+}:
 let
   inherit (lib)
     mkOption
@@ -14,8 +19,15 @@ let
 in
 {
   options = {
-    perSystem = flake-parts-lib.mkPerSystemOption ({ config, options, pkgs, ... }:
-      let cfg = config.pre-commit;
+    perSystem = flake-parts-lib.mkPerSystemOption (
+      {
+        config,
+        options,
+        pkgs,
+        ...
+      }:
+      let
+        cfg = config.pre-commit;
       in
       {
         options = {
@@ -72,17 +84,22 @@ in
         };
         config = {
           checks = lib.optionalAttrs cfg.check.enable { pre-commit = cfg.settings.run; };
-          pre-commit.settings = { pkgs, ... }: {
-            rootSrc = self.outPath;
-            package = lib.mkDefault pkgs.pre-commit;
-            tools = import ./nix/call-tools.nix pkgs;
-            hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
-          };
+          pre-commit.settings =
+            { pkgs, ... }:
+            {
+              rootSrc = self.outPath;
+              package = lib.mkDefault pkgs.pre-commit;
+              tools = import ./nix/call-tools.nix pkgs;
+              hooks.treefmt.package = lib.mkIf (options ? treefmt) (
+                lib.mkOverride 900 config.treefmt.build.wrapper
+              );
+            };
           pre-commit.devShell = pkgs.mkShell {
             inherit (cfg.settings) shellHook;
             nativeBuildInputs = cfg.settings.enabledPackages;
           };
         };
-      });
+      }
+    );
   };
 }

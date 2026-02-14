@@ -1,111 +1,111 @@
-{ stdenv
-, lib
-, placeholder
-, actionlint
-, action-validator
-, alejandra
-, ansible-lint
-, biome
-, cabal2nix
-, callPackage
-, cargo
-, chart-testing
-, checkmake
-, circleci-cli
-, llvmPackages_latest
-, clippy
-, cljfmt
-, cmake-format
-, commitizen
-, comrak
-, conform
-, convco
-, crystal
-, cue
-, dart
-, deadnix
-, deno
-, dhall
-, dune_3
-, eclint
-, editorconfig-checker
-, elixir
-, elmPackages
-, flake-checker ? placeholder "flake-checker"
-, fprettify
-, git-annex
-, gitlint
-, gptcommit ? placeholder "gptcommit"
-, hadolint
-, haskell
-, haskellPackages
-, hledger-fmt ? placeholder "hledger-fmt"
-, hlint
-, hpack
-, html-tidy
-, keep-sorted
-, luaPackages
-, lua-language-server
-, lychee
-, julia-bin
-, mdformat
-, mdl
-, mdsh
-, nbstripout
-, nil
-, nixf-diagnose
-, nixfmt
-, nixfmt-classic ? placeholder "nixfmt-classic"
-, nixfmt-rfc-style ? placeholder "nixfmt-rfc-style"
-, nixpkgs-fmt
-, nodePackages
-, ocamlPackages
-, opam
-, opentofu
-, ormolu
-, pkgsBuildBuild
-, poetry
-, pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops"
-, proselint
-, python3Packages
-, pyright ? nodePackages.pyright
-, phpPackages
-, ripsecrets ? placeholder "ripsecrets"
-, reuse
-, ruff ? placeholder "ruff"
-, rumdl ? placeholder "rumdl"
-, rustfmt
-, selene
-, shellcheck
-, bats
-, shfmt
-, beautysh
-, statix
-, stylish-haskell
-, stylua
-, tagref
-, taplo
-, texlive
-, # Added in nixpkgs on Dec 2, 2022
-  topiary ? placeholder "topiary"
-, treefmt
-, trufflehog
-, typos
-, # Added in nixpkgs in commit 800ca60
-  typstyle ? placeholder "typstyle"
-, woodpecker-cli
-, zprint
-, yamlfmt
-, yamllint
-, go
-, go-tools
-, golangci-lint
-, golines
-, revive ? placeholder "revive"
-, uv
-, vale
-, zizmor
-,
+{
+  stdenv,
+  lib,
+  placeholder,
+  actionlint,
+  action-validator,
+  alejandra,
+  ansible-lint,
+  biome,
+  cabal2nix,
+  callPackage,
+  cargo,
+  chart-testing,
+  checkmake,
+  circleci-cli,
+  llvmPackages_latest,
+  clippy,
+  cljfmt,
+  cmake-format,
+  commitizen,
+  comrak,
+  conform,
+  convco,
+  crystal,
+  cue,
+  dart,
+  deadnix,
+  deno,
+  dhall,
+  dune_3,
+  eclint,
+  editorconfig-checker,
+  elixir,
+  elmPackages,
+  flake-checker ? placeholder "flake-checker",
+  fprettify,
+  git-annex,
+  gitlint,
+  gptcommit ? placeholder "gptcommit",
+  hadolint,
+  haskell,
+  haskellPackages,
+  hledger-fmt ? placeholder "hledger-fmt",
+  hlint,
+  hpack,
+  html-tidy,
+  keep-sorted,
+  luaPackages,
+  lua-language-server,
+  lychee,
+  julia-bin,
+  mdformat,
+  mdl,
+  mdsh,
+  nbstripout,
+  nil,
+  nixf-diagnose,
+  nixfmt,
+  nixfmt-classic ? placeholder "nixfmt-classic",
+  nixfmt-rfc-style ? placeholder "nixfmt-rfc-style",
+  nixpkgs-fmt,
+  nodePackages,
+  ocamlPackages,
+  opam,
+  opentofu,
+  ormolu,
+  pkgsBuildBuild,
+  poetry,
+  pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops",
+  proselint,
+  python3Packages,
+  pyright ? nodePackages.pyright,
+  phpPackages,
+  ripsecrets ? placeholder "ripsecrets",
+  reuse,
+  ruff ? placeholder "ruff",
+  rumdl ? placeholder "rumdl",
+  rustfmt,
+  selene,
+  shellcheck,
+  bats,
+  shfmt,
+  beautysh,
+  statix,
+  stylish-haskell,
+  stylua,
+  tagref,
+  taplo,
+  texlive,
+  # Added in nixpkgs on Dec 2, 2022
+  topiary ? placeholder "topiary",
+  treefmt,
+  trufflehog,
+  typos,
+  # Added in nixpkgs in commit 800ca60
+  typstyle ? placeholder "typstyle",
+  woodpecker-cli,
+  zprint,
+  yamlfmt,
+  yamllint,
+  go,
+  go-tools,
+  golangci-lint,
+  golines,
+  revive ? placeholder "revive",
+  uv,
+  vale,
+  zizmor,
 }:
 
 let

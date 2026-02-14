@@ -1,5 +1,6 @@
 { lib }:
-let inherit (lib) types;
+let
+  inherit (lib) types;
   # according to https://pre-commit.com/#supported-git-hooks
   supportedHooks = [
     "commit-msg"

@@ -1,4 +1,8 @@
-{ writeShellApplication, dune, ocaml }:
+{
+  writeShellApplication,
+  dune,
+  ocaml,
+}:
 
 writeShellApplication {
   name = "dune-fmt";

@@ -1,7 +1,6 @@
 {
-  imports =
-    [
-      ./pre-commit.nix
-      ./hooks.nix
-    ];
+  imports = [
+    ./pre-commit.nix
+    ./hooks.nix
+  ];
 }
