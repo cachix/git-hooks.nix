@@ -67,6 +67,10 @@ in
   config.hookModule = {
     imports = [ ./hook.nix ];
     config._module.args.default_stages = cfg.default_stages;
+    config._module.args.default_language =
+      if cfg.package.pname or "" == "pre-commit" && lib.versionAtLeast (cfg.package.version or "0") "4.4.0"
+      then "unsupported"
+      else "system";
   };
   config._module.args.hookModule = config.hookModule;
 

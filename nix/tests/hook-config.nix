@@ -3,6 +3,8 @@ let
   eval = conf: (run ({ src = null; addGcRoot = false; } // conf)).config;
 
   fakePrek = pkgs.writeShellScriptBin "prek" "" // { pname = "prek"; };
+  fakeOldPreCommit = pkgs.writeShellScriptBin "pre-commit" "" // { pname = "pre-commit"; version = "4.3.0"; };
+  fakeNewPreCommit = pkgs.writeShellScriptBin "pre-commit" "" // { pname = "pre-commit"; version = "4.4.0"; };
 
   hookTests = {
     "pre-commit: no priority field when unset" = {
@@ -30,6 +32,36 @@ let
       hook = "shellcheck";
       check = raw: raw ? priority && raw.priority == 5;
       expected = "priority = 5 in raw config";
+    };
+
+    "pre-commit < 4.4.0: language defaults to system" = {
+      conf = {
+        package = fakeOldPreCommit;
+        hooks.shellcheck.enable = true;
+      };
+      hook = "shellcheck";
+      check = raw: raw.language == "system";
+      expected = "language = system";
+    };
+
+    "pre-commit >= 4.4.0: language defaults to unsupported" = {
+      conf = {
+        package = fakeNewPreCommit;
+        hooks.shellcheck.enable = true;
+      };
+      hook = "shellcheck";
+      check = raw: raw.language == "unsupported";
+      expected = "language = unsupported";
+    };
+
+    "prek: language defaults to system" = {
+      conf = {
+        package = fakePrek;
+        hooks.shellcheck.enable = true;
+      };
+      hook = "shellcheck";
+      check = raw: raw.language == "system";
+      expected = "language = system";
     };
   };
 

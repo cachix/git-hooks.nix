@@ -235,7 +235,79 @@ If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts
 use nix
 ```
 
-## Hooks
+## Custom hooks
+
+Sometimes it is useful to add a project specific command as an extra check that
+is not part of the pre-defined set of hooks provided by this project.
+
+Example configuration:
+
+```nix
+ let
+   nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/git-hooks.nix/tarball/master");
+ in {
+   pre-commit-check = nix-pre-commit-hooks.run {
+     hooks = {
+       # ...
+
+       # Example custom hook for a C project using Make:
+       unit-tests = {
+         enable = true;
+
+         # The name of the hook (appears on the report table):
+         name = "Unit tests";
+
+         # The command to execute (mandatory):
+         entry = "make check";
+
+         # The pattern of files to run on (default: "" (all))
+         # see also https://pre-commit.com/#hooks-files
+         files = "\\.(c|h)$";
+
+         # List of file types to run on (default: [ "file" ] (all files))
+         # see also https://pre-commit.com/#filtering-files-with-types
+         # You probably only need to specify one of `files` or `types`:
+         types = [ "text" "c" ];
+
+         # Exclude files that were matched by these patterns (default: [ ] (none)):
+         excludes = [ "irrelevant\\.c" ];
+
+         # The language of the hook - tells pre-commit
+         # how to install the hook
+         # (default: "system", or "unsupported" for pre-commit >= 4.4.0)
+         # see also https://pre-commit.com/#supported-languages
+         language = "unsupported";
+
+         # Set this to false to not pass the changed files
+         # to the command (default: true):
+         pass_filenames = false;
+
+         # Which git hooks the command should run for (default: [ "pre-commit" ]):
+         stages = ["pre-push"];
+       };
+     };
+   };
+ }
+```
+
+Custom hooks are defined with the same schema as [pre-defined
+hooks](modules/pre-commit.nix).
+
+> **Note on `language = "system"` vs `"unsupported"`:**
+>
+> Pre-commit >= 4.4.0 [renamed](https://github.com/pre-commit/pre-commit/pull/3577) `"system"` to `"unsupported"`.
+>
+> This does **not** mean deprecated — `"unsupported"` is just a new name to
+> reflect that when using this language, pre-commit does not provision the tools,
+> and using externally managed tools (e.g. via Nix) is not an officially
+> supported workflow.
+>
+> Both values are functionally equivalent.
+> The default is set automatically based on the pre-commit package version.
+>
+> We recommend switching to [`prek`](https://github.com/j178/prek).
+
+## Built-in hooks
 
 ### Ansible
 
@@ -541,63 +613,6 @@ use nix
 - [trim-trailing-whitespace](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/trailing_whitespace_fixer.py)
 - [woodpecker-cli-lint](https://woodpecker-ci.org/docs/cli#lint)
 - [zizmor](https://github.com/zizmorcore/zizmor)
-
-### Custom hooks
-
-Sometimes it is useful to add a project specific command as an extra check that
-is not part of the pre-defined set of hooks provided by this project.
-
-Example configuration:
-
-```nix
- let
-   nix-pre-commit-hooks = import (builtins.fetchTarball "https://github.com/cachix/git-hooks.nix/tarball/master");
- in {
-   pre-commit-check = nix-pre-commit-hooks.run {
-     hooks = {
-       # ...
-
-       # Example custom hook for a C project using Make:
-       unit-tests = {
-         enable = true;
-
-         # The name of the hook (appears on the report table):
-         name = "Unit tests";
-
-         # The command to execute (mandatory):
-         entry = "make check";
-
-         # The pattern of files to run on (default: "" (all))
-         # see also https://pre-commit.com/#hooks-files
-         files = "\\.(c|h)$";
-
-         # List of file types to run on (default: [ "file" ] (all files))
-         # see also https://pre-commit.com/#filtering-files-with-types
-         # You probably only need to specify one of `files` or `types`:
-         types = [ "text" "c" ];
-
-         # Exclude files that were matched by these patterns (default: [ ] (none)):
-         excludes = [ "irrelevant\\.c" ];
-
-         # The language of the hook - tells pre-commit
-         # how to install the hook (default: "unsupported")
-         # see also https://pre-commit.com/#supported-languages
-         language = "unsupported";
-
-         # Set this to false to not pass the changed files
-         # to the command (default: true):
-         pass_filenames = false;
-
-         # Which git hooks the command should run for (default: [ "pre-commit" ]):
-         stages = ["pre-push"];
-       };
-     };
-   };
- }
-```
-
-Custom hooks are defined with the same schema as [pre-defined
-hooks](modules/pre-commit.nix).
 
 ## Contributing hooks
 
