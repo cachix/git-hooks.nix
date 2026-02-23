@@ -3858,7 +3858,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "regal";
           description = "A linter for Rego policies";
           package = tools.regal;
-          entry = "${tools.regal.package}/bin/regal lint ${hooks.regal.settings.flags}";
+          entry = "${hooks.regal.package}/bin/regal lint ${hooks.regal.settings.flags}";
           files = "\\.rego$";
           pass_filenames = true;
         };
