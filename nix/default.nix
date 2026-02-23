@@ -53,6 +53,7 @@ let
 
         in
         if warn then lib.warnIfNot result message result else result;
+      tests = import ./tests { inherit pkgs run; };
     in
     {
       inherit tools run;
@@ -63,7 +64,7 @@ let
         inherit (pkgs) pre-commit;
       };
 
-      checks = (lib.filterAttrs removeInvalidPackage tools) // {
+      checks = (lib.filterAttrs removeInvalidPackage tools) // tests // {
         # A pre-commit-check for nix-pre-commit itself
         pre-commit-check = run {
           src = ../.;
@@ -72,7 +73,6 @@ let
             typos.enable = true;
           };
         };
-        installation-test = pkgs.callPackage ./installation-test.nix { inherit run; };
         all-tools-eval =
           let
             config = lib.evalModules {
