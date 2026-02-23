@@ -117,6 +117,7 @@ in
           Both values are functionally equivalent.
         '';
       default = default_language;
+      defaultText = lib.literalExpression ''"system" or "unsupported" depending on pre-commit version'';
     };
 
     files = mkOption {
