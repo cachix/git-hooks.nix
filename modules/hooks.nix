@@ -1775,7 +1775,7 @@ in
           options.settings = {
             language-dialect = mkOption {
               type = types.enum [ "auto" "bash" "posix" "mksh" "bats" ];
-              description = lib.mdDoc "Shell language dialect.";
+              description = "Shell language dialect.";
               default = "auto";
             };
             simplify = mkOption {
@@ -1785,32 +1785,32 @@ in
             };
             indent = mkOption {
               type = types.nullOr (types.oneOf [ types.int types.str ]);
-              description = lib.mdDoc "0 for tabs, >0 for number of spaces.";
+              description = "0 for tabs, >0 for number of spaces.";
               default = null;
             };
             binary-next-line = mkOption {
               type = types.bool;
-              description = lib.mdDoc "Binary ops like && and | may start a line.";
+              description = "Binary ops like && and | may start a line.";
               default = false;
             };
             case-indent = mkOption {
               type = types.bool;
-              description = lib.mdDoc "Switch cases will be indented.";
+              description = "Switch cases will be indented.";
               default = false;
             };
             space-redirects = mkOption {
               type = types.bool;
-              description = lib.mdDoc "Redirect operators will be followed by a space.";
+              description = "Redirect operators will be followed by a space.";
               default = false;
             };
             keep-padding = mkOption {
               type = types.bool;
-              description = lib.mdDoc "Keep column alignment paddings.";
+              description = "Keep column alignment paddings.";
               default = false;
             };
             func-next-line = mkOption {
               type = types.bool;
-              description = lib.mdDoc "Function opening braces are placed on a separate line.";
+              description = "Function opening braces are placed on a separate line.";
               default = false;
             };
           };
