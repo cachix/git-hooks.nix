@@ -279,12 +279,12 @@ in
 
       runHookStage =
         mkOption {
-          type = types.nullOr types.str;
+          type = types.nullOr supportedHooksLib.supportedHooksType;
           description =
             ''
               The hook stage to run in the `run` derivation.
 
-              If set to `null` (default), pre-commit will run the default hook stage.
+              If set to `null` (default), pre-commit will run the default hook stage (pre-commit).
               If set to a specific stage (e.g., "manual", "pre-commit", "pre-push"),
               only hooks configured for that stage will run.
             '';
