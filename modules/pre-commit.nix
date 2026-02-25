@@ -483,7 +483,6 @@ in
             return 1
           fi
 
-          echo 1>&2 "git-hooks.nix: uninstalling hooks"
           # Remove any previously installed hooks (since pre-commit itself has no convergent design)
           hooks="${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks )}"
           for hook in $hooks; do
@@ -505,7 +504,6 @@ in
             return 1
           fi
 
-          echo 1>&2 "git-hooks.nix: installing hooks"
           # Add hooks for configured stages (only) ...
           if [ ! -z "${concatStringsSep " " install_stages}" ]; then
             for stage in ${concatStringsSep " " install_stages}; do
