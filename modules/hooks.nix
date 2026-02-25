@@ -643,6 +643,33 @@ in
           };
         };
       };
+      golangci-lint = mkOption {
+        description = "golangci-lint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options = {
+            settings = {
+              configPath = mkOption {
+                type = types.nullOr types.str;
+                description = "Path to the config file.";
+                default = null;
+              };
+              flags = mkOption {
+                type = types.str;
+                description = "Flags passed to golangci-lint.";
+                default = "";
+                example = "--new-from-rev HEAD --fix";
+              };
+            };
+            packageOverrides = {
+              go = mkOption {
+                type = types.package;
+                description = "The go package to use.";
+              };
+            };
+          };
+        };
+      };
       golines = mkOption {
         description = "golines hook";
         type = types.submodule {
@@ -3073,25 +3100,39 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             builtins.toString script;
           files = "\\.go$";
         };
-      golangci-lint = {
-        name = "golangci-lint";
-        description = "Fast linters runner for Go.";
-        package = tools.golangci-lint;
-        entry =
-          let
-            script = pkgs.writeShellScript "precommit-golangci-lint" ''
-              set -e
-              for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
-                ${hooks.golangci-lint.package}/bin/golangci-lint run ./"$dir"
-              done
-            '';
-          in
-          builtins.toString script;
-        files = "\\.go$";
-        # to avoid multiple invocations of the same directory input, provide
-        # all file names in a single run.
-        require_serial = true;
-      };
+      golangci-lint =
+        let
+          inherit (hooks.golangci-lint) packageOverrides;
+          wrapper = pkgs.runCommand "golangci-lint-wrapped"
+            {
+              buildInputs = [ pkgs.makeWrapper ];
+            } ''
+            makeWrapper ${tools.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
+              --prefix PATH : ${packageOverrides.go}/bin
+          '';
+        in
+        {
+          name = "golangci-lint";
+          description = "Fast linters runner for Go.";
+          package = wrapper;
+          packageOverrides = { inherit (tools) go; };
+          entry =
+            let
+              inherit (hooks.golangci-lint) settings;
+              configArg = lib.optionalString (settings.configPath != null) "--config ${settings.configPath}";
+              script = pkgs.writeShellScript "precommit-golangci-lint" ''
+                set -e
+                for dir in $(echo "$@" | xargs -n1 dirname | sort -u); do
+                  ${hooks.golangci-lint.package}/bin/golangci-lint run ${configArg} ${settings.flags} ./"$dir"
+                done
+              '';
+            in
+            builtins.toString script;
+          files = "\\.go$";
+          # to avoid multiple invocations of the same directory input, provide
+          # all file names in a single run.
+          require_serial = true;
+        };
       golines =
         {
           name = "golines";
