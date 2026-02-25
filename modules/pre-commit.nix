@@ -522,7 +522,7 @@ in
                   ;;
                 *)
                   echo 1>&2 "ERROR: git-hooks.nix: either $stage is not a valid stage or git-hooks.nix doesn't yet support it."
-                  return 1
+                  exit 1
                   ;;
               esac
             done
