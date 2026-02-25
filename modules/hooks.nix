@@ -1778,7 +1778,7 @@ in
           imports = [ hookModule ];
           options.settings = {
             language-dialect = mkOption {
-              type = types.enum [ "auto" "bash" "posix" "mksh" "bats" ];
+              type = types.nullOr (types.enum [ "auto" "bash" "posix" "mksh" "bats" ]);
               description = "Shell language dialect.";
               default = "auto";
             };
@@ -4069,7 +4069,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               cmdArgs =
                 mkCmdArgs
                   (with hooks.shfmt.settings; [
-                    [ true "-ln ${language-dialect}" ]
+                    [ (language-dialect != null) "-ln ${language-dialect}" ]
                     [ simplify "-s" ]
                     [ (indent != null) "-i ${builtins.toString indent}" ]
                     [ binary-next-line "-bn" ]
