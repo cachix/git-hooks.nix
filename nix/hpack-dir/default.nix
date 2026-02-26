@@ -1,6 +1,7 @@
 { writeScriptBin, hpack }:
 
-(writeScriptBin "hpack-dir" ''#!/usr/bin/env bash
+(writeScriptBin "hpack-dir" ''
+  #!/usr/bin/env bash
   set -e
   ##  ^^
   ## The `-e` flag changes the behaviour of Shell so that the first top-level
