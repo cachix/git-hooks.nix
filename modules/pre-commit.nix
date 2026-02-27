@@ -540,7 +540,9 @@ in
               common_dir=''$(${cfg.gitPackage}/bin/git rev-parse --path-format=absolute --git-common-dir)
 
               # Convert the absolute path to a path relative to the toplevel working directory.
-              common_dir=''${common_dir#''$GIT_WC/}
+              # Using realpath instead of string stripping to correctly handle git worktrees
+              # where the common directory is not under the working tree.
+              common_dir=''$(${pkgs.coreutils}/bin/realpath --relative-to="''$GIT_WC" "''$common_dir")
 
               ${lib.getExe cfg.gitPackage} config --local core.hooksPath "''$common_dir/hooks"
             fi
