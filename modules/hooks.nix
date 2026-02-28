@@ -1833,6 +1833,22 @@ in
           };
         };
       };
+      staticcheck = mkOption {
+        description = "staticcheck hook";
+        type = types.submodule ({ config, ... }: {
+          imports = [ hookModule ];
+          options.packageOverrides = {
+            go = mkOption {
+              type = types.package;
+              description = "The go package to use";
+            };
+            go-tools = mkOption {
+              type = types.package;
+              description = "The go-tools package to use";
+            };
+          };
+        });
+      };
       statix = mkOption {
         description = "statix hook";
         type = types.submodule {
@@ -4140,11 +4156,18 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "(\\.yaml$)|(\\.yml$)";
         };
       staticcheck =
+        let
+          inherit (hooks.staticcheck) packageOverrides;
+          wrapper = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+            makeWrapper ${packageOverrides.go-tools}/bin/staticcheck $out/bin/staticcheck \
+              --prefix PATH : ${packageOverrides.go}/bin
+          '';
+        in
         {
           name = "staticcheck";
           description = "State of the art linter for the Go programming language";
-          package = tools.go-tools;
-          # staticheck works with directories.
+          package = wrapper;
+          packageOverrides = { go = tools.go; go-tools = tools.go-tools; };
           entry =
             let
               script = pkgs.writeShellScript "precommit-staticcheck" ''
