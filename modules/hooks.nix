@@ -643,6 +643,18 @@ in
           };
         };
       };
+      gitlint = mkOption {
+        description = "gitlint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.flags = mkOption {
+            type = types.listOf types.str;
+            description = "Flags passed to gitlint. See all available [here](https://jorisroovers.com/gitlint/latest/configuration/cli/)";
+            default = [ ];
+            example = [ "-c" "title-max-length.line-length=120" ];
+          };
+        };
+      };
       golines = mkOption {
         description = "golines hook";
         type = types.submodule {
@@ -3045,7 +3057,11 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         name = "gitlint";
         description = "Linting for your git commit messages";
         package = tools.gitlint;
-        entry = "${hooks.gitlint.package}/bin/gitlint --staged --msg-filename";
+        entry = lib.escapeShellArgs (
+          [ "${hooks.gitlint.package}/bin/gitlint" ]
+          ++ hooks.gitlint.flags
+          ++ [ "--staged" "--msg-filename" ]
+        );
         stages = [ "commit-msg" ];
       };
       gofmt =
