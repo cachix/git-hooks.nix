@@ -296,11 +296,31 @@ in
         type = types.submodule {
           imports = [ hookModule ];
           options.settings = {
-            configPath = mkOption {
-              type = types.str;
+            in-place =
+              mkOption {
+                description = "Edit files in-place. If unset, --check will be used.";
+                type = types.bool;
+                default = false;
+            };
+            log-level =
+              mkOption {
+                description = "What level of logs to report.";
+                type =  types.enum [ "" "error" "warning" "info" "debug" ];
+                default = "";
+                example = "debug";
+              };
+            line-width =
+              mkOption {
+                description = "What level of logs to report.";
+                type =  types.nullOr types.int;
+                default = null;
+                example = 160;
+              };
+            config-files = mkOption {
+              type = types.listOf types.str;
               description = "Path to the configuration file (.json,.python,.yaml)";
-              default = "";
-              example = ".cmake-format.json";
+              default = [];
+              example = [".cmake-format.json"];
             };
           };
         };
@@ -2663,13 +2683,16 @@ in
           package = tools.cmake-format;
           entry =
             let
-              maybeConfigPath =
-                if hooks.cmake-format.settings.configPath == ""
-                # Searches automatically for the config path.
-                then ""
-                else "-C ${hooks.cmake-format.settings.configPath}";
+              cmdArgs =
+                mkCmdArgs (with hooks.cmake-format.settings; [
+                  [ in-place "--in-place" ]
+                  [ (!in-place) "--check" ]
+                  [ (line-width != null) "--line-width ${toString line-width}" ]
+                  [ (log-level != "")  "--log-level ${log-level}" ]
+                  [ (config-files != []) "--config-files ${concatStringsSep " " config-files}" ]
+                ]);
             in
-            "${hooks.cmake-format.package}/bin/cmake-format --check ${maybeConfigPath}";
+            "${hooks.cmake-format.package}/bin/cmake-format ${cmdArgs}";
           files = "\\.cmake$|CMakeLists.txt";
         };
       commitizen =
