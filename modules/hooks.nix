@@ -2831,6 +2831,26 @@ in
           entry = "${hooks.detect-private-keys.package}/bin/detect-private-key";
           types = [ "text" ];
         };
+      detect-secrets =
+        {
+          name = "detect-secrets";
+          description = "An enterprise friendly way of detecting and preventing secrets in code.";
+          package = tools.detect-secrets;
+          entry =
+            let
+              # 1. Check if `.secrets.baseline` exists if not we need to run `detect-secrets scan` to create it.
+              # 2. Run `detect-secrets audit .secrets.baseline` to scan the files.
+              script = pkgs.writeShellScript "precommit-detect-secrets" ''
+                if [ ! -f .secrets.baseline ]; then
+                  ${hooks.detect-secrets.package}/bin/detect-secrets scan
+                fi
+                ${hooks.detect-secrets.package}/bin/detect-secrets audit .secrets.baseline
+              '';
+            in
+              toString
+              script;
+          types = [ "text" ];
+        };
       dhall-format = {
         name = "dhall-format";
         description = "Dhall code formatter.";
