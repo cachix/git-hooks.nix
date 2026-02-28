@@ -1091,6 +1091,100 @@ in
           };
         };
       };
+      oxlint = mkOption {
+        description = "oxlint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            categories =
+              mkOption {
+                type = types.listOf (types.submodule {
+                  options = {
+                    action = mkOption {
+                      type = types.enum [ "allow" "warn" "deny" ];
+                      description = "Whether to allow a category and suppress its lints, deny a category and emit warnings, or deny and emit an error.";
+                    };
+                    category = mkOption {
+                      type = types.enum [ "correctness" "suspicious" "pedantic" "style" "nursery" "restriction" "all" ];
+                      description = ''
+                        * `correctness` - code that is outright wrong or useless (default).
+                        * `suspicious`  - code that is most likely wrong or useless.
+                        * `pedantic`    - lints which are rather strict or have occasional false positives.
+                        * `style`       - code that should be written in a more idiomatic way.
+                        * `nursery`     - new lints that are still under development.
+                        * `restriction` - lints which prevent the use of language and library features.
+                        * `all`         - all the categories listed above except nursery. Does not enable plugins
+                      '';
+                    };
+                  };
+                });
+                description = "List of action-category pairs";
+                default = [ ];
+                example = [
+                  { action = "deny"; category = "correctness"; }
+                  { action = "allow"; category = "no-debugger"; }
+                ];
+              };
+            configPath = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "Oxlint configuration file. Only `.json` extension is supported.";
+              default = null;
+              example = "./oxlintrc.json";
+            };
+            deny-warnings = mkOption {
+              type = types.bool;
+              description = "Ensure warnings produce a non-zero exit code.";
+              default = false;
+            };
+            fix = mkOption {
+              type = types.nullOr (types.enum [ "safe" "suggestions" "dangerously" ]);
+              description = "Which issue fixes to apply";
+              default = null;
+            };
+            format = mkOption {
+              type = types.enum [ "checkstyle" "default" "github" "gitlab" "json" "junit" "stylish" "unix" ];
+              description = "Use a specific output format.";
+              default = "default";
+            };
+            max-warnings = mkOption {
+              type = types.nullOr types.int;
+              description = "Specify a warning threshold, which can be used to force exit with an error status if there are too many warning-level rule violations in your project.";
+              default = null;
+            };
+            plugins = mkOption {
+              type = types.listOf (types.enum [ "import" "jest" "jsdoc" "jsx-a11y" "nextjs" "node" "oxc" "promise" "react" "react-perf" "regex" "typescript" "unicorn" "vitest" "vue" ]);
+              description = "The plugins to enable.";
+              default = [ "oxc" "unicorn" "typescript" ];
+            };
+            quiet = mkOption {
+              type = types.bool;
+              description = "Disable reporting on warnings, only errors are reported.";
+              default = false;
+            };
+            report-unused-disable-directives-severity = mkOption {
+              type = types.nullOr (types.enum [ "error" "warn" "log" "debug" ]);
+              description = "Specify the severity level of directive comments like `// eslint-disable-line` when no errors would have been reported on that line anyway.";
+              default = null;
+            };
+            silent = mkOption {
+              type = types.bool;
+              description = "Do not display any diagnostics.";
+              default = false;
+            };
+            threads = mkOption {
+              type = types.nullOr types.int;
+              description = "Number of threads to use. Set to 1 for using only 1 CPU core.";
+              default = null;
+            };
+            tsconfigPath = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "TypeScript `tsconfig.json` path for reading path alias and project references for import plugin.";
+              default = null;
+              example = "./tsconfig.json";
+            };
+          };
+        };
+      };
       php-cs-fixer = mkOption {
         description = "php-cs-fixer hook";
         type = types.submodule {
@@ -3686,6 +3780,41 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.ormolu.package}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
           files = "\\.l?hs(-boot)?$";
+        };
+      oxlint =
+        {
+          name = "oxlint";
+          description = "ESLint replacement written in Rust";
+          package = tools.oxlint;
+          entry =
+            let
+              pluginsDefault = [ "oxc" "unicorn" "typescript" ];
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.oxlint.settings; [
+                    [ (categories != [ ]) (lib.strings.concatStringsSep " " (lib.concatMap (entry: [ "--${entry.0}=${entry.1}" ]) categories)) ]
+                    [ (config-path != null) "--config=${builtins.toString config-path}" ]
+                    [ (deny-warnings != null) "--deny-warnings" ]
+                    [ (fix != null) (if fix == "safe" then "--fix" else "--fix=${fix}") ]
+                    [ (true) "--format=${format}" ]
+                    [ (max-warnings != null) "--max-warnings=${builtins.toString max-warnings}" ]
+                    [
+                      (plugins != [ ])
+                      (lib.strings.concatStringsSep " "
+                        (flatten [
+                          (lib.concatMap (plugin: [ "--${plugin}-plugin" ]) (lib.subtractLists pluginsDefault plugins))
+                          (lib.concatMap (plugin: [ "--disable-${plugin}-plugin" ]) (lib.subtractLists plugins pluginsDefault))
+                        ]))
+                    ]
+                    [ (quiet) "--quiet" ]
+                    [ (report-unused-disable-directives-severity != null) "--report-unused-disable-directives-severity=${report-unused-disable-directives-severity}" ]
+                    [ (silent) "--silent" ]
+                    [ (threads != null) "--threads=${builtins.toString threads}" ]
+                    [ (tsconfig-path != null) "--tsconfig=${builtins.toString tsconfig-path}" ]
+                  ]);
+            in
+            "${hooks.oxlint.package}/bin/oxlint ${cmdArgs}";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
         };
       php-cs-fixer =
         {
