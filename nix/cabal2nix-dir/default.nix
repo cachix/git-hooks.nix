@@ -1,6 +1,7 @@
 { writeScriptBin, cabal2nix }:
 
-writeScriptBin "cabal2nix-dir" ''#!/usr/bin/env bash
+writeScriptBin "cabal2nix-dir" ''
+  #!/usr/bin/env bash
   projectdir="$(pwd)"
   outputFileName=""
   cabalFiles=()
