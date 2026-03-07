@@ -3044,6 +3044,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
       gitleaks = {
         name = "gitleaks";
         description = "Detect hardcoded secrets using Gitleaks";
+        entry = lib.getExe hooks.gitleaks.package;
         package = tools.gitleaks;
         args = [ "git" "--pre-commit" "--redact" "--staged" "--verbose" ];
       };
