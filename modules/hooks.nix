@@ -4250,7 +4250,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   | sort \
                   | uniq \
                   | while read dir; do
-                      ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init
+                      ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init -backend=false
                       ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" validate
                     done
               '';
