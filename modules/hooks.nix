@@ -1091,6 +1091,234 @@ in
           };
         };
       };
+      oxfmt = mkOption {
+        description = "oxfmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            binPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `oxfmt` binary path.
+                  For example, if you want to use the `oxfmt` binary from `node_modules`, use `"./node_modules/.bin/oxfmt"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.oxfmt}/bin/oxfmt"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/oxfmt"
+                '';
+              };
+
+            mode =
+              mkOption {
+                type = types.enum [ "write" "check" "list-different" ];
+                description = ''
+                  Output mode.
+                  * `write` - Format and write files in place (default).
+                  * `check` - Check if files are formatted, also show statistics.
+                  * `list-different` - List files that would be changed.
+                '';
+                default = "write";
+              };
+
+            threads =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Number of threads to use. Set to 1 for using only 1 CPU core.";
+                default = null;
+              };
+
+            configPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Path to the configuration file.";
+                default = null;
+                example = "./oxfmtrc.json";
+              };
+          };
+        };
+      };
+      oxlint = mkOption {
+        description = "oxlint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            allow =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Allow the rule or category (suppress the lint).";
+                default = [ ];
+                example = [ "correctness" "no-debugger" ];
+              };
+
+            warn =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Warn on the rule or category (emit a warning).";
+                default = [ ];
+                example = [ "suspicious" ];
+              };
+
+            deny =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Deny the rule or category (emit an error).";
+                default = [ ];
+                example = [ "correctness" "perf" ];
+              };
+
+            plugins =
+              mkOption {
+                type = types.listOf (types.enum [ "import" "jest" "jsdoc" "jsx-a11y" "nextjs" "node" "oxc" "promise" "react" "react-perf" "typescript" "unicorn" "vitest" "vue" ]);
+                description = "Plugins to enable. Plugins not in this list will be disabled.";
+                default = [ "oxc" "unicorn" "typescript" ];
+              };
+
+            binPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `oxlint` binary path.
+                  For example, if you want to use the `oxlint` binary from `node_modules`, use `"./node_modules/.bin/oxlint"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.oxlint}/bin/oxlint"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/oxlint"
+                '';
+              };
+
+            fix =
+              mkOption {
+                type = types.listOf (types.enum [ "safe" "suggestions" "dangerously" ]);
+                description = ''
+                  Which fix tiers to enable. Each tier is independent and combinable.
+                  * `safe` - Fix as many issues as possible (`--fix`).
+                  * `suggestions` - Apply auto-fixable suggestions that may change program behavior (`--fix-suggestions`).
+                  * `dangerously` - Apply dangerous fixes and suggestions (`--fix-dangerously`).
+                '';
+                default = [ ];
+                example = [ "safe" "suggestions" ];
+              };
+
+            denyWarnings =
+              mkOption {
+                type = types.bool;
+                description = "Ensure warnings produce a non-zero exit code.";
+                default = false;
+              };
+
+            format =
+              mkOption {
+                type = types.enum [ "default" "checkstyle" "github" "gitlab" "json" "junit" "stylish" "unix" ];
+                description = "Output format.";
+                default = "default";
+              };
+
+            quiet =
+              mkOption {
+                type = types.bool;
+                description = "Disable reporting on warnings, only errors are reported.";
+                default = false;
+              };
+
+            maxWarnings =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Specify a warning threshold, which can be used to force exit with an error status if there are too many warning-level rule violations.";
+                default = null;
+              };
+
+            silent =
+              mkOption {
+                type = types.bool;
+                description = "Do not display any diagnostics.";
+                default = false;
+              };
+
+            typeAware =
+              mkOption {
+                type = types.bool;
+                description = "Enable rules that require type information.";
+                default = false;
+              };
+
+            typeCheck =
+              mkOption {
+                type = types.bool;
+                description = "Enable experimental type checking (includes TypeScript compiler diagnostics).";
+                default = false;
+              };
+
+            disableNestedConfig =
+              mkOption {
+                type = types.bool;
+                description = "Disable the automatic loading of nested configuration files.";
+                default = false;
+              };
+
+            ignorePath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Specify the file to use as your ignore file.";
+                default = null;
+                example = "./.eslintignore";
+              };
+
+            ignorePattern =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Patterns of files to ignore (in addition to those in ignore files).";
+                default = [ ];
+                example = [ "*.test.js" "dist/" ];
+              };
+
+            noIgnore =
+              mkOption {
+                type = types.bool;
+                description = "Disable excluding files from ignore files and ignore patterns.";
+                default = false;
+              };
+
+            threads =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Number of threads to use. Set to 1 for using only 1 CPU core.";
+                default = null;
+              };
+
+            reportUnusedDisableDirectivesSeverity =
+              mkOption {
+                type = types.nullOr (types.enum [ "error" "warn" "log" "debug" ]);
+                description = "Severity level for unused disable directives.";
+                default = null;
+              };
+
+            tsconfig =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "TypeScript tsconfig.json path for reading path alias and project references.";
+                default = null;
+                example = "./tsconfig.json";
+              };
+
+            configPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Path to the configuration file.";
+                default = null;
+                example = "./oxlintrc.json";
+              };
+          };
+        };
+      };
       php-cs-fixer = mkOption {
         description = "php-cs-fixer hook";
         type = types.submodule {
@@ -3686,6 +3914,69 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.ormolu.package}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
           files = "\\.l?hs(-boot)?$";
+        };
+      oxfmt =
+        {
+          name = "oxfmt";
+          description = "A fast formatter for JavaScript and TypeScript";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+
+          package = tools.oxfmt;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.oxfmt "/bin/oxfmt";
+              cmdArgs =
+                mkCmdArgs [
+                  [ (hooks.oxfmt.settings.mode != "write") "--${hooks.oxfmt.settings.mode}" ]
+                  [ (hooks.oxfmt.settings.threads != null) "--threads ${toString hooks.oxfmt.settings.threads}" ]
+                  [ (hooks.oxfmt.settings.configPath != null) "--config ${builtins.toString hooks.oxfmt.settings.configPath}" ]
+                ];
+            in
+            "${binPath} ${cmdArgs}";
+        };
+      oxlint =
+        {
+          name = "oxlint";
+          description = "A fast linter for JavaScript and TypeScript";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+
+          package = tools.oxlint;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.oxlint "/bin/oxlint";
+              pluginsDefault = [ "oxc" "unicorn" "typescript" ];
+              pluginFlags = lib.concatStringsSep " " (lib.flatten [
+                (map (p: "--${p}-plugin") (lib.subtractLists pluginsDefault hooks.oxlint.settings.plugins))
+                (map (p: "--disable-${p}-plugin") (lib.subtractLists hooks.oxlint.settings.plugins pluginsDefault))
+              ]);
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.oxlint.settings; [
+                    [ (deny != [ ]) (lib.concatMapStringsSep " " (r: "--deny ${r}") deny) ]
+                    [ (warn != [ ]) (lib.concatMapStringsSep " " (r: "--warn ${r}") warn) ]
+                    [ (allow != [ ]) (lib.concatMapStringsSep " " (r: "--allow ${r}") allow) ]
+                    [ (plugins != pluginsDefault) pluginFlags ]
+                    [ (builtins.elem "safe" fix) "--fix" ]
+                    [ (builtins.elem "suggestions" fix) "--fix-suggestions" ]
+                    [ (builtins.elem "dangerously" fix) "--fix-dangerously" ]
+                    [ (denyWarnings) "--deny-warnings" ]
+                    [ (format != "default") "--format ${format}" ]
+                    [ (quiet) "--quiet" ]
+                    [ (silent) "--silent" ]
+                    [ (maxWarnings != null) "--max-warnings ${toString maxWarnings}" ]
+                    [ (threads != null) "--threads ${toString threads}" ]
+                    [ (reportUnusedDisableDirectivesSeverity != null) "--report-unused-disable-directives-severity ${reportUnusedDisableDirectivesSeverity}" ]
+                    [ (typeAware) "--type-aware" ]
+                    [ (typeCheck) "--type-check" ]
+                    [ (disableNestedConfig) "--disable-nested-config" ]
+                    [ (ignorePath != null) "--ignore-path ${builtins.toString ignorePath}" ]
+                    [ (ignorePattern != [ ]) (lib.concatMapStringsSep " " (p: "--ignore-pattern ${p}") ignorePattern) ]
+                    [ (noIgnore) "--no-ignore" ]
+                    [ (tsconfig != null) "--tsconfig ${builtins.toString tsconfig}" ]
+                    [ (configPath != null) "--config ${builtins.toString configPath}" ]
+                  ]);
+            in
+            "${binPath} ${cmdArgs}";
         };
       php-cs-fixer =
         {
