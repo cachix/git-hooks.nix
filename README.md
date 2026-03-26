@@ -474,6 +474,10 @@ hooks](modules/pre-commit.nix).
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [statix](https://github.com/nerdypepper/statix)
 
+### Nushell
+
+- [nufmt](https://github.com/nushell/nufmt)
+
 ### OCaml
 
 - [dune-fmt](https://dune.build/)

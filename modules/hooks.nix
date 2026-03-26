@@ -1071,6 +1071,19 @@ in
           };
         };
       };
+      nufmt = mkOption {
+        description = "nufmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath = mkOption {
+              type = types.nullOr types.path;
+              description = "Path to the nufmt.nuon configuration file.";
+              default = null;
+            };
+          };
+        };
+      };
       ormolu = mkOption {
         description = "ormolu hook";
         type = types.submodule {
@@ -3648,6 +3661,22 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.no-commit-to-branch.package}/bin/no-commit-to-branch ${cmdArgs}";
         };
+      nufmt =
+        {
+          name = "nufmt";
+          description = "Nushell code formatter.";
+          package = tools.nufmt;
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.nufmt.settings; [
+                    [ (configPath != null) "--config ${configPath}" ]
+                  ]);
+            in
+            "${lib.getExe hooks.nufmt.package} ${cmdArgs}";
+          types = [ "nushell" ];
+        };
       ocp-indent =
         {
           name = "ocp-indent";
@@ -4016,6 +4045,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                 [ (configuration != { }) " --config ${toml.generate ".rumdl.toml" configuration}" ]
               ]);
         in
+
         {
           name = "rumdl";
           description = "Style checker and linter for rumdl files.";
