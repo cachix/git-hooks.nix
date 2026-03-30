@@ -184,6 +184,7 @@ in
     selene
     shellcheck
     shfmt
+    sqlfluff
     statix
     stylish-haskell
     stylua
