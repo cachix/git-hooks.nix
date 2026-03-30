@@ -81,6 +81,7 @@
 , bats
 , shfmt
 , beautysh
+, sqlfluff
 , statix
 , stylish-haskell
 , stylua
