@@ -81,6 +81,7 @@
 , bats
 , shfmt
 , beautysh
+, sqlfluff
 , statix
 , stylish-haskell
 , stylua
@@ -183,6 +184,7 @@ in
     selene
     shellcheck
     shfmt
+    sqlfluff
     statix
     stylish-haskell
     stylua

@@ -1833,6 +1833,60 @@ in
           };
         };
       };
+      sqlfluff = lib.mkOption {
+        description = "sqlfluff hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "Path to the SQLFluff config file.";
+              default = null;
+              example = ".sqlfluff";
+            };
+            dialect = mkOption {
+              type = types.nullOr types.str;
+              description = "SQL dialect to use (e.g. postgres, mysql, ansi).";
+              default = null;
+              example = "postgres";
+            };
+            path = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "Path to lint. If null, sqlfluff will lint the files passed by the hook runner.";
+              default = null;
+              example = "migrations/";
+            };
+            excludeRules = mkOption {
+              type = types.listOf types.str;
+              description = "Exclude specific rules from linting. For example, [\"LT01\", \"LT02\"].";
+              default = [ ];
+              example = [ "LT01" "LT02" ];
+            };
+            ignoreLocalConfig = mkOption {
+              type = types.bool;
+              description = "Ignore config files in default search path locations. Useful when combined with `configPath` to only use the specified config file.";
+              default = false;
+            };
+            rules = mkOption {
+              type = types.listOf types.str;
+              description = "Narrow linting to specific rules. For example, [\"LT01\", \"LT02\"].";
+              default = [ ];
+              example = [ "LT01" "LT02" ];
+            };
+            processes = mkOption {
+              type = types.nullOr types.int;
+              description = "The number of parallel processes to run.";
+              default = null;
+              example = 4;
+            };
+            format = mkOption {
+              type = types.enum [ "human" "json" "yaml" "sarif" "github-annotation" "github-annotation-native" "none" ];
+              description = "The format to return lint results in.";
+              default = "human";
+            };
+          };
+        };
+      };
       statix = mkOption {
         description = "statix hook";
         type = types.submodule {
@@ -4138,6 +4192,33 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pre-commit-hooks;
           entry = "${hooks.sort-simple-yaml.package}/bin/sort-simple-yaml";
           files = "(\\.yaml$)|(\\.yml$)";
+        };
+      sqlfluff =
+        {
+          name = "sqlfluff";
+          description = "SQL linter and formatter";
+          package = tools.sqlfluff;
+          entry =
+            let
+              cmdArgs = mkCmdArgs [
+                [ (hooks.sqlfluff.settings.configPath != null) "--config ${hooks.sqlfluff.settings.configPath}" ]
+                [ (hooks.sqlfluff.settings.dialect != null) "--dialect ${hooks.sqlfluff.settings.dialect}" ]
+                [ (hooks.sqlfluff.settings.excludeRules != [ ]) "--exclude-rules ${lib.strings.concatStringsSep "," hooks.sqlfluff.settings.excludeRules}" ]
+                [ hooks.sqlfluff.settings.ignoreLocalConfig "--ignore-local-config" ]
+                [ (hooks.sqlfluff.settings.rules != [ ]) "--rules ${lib.strings.concatStringsSep "," hooks.sqlfluff.settings.rules}" ]
+                [ (hooks.sqlfluff.settings.processes != null) "--processes ${toString hooks.sqlfluff.settings.processes}" ]
+                [ (hooks.sqlfluff.settings.format != "human") "--format ${hooks.sqlfluff.settings.format}" ]
+              ];
+            in
+            builtins.concatStringsSep " " (
+              [
+                (lib.getExe hooks.sqlfluff.package)
+                "lint"
+                cmdArgs
+              ] ++ lib.optional (hooks.sqlfluff.settings.path != null) hooks.sqlfluff.settings.path
+            );
+          types = [ "sql" ];
+          pass_filenames = hooks.sqlfluff.settings.path == null;
         };
       staticcheck =
         {
