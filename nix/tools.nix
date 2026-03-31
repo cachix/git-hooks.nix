@@ -1,5 +1,6 @@
 { stdenv
 , lib
+, pkgs
 , placeholder
 , actionlint
 , action-validator
@@ -21,6 +22,7 @@
 , conform
 , convco
 , crystal
+, cspell
 , cue
 , dart
 , deadnix
@@ -31,6 +33,7 @@
 , editorconfig-checker
 , elixir
 , elmPackages
+, eslint
 , flake-checker ? placeholder "flake-checker"
 , fprettify
 , git-annex
@@ -48,6 +51,7 @@
 , lua-language-server
 , lychee
 , julia-bin
+, markdownlint-cli
 , mdformat
 , mdl
 , mdsh
@@ -66,6 +70,7 @@
 , pkgsBuildBuild
 , poetry
 , pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops"
+, prettier
 , proselint
 , python3Packages
 , pyright ? nodePackages.pyright
@@ -136,6 +141,7 @@ in
     conform
     convco
     crystal
+    cspell
     cue
     dart
     deadnix
@@ -144,6 +150,7 @@ in
     eclint
     editorconfig-checker
     elixir
+    eslint
     flake-checker
     fprettify
     git-annex
@@ -160,6 +167,7 @@ in
     html-tidy
     keep-sorted
     lychee
+    markdownlint-cli
     mdformat
     mdl
     mdsh
@@ -171,6 +179,7 @@ in
     opentofu
     ormolu
     pre-commit-hook-ensure-sops
+    prettier
     poetry
     proselint
     pyright
@@ -207,12 +216,6 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages)
-    eslint
-    markdownlint-cli
-    prettier
-    cspell
-    ;
   inherit (ocamlPackages) ocp-indent;
   inherit (python3Packages)
     autoflake
@@ -236,7 +239,11 @@ in
   phpcbf = phpPackages.php-codesniffer or phpPackages.phpcbf;
   phpcs = phpPackages.php-codesniffer or phpPackages.phpcs;
   lua-language-server = lua-language-server;
-  purs-tidy = nodePackages.purs-tidy or (placeholder "purs-tidy");
+  purs-tidy =
+    if pkgs ? nodePackages && pkgs.nodePackages ? purs-tidy then
+      pkgs.nodePackages.purs-tidy
+    else
+      placeholder "purs-tidy";
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
