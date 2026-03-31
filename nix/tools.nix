@@ -62,6 +62,7 @@
 , nixfmt-classic ? placeholder "nixfmt-classic"
 , nixfmt-rfc-style ? placeholder "nixfmt-rfc-style"
 , nixpkgs-fmt
+, nufmt ? placeholder "nufmt"
 , nodePackages
 , ocamlPackages
 , opam
@@ -175,6 +176,7 @@ in
     nil
     nixf-diagnose
     nixpkgs-fmt
+    nufmt
     opam
     opentofu
     ormolu
