@@ -72,6 +72,7 @@
 , poetry
 , pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops"
 , prettier
+, prometheus
 , proselint
 , python3Packages
 , pyright ? nodePackages.pyright
@@ -275,6 +276,7 @@ in
       bats;
 
   headache = callPackage ./headache { };
+  promtool = prometheus.cli;
 
   # Disable tests as these take way to long on our infra.
   julia-bin = julia-bin.overrideAttrs (_: _: { doInstallCheck = false; });
