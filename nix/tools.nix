@@ -37,6 +37,7 @@
 , flake-checker ? placeholder "flake-checker"
 , fprettify
 , git-annex
+, gitleaks
 , gitlint
 , gptcommit ? placeholder "gptcommit"
 , hadolint
@@ -155,6 +156,7 @@ in
     flake-checker
     fprettify
     git-annex
+    gitleaks
     gitlint
     go
     go-tools

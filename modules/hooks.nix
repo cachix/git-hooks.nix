@@ -3108,6 +3108,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.fprettify;
         entry = "${hooks.fprettify.package}/bin/fprettify";
       };
+      gitleaks = {
+        name = "gitleaks";
+        description = "Detect hardcoded secrets using Gitleaks";
+        entry = lib.getExe hooks.gitleaks.package;
+        package = tools.gitleaks;
+        args = [ "git" "--pre-commit" "--redact" "--staged" "--verbose" ];
+        pass_filenames = false;
+      };
       gitlint = {
         name = "gitlint";
         description = "Linting for your git commit messages";
