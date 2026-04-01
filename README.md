@@ -423,6 +423,8 @@ hooks](modules/pre-commit.nix).
 - [denofmt](https://docs.deno.com/runtime/reference/cli/fmt/)
 - [denolint](https://docs.deno.com/runtime/reference/cli/lint/)
 - [eslint](https://github.com/eslint/eslint)
+- [oxfmt](https://oxc.rs/docs/guide/usage/formatter)
+- [oxlint](https://oxc.rs/docs/guide/usage/linter)
 - rome: (alias to the biome hook)
 
 ### JSON
