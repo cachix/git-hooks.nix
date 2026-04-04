@@ -2734,6 +2734,16 @@ in
           files = "\\.rs$";
           pass_filenames = false;
         };
+      cargo-sort =
+        {
+          name = "cargo-sort";
+          description = "Ensure Cargo.toml is sorted.";
+          package = tools.cargo-sort;
+          entry = "${hooks.cargo-sort.package}/bin/cargo-sort";
+          files = "Cargo\\.toml";
+          types = [ "file" "toml" ];
+          pass_filenames = false;
+        };
       chart-testing =
         {
           name = "chart-testing";
