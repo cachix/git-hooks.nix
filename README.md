@@ -48,9 +48,10 @@
     clippy.settings.allFeatures = true;
 
     # Define your own custom hooks
+    # See all options: https://github.com/cachix/git-hooks.nix#custom-hooks
     my-custom-hook = {
-      name = "My own hook";
-      exec = "on-pre-commit.sh";
+      enable = true;
+      entry = "./on-pre-commit.sh";
     };
   };
 
