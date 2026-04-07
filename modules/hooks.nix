@@ -302,6 +302,11 @@ in
               default = "";
               example = ".cmake-format.json";
             };
+            inPlace = mkOption {
+              type = types.bool;
+              description = "Format files in place (`-i`) instead of only checking formatting (`--check`).";
+              default = false;
+            };
           };
         };
       };
@@ -2979,8 +2984,10 @@ in
                 # Searches automatically for the config path.
                 then ""
                 else "-C ${hooks.cmake-format.settings.configPath}";
+              modeFlag =
+                if hooks.cmake-format.settings.inPlace then "--in-place" else "--check";
             in
-            "${hooks.cmake-format.package}/bin/cmake-format --check ${maybeConfigPath}";
+            "${hooks.cmake-format.package}/bin/cmake-format ${modeFlag} ${maybeConfigPath}";
           files = "\\.cmake$|CMakeLists.txt";
         };
       commitizen =
