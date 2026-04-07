@@ -1723,6 +1723,12 @@ in
           };
         };
       };
+      promtool-rules = mkOption {
+        description = "promtool-rules hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+        };
+      };
       psalm = mkOption {
         description = "psalm hook";
         type = types.submodule {
@@ -4219,6 +4225,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
+        };
+      promtool-rules =
+        {
+          name = "promtool-rules";
+          description = "Validate Prometheus recording and alerting rules.";
+          package = tools.promtool;
+          entry = "${hooks.promtool-rules.package}/bin/promtool check rules";
+          types = [ "yaml" ];
         };
       psalm =
         {
