@@ -532,6 +532,7 @@ hooks](modules/pre-commit.nix).
 ### Rust
 
 - [cargo-check](https://doc.rust-lang.org/cargo/commands/cargo-check.html)
+- [cargo-sort](https://github.com/DevinR528/cargo-sort)
 - [clippy](https://github.com/rust-lang/rust-clippy)
 - [rustfmt](https://github.com/rust-lang/rustfmt)
 

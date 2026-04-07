@@ -10,6 +10,7 @@
 , cabal2nix
 , callPackage
 , cargo
+, cargo-sort
 , chart-testing
 , checkmake
 , circleci-cli
@@ -135,6 +136,7 @@ in
     biome
     cabal2nix
     cargo
+    cargo-sort
     chart-testing
     checkmake
     circleci-cli
