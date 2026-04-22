@@ -48,9 +48,10 @@
     clippy.settings.allFeatures = true;
 
     # Define your own custom hooks
+    # See all options: https://github.com/cachix/git-hooks.nix#custom-hooks
     my-custom-hook = {
-      name = "My own hook";
-      exec = "on-pre-commit.sh";
+      enable = true;
+      entry = "./on-pre-commit.sh";
     };
   };
 
@@ -424,6 +425,8 @@ hooks](modules/pre-commit.nix).
 - [denofmt](https://docs.deno.com/runtime/reference/cli/fmt/)
 - [denolint](https://docs.deno.com/runtime/reference/cli/lint/)
 - [eslint](https://github.com/eslint/eslint)
+- [oxfmt](https://oxc.rs/docs/guide/usage/formatter)
+- [oxlint](https://oxc.rs/docs/guide/usage/linter)
 - rome: (alias to the biome hook)
 
 ### JSON
@@ -474,6 +477,10 @@ hooks](modules/pre-commit.nix).
 - [nixfmt-rfc-style](https://github.com/NixOS/nixfmt/)
 - [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
 - [statix](https://github.com/nerdypepper/statix)
+
+### Nushell
+
+- [nufmt](https://github.com/nushell/nufmt)
 
 ### OCaml
 
@@ -526,6 +533,7 @@ hooks](modules/pre-commit.nix).
 ### Rust
 
 - [cargo-check](https://doc.rust-lang.org/cargo/commands/cargo-check.html)
+- [cargo-sort](https://github.com/DevinR528/cargo-sort)
 - [clippy](https://github.com/rust-lang/rust-clippy)
 - [rustfmt](https://github.com/rust-lang/rustfmt)
 

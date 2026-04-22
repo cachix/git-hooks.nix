@@ -1071,6 +1071,19 @@ in
           };
         };
       };
+      nufmt = mkOption {
+        description = "nufmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath = mkOption {
+              type = types.nullOr types.path;
+              description = "Path to the nufmt.nuon configuration file.";
+              default = null;
+            };
+          };
+        };
+      };
       ormolu = mkOption {
         description = "ormolu hook";
         type = types.submodule {
@@ -1087,6 +1100,234 @@ in
                 type = types.bool;
                 description = "Use `default-extensions` from `.cabal` files.";
                 default = false;
+              };
+          };
+        };
+      };
+      oxfmt = mkOption {
+        description = "oxfmt hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            binPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `oxfmt` binary path.
+                  For example, if you want to use the `oxfmt` binary from `node_modules`, use `"./node_modules/.bin/oxfmt"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.oxfmt}/bin/oxfmt"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/oxfmt"
+                '';
+              };
+
+            mode =
+              mkOption {
+                type = types.enum [ "write" "check" "list-different" ];
+                description = ''
+                  Output mode.
+                  * `write` - Format and write files in place (default).
+                  * `check` - Check if files are formatted, also show statistics.
+                  * `list-different` - List files that would be changed.
+                '';
+                default = "write";
+              };
+
+            threads =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Number of threads to use. Set to 1 for using only 1 CPU core.";
+                default = null;
+              };
+
+            configPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Path to the configuration file.";
+                default = null;
+                example = "./oxfmtrc.json";
+              };
+          };
+        };
+      };
+      oxlint = mkOption {
+        description = "oxlint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            allow =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Allow the rule or category (suppress the lint).";
+                default = [ ];
+                example = [ "correctness" "no-debugger" ];
+              };
+
+            warn =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Warn on the rule or category (emit a warning).";
+                default = [ ];
+                example = [ "suspicious" ];
+              };
+
+            deny =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Deny the rule or category (emit an error).";
+                default = [ ];
+                example = [ "correctness" "perf" ];
+              };
+
+            plugins =
+              mkOption {
+                type = types.listOf (types.enum [ "import" "jest" "jsdoc" "jsx-a11y" "nextjs" "node" "oxc" "promise" "react" "react-perf" "typescript" "unicorn" "vitest" "vue" ]);
+                description = "Plugins to enable. Plugins not in this list will be disabled.";
+                default = [ "oxc" "unicorn" "typescript" ];
+              };
+
+            binPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = ''
+                  `oxlint` binary path.
+                  For example, if you want to use the `oxlint` binary from `node_modules`, use `"./node_modules/.bin/oxlint"`.
+                  Use a string instead of a path to avoid having to Git track the file in projects that use Nix flakes.
+                '';
+                default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.oxlint}/bin/oxlint"
+                '';
+                example = lib.literalExpression ''
+                  "./node_modules/.bin/oxlint"
+                '';
+              };
+
+            fix =
+              mkOption {
+                type = types.listOf (types.enum [ "safe" "suggestions" "dangerously" ]);
+                description = ''
+                  Which fix tiers to enable. Each tier is independent and combinable.
+                  * `safe` - Fix as many issues as possible (`--fix`).
+                  * `suggestions` - Apply auto-fixable suggestions that may change program behavior (`--fix-suggestions`).
+                  * `dangerously` - Apply dangerous fixes and suggestions (`--fix-dangerously`).
+                '';
+                default = [ ];
+                example = [ "safe" "suggestions" ];
+              };
+
+            denyWarnings =
+              mkOption {
+                type = types.bool;
+                description = "Ensure warnings produce a non-zero exit code.";
+                default = false;
+              };
+
+            format =
+              mkOption {
+                type = types.enum [ "default" "checkstyle" "github" "gitlab" "json" "junit" "stylish" "unix" ];
+                description = "Output format.";
+                default = "default";
+              };
+
+            quiet =
+              mkOption {
+                type = types.bool;
+                description = "Disable reporting on warnings, only errors are reported.";
+                default = false;
+              };
+
+            maxWarnings =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Specify a warning threshold, which can be used to force exit with an error status if there are too many warning-level rule violations.";
+                default = null;
+              };
+
+            silent =
+              mkOption {
+                type = types.bool;
+                description = "Do not display any diagnostics.";
+                default = false;
+              };
+
+            typeAware =
+              mkOption {
+                type = types.bool;
+                description = "Enable rules that require type information.";
+                default = false;
+              };
+
+            typeCheck =
+              mkOption {
+                type = types.bool;
+                description = "Enable experimental type checking (includes TypeScript compiler diagnostics).";
+                default = false;
+              };
+
+            disableNestedConfig =
+              mkOption {
+                type = types.bool;
+                description = "Disable the automatic loading of nested configuration files.";
+                default = false;
+              };
+
+            ignorePath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Specify the file to use as your ignore file.";
+                default = null;
+                example = "./.eslintignore";
+              };
+
+            ignorePattern =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Patterns of files to ignore (in addition to those in ignore files).";
+                default = [ ];
+                example = [ "*.test.js" "dist/" ];
+              };
+
+            noIgnore =
+              mkOption {
+                type = types.bool;
+                description = "Disable excluding files from ignore files and ignore patterns.";
+                default = false;
+              };
+
+            threads =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Number of threads to use. Set to 1 for using only 1 CPU core.";
+                default = null;
+              };
+
+            reportUnusedDisableDirectivesSeverity =
+              mkOption {
+                type = types.nullOr (types.enum [ "error" "warn" "log" "debug" ]);
+                description = "Severity level for unused disable directives.";
+                default = null;
+              };
+
+            tsconfig =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "TypeScript tsconfig.json path for reading path alias and project references.";
+                default = null;
+                example = "./tsconfig.json";
+              };
+
+            configPath =
+              mkOption {
+                type = types.nullOr (types.oneOf [ types.str types.path ]);
+                description = "Path to the configuration file.";
+                default = null;
+                example = "./oxlintrc.json";
               };
           };
         };
@@ -1482,6 +1723,12 @@ in
           };
         };
       };
+      promtool-rules = mkOption {
+        description = "promtool-rules hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+        };
+      };
       psalm = mkOption {
         description = "psalm hook";
         type = types.submodule {
@@ -1829,6 +2076,60 @@ in
               type = types.bool;
               description = "Function opening braces are placed on a separate line.";
               default = false;
+            };
+          };
+        };
+      };
+      sqlfluff = lib.mkOption {
+        description = "sqlfluff hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "Path to the SQLFluff config file.";
+              default = null;
+              example = ".sqlfluff";
+            };
+            dialect = mkOption {
+              type = types.nullOr types.str;
+              description = "SQL dialect to use (e.g. postgres, mysql, ansi).";
+              default = null;
+              example = "postgres";
+            };
+            path = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "Path to lint. If null, sqlfluff will lint the files passed by the hook runner.";
+              default = null;
+              example = "migrations/";
+            };
+            excludeRules = mkOption {
+              type = types.listOf types.str;
+              description = "Exclude specific rules from linting. For example, [\"LT01\", \"LT02\"].";
+              default = [ ];
+              example = [ "LT01" "LT02" ];
+            };
+            ignoreLocalConfig = mkOption {
+              type = types.bool;
+              description = "Ignore config files in default search path locations. Useful when combined with `configPath` to only use the specified config file.";
+              default = false;
+            };
+            rules = mkOption {
+              type = types.listOf types.str;
+              description = "Narrow linting to specific rules. For example, [\"LT01\", \"LT02\"].";
+              default = [ ];
+              example = [ "LT01" "LT02" ];
+            };
+            processes = mkOption {
+              type = types.nullOr types.int;
+              description = "The number of parallel processes to run.";
+              default = null;
+              example = 4;
+            };
+            format = mkOption {
+              type = types.enum [ "human" "json" "yaml" "sarif" "github-annotation" "github-annotation-native" "none" ];
+              description = "The format to return lint results in.";
+              default = "human";
             };
           };
         };
@@ -2437,6 +2738,16 @@ in
           package = tools.cargo;
           entry = "${hooks.cargo-check.package}/bin/cargo check ${cargoManifestPathArg}";
           files = "\\.rs$";
+          pass_filenames = false;
+        };
+      cargo-sort =
+        {
+          name = "cargo-sort";
+          description = "Ensure Cargo.toml is sorted.";
+          package = tools.cargo-sort;
+          entry = "${hooks.cargo-sort.package}/bin/cargo-sort";
+          files = "Cargo\\.toml";
+          types = [ "file" "toml" ];
           pass_filenames = false;
         };
       chart-testing =
@@ -3656,6 +3967,22 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.no-commit-to-branch.package}/bin/no-commit-to-branch ${cmdArgs}";
         };
+      nufmt =
+        {
+          name = "nufmt";
+          description = "Nushell code formatter.";
+          package = tools.nufmt;
+          entry =
+            let
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.nufmt.settings; [
+                    [ (configPath != null) "--config ${configPath}" ]
+                  ]);
+            in
+            "${lib.getExe hooks.nufmt.package} ${cmdArgs}";
+          types = [ "nushell" ];
+        };
       ocp-indent =
         {
           name = "ocp-indent";
@@ -3694,6 +4021,69 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.ormolu.package}/bin/ormolu --mode inplace ${extensions} ${cabalExtensions}";
           files = "\\.l?hs(-boot)?$";
+        };
+      oxfmt =
+        {
+          name = "oxfmt";
+          description = "A fast formatter for JavaScript and TypeScript";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+
+          package = tools.oxfmt;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.oxfmt "/bin/oxfmt";
+              cmdArgs =
+                mkCmdArgs [
+                  [ (hooks.oxfmt.settings.mode != "write") "--${hooks.oxfmt.settings.mode}" ]
+                  [ (hooks.oxfmt.settings.threads != null) "--threads ${toString hooks.oxfmt.settings.threads}" ]
+                  [ (hooks.oxfmt.settings.configPath != null) "--config ${builtins.toString hooks.oxfmt.settings.configPath}" ]
+                ];
+            in
+            "${binPath} ${cmdArgs}";
+        };
+      oxlint =
+        {
+          name = "oxlint";
+          description = "A fast linter for JavaScript and TypeScript";
+          types_or = [ "javascript" "jsx" "ts" "tsx" ];
+
+          package = tools.oxlint;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.oxlint "/bin/oxlint";
+              pluginsDefault = [ "oxc" "unicorn" "typescript" ];
+              pluginFlags = lib.concatStringsSep " " (lib.flatten [
+                (map (p: "--${p}-plugin") (lib.subtractLists pluginsDefault hooks.oxlint.settings.plugins))
+                (map (p: "--disable-${p}-plugin") (lib.subtractLists hooks.oxlint.settings.plugins pluginsDefault))
+              ]);
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.oxlint.settings; [
+                    [ (deny != [ ]) (lib.concatMapStringsSep " " (r: "--deny ${r}") deny) ]
+                    [ (warn != [ ]) (lib.concatMapStringsSep " " (r: "--warn ${r}") warn) ]
+                    [ (allow != [ ]) (lib.concatMapStringsSep " " (r: "--allow ${r}") allow) ]
+                    [ (plugins != pluginsDefault) pluginFlags ]
+                    [ (builtins.elem "safe" fix) "--fix" ]
+                    [ (builtins.elem "suggestions" fix) "--fix-suggestions" ]
+                    [ (builtins.elem "dangerously" fix) "--fix-dangerously" ]
+                    [ (denyWarnings) "--deny-warnings" ]
+                    [ (format != "default") "--format ${format}" ]
+                    [ (quiet) "--quiet" ]
+                    [ (silent) "--silent" ]
+                    [ (maxWarnings != null) "--max-warnings ${toString maxWarnings}" ]
+                    [ (threads != null) "--threads ${toString threads}" ]
+                    [ (reportUnusedDisableDirectivesSeverity != null) "--report-unused-disable-directives-severity ${reportUnusedDisableDirectivesSeverity}" ]
+                    [ (typeAware) "--type-aware" ]
+                    [ (typeCheck) "--type-check" ]
+                    [ (disableNestedConfig) "--disable-nested-config" ]
+                    [ (ignorePath != null) "--ignore-path ${builtins.toString ignorePath}" ]
+                    [ (ignorePattern != [ ]) (lib.concatMapStringsSep " " (p: "--ignore-pattern ${p}") ignorePattern) ]
+                    [ (noIgnore) "--no-ignore" ]
+                    [ (tsconfig != null) "--tsconfig ${builtins.toString tsconfig}" ]
+                    [ (configPath != null) "--config ${builtins.toString configPath}" ]
+                  ]);
+            in
+            "${binPath} ${cmdArgs}";
         };
       php-cs-fixer =
         {
@@ -3853,6 +4243,14 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
+        };
+      promtool-rules =
+        {
+          name = "promtool-rules";
+          description = "Validate Prometheus recording and alerting rules.";
+          package = tools.promtool;
+          entry = "${hooks.promtool-rules.package}/bin/promtool check rules";
+          types = [ "yaml" ];
         };
       psalm =
         {
@@ -4024,6 +4422,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                 [ (configuration != { }) " --config ${toml.generate ".rumdl.toml" configuration}" ]
               ]);
         in
+
         {
           name = "rumdl";
           description = "Style checker and linter for rumdl files.";
@@ -4147,6 +4546,33 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry = "${hooks.sort-simple-yaml.package}/bin/sort-simple-yaml";
           files = "(\\.yaml$)|(\\.yml$)";
         };
+      sqlfluff =
+        {
+          name = "sqlfluff";
+          description = "SQL linter and formatter";
+          package = tools.sqlfluff;
+          entry =
+            let
+              cmdArgs = mkCmdArgs [
+                [ (hooks.sqlfluff.settings.configPath != null) "--config ${hooks.sqlfluff.settings.configPath}" ]
+                [ (hooks.sqlfluff.settings.dialect != null) "--dialect ${hooks.sqlfluff.settings.dialect}" ]
+                [ (hooks.sqlfluff.settings.excludeRules != [ ]) "--exclude-rules ${lib.strings.concatStringsSep "," hooks.sqlfluff.settings.excludeRules}" ]
+                [ hooks.sqlfluff.settings.ignoreLocalConfig "--ignore-local-config" ]
+                [ (hooks.sqlfluff.settings.rules != [ ]) "--rules ${lib.strings.concatStringsSep "," hooks.sqlfluff.settings.rules}" ]
+                [ (hooks.sqlfluff.settings.processes != null) "--processes ${toString hooks.sqlfluff.settings.processes}" ]
+                [ (hooks.sqlfluff.settings.format != "human") "--format ${hooks.sqlfluff.settings.format}" ]
+              ];
+            in
+            builtins.concatStringsSep " " (
+              [
+                (lib.getExe hooks.sqlfluff.package)
+                "lint"
+                cmdArgs
+              ] ++ lib.optional (hooks.sqlfluff.settings.path != null) hooks.sqlfluff.settings.path
+            );
+          types = [ "sql" ];
+          pass_filenames = hooks.sqlfluff.settings.path == null;
+        };
       staticcheck =
         {
           name = "staticcheck";
@@ -4258,7 +4684,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   | sort \
                   | uniq \
                   | while read dir; do
-                      ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init
+                      ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" init -backend=false
                       ${lib.getExe hooks.terraform-validate.package} -chdir="$dir" validate
                     done
               '';

@@ -510,7 +510,8 @@ in
               for hook in $hooks; do
                 ${lib.getExe cfg.package} uninstall -t $hook
               done
-              ${lib.getExe cfg.gitPackage} config --local core.hooksPath ""
+              # Clear any user-configured core.hooksPath so the hook tool installs into the real hooks dir.
+              ${lib.getExe cfg.gitPackage} config --local --unset-all core.hooksPath || true
               # Add hooks for configured stages (only) ...
               if [ ! -z "${concatStringsSep " " install_stages}" ]; then
                 for stage in ${concatStringsSep " " install_stages}; do

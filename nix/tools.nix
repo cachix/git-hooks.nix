@@ -1,5 +1,6 @@
 { stdenv
 , lib
+, pkgs
 , placeholder
 , actionlint
 , action-validator
@@ -9,6 +10,7 @@
 , cabal2nix
 , callPackage
 , cargo
+, cargo-sort
 , chart-testing
 , checkmake
 , circleci-cli
@@ -21,6 +23,7 @@
 , conform
 , convco
 , crystal
+, cspell
 , cue
 , dart
 , deadnix
@@ -31,6 +34,7 @@
 , editorconfig-checker
 , elixir
 , elmPackages
+, eslint
 , flake-checker ? placeholder "flake-checker"
 , fprettify
 , git-annex
@@ -49,6 +53,7 @@
 , lua-language-server
 , lychee
 , julia-bin
+, markdownlint-cli
 , mdformat
 , mdl
 , mdsh
@@ -59,14 +64,19 @@
 , nixfmt-classic ? placeholder "nixfmt-classic"
 , nixfmt-rfc-style ? placeholder "nixfmt-rfc-style"
 , nixpkgs-fmt
+, nufmt ? placeholder "nufmt"
 , nodePackages
 , ocamlPackages
 , opam
 , opentofu
 , ormolu
+, oxfmt ? placeholder "oxfmt"
+, oxlint
 , pkgsBuildBuild
 , poetry
 , pre-commit-hook-ensure-sops ? placeholder "pre-commit-hook-ensure-sops"
+, prettier
+, prometheus
 , proselint
 , python3Packages
 , pyright ? nodePackages.pyright
@@ -82,6 +92,7 @@
 , bats
 , shfmt
 , beautysh
+, sqlfluff
 , statix
 , stylish-haskell
 , stylua
@@ -126,6 +137,7 @@ in
     biome
     cabal2nix
     cargo
+    cargo-sort
     chart-testing
     checkmake
     circleci-cli
@@ -136,6 +148,7 @@ in
     conform
     convco
     crystal
+    cspell
     cue
     dart
     deadnix
@@ -144,6 +157,7 @@ in
     eclint
     editorconfig-checker
     elixir
+    eslint
     flake-checker
     fprettify
     gitleaks
@@ -161,6 +175,7 @@ in
     html-tidy
     keep-sorted
     lychee
+    markdownlint-cli
     mdformat
     mdl
     mdsh
@@ -168,10 +183,14 @@ in
     nil
     nixf-diagnose
     nixpkgs-fmt
+    nufmt
     opam
     opentofu
     ormolu
+    oxfmt
+    oxlint
     pre-commit-hook-ensure-sops
+    prettier
     poetry
     proselint
     pyright
@@ -185,6 +204,7 @@ in
     selene
     shellcheck
     shfmt
+    sqlfluff
     statix
     stylish-haskell
     stylua
@@ -207,12 +227,6 @@ in
   # TODO: these two should be statically compiled
   inherit (haskellPackages) fourmolu;
   inherit (luaPackages) luacheck;
-  inherit (nodePackages)
-    eslint
-    markdownlint-cli
-    prettier
-    cspell
-    ;
   inherit (ocamlPackages) ocp-indent;
   inherit (python3Packages)
     autoflake
@@ -236,7 +250,11 @@ in
   phpcbf = phpPackages.php-codesniffer or phpPackages.phpcbf;
   phpcs = phpPackages.php-codesniffer or phpPackages.phpcs;
   lua-language-server = lua-language-server;
-  purs-tidy = nodePackages.purs-tidy or (placeholder "purs-tidy");
+  purs-tidy =
+    if pkgs ? nodePackages && pkgs.nodePackages ? purs-tidy then
+      pkgs.nodePackages.purs-tidy
+    else
+      placeholder "purs-tidy";
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
@@ -266,6 +284,7 @@ in
       bats;
 
   headache = callPackage ./headache { };
+  promtool = prometheus.cli;
 
   # Disable tests as these take way to long on our infra.
   julia-bin = julia-bin.overrideAttrs (_: _: { doInstallCheck = false; });

@@ -1,10 +1,18 @@
 # Test that checks whether the correct hooks are created in the hooks folder.
-{ git, perl, coreutils, runCommand, run, lib, mktemp }:
+{ git, perl, coreutils, runCommand, run, lib, mktemp, prek }:
 let
   tests = {
     basic-test = {
       expectedHooks = [ "pre-commit" ];
       conf.hooks.shellcheck.enable = true;
+    };
+
+    prek-test = {
+      expectedHooks = [ "pre-commit" ];
+      conf = {
+        package = prek;
+        hooks.shellcheck.enable = true;
+      };
     };
 
     multiple-hooks-test = {
