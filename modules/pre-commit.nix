@@ -543,6 +543,37 @@ in
               # Convert the absolute path to a path relative to the toplevel working directory.
               common_dir=''${common_dir#''$GIT_WC/}
 
+              # Patch installed hook scripts to fall back to the main worktree's config in linked worktrees.
+              _prelude=$(mktemp)
+              cat > "$_prelude" <<'PRELUDE'
+        # git-hooks.nix: worktree-config-fallback
+        _git=${lib.getExe cfg.gitPackage}
+        _cfg_rel=${cfg.configPath}
+        _top=$("$_git" rev-parse --show-toplevel)
+        _config="$_top/$_cfg_rel"
+        if [ ! -e "$_config" ]; then
+          _dir=$("$_git" rev-parse --git-dir)
+          _common=$("$_git" rev-parse --path-format=absolute --git-common-dir)
+          if [ "$_dir" != "$_common" ]; then
+            _alt="$(dirname "$_common")/$_cfg_rel"
+            if [ -e "$_alt" ]; then
+              _config="$_alt"
+            else
+              exit 0
+            fi
+          fi
+        fi
+PRELUDE
+              for hook in ${concatStringsSep " " (remove "manual" supportedHooksLib.supportedHooks)}; do
+                hook_file="''${GIT_WC}/''${common_dir}/hooks/''${hook}"
+                [ -f "''${hook_file}" ] || continue
+                if ! grep -qF '# git-hooks.nix: worktree-config-fallback' "''${hook_file}"; then
+                  sed -i "1r ''${_prelude}" "''${hook_file}"
+                  sed -i 's|--config=${cfg.configPath}|--config="$_config"|' "''${hook_file}"
+                fi
+              done
+              rm -f "$_prelude"
+
               ${lib.getExe cfg.gitPackage} config --local core.hooksPath "''$common_dir/hooks"
             fi
           fi
