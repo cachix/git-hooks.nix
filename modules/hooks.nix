@@ -1047,40 +1047,6 @@ in
           };
         };
       };
-      nixfmt-classic = mkOption {
-        description = "nixfmt (classic) hook";
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            width =
-              mkOption {
-                type = types.nullOr types.int;
-                description = "Line width.";
-                default = null;
-              };
-          };
-        };
-      };
-      nixfmt-rfc-style = mkOption {
-        description = "nixfmt (RFC 166 style) hook";
-        type = types.submodule {
-          imports = [ hookModule ];
-          options.settings = {
-            width =
-              mkOption {
-                type = with types; nullOr int;
-                description = "Maximum width in characters.";
-                default = null;
-              };
-            indent =
-              mkOption {
-                type = with types; nullOr int;
-                description = "Number of spaces to use for indentation.";
-                default = null;
-              };
-          };
-        };
-      };
       no-commit-to-branch = mkOption {
         description = "no-commit-to-branch-hook";
         type = types.submodule {
@@ -2594,20 +2560,6 @@ in
   config.warnings =
     lib.optional cfg.hooks.rome.enable ''
       The hook `hooks.rome` has been renamed to `hooks.biome`.
-    ''
-    ++ lib.optional (cfg.hooks.nixfmt.enable && lib.versionOlder cfg.hooks.nixfmt.package.version "1.0") ''
-      The hook `hooks.nixfmt` has been renamed to `hooks.nixfmt-classic`.
-
-      The new RFC 166-style nixfmt is available as `hooks.nixfmt-rfc-style`.
-    ''
-    ++ lib.optional (cfg.hooks.nixfmt-classic.enable && lib.versionAtLeast cfg.hooks.nixfmt-classic.package.version "1.0") ''
-      The hook `hooks.nixfmt-classic` is using an incompatible version of `nixfmt`.
-
-        Found: ${cfg.hooks.nixfmt-classic.package.version}.
-        Expected: < v1.0
-
-      `hooks.nixfmt-classic` supports versions of `nixfmt` up to `v1.0`.
-      For `nixfmt` `v1.0` and newer, switch to `hooks.nixfmt`.
     '';
 
   # PLEASE keep this sorted alphabetically.
@@ -3941,47 +3893,12 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry =
             let
               nixfmt = hooks.nixfmt.package;
-              hasIndent = lib.versionAtLeast nixfmt.version "1.0.0";
               cmdArgs = mkCmdArgs (with hooks.nixfmt.settings; [
                 [ (width != null) "--width=${builtins.toString width}" ]
                 [ (indent != null) "--indent=${builtins.toString indent}" ]
               ]);
             in
-            lib.throwIf (hooks.nixfmt.settings.indent != null && !hasIndent) "`indent` option in `nixfmt` hook can only be used with version >= 1.0.0"
-              "${nixfmt}/bin/nixfmt ${cmdArgs}";
-          files = "\\.nix$";
-        };
-      nixfmt-classic =
-        {
-          name = "nixfmt-classic";
-          description = "Nix code prettifier (classic).";
-          package = tools.nixfmt-classic;
-          entry =
-            let
-              nixfmt-classic = hooks.nixfmt-classic.package;
-              cmdArgs = mkCmdArgs (with hooks.nixfmt-classic.settings; [
-                [ (width != null) "--width=${builtins.toString width}" ]
-              ]);
-            in
-            "${nixfmt-classic}/bin/nixfmt ${cmdArgs}";
-          files = "\\.nix$";
-        };
-      nixfmt-rfc-style =
-        {
-          name = "nixfmt-rfc-style";
-          description = "Nix code prettifier (RFC 166 style).";
-          package = tools.nixfmt-rfc-style;
-          entry =
-            let
-              nixfmt-rfc-style = hooks.nixfmt-rfc-style.package;
-              hasIndent = lib.versionAtLeast nixfmt-rfc-style.version "1.0.0";
-              cmdArgs = mkCmdArgs (with hooks.nixfmt-rfc-style.settings; [
-                [ (width != null) "--width=${builtins.toString width}" ]
-                [ (indent != null) "--indent=${builtins.toString indent}" ]
-              ]);
-            in
-            lib.throwIf (hooks.nixfmt-rfc-style.settings.indent != null && !hasIndent) "`indent` option in `nixfmt-rfc-style` hook can only be used with version >= 1.0.0"
-              "${nixfmt-rfc-style}/bin/nixfmt ${cmdArgs}";
+            "${lib.getExe nixfmt} ${cmdArgs}";
           files = "\\.nix$";
         };
       nixpkgs-fmt =
