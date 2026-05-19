@@ -26,7 +26,15 @@ let
     excludes:
     if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
 
-  enabledHooks = filterAttrs (id: value: value.enable) cfg.hooks;
+  # Hook removal notices should be defined here.
+  removedHooks = {
+    nixfmt-classic = "The `nixfmt-classic` hook has been removed because it is deprecated and unmaintained. Use `hooks.nixfmt` instead.";
+    nixfmt-rfc-style = "The `nixfmt-rfc-style` hook has been removed. Use `hooks.nixfmt` instead.";
+    purty = "The `purty` hook has been removed because the project is unmaintained. Consider using `purs-tidy` instead.";
+  };
+
+  # Report removed hooks through assertions without evaluating their missing defaults.
+  enabledHooks = filterAttrs (id: value: !(builtins.hasAttr id removedHooks) && value.enable) cfg.hooks;
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
   usingPrek = cfg.package.pname == "prek";
   processedHooks =
@@ -208,9 +216,8 @@ in
             Useful for including into the developer environment.
           '';
 
-        default = lib.pipe config.hooks [
+        default = lib.pipe enabledHooks [
           builtins.attrValues
-          (lib.filter (hook: hook.enable))
           (builtins.concatMap (hook:
             (lib.optional (hook.package != null) hook.package)
             ++ hook.extraPackages
@@ -432,12 +439,12 @@ in
     };
 
   config = lib.mkIf cfg.enable {
-    # Hook removal notices should be defined here
-    assertions = [
-      {
-        assertion = !(cfg.hooks ? purty);
-        message = "The `purty` hook has been removed because the project is unmaintained. Consider using `purs-tidy` instead.";
-      }
+    assertions = mapAttrsToList
+      (name: message: {
+        assertion = !(builtins.hasAttr name cfg.hooks);
+        inherit message;
+      })
+      removedHooks ++ [
       {
         assertion = usingPrek || (lib.all (hook: !(hook ? priority)) processedHooks);
         message =
@@ -450,7 +457,6 @@ in
             The following hooks have priority defined: ${hookNames}
           '';
       }
-
     ];
 
     rawConfig =
