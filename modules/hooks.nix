@@ -4622,12 +4622,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               };
               options = lib.cli.toCommandLine
                 optionFormat
-                (lib.mapAttrs
-                  (_: v:
-                    if builtins.isList v
-                    then builtins.concatStringsSep " " (lib.unique v)
-                    else v)
-                  settings);
+                settings;
             in
             "${package}/bin/statix check ${toString options}";
           files = "\\.nix$";
