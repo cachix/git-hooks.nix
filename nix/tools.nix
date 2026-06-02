@@ -4,6 +4,7 @@
 , placeholder
 , actionlint
 , action-validator
+, air-formatter
 , alejandra
 , ansible-lint
 , biome
@@ -127,6 +128,7 @@ let
   };
 in
 {
+  air = air-formatter;
   clang-tools = llvmPackages_latest.clang-tools;
   inherit
     actionlint

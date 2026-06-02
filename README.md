@@ -526,6 +526,10 @@ hooks](modules/pre-commit.nix).
 - [sort-requirements-txt](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/requirements_txt_fixer.py)
 - [uv](https://github.com/astral-sh/uv)
 
+### R
+
+- [air](https://github.com/posit-dev/air)
+
 ### Rego (Open Policy Agent)
 
 - [regal](https://www.openpolicyagent.org/projects/regal)
