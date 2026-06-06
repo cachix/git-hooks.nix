@@ -32,6 +32,6 @@ let
 
 in
 project.config.run // {
-  inherit (project) config;
+  inherit (project) config extendModules;
   inherit (project.config) enabledPackages shellHook;
 }
