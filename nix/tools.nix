@@ -114,6 +114,7 @@
 , go-tools
 , golangci-lint
 , golines
+, google-java-format
 , revive ? placeholder "revive"
 , uv
 , vale
@@ -166,6 +167,7 @@ in
     go-tools
     golangci-lint
     golines
+    google-java-format
     gptcommit
     hadolint
     hledger-fmt

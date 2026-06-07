@@ -657,6 +657,20 @@ in
           };
         };
       };
+      google-java-format = mkOption {
+        description = "google-java-format hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            flags = mkOption {
+              type = types.str;
+              description = "Additional flags passed to google-java-format. See all available [here](https://github.com/google/google-java-format/blob/master/README.md#usage).";
+              default = "";
+              example = "--aosp";
+            };
+          };
+        };
+      };
       gotest = mkOption {
         description = "gotest hook";
         type = types.submodule {
@@ -3428,6 +3442,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             builtins.toString script;
           files = "\\.go$";
         };
+      google-java-format = {
+        name = "google-java-format";
+        description = "Reformats Java source code to comply with Google Java Style";
+        package = tools.google-java-format;
+        entry = "${hooks.google-java-format.package}/bin/google-java-format --replace --set-exit-if-changed ${hooks.google-java-format.settings.flags}";
+        files = "\\.java$";
+      };
       gotest = {
         name = "gotest";
         description = "Run go tests";

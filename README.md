@@ -418,6 +418,10 @@ hooks](modules/pre-commit.nix).
 
 - [html-tidy](https://github.com/htacg/tidy-html5)
 
+### Java
+
+- [google-java-format](https://github.com/google/google-java-format)
+
 ### JavaScript/TypeScript
 
 - [biome](https://biomejs.dev/)
