@@ -283,6 +283,12 @@ in
                 description = "Additional arguments to pass to clippy";
                 default = "";
               };
+              allowedLints = mkOption {
+                type = types.listOf types.str;
+                description = "Lints to allow, passed to clippy as `-A <lint>`";
+                default = [ ];
+                example = [ "clippy::too_many_arguments" ];
+              };
             };
 
             config.extraPackages = [
@@ -2955,7 +2961,7 @@ in
           description = "Lint Rust code.";
           package = wrapper;
           packageOverrides = { cargo = tools.cargo; clippy = tools.clippy; };
-          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} ${hooks.clippy.settings.extraArgs} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"}";
+          entry = "${hooks.clippy.package}/bin/cargo-clippy clippy ${cargoManifestPathArg} ${lib.optionalString hooks.clippy.settings.offline "--offline"} ${lib.optionalString hooks.clippy.settings.allFeatures "--all-features"} ${hooks.clippy.settings.extraArgs} -- ${lib.optionalString hooks.clippy.settings.denyWarnings "-D warnings"} ${lib.concatMapStringsSep " " (lint: "-A ${lib.escapeShellArg lint}") hooks.clippy.settings.allowedLints}";
           files = "\\.rs$";
           pass_filenames = false;
         };
