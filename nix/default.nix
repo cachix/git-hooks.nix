@@ -1,6 +1,5 @@
 { system ? builtins.currentSystem
 , nixpkgs
-, gitignore-nix-src
 , isFlakes ? false
 ,
 }:
@@ -15,7 +14,6 @@ let
           pkgs
           tools
           isFlakes
-          gitignore-nix-src
           ;
       };
 
