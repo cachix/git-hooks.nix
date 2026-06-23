@@ -1,4 +1,4 @@
-{ config, lib, hookModule, ... }:
+{ config, lib, pkgs, hookModule, ... }:
 let
   inherit (config) hooks tools;
   inherit (lib) mkDefault mkOption types;
@@ -43,8 +43,26 @@ in
         flake = lib.escapeShellArg (toString hooks.flake-follows.settings.flake);
         lockFile = lib.escapeShellArg (toString hooks.flake-follows.settings.lockFile);
         noLock = lib.optionalString hooks.flake-follows.settings.noLock "--no-lock";
+        flakeEdit = lib.getExe hooks.flake-follows.package;
+        script = pkgs.writeShellScript "precommit-flake-follows" ''
+          set -euo pipefail
+
+          flake=${flake}
+          lock_file=${lockFile}
+
+          if [ ! -f "$flake" ] || [ ! -f "$lock_file" ]; then
+            exit 0
+          fi
+
+          ${flakeEdit} \
+            --flake "$flake" \
+            --lock-file "$lock_file" \
+            ${noLock} \
+            --non-interactive \
+            follow >/dev/null
+        '';
       in
-      "${hooks.flake-follows.package}/bin/flake-edit --flake ${flake} --lock-file ${lockFile} ${noLock} --non-interactive follow";
+      builtins.toString script;
     files = "^(flake\\.nix|flake\\.lock)$";
     pass_filenames = false;
   };
