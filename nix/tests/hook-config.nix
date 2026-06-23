@@ -7,6 +7,13 @@ let
   fakeNewPreCommit = pkgs.writeShellScriptBin "pre-commit" "" // { pname = "pre-commit"; version = "4.4.0"; };
 
   hookTests = {
+    "flake-follows: runs once for flake inputs" = {
+      conf.hooks.flake-follows.enable = true;
+      hook = "flake-follows";
+      check = raw: raw.files == "^(flake\\.nix|flake\\.lock)$" && raw.pass_filenames == false;
+      expected = "files limited to flake.nix/flake.lock and pass_filenames = false";
+    };
+
     "pre-commit: no priority field when unset" = {
       conf.hooks.shellcheck.enable = true;
       hook = "shellcheck";
