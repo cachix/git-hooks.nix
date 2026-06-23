@@ -3,11 +3,13 @@ let
   fakeFlakeEdit = pkgs.writeShellScriptBin "flake-edit" ''
     set -eu
 
+    flake=
     : > flake-edit-args
 
     while [ "$#" -gt 0 ]; do
       case "$1" in
         --flake)
+          flake=$2
           printf '%s\n' "$1" "$2" >> flake-edit-args
           shift 2
           ;;
@@ -26,7 +28,8 @@ let
       esac
     done
 
-    echo '# flake-edit follow ran' >> flake.nix
+    test -n "$flake"
+    echo '# flake-edit follow ran' >> "$flake"
   '';
 
   hook = (run {
