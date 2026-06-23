@@ -470,6 +470,7 @@ hooks](modules/pre-commit.nix).
 - [alejandra](https://github.com/kamadorueda/alejandra)
 - [deadnix](https://github.com/astro/deadnix)
 - [flake-checker](https://github.com/DeterminateSystems/flake-checker)
+- [flake-edit](https://github.com/a-kenji/flake-edit) (for `flake-follows`)
 - [nil](https://github.com/oxalica/nil)
 - [nixf-diagnose](https://github.com/inclyc/nixf-diagnose)
 - [nixfmt](https://github.com/NixOS/nixfmt/) (supports `nixfmt` >=v1.0)
