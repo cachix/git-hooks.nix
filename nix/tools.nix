@@ -36,6 +36,7 @@
 , elmPackages
 , eslint
 , flake-checker ? placeholder "flake-checker"
+, flake-edit ? placeholder "flake-edit"
 , fprettify
 , git-annex
 , gitlint
@@ -159,6 +160,7 @@ in
     elixir
     eslint
     flake-checker
+    flake-edit
     fprettify
     git-annex
     gitlint
@@ -258,52 +260,4 @@ in
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
-  tflint = callPackage ./tflint { };
-  dune-build-opam-files = callPackage ./dune-build-opam-files {
-    dune = dune_3;
-    inherit (pkgsBuildBuild) ocaml;
-  };
-  dune-fmt = callPackage ./dune-fmt {
-    dune = dune_3;
-    inherit (pkgsBuildBuild) ocaml;
-  };
-  latexindent = tex;
-  lacheck = texlive.combine {
-    inherit (texlive) lacheck scheme-basic;
-  };
-  chktex = tex;
-  commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
-  bats =
-    if bats ? withLibraries then
-      (bats.withLibraries (p: [
-        p.bats-support
-        p.bats-assert
-        p.bats-file
-      ]))
-    else
-      bats;
-
-  headache = callPackage ./headache { };
-  promtool = prometheus.cli;
-
-  # Disable tests as these take way to long on our infra.
-  julia-bin = julia-bin.overrideAttrs (_: _: { doInstallCheck = false; });
-
-  cabal-fmt = (haskell.lib.enableSeparateBinOutput haskellPackages.cabal-fmt).bin;
-  cabal-gild = (haskell.lib.enableSeparateBinOutput haskellPackages.cabal-gild).bin;
-  hindent = haskell.lib.enableSeparateBinOutput haskellPackages.hindent;
-
-  # nixfmt 1.0 is now the official Nix formatter as of 25.11.
-  #
-  # In 24.05, the `nixfmt` package was deprecated and replaced with two separate packages:
-  #   - nixfmt-classic
-  #   - nixfmt-rfc-style
-  #
-  # Remove this block in 26.05
-  nixfmt =
-    if lib.versionOlder nixfmt.version "1.0" && (nixfmt-classic.meta.isPlaceholder or false) then
-      nixfmt-classic
-    else
-      nixfmt;
-  inherit nixfmt-classic nixfmt-rfc-style;
 }
