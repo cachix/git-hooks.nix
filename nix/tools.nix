@@ -103,6 +103,7 @@
   topiary ? placeholder "topiary"
 , treefmt
 , trufflehog
+, ty
 , typos
 , # Added in nixpkgs in commit 800ca60
   typstyle ? placeholder "typstyle"
@@ -213,6 +214,7 @@ in
     topiary
     treefmt
     trufflehog
+    ty
     typos
     typstyle
     uv
