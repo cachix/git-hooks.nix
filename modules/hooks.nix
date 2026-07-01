@@ -2612,6 +2612,15 @@ in
           package = tools.action-validator;
           entry = "${hooks.action-validator.package}/bin/action-validator";
         };
+      air =
+        {
+          name = "air";
+          description = "An extremely fast R code formatter.";
+          package = tools.air;
+          entry = "${hooks.air.package}/bin/air format";
+          files = "\\.[rR]$";
+          types = [ "file" "r" ];
+        };
       alejandra =
         {
           name = "alejandra";
