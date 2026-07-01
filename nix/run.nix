@@ -1,4 +1,4 @@
-builtinStuff@{ lib, pkgs, tools, gitignore-nix-src, isFlakes }:
+builtinStuff@{ lib, pkgs, tools, isFlakes }:
 
 options@
 { src
@@ -18,12 +18,12 @@ let
             config = lib.mkMerge [
               moduleOptions
               {
-                _module.args = { inherit pkgs gitignore-nix-src; };
+                _module.args = { inherit pkgs; };
                 tools = lib.mkDefault (builtinStuff.tools // tools);
                 rootSrc =
                   if isFlakes
                   then src
-                  else gitignore-nix-src.lib.gitignoreSource src;
+                  else pkgs.nix-gitignore.gitignoreSource [ ] src;
               }
             ];
           }

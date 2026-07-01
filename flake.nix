@@ -6,12 +6,8 @@
     url = "github:NixOS/flake-compat";
     flake = false;
   };
-  inputs.gitignore = {
-    url = "github:hercules-ci/gitignore.nix";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
 
-  outputs = { self, nixpkgs, gitignore, ... }:
+  outputs = { self, nixpkgs, ... }:
     let
       lib = nixpkgs.lib;
       defaultSystems = [
@@ -24,7 +20,7 @@
         let
           args = {
             pkgs = nixpkgs.legacyPackages.${system};
-            exposed = import ./nix { inherit nixpkgs system; gitignore-nix-src = gitignore; isFlakes = true; };
+            exposed = import ./nix { inherit nixpkgs system; isFlakes = true; };
           };
         in
         fn args;
