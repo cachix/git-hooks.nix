@@ -216,6 +216,13 @@ in
               # underlying biome binary (i.e biome.json if exists)
               default = "";
             };
+
+            flags = mkOption {
+              type = types.str;
+              description = "Additional flags passed to biome. See all available [here](https://biomejs.dev/reference/cli/).";
+              default = "";
+              example = "--no-errors-on-unmatched";
+            };
           };
         };
       };
@@ -2675,6 +2682,7 @@ in
                 mkCmdArgs [
                   [ (hooks.biome.settings.write) "--write" ]
                   [ (hooks.biome.settings.configPath != "") "--config-path ${hooks.biome.settings.configPath}" ]
+                  [ (hooks.biome.settings.flags != "") hooks.biome.settings.flags ]
                 ];
             in
             "${binPath} check ${cmdArgs}";
