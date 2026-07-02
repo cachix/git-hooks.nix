@@ -317,7 +317,7 @@ in
             };
             inPlace = mkOption {
               type = types.bool;
-              description = "Format files in place (`-i`) instead of only checking formatting (`--check`).";
+              description = "Format files in place (`--in-place`) instead of only checking formatting (`--check`).";
               default = false;
             };
           };
