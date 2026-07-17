@@ -103,11 +103,11 @@ let
         git commit -m "init" -q
         if [[ ${toString (compare cfg.installStages [ "manual" ])} -eq 0 ]]
         then
-          echo "Running: $ pre-commit run --hook-stage manual --all-files"
+          echo "Running: $ ${cfg.package.pname} run --hook-stage manual --all-files"
           ${lib.getExe cfg.package} run -c ${cfg.configPath} --hook-stage manual --all-files
         else
-          echo "Running: $ pre-commit run --all-files"
-          ${lib.getExe cfg.package}  run -c ${cfg.configPath} --all-files
+          echo "Running: $ ${cfg.package.pname} run --all-files"
+          ${lib.getExe cfg.package} run -c ${cfg.configPath} --all-files
         fi
         exitcode=$?
         git --no-pager diff --color
