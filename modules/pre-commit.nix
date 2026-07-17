@@ -169,9 +169,9 @@ in
             ''
               The `pre-commit` package to use.
             '';
-          default = pkgs.pre-commit;
-          defaultText = lib.literalExpression "pkgs.pre-commit";
-          example = lib.literalExpression "pkgs.prek";
+          default = pkgs.prek;
+          defaultText = lib.literalExpression "pkgs.prek";
+          example = lib.literalExpression "pkgs.pre-commit";
         };
 
       gitPackage =
