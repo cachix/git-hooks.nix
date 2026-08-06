@@ -4488,6 +4488,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.rumdl;
           entry = "${hooks.rumdl.package}/bin/rumdl check ${cmdArgs}";
           files = "\\.md$";
+          require_serial = true;
         };
       rustfmt =
         let
