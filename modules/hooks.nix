@@ -4996,11 +4996,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         };
       zizmor = {
         name = "zizmor";
-        description = "Static analysis for GitHub Actions";
-        files = "^.github/workflows/";
+        description = "Find security issues in GitHub Actions CI/CD setups";
         types = [ "yaml" ];
+        files = "(\\.github/(workflows/.*|dependabot.ya?ml))|(action\\.ya?ml)$";
+        require_serial = true;
         package = tools.zizmor;
-        entry = "${hooks.zizmor.package}/bin/zizmor";
+        entry = lib.getExe hooks.zizmor.package;
+        args = [ "--no-progress" ]; # https://github.com/zizmorcore/zizmor/issues/582
       };
       zprint =
         {
