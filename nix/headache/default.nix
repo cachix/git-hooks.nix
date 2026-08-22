@@ -6,7 +6,7 @@
 let
   the-headache =
     (if headache != null then headache else ocamlPackages.headache).overrideAttrs (drv: {
-      nativeBuildInputs = (drv.nativeBuildInputs or [ ]) ++ lib.optionals stdenv.isDarwin [
+      nativeBuildInputs = (drv.nativeBuildInputs or [ ]) ++ lib.optionals stdenv.hostPlatform.isDarwin [
         darwin.sigtool
       ];
     });
