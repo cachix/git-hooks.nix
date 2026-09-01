@@ -2696,6 +2696,24 @@ in
             "${binPath} ${hooks.autoflake.settings.flags}";
           types = [ "python" ];
         };
+      badness-format =
+        {
+          name = "badness-format";
+          description = "Format LaTeX and BibTeX files with badness.";
+          package = tools.badness;
+          entry = "${lib.getExe hooks.badness-format.package} format --force-exclude";
+          files = "\\.(tex|sty|cls|dtx|ins|bib)$";
+          require_serial = true;
+        };
+      badness-lint =
+        {
+          name = "badness-lint";
+          description = "Lint LaTeX and BibTeX files with badness.";
+          package = tools.badness;
+          entry = "${lib.getExe hooks.badness-lint.package} lint --force-exclude";
+          files = "\\.(tex|sty|cls|dtx|ins|bib)$";
+          require_serial = true;
+        };
       biome =
         {
           name = "biome";

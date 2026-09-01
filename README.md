@@ -443,6 +443,7 @@ hooks](modules/pre-commit.nix).
 
 ### LaTeX
 
+- [badness](https://github.com/jolars/badness)
 - [chktex](https://www.nongnu.org/chktex/)
 - [lacheck](https://ctan.org/pkg/lacheck)
 - [latexindent](https://github.com/cmhughes/latexindent.pl)
