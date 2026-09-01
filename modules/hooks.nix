@@ -2683,6 +2683,24 @@ in
           files = if hooks.ansible-lint.settings.subdir != "" then "${hooks.ansible-lint.settings.subdir}/" else "";
           pass_filenames = false;
         };
+      arity-format =
+        {
+          name = "arity-format";
+          description = "Format R files and DESCRIPTION files with arity.";
+          package = tools.arity;
+          entry = "${lib.getExe hooks.arity-format.package} format --force-exclude";
+          files = "(^|/)(DESCRIPTION|[^/]*\\.[rR])$";
+          require_serial = true;
+        };
+      arity-lint =
+        {
+          name = "arity-lint";
+          description = "Lint R files with arity.";
+          package = tools.arity;
+          entry = "${lib.getExe hooks.arity-lint.package} lint --force-exclude";
+          files = "\\.[rR]$";
+          require_serial = true;
+        };
       autoflake =
         {
           name = "autoflake";

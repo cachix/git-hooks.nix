@@ -7,6 +7,7 @@
 , air-formatter
 , alejandra
 , ansible-lint
+, arity ? placeholder "arity"
 , biome
 , cabal2nix
 , callPackage
@@ -136,6 +137,7 @@ in
     action-validator
     alejandra
     ansible-lint
+    arity
     beautysh
     biome
     cabal2nix
