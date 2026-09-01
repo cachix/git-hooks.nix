@@ -36,6 +36,7 @@
 , elixir
 , elmPackages
 , eslint
+, fatou ? placeholder "fatou"
 , flake-checker ? placeholder "flake-checker"
 , fprettify
 , git-annex
@@ -161,6 +162,7 @@ in
     editorconfig-checker
     elixir
     eslint
+    fatou
     flake-checker
     fprettify
     git-annex
