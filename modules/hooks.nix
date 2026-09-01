@@ -3302,6 +3302,24 @@ in
             "${binPath} --fix";
           files = "${hooks.eslint.settings.extensions}";
         };
+      fatou-format =
+        {
+          name = "fatou-format";
+          description = "Format Julia files with fatou.";
+          package = tools.fatou;
+          entry = "${lib.getExe hooks.fatou-format.package} format --force-exclude";
+          files = "\\.jl$";
+          require_serial = true;
+        };
+      fatou-lint =
+        {
+          name = "fatou-lint";
+          description = "Lint Julia files with fatou.";
+          package = tools.fatou;
+          entry = "${lib.getExe hooks.fatou-lint.package} lint --force-exclude";
+          files = "\\.jl$";
+          require_serial = true;
+        };
       fix-byte-order-marker =
         {
           name = "fix-byte-order-marker";
