@@ -4484,7 +4484,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
 
         {
           name = "rumdl";
-          description = "Style checker and linter for rumdl files.";
+          description = "Style checker and linter for markdown files.";
           package = tools.rumdl;
           entry = "${hooks.rumdl.package}/bin/rumdl check ${cmdArgs}";
           files = "\\.md$";
