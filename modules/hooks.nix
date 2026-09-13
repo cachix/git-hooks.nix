@@ -853,6 +853,51 @@ in
           };
         };
       };
+      markdownlint-cli2 = mkOption {
+        description = "markdownlint-cli2 hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configuration =
+              mkOption {
+                type = types.attrs;
+                description =
+                  "See https://github.com/DavidAnson/markdownlint-cli2#configuration";
+                default = { };
+              };
+            configPath =
+              mkOption {
+                type = types.str;
+                description = "Path to the configuration file to use.";
+                default = "";
+              };
+            configPointer =
+              mkOption {
+                type = types.str;
+                description = "JSON Pointer to the configuration object within the configuration file.";
+                default = "";
+              };
+            fix =
+              mkOption {
+                type = types.bool;
+                description = "Automatically fix fixable issues.";
+                default = false;
+              };
+            no-globs =
+              mkOption {
+                type = types.bool;
+                description = "Ignore the 'globs' property if present in the configuration object.";
+                default = false;
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Additional flags passed to markdownlint-cli2. See all available [here](https://github.com/DavidAnson/markdownlint-cli2#command-line).";
+                default = "";
+              };
+          };
+        };
+      };
       mdl = mkOption {
         description = "mdl hook";
         type = types.submodule {
@@ -3779,6 +3824,34 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.markdownlint-cli;
           entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
           files = "\\.md$";
+        };
+      markdownlint-cli2 =
+        let
+          inherit (hooks.markdownlint-cli2.settings)
+            configuration
+            configPath
+            configPointer
+            fix
+            no-globs
+            flags
+            ;
+          configFile = pkgs.writeText ".markdownlint-cli2.json" (builtins.toJSON configuration);
+          cmdArgs =
+            mkCmdArgs [
+              [ (configuration != { }) "--config ${configFile}" ]
+              [ (configPath != "" && configuration == { }) "--config ${configPath}" ]
+              [ (configPointer != "") "--configPointer ${configPointer}" ]
+              [ fix "--fix" ]
+              [ no-globs "--no-globs" ]
+              [ (flags != "") flags ]
+            ];
+        in
+        {
+          name = "markdownlint-cli2";
+          description = "Checks the style of Markdown/CommonMark files.";
+          package = tools.markdownlint-cli2;
+          entry = "${lib.getExe hooks.markdownlint-cli2.package}${lib.optionalString (cmdArgs != "") " ${cmdArgs}"}";
+          types = [ "markdown" ];
         };
       mdformat = {
         name = "mdformat";
