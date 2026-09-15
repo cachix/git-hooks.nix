@@ -61,6 +61,8 @@ class Benchmark:
         # Refuse to overwrite samples or reuse old runtime repositories.
         self.out.mkdir(parents=True, exist_ok=False)
         self.backends = ["pre-commit", "prek"]
+        if args.parallel_prek:
+            self.backends.append("prek-parallel")
         if args.nixhooks:
             self.backends.append("nixhooks")
         self.env = dict(os.environ)
@@ -76,6 +78,8 @@ class Benchmark:
             PREK_HOME=str(self.out / "prek-cache"),
             TERM="dumb", NO_COLOR="1", NIX_COUNT_CALLS="0",
         )
+        if args.parallel_prek:
+            self.env["PREK_CONCURRENT_HOOKS"] = "2"
         self.nix_args = [
             str(HERE / "runner.nix"), *NIX_OPTIONS,
             "--argstr", "nixpkgs", str(args.nixpkgs),
@@ -315,6 +319,10 @@ def main():
         "--source", type=source_path, default=HERE.parent.parent,
     )
     parser.add_argument("--nixhooks", type=source_path)
+    parser.add_argument(
+        "--parallel-prek", action="store_true",
+        help="also run the two independent hooks concurrently with prek",
+    )
     parser.add_argument("--output", type=Path, required=True,
                         help="new directory for samples, logs and fixtures")
     parser.add_argument("--mode", choices=["eval", "runtime", "all"],

@@ -10,6 +10,7 @@ let
   pkgs = import (/. + nixpkgs) { config = { }; overlays = [ ]; };
   inherit (pkgs) lib;
   sourcePath = /. + source;
+  package = pkgs.${if backend == "prek-parallel" then "prek" else backend};
   common = lib.optionalAttrs (scenario == "two") {
     nixfmt = {
       entry = "${pkgs.nixfmt}/bin/nixfmt";
@@ -28,13 +29,15 @@ let
     isFlakes = false;
   }) {
     src = ./fixture;
-    package = pkgs.${backend};
+    inherit package;
     addGcRoot = false;
     hooks = lib.mapAttrs
       (_: hook: hook // {
         enable = true;
         types = [ "file" ];
         require_serial = true;
+      } // lib.optionalAttrs (backend == "prek-parallel") {
+        priority = 0;
       })
       common;
   };
@@ -45,16 +48,16 @@ let
     if backend == "nixhooks" then theirs.run-hooks
     else
       pkgs.writeShellScriptBin "run-hooks" ''
-        exec ${lib.getExe pkgs.${backend}} run --all-files --config ${ours.config.configFile}
+        exec ${lib.getExe package} run --all-files --config ${ours.config.configFile}
       '';
   staged =
     if backend == "nixhooks" then theirs.pre-commit-hook
     else
       pkgs.writeShellScriptBin "staged-hooks" ''
-        exec ${lib.getExe pkgs.${backend}} run --config ${ours.config.configFile}
+        exec ${lib.getExe package} run --config ${ours.config.configFile}
       '';
 in
-assert builtins.elem backend [ "pre-commit" "prek" "nixhooks" ];
+assert builtins.elem backend [ "pre-commit" "prek" "prek-parallel" "nixhooks" ];
 assert builtins.elem scenario [ "empty" "two" ];
 assert backend != "nixhooks" || nixhooks != null;
 if target == "eval" then runner.drvPath

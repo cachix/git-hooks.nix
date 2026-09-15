@@ -97,7 +97,7 @@ is not an additive cost breakdown because dependencies are shared lazily.
 
 ## Runtime method and limits
 
-All runners use identical absolute shellcheck and nixfmt executable paths,
+By default, all runners use identical absolute shellcheck and nixfmt executable paths,
 `nixfmt --check`, extension filters, and serial hooks. git-hooks.nix overrides
 file types to `file` and sets `require_serial`; nixhooks uses its default serial
 mode. No prek priorities are set, preserving sequential hook order.
@@ -119,9 +119,50 @@ rejects unformatted Nix and a shellcheck failure. Failure controls are untimed.
 Warmup logs allow checking that both hooks ran.
 
 These are warm-cache synthetic workloads. They do not measure cold starts,
-downloads, builds, large real-world lint workloads, remote hooks, parallel
-execution, partially staged files, or feature compatibility. A runner can win
+downloads, builds, large real-world lint workloads, remote hooks, partially staged files, or feature compatibility. A runner can win
 all-files checks and lose staged checks. Compare both before drawing conclusions.
+
+## Concurrent hooks with prek
+
+Add `--parallel-prek` to include a `prek-parallel` variant alongside the serial
+baseline. It sets both hooks to `priority = 0` and limits prek to two concurrent
+hooks with `PREK_CONCURRENT_HOOKS=2`. All other hook settings stay the same.
+The serial pre-commit, prek, and nixhooks cases remain available for comparison.
+For example:
+
+```sh
+python3 dev/benchmarks/run.py \
+  --nixpkgs /tmp/benchmark-nixpkgs \
+  --mode runtime --parallel-prek \
+  --output /tmp/hooks-parallel
+```
+
+The equivalent options inside a git-hooks.nix `run` configuration are:
+
+```nix
+{
+  package = pkgs.prek;
+  hooks = {
+    nixfmt = {
+      enable = true;
+      args = [ "--check" ];
+      priority = 0;
+      require_serial = true;
+    };
+    shellcheck = {
+      enable = true;
+      priority = 0;
+      require_serial = true;
+    };
+  };
+}
+```
+
+Hooks with the same priority can run concurrently. `require_serial` controls
+batching *within* each hook; it keeps each tool in one process in this fixture.
+Both checks here are read-only and independent. Keep hooks that depend on each
+other's edits in separate priority groups. This is an opt-in execution benchmark,
+not a Nix evaluation optimization or a change to default hook scheduling.
 
 ## Profile before optimizing
 
