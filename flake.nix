@@ -18,8 +18,9 @@
       ];
       # Reuse each package set across output groups so requesting, for example,
       # both checks and devShells does not evaluate the same dependencies twice.
-      depsFor = lib.genAttrs defaultSystems (system: {
-        pkgs = nixpkgs.legacyPackages.${system};
+      depsFor = lib.genAttrs defaultSystems (system: rec {
+        # The exposed set already contains nixpkgs with our overlay.
+        pkgs = exposed;
         exposed = import ./nix { inherit nixpkgs system; isFlakes = true; };
       });
       forAllSystems = fn: lib.mapAttrs (_: args: fn args) depsFor;
