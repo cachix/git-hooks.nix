@@ -106,6 +106,8 @@ runCommand "hook-config-test" { } (
   lib.concatStrings (lib.mapAttrsToList runHookTest hookTests) +
   lib.concatStrings (lib.mapAttrsToList runAssertionTest assertionTests) +
   ''
+    ${lib.optionalString (!lib.isDerivation (run { src = null; addGcRoot = false; }).formatter) "echo 'FAILED: res.formatter is not a derivation'; exit 1"}
+    ${lib.optionalString (!lib.isDerivation (eval { }).formatter) "echo 'FAILED: (eval {}).formatter is not a derivation'; exit 1"}
     echo "All hook config tests passed" > $out
   ''
 )
