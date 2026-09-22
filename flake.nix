@@ -13,7 +13,6 @@
       defaultSystems = [
         "aarch64-linux"
         "aarch64-darwin"
-        "x86_64-darwin"
         "x86_64-linux"
       ];
       # Reuse each package set across output groups so requesting, for example,
