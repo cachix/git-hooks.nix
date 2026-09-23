@@ -117,6 +117,36 @@ let
       '';
     };
 
+  formatter =
+    pkgs.writeShellScriptBin "pre-commit-fmt" ''
+      set -euo pipefail
+      export PATH="${lib.makeBinPath ([ cfg.gitPackage cfg.package ] ++ enabledExtraPackages)}:$PATH"
+
+      exitcode=0
+      if [ "$#" -gt 0 ]; then
+        ${lib.getExe cfg.package} run -c ${cfg.configFile} --files "$@" || exitcode=$?
+      else
+        if [ -n "''${PRJ_ROOT:-}" ]; then
+          cd "$PRJ_ROOT"
+        fi
+        ${lib.getExe cfg.package} run -c ${cfg.configFile} --all-files || exitcode=$?
+      fi
+
+      # pre-commit returns 1 when files were modified by hooks.
+      # For a formatter (`nix fmt`), modifying files is the intended outcome.
+      # If exit code was 1, re-run to distinguish between successful formatting changes (clean on 2nd pass)
+      # and actual errors/syntax failures (fails again on 2nd pass).
+      if [ "$exitcode" -eq 1 ]; then
+        if [ "$#" -gt 0 ]; then
+          ${lib.getExe cfg.package} run -c ${cfg.configFile} --files "$@"
+        else
+          ${lib.getExe cfg.package} run -c ${cfg.configFile} --all-files
+        fi
+      else
+        exit "$exitcode"
+      fi
+    '';
+
   failedAssertions = builtins.map (x: x.message) (builtins.filter (x: !x.assertion) config.assertions);
 
   performAssertions =
@@ -276,6 +306,19 @@ in
             '';
           readOnly = false;
           default = run;
+          defaultText = lib.literalExpression "<derivation>";
+        };
+
+      formatter =
+        mkOption {
+          type = types.package;
+          description =
+            ''
+              A wrapper script that runs pre-commit on all files or specified files,
+              suitable for use as the flake's `formatter` output (`nix fmt`).
+            '';
+          readOnly = true;
+          default = formatter;
           defaultText = lib.literalExpression "<derivation>";
         };
 
