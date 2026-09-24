@@ -99,7 +99,7 @@
 , stylua
 , tagref
 , taplo
-, texlive
+, texliveSmall
 , # Added in nixpkgs on Dec 2, 2022
   topiary ? placeholder "topiary"
 , treefmt
@@ -124,9 +124,11 @@
 }:
 
 let
-  tex = texlive.combine {
-    inherit (texlive) latexindent chktex scheme-basic;
-  };
+  tex = texliveSmall.withPackages (ps: [
+    ps.latexindent
+    ps.chktex
+    ps.scheme-basic
+  ]);
 in
 {
   air = air-formatter;
@@ -272,9 +274,10 @@ in
     inherit (pkgsBuildBuild) ocaml;
   };
   latexindent = tex;
-  lacheck = texlive.combine {
-    inherit (texlive) lacheck scheme-basic;
-  };
+  lacheck = texliveSmall.withPackages (ps: [
+    ps.lacheck
+    ps.scheme-basic
+  ]);
   chktex = tex;
   commitizen = commitizen.overrideAttrs (_: _: { doCheck = false; });
   bats =
