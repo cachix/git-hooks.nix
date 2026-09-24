@@ -4024,7 +4024,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${lib.getExe hooks.nufmt.package} ${cmdArgs}";
-          types = [ "nushell" ];
+          files = "\\.nu$";
         };
       ocp-indent =
         {
