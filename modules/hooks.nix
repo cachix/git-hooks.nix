@@ -4674,10 +4674,18 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
               options = lib.cli.toCommandLine
                 optionFormat
                 settings;
+              # statix check accepts only one target per invocation.
+              script = pkgs.writeShellScript "precommit-statix" ''
+                status=0
+                for file in "$@"; do
+                  ${package}/bin/statix check ${toString options} -- "$file" || status=1
+                done
+                exit "$status"
+              '';
             in
-            "${package}/bin/statix check ${toString options}";
+            builtins.toString script;
           files = "\\.nix$";
-          pass_filenames = false;
+          pass_filenames = true;
         };
       stylish-haskell =
         {
