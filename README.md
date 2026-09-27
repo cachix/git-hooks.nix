@@ -463,6 +463,7 @@ hooks](modules/pre-commit.nix).
 
 - [comrak](https://github.com/kivikakk/comrak)
 - [markdownlint](https://github.com/DavidAnson/markdownlint)
+- [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2)
 - [mdformat](https://github.com/hukkin/mdformat)
 - [mdl](https://github.com/markdownlint/markdownlint/)
 - [mdsh](https://zimbatm.github.io/mdsh/)
