@@ -62,6 +62,8 @@
 , nixf-diagnose
 , nixfmt
 , nixpkgs-fmt
+, nu-lint ? placeholder "nu-lint"
+, nushell ? placeholder "nushell"
 , nufmt ? placeholder "nufmt"
 , nodePackages
 , ocamlPackages
@@ -185,6 +187,8 @@ in
     nixf-diagnose
     nixfmt
     nixpkgs-fmt
+    nu-lint
+    nushell
     nufmt
     opam
     opentofu
