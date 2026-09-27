@@ -61,8 +61,6 @@
 , nil
 , nixf-diagnose
 , nixfmt
-, nixfmt-classic ? placeholder "nixfmt-classic"
-, nixfmt-rfc-style ? placeholder "nixfmt-rfc-style"
 , nixpkgs-fmt
 , nufmt ? placeholder "nufmt"
 , nodePackages
@@ -185,6 +183,7 @@ in
     nbstripout
     nil
     nixf-diagnose
+    nixfmt
     nixpkgs-fmt
     nufmt
     opam
@@ -296,18 +295,4 @@ in
   cabal-fmt = (haskell.lib.enableSeparateBinOutput haskellPackages.cabal-fmt).bin;
   cabal-gild = (haskell.lib.enableSeparateBinOutput haskellPackages.cabal-gild).bin;
   hindent = haskell.lib.enableSeparateBinOutput haskellPackages.hindent;
-
-  # nixfmt 1.0 is now the official Nix formatter as of 25.11.
-  #
-  # In 24.05, the `nixfmt` package was deprecated and replaced with two separate packages:
-  #   - nixfmt-classic
-  #   - nixfmt-rfc-style
-  #
-  # Remove this block in 26.05
-  nixfmt =
-    if lib.versionOlder nixfmt.version "1.0" && (nixfmt-classic.meta.isPlaceholder or false) then
-      nixfmt-classic
-    else
-      nixfmt;
-  inherit nixfmt-classic nixfmt-rfc-style;
 }
