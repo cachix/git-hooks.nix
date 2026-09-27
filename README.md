@@ -631,6 +631,11 @@ hooks](modules/pre-commit.nix).
 - [woodpecker-cli-lint](https://woodpecker-ci.org/docs/cli#lint)
 - [zizmor](https://github.com/zizmorcore/zizmor)
 
+## Performance benchmarks
+
+See [the benchmark toolset](dev/benchmarks/README.md) to compare Nix evaluation
+and hook execution with pre-commit, prek, and nixhooks without flakes.
+
 ## Contributing hooks
 
 Everyone is encouraged to add new hooks.
