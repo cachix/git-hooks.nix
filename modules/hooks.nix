@@ -2275,6 +2275,162 @@ in
               config.extraPackages = config.settings.formatters;
             });
       };
+      ty = mkOption {
+        description = "ty hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            binPath =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "`ty` binary path. Should be used to specify the ty binary from your Python environment.";
+                default = null;
+                defaultText = lib.literalExpression ''
+                  "''${tools.ty}/bin/ty"
+                '';
+              };
+            fix =
+              mkOption {
+                type = types.bool;
+                description = "Apply fixes to resolve errors.";
+                default = false;
+              };
+            addIgnore =
+              mkOption {
+                type = types.bool;
+                description = "Adds `ty: ignore` comments to suppress all rule diagnostics.";
+                default = false;
+              };
+            error =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Treat the given rule as having severity 'error'. Use 'all' to apply to all rules.";
+                default = [ ];
+                example = [ "possibly-unresolved-reference" ];
+              };
+            warn =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Treat the given rule as having severity 'warn'. Use 'all' to apply to all rules.";
+                default = [ ];
+                example = [ "division-by-zero" ];
+              };
+            ignore =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Disables the rule. Use 'all' to apply to all rules.";
+                default = [ ];
+                example = [ "unused-ignore-comment" ];
+              };
+            errorOnWarning =
+              mkOption {
+                type = types.bool;
+                description = "Use exit code 1 if there are any warning-level diagnostics.";
+                default = false;
+              };
+            exitZero =
+              mkOption {
+                type = types.bool;
+                description = "Always use exit code 0, even when there are error-level diagnostics.";
+                default = false;
+              };
+            project =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Run the command within the given project directory.";
+                default = null;
+              };
+            python =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Path to your project's Python environment or interpreter.";
+                default = null;
+              };
+            pythonVersion =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Python version to assume when resolving types.";
+                default = null;
+                example = "3.12";
+              };
+            pythonPlatform =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Target platform to assume when resolving types.";
+                default = null;
+                example = "linux";
+              };
+            typeshed =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "Custom directory to use for stdlib typeshed stubs.";
+                default = null;
+              };
+            extraSearchPath =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Additional path to use as a module-resolution source.";
+                default = [ ];
+              };
+            exclude =
+              mkOption {
+                type = types.listOf types.str;
+                description = "Glob patterns for files to exclude from type checking.";
+                default = [ ];
+                example = [ "tests/" "**/__pycache__/**" ];
+              };
+            respectIgnoreFiles =
+              mkOption {
+                type = types.nullOr types.bool;
+                description = "Respect file exclusions via `.gitignore` and other standard ignore files. Use `--no-respect-ignore-files` to disable.";
+                default = null;
+              };
+            forceExclude =
+              mkOption {
+                type = types.nullOr types.bool;
+                description = "Enforce exclusions, even for paths passed to ty directly on the command-line. Use `--no-force-exclude` to disable.";
+                default = null;
+              };
+            outputFormat =
+              mkOption {
+                type = types.nullOr (types.enum [ "full" "concise" "gitlab" "github" "junit" ]);
+                description = "The format to use for printing diagnostic messages.";
+                default = null;
+              };
+            color =
+              mkOption {
+                type = types.nullOr (types.enum [ "auto" "always" "never" ]);
+                description = "Control when colored output is used.";
+                default = null;
+              };
+            noProgress =
+              mkOption {
+                type = types.bool;
+                description = "Hide all progress outputs.";
+                default = false;
+              };
+            verbosity =
+              mkOption {
+                type = types.enum [ "silent" "quiet" "default" "verbose" "more-verbose" "most-verbose" ];
+                description = "Output verbosity: `silent` (`-qq`), `quiet` (`-q`), `default`, `verbose` (`-v`), `more-verbose` (`-vv`), or `most-verbose` (`-vvv`).";
+                default = "default";
+              };
+            flags =
+              mkOption {
+                type = types.str;
+                description = "Flags passed to ty. For available options run 'ty check --help'.";
+                default = "";
+                example = "-c terminal.error-on-warning=true";
+              };
+            configFile =
+              mkOption {
+                type = types.nullOr types.str;
+                description = "The path to a `ty.toml` file to use for configuration.";
+                default = null;
+              };
+          };
+        };
+      };
       typos = mkOption {
         description = "typos hook";
         type = types.submodule {
@@ -4834,6 +4990,50 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
 
           # trufflehog expects to run across the whole repo, not particular files
           pass_filenames = false;
+        };
+      ty =
+        {
+          name = "ty";
+          description = "An extremely fast Python type checker, written in Rust.";
+          types_or = [ "python" "pyi" ];
+
+          package = tools.ty;
+          entry =
+            let
+              binPath = migrateBinPathToPackage hooks.ty "/bin/ty";
+              cmdArgs =
+                mkCmdArgs
+                  (with hooks.ty.settings; [
+                    [ fix "--fix" ]
+                    [ addIgnore "--add-ignore" ]
+                    [ (error != [ ]) (lib.concatMapStringsSep " " (r: "--error ${r}") error) ]
+                    [ (warn != [ ]) (lib.concatMapStringsSep " " (r: "--warn ${r}") warn) ]
+                    [ (ignore != [ ]) (lib.concatMapStringsSep " " (r: "--ignore ${r}") ignore) ]
+                    [ errorOnWarning "--error-on-warning" ]
+                    [ exitZero "--exit-zero" ]
+                    [ (project != null) "--project ${project}" ]
+                    [ (python != null) "--python ${python}" ]
+                    [ (pythonVersion != null) "--python-version ${pythonVersion}" ]
+                    [ (pythonPlatform != null) "--python-platform ${pythonPlatform}" ]
+                    [ (typeshed != null) "--typeshed ${typeshed}" ]
+                    [ (extraSearchPath != [ ]) (lib.concatMapStringsSep " " (p: "--extra-search-path ${p}") extraSearchPath) ]
+                    [ (exclude != [ ]) (lib.concatMapStringsSep " " (p: "--exclude ${p}") exclude) ]
+                    [ (respectIgnoreFiles == true) "--respect-ignore-files" ]
+                    [ (respectIgnoreFiles == false) "--no-respect-ignore-files" ]
+                    [ (forceExclude == true) "--force-exclude" ]
+                    [ (forceExclude == false) "--no-force-exclude" ]
+                    [ (outputFormat != null) "--output-format ${outputFormat}" ]
+                    [ (color != null) "--color ${color}" ]
+                    [ noProgress "--no-progress" ]
+                    [ (verbosity == "silent") "--quiet --quiet" ]
+                    [ (verbosity == "quiet") "--quiet" ]
+                    [ (verbosity == "verbose") "--verbose" ]
+                    [ (verbosity == "more-verbose") "--verbose --verbose" ]
+                    [ (verbosity == "most-verbose") "--verbose --verbose --verbose" ]
+                    [ (configFile != null) "--config-file ${configFile}" ]
+                  ]);
+            in
+            "${binPath} check ${cmdArgs} ${hooks.ty.settings.flags}";
         };
       typos =
         {
