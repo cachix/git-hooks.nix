@@ -439,6 +439,7 @@ hooks](modules/pre-commit.nix).
 
 ### Julia
 
+- [fatou](https://github.com/jolars/fatou)
 - [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
 
 ### LaTeX
