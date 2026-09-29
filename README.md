@@ -88,16 +88,7 @@ Given the following `flake.nix` example:
     {
       # Run the hooks with `nix fmt`.
       formatter = forEachSystem (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          config = self.checks.${system}.pre-commit-check.config;
-          inherit (config) package configFile;
-          script = ''
-            ${pkgs.lib.getExe package} run --all-files --config ${configFile}
-          '';
-        in
-        pkgs.writeShellScriptBin "pre-commit-run" script
+        system: self.checks.${system}.pre-commit-check.formatter
       );
 
       # Run the hooks in a sandbox with `nix flake check`.
@@ -162,7 +153,7 @@ nix fmt
 
 ### flake-parts
 
-If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts module as well. Checkout [`./template/flake.nix`](https://github.com/cachix/git-hooks.nix/blob/master/template/flake.nix) for an example.
+If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts module as well. It automatically configures `checks.<system>.pre-commit` and `formatter.<system>` to format your code using the enabled hooks when running `nix fmt`. Checkout [`./template/flake.nix`](https://github.com/cachix/git-hooks.nix/blob/master/template/flake.nix) for an example.
 
 ## Nix
 
