@@ -44,7 +44,7 @@ let
         (builtins.attrValues enabledHooks);
     in
     if sortedHooks ? result then
-      builtins.map (value: value.raw) sortedHooks.result
+      sortedHooks.result
     else
       let
         getIds = builtins.map (value: value.id);
@@ -69,6 +69,33 @@ let
 
           ${prettyPrintCycle { indent = "  "; } sortedHooks.cycle}
       '';
+  _prekBuiltins =
+    if usingPrek then
+      builtins.filter (s: s != "") (builtins.split "\n" (
+        builtins.readFile (
+          pkgs.runCommand "prek-builtins.txt"
+            {
+              buildInputs = [ cfg.package ];
+              PREK_HOME = "/tmp/"; # This is to avoid prek trying to create ~/.cache/prek/
+            }
+            ''${lib.getExe cfg.package} util list-builtins > $out''
+        )
+      ))
+    else
+      [ ];
+
+  _is_builtin =
+    {
+      package,
+      name,
+      ...
+    }:
+    usingPrek && (package.pname == "pre-commit-hooks") && (builtins.elem name _prekBuiltins);
+
+  _partitioned = builtins.partition _is_builtin processedHooks;
+
+  builtinHooks = builtins.map (value: builtins.removeAttrs value.raw [ "entry" ]) _partitioned.right;
+  localHooks = builtins.map (value: value.raw) _partitioned.wrong;
 
   configFile =
     performAssertions (
@@ -446,10 +473,10 @@ in
       })
       removedHooks ++ [
       {
-        assertion = usingPrek || (lib.all (hook: !(hook ? priority)) processedHooks);
+        assertion = usingPrek || (lib.all (hook: !(hook ? priority)) localHooks);
         message =
           let
-            hooksWithPriority = lib.filter (hook: hook ? priority) processedHooks;
+            hooksWithPriority = lib.filter (hook: hook ? priority) localHooks;
             hookNames = lib.concatMapStringsSep ", " (hook: hook.id) hooksWithPriority;
           in
           ''
@@ -461,13 +488,18 @@ in
 
     rawConfig =
       {
-        repos =
-          [
-            {
-              repo = "local";
-              hooks = processedHooks;
-            }
-          ];
+        repos = [
+          {
+            repo = "local";
+            hooks = localHooks;
+          }
+        ]
+        ++ lib.optionals (builtinHooks != [ ]) [
+          {
+            repo = "builtin";
+            hooks = builtinHooks;
+          }
+        ];
       } // lib.optionalAttrs (cfg.excludes != [ ]) {
         exclude = mergeExcludes cfg.excludes;
       } // lib.optionalAttrs (cfg.default_stages != [ ]) {
