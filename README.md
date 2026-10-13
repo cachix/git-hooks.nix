@@ -388,6 +388,7 @@ hooks](modules/pre-commit.nix).
 - [commitizen](https://github.com/commitizen-tools/commitizen)
 - [convco](https://github.com/convco/convco)
 - [forbid-new-submodules](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/forbid_new_submodules.py)
+- [gitleaks](https://github.com/gitleaks/gitleaks)
 - [gitlint](https://github.com/jorisroovers/gitlint)
 - [gptcommit](https://github.com/zurawiki/gptcommit)
 - [no-commit-to-branch](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/no_commit_to_branch.py)
