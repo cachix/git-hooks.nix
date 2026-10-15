@@ -68,10 +68,18 @@ in
               description = "A development shell with the git hooks installed and all the packages made available.";
               readOnly = true;
             };
+            formatter = mkOption {
+              type = types.package;
+              description = "A formatter package that runs pre-commit hooks, suitable for flake-parts `formatter`.";
+              default = cfg.settings.formatter;
+              defaultText = lib.literalExpression "config.pre-commit.settings.formatter";
+              readOnly = true;
+            };
           };
         };
         config = {
           checks = lib.optionalAttrs cfg.check.enable { pre-commit = cfg.settings.run; };
+          formatter = lib.mkDefault cfg.settings.formatter;
           pre-commit.settings = { pkgs, ... }: {
             rootSrc = self.outPath;
             package = lib.mkDefault pkgs.pre-commit;

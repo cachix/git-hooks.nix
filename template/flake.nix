@@ -24,6 +24,8 @@
           # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
           packages.hello = pkgs.hello;
           pre-commit.settings.hooks.nixpkgs-fmt.enable = true;
+          # NOTE: `formatter` is automatically configured to run enabled hooks via `nix fmt`.
+          # You can also use `config.pre-commit.formatter` explicitly if needed.
           # NOTE: You can also use `config.pre-commit.devShell`
           devShells.default = pkgs.mkShell {
             shellHook = ''

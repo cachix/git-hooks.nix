@@ -33,5 +33,5 @@ let
 in
 project.config.run // {
   inherit (project) config extendModules;
-  inherit (project.config) enabledPackages shellHook;
+  inherit (project.config) enabledPackages shellHook formatter;
 }
