@@ -37,6 +37,7 @@
 , elmPackages
 , eslint
 , flake-checker ? placeholder "flake-checker"
+, flake-edit ? placeholder "flake-edit"
 , fprettify
 , git-annex
 , gitleaks
@@ -164,6 +165,7 @@ in
     elixir
     eslint
     flake-checker
+    flake-edit
     fprettify
     git-annex
     gitleaks
