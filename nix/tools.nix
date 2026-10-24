@@ -55,6 +55,7 @@
 , lychee
 , julia-bin
 , markdownlint-cli
+, markdownlint-cli2
 , mdformat
 , mdl
 , mdsh
@@ -182,6 +183,7 @@ in
     keep-sorted
     lychee
     markdownlint-cli
+    markdownlint-cli2
     mdformat
     mdl
     mdsh
