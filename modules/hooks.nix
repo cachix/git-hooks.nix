@@ -778,6 +778,20 @@ in
           };
         };
       };
+      just = mkOption {
+        description = "just hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            check = mkOption {
+              type = types.bool;
+              description = "Check whether files are formatted without modifying them.";
+              default = false;
+              example = true;
+            };
+          };
+        };
+      };
       latexindent = mkOption {
         description = "latexindent hook";
         type = types.submodule {
@@ -3813,6 +3827,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                 exit(1)
             end'
           '';
+        };
+      just =
+        {
+          name = "just";
+          description = "Format Justfiles";
+          package = tools.just;
+          entry = "${hooks.just.package}/bin/pre-commit-just${lib.optionalString hooks.just.settings.check " --check"}";
+          files = "(^|/)((?i:\\.?justfile)|.*\\.just(file)?)$";
+          pass_filenames = true;
         };
       keep-sorted =
         {
