@@ -3916,7 +3916,13 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           name = "markdownlint";
           description = "Style checker and linter for markdown files.";
           package = tools.markdownlint-cli;
-          entry = "${hooks.markdownlint.package}/bin/markdownlint -c ${pkgs.writeText "markdownlint.json" (builtins.toJSON hooks.markdownlint.settings.configuration)}";
+          entry =
+            let
+              inherit (hooks.markdownlint.settings) configuration;
+              configFile = pkgs.writeText "markdownlint.json" (builtins.toJSON configuration);
+            in
+            "${hooks.markdownlint.package}/bin/markdownlint"
+            + lib.optionalString (configuration != { }) "-c ${configFile}";
           files = "\\.md$";
         };
       mdformat = {
