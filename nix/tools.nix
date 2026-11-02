@@ -270,6 +270,7 @@ in
   hpack-dir = callPackage ./hpack-dir { };
   hunspell = callPackage ./hunspell { };
   tflint = callPackage ./tflint { };
+  xmllint = callPackage ./xmllint { };
   dune-build-opam-files = callPackage ./dune-build-opam-files {
     dune = dune_3;
     inherit (pkgsBuildBuild) ocaml;

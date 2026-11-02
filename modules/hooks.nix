@@ -2654,6 +2654,20 @@ in
           };
         };
       };
+      xmllint = mkOption {
+        description = "xmllint hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            check = mkOption {
+              type = types.bool;
+              description = "Check whether files are formatted without modifying them.";
+              default = false;
+              example = true;
+            };
+          };
+        };
+      };
       yamlfmt = mkOption {
         description = "yamlfmt hook";
         type = types.submodule {
@@ -5128,6 +5142,15 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           "${lib.getExe hooks.woodpecker-cli-lint.package} lint ${cmdArgs}";
         types = [ "file" "yaml" ];
       };
+      xmllint =
+        {
+          name = "xmllint";
+          description = "Format XML files with xmllint.";
+          package = tools.xmllint;
+          entry = "${hooks.xmllint.package}/bin/pre-commit-xmllint${lib.optionalString hooks.xmllint.settings.check " --check"}";
+          types = [ "xml" ];
+          pass_filenames = true;
+        };
       yamlfmt =
         {
           name = "yamlfmt";
