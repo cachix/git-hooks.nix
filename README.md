@@ -591,6 +591,11 @@ hooks](modules/pre-commit.nix).
 
 - [typstyle](https://github.com/Enter-tainer/typstyle)
 
+### XML
+
+- [check-xml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_xml.py)
+- [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html)
+
 ### YAML
 
 - [check-yaml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_yaml.py)
@@ -610,7 +615,6 @@ hooks](modules/pre-commit.nix).
 - [check-shebang-scripts-are-executable](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_shebang_scripts_are_executable.py)
 - [check-symlinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_symlinks.py)
 - [check-vcs-permalinks](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_vcs_permalinks.py)
-- [check-xml](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/check_xml.py)
 - [circleci](https://circleci.com/)
 - [conform](https://github.com/edmundhung/conform)
 - [detect-aws-credentials](https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_aws_credentials.py)

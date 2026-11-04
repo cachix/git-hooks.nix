@@ -2,4 +2,5 @@
 {
   installation-test = pkgs.callPackage ./installation.nix { inherit run; };
   hook-config-test = pkgs.callPackage ./hook-config.nix { inherit run; };
+  xmllint-test = pkgs.callPackage ./xmllint.nix { inherit run; };
 }
