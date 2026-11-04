@@ -17,6 +17,7 @@ let
 
   cfg = config;
   install_stages = lib.unique (builtins.concatLists (lib.mapAttrsToList (_: h: h.stages) enabledHooks));
+  installArgs = lib.escapeShellArgs (lib.optional cfg.install.force "--force" ++ [ "-c" cfg.configPath ]);
 
   supportedHooksLib = import ./supported-hooks.nix { inherit lib; };
 
@@ -166,6 +167,15 @@ in
 
             When set to false, hooks will not be installed into the git repository,
             but all other module functionality (like configuration generation) will still work.
+          '';
+        };
+
+        force = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Whether to pass `--force` to the hook install command, overwriting any
+            existing hooks in the target stage(s).
           '';
         };
       };
@@ -527,10 +537,10 @@ in
                     # if you amend these switches please also review $hooks above
                     commit | merge-commit | push)
                       stage="pre-"$stage
-                      ${lib.getExe cfg.package} install -c ${cfg.configPath} -t $stage
+                      ${lib.getExe cfg.package} install ${installArgs} -t $stage
                       ;;
                     ${concatStringsSep "|" supportedHooksLib.supportedHooks})
-                      ${lib.getExe cfg.package}  install -c ${cfg.configPath} -t $stage
+                      ${lib.getExe cfg.package} install ${installArgs} -t $stage
                       ;;
                     *)
                       echo 1>&2 "ERROR: git-hooks.nix: either $stage is not a valid stage or git-hooks.nix doesn't yet support it."
@@ -540,7 +550,7 @@ in
                 done
               # ... or default 'pre-commit' hook
               else
-                ${lib.getExe cfg.package}  install -c ${cfg.configPath}
+                ${lib.getExe cfg.package} install ${installArgs}
               fi
 
               # Fetch the absolute path to the git common directory. This will normally point to $GIT_WC/.git.
