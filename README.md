@@ -442,6 +442,10 @@ hooks](modules/pre-commit.nix).
 
 - [JuiaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl)
 
+### Just
+
+- [just](https://github.com/casey/just)
+
 ### LaTeX
 
 - [chktex](https://www.nongnu.org/chktex/)
