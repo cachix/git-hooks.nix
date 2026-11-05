@@ -2192,6 +2192,91 @@ in
           };
         };
       };
+      stylua = mkOption {
+        description = "stylua hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            syntax =
+              mkOption {
+                type = types.nullOr (types.enum [ "All" "Lua51" "Lua52" "Lua53" "Lua54" "LuaJIT" "Luau" "CfxLua" ]);
+                description = "Disambiguation for the style of Lua syntax being formatted.";
+                default = null;
+                example = "Lua53";
+              };
+            column_width =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Approximate line length for printing. Used as a guide for line wrapping, not a hard requirement.";
+                default = null;
+                example = 120;
+              };
+            line_endings =
+              mkOption {
+                type = types.nullOr (types.enum [ "Unix" "Windows" ]);
+                description = "Line endings type.";
+                default = null;
+                example = "Unix";
+              };
+            indent_type =
+              mkOption {
+                type = types.nullOr (types.enum [ "Tabs" "Spaces" ]);
+                description = "Indent type.";
+                default = null;
+                example = "Tabs";
+              };
+            indent_width =
+              mkOption {
+                type = types.nullOr types.int;
+                description = "Character size of a single indentation. With `Tabs`, used only as a heuristic for column width.";
+                default = null;
+                example = 4;
+              };
+            quote_style =
+              mkOption {
+                type = types.nullOr (types.enum [ "AutoPreferDouble" "AutoPreferSingle" "ForceDouble" "ForceSingle" ]);
+                description = "Quote style for string literals.";
+                default = null;
+                example = "AutoPreferDouble";
+              };
+            call_parentheses =
+              mkOption {
+                type = types.nullOr (types.enum [ "Always" "NoSingleString" "NoSingleTable" "None" "Input" ]);
+                description = "Whether parentheses are applied on function calls with a single string or table argument.";
+                default = null;
+                example = "Always";
+              };
+            space_after_function_names =
+              mkOption {
+                type = types.nullOr (types.enum [ "Never" "Definitions" "Calls" "Always" ]);
+                description = "Whether to add a space between the function name and the parentheses.";
+                default = null;
+                example = "Never";
+              };
+            block_newline_gaps =
+              mkOption {
+                type = types.nullOr (types.enum [ "Never" "Preserve" ]);
+                description = "Whether to preserve leading and trailing newline gaps for blocks.";
+                default = null;
+                example = "Never";
+              };
+            collapse_simple_statement =
+              mkOption {
+                type = types.nullOr (types.enum [ "Never" "Input" "FunctionOnly" "ConditionalOnly" "Always" ]);
+                description = "Whether to collapse simple statements.";
+                default = null;
+                example = "Never";
+              };
+            sort_requires.enabled =
+              mkOption {
+                type = types.nullOr types.bool;
+                description = "Whether to sort consecutive `require` statements within each block.";
+                default = null;
+                example = true;
+              };
+          };
+        };
+      };
       sort-file-contents = mkOption {
         description = "sort-file-contents-hook";
         type = types.submodule {
@@ -4822,12 +4907,22 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "\\.l?hs(-boot)?$";
         };
       stylua =
+        let
+          settings = lib.filterAttrsRecursive (_: v: v != { })
+            (lib.filterAttrsRecursive (_: v: v != null) hooks.stylua.settings);
+          configFile = toml.generate "stylua.toml" settings;
+          cmdArgs =
+            mkCmdArgs [
+              [ (settings != { }) "--config-path ${configFile}" ]
+              [ true "--respect-ignores" ]
+            ];
+        in
         {
           name = "stylua";
           description = "An Opinionated Lua Code Formatter.";
           types = [ "file" "lua" ];
           package = tools.stylua;
-          entry = "${hooks.stylua.package}/bin/stylua --respect-ignores";
+          entry = "${hooks.stylua.package}/bin/stylua ${cmdArgs}";
         };
       tagref =
         {
