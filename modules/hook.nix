@@ -166,9 +166,11 @@ in
     };
 
     pass_filenames = mkOption {
-      type = types.bool;
+      type = types.oneOf [ types.bool types.ints.u32 ];
       description = ''
         Whether to pass filenames as arguments to the entry point.
+        Positive integer only works if cfg.package is set to prek, it limits each invocation to at most n filenames.
+        See [`pass_filenames`](https://prek.j178.dev/reference/configuration/#pass_filenames).
       '';
       default = true;
     };
