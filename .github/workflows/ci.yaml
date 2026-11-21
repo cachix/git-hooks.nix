@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v7
-    - uses: cachix/install-nix-action@v31
+    - uses: cachix/install-nix-action@v32
     - uses: cachix/cachix-action@v17
       with:
         name: pre-commit-hooks
@@ -32,7 +32,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v7
-    - uses: cachix/install-nix-action@v31
+    - uses: cachix/install-nix-action@v32
     - uses: cachix/cachix-action@v17
       with:
         name: pre-commit-hooks
@@ -52,7 +52,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v7
-    - uses: cachix/install-nix-action@v31
+    - uses: cachix/install-nix-action@v32
     - uses: cachix/cachix-action@v17
       with:
         name: pre-commit-hooks
