@@ -153,7 +153,7 @@ nix fmt
 
 ### flake-parts
 
-If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts module as well. It automatically configures `checks.<system>.pre-commit` and `formatter.<system>` to format your code using the enabled hooks when running `nix fmt`. Checkout [`./template/flake.nix`](https://github.com/cachix/git-hooks.nix/blob/master/template/flake.nix) for an example.
+If your flake uses [flake-parts](https://flake.parts/), we provide a flake-parts module as well. It automatically configures `checks.<system>.pre-commit` and `formatter.<system>` to format your code using the enabled hooks when running `nix fmt`. You can exclude specific checks, linters, or tests from `nix fmt` with `hooks.<name>.formatter = false;`. Checkout [`./template/flake.nix`](https://github.com/cachix/git-hooks.nix/blob/master/template/flake.nix) for an example.
 
 ## Nix
 

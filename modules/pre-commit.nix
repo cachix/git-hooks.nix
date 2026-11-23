@@ -32,16 +32,36 @@ let
     nixfmt-rfc-style = "The `nixfmt-rfc-style` hook has been removed. Use `hooks.nixfmt` instead.";
     purty = "The `purty` hook has been removed because the project is unmaintained. Consider using `purs-tidy` instead.";
   };
+  makeRawConfig =
+    hooks:
+    {
+      repos =
+        [
+          {
+            repo = "local";
+            inherit hooks;
+          }
+        ];
+    } // lib.optionalAttrs (cfg.excludes != [ ]) {
+      exclude = mergeExcludes cfg.excludes;
+    } // lib.optionalAttrs (cfg.default_stages != [ ]) {
+      default_stages = cfg.default_stages;
+    };
 
   # Report removed hooks through assertions without evaluating their missing defaults.
   enabledHooks = filterAttrs (id: value: !(builtins.hasAttr id removedHooks) && value.enable) cfg.hooks;
   enabledExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) enabledHooks);
+
+  formatterHooks = filterAttrs (_: value: value.formatter) enabledHooks;
+  formatterExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) formatterHooks);
+
   usingPrek = cfg.package.pname == "prek";
-  processedHooks =
+
+  sortHooks = hooks:
     let
       sortedHooks = lib.toposort
         (a: b: builtins.elem b.id a.before || builtins.elem a.id b.after)
-        (builtins.attrValues enabledHooks);
+        (builtins.attrValues hooks);
     in
     if sortedHooks ? result then
       builtins.map (value: value.raw) sortedHooks.result
@@ -70,9 +90,13 @@ let
           ${prettyPrintCycle { indent = "  "; } sortedHooks.cycle}
       '';
 
-  configFile =
+  processedHooks = sortHooks enabledHooks;
+  processedFormatterHooks = sortHooks formatterHooks;
+
+  makeConfigFile =
+    name: rawConfig:
     performAssertions (
-      runCommand "pre-commit-config.json"
+      runCommand name
         {
           buildInputs = [
             pkgs.jq
@@ -81,7 +105,7 @@ let
             cfg.package
           ];
           passAsFile = [ "rawJSON" ];
-          rawJSON = builtins.toJSON cfg.rawConfig;
+          rawJSON = builtins.toJSON rawConfig;
         } ''
         {
           echo '# DO NOT MODIFY';
@@ -90,6 +114,9 @@ let
         } >$out
       ''
     );
+
+  configFile = makeConfigFile "pre-commit-config.json" cfg.rawConfig;
+  formatterConfigFile = makeConfigFile "pre-commit-formatter-config.json" cfg.formatterRawConfig;
 
   run =
     mkDerivation {
@@ -126,34 +153,38 @@ let
     };
 
   formatter =
-    pkgs.writeShellScriptBin "pre-commit-fmt" ''
-      set -euo pipefail
-      export PATH="${lib.makeBinPath ([ cfg.gitPackage cfg.package ] ++ enabledExtraPackages)}:$PATH"
+    if formatterHooks == { } then
+      pkgs.writeShellScriptBin "pre-commit-fmt" ''
+        exit 0
+      ''
+    else
+      pkgs.writeShellScriptBin "pre-commit-fmt" ''
+        set -euo pipefail
+        export PATH="${lib.makeBinPath ([ cfg.gitPackage cfg.package ] ++ formatterExtraPackages)}:$PATH"
 
-      exitcode=0
-      if [ "$#" -gt 0 ]; then
-        ${lib.getExe cfg.package} run -c ${cfg.configFile} --files "$@" || exitcode=$?
-      else
-        if [ -n "''${PRJ_ROOT:-}" ]; then
-          cd "$PRJ_ROOT"
-        fi
-        ${lib.getExe cfg.package} run -c ${cfg.configFile} --all-files || exitcode=$?
-      fi
-
-      # pre-commit returns 1 when files were modified by hooks.
-      # For a formatter (`nix fmt`), modifying files is the intended outcome.
-      # If exit code was 1, re-run to distinguish between successful formatting changes (clean on 2nd pass)
-      # and actual errors/syntax failures (fails again on 2nd pass).
-      if [ "$exitcode" -eq 1 ]; then
+        args=(run -c ${cfg.formatterConfigFile})
         if [ "$#" -gt 0 ]; then
-          ${lib.getExe cfg.package} run -c ${cfg.configFile} --files "$@"
+          args+=(--files "$@")
         else
-          ${lib.getExe cfg.package} run -c ${cfg.configFile} --all-files
+          if [ -n "''${PRJ_ROOT:-}" ]; then
+            cd "$PRJ_ROOT"
+          fi
+          args+=(--all-files)
         fi
-      else
-        exit "$exitcode"
-      fi
-    '';
+
+        exitcode=0
+        ${lib.getExe cfg.package} "''${args[@]}" || exitcode=$?
+
+        # pre-commit returns 1 when files were modified by hooks.
+        # For a formatter (`nix fmt`), modifying files is the intended outcome.
+        # If exit code was 1, re-run to distinguish between successful formatting changes (clean on 2nd pass)
+        # and actual errors/syntax failures (fails again on 2nd pass).
+        if [ "$exitcode" -eq 1 ]; then
+          ${lib.getExe cfg.package} "''${args[@]}"
+        else
+          exit "$exitcode"
+        fi
+      '';
 
   failedAssertions = builtins.map (x: x.message) (builtins.filter (x: !x.assertion) config.assertions);
 
@@ -363,6 +394,18 @@ in
           defaultText = "<derivation>";
         };
 
+      formatterConfigFile =
+        mkOption {
+          type = types.package;
+          description =
+            ''
+              The pre-commit configuration file used for formatting (`nix fmt`).
+            '';
+          readOnly = true;
+          default = formatterConfigFile;
+          defaultText = "<derivation>";
+        };
+
       configPath = lib.mkOption {
         type = types.str;
         default = ".pre-commit-config.yaml";
@@ -438,6 +481,19 @@ in
           internal = true;
         };
 
+      formatterRawConfig =
+        mkOption {
+          type = types.attrsOf types.unspecified;
+          description =
+            ''
+              The raw formatter configuration before writing to file.
+
+              This option does not have an appropriate merge function.
+              It is accessible in case you need to set an attribute that doesn't have an option.
+            '';
+          internal = true;
+        };
+
       addGcRoot = mkOption {
         type = types.bool;
         default = true;
@@ -502,20 +558,9 @@ in
       }
     ];
 
-    rawConfig =
-      {
-        repos =
-          [
-            {
-              repo = "local";
-              hooks = processedHooks;
-            }
-          ];
-      } // lib.optionalAttrs (cfg.excludes != [ ]) {
-        exclude = mergeExcludes cfg.excludes;
-      } // lib.optionalAttrs (cfg.default_stages != [ ]) {
-        default_stages = cfg.default_stages;
-      };
+    rawConfig = makeRawConfig processedHooks;
+
+    formatterRawConfig = makeRawConfig processedFormatterHooks;
 
     shellHook =
       ''

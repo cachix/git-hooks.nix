@@ -251,6 +251,15 @@ in
       '';
       default = null;
     };
+
+    formatter = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether this hook should be executed by `nix fmt`.
+        Defaults to `true`. Set to `false` to exclude heavy checks, linters or tests from formatting.
+      '';
+    };
   };
 
   config = {
