@@ -546,6 +546,26 @@ in
           };
         };
       };
+      elvis = mkOption {
+        description = "elvis hook";
+        type = types.submodule {
+          imports = [ hookModule ];
+          options.settings = {
+            configPath = mkOption {
+              type = types.nullOr (types.oneOf [ types.str types.path ]);
+              description = "Path to the elvis configuration file.";
+              default = null;
+              example = "./elvis.config";
+            };
+            args = mkOption {
+              type = types.listOf types.str;
+              description = "Extra arguments passed to `elvis rock`.";
+              default = [ ];
+              example = [ "--output-format" "parsable" ];
+            };
+          };
+        };
+      };
       flake8 = mkOption {
         description = "flake8 hook";
         type = types.submodule {
@@ -3432,6 +3452,23 @@ in
             in
             "${binPath} --fix";
           files = "${hooks.eslint.settings.extensions}";
+        };
+      elvis =
+        {
+          name = "elvis";
+          description = "Erlang style reviewer";
+          package = tools.elvis-erlang;
+          entry =
+            let
+              inherit (hooks.elvis.settings) configPath args;
+
+              cmdArgs = mkCmdArgs [
+                [ (configPath != null) "--config ${lib.escapeShellArg (toString configPath)}" ]
+              ] + lib.optionalString (args != [ ])
+                (" " + lib.concatMapStringsSep " " lib.escapeShellArg args);
+            in
+            "${hooks.elvis.package}/bin/elvis rock ${cmdArgs}";
+          files = "\\.erl$";
         };
       fix-byte-order-marker =
         {
