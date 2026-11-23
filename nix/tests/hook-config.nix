@@ -132,6 +132,22 @@ runCommand "hook-config-test" { } (
       in
       lib.optionalString (!hasNixpkgsFmt) "echo 'FAILED: formatterRawConfig should include nixpkgs-fmt by default'; exit 1"
     }
+    ${
+      let
+        confDefault = eval {
+          hooks.shellcheck.enable = true;
+        };
+        hooksInFormatterDefault = (builtins.elemAt confDefault.formatterRawConfig.repos 0).hooks;
+        hasShellcheckDefault = lib.any (h: h.id == "shellcheck") hooksInFormatterDefault;
+
+        confOverride = eval {
+          hooks.shellcheck = { enable = true; formatter = true; };
+        };
+        hooksInFormatterOverride = (builtins.elemAt confOverride.formatterRawConfig.repos 0).hooks;
+        hasShellcheckOverride = lib.any (h: h.id == "shellcheck") hooksInFormatterOverride;
+      in
+      lib.optionalString (hasShellcheckDefault || !hasShellcheckOverride) "echo 'FAILED: shellcheck should be excluded from formatterRawConfig by default and included when overridden'; exit 1"
+    }
     echo "All hook config tests passed" > $out
   ''
 )
