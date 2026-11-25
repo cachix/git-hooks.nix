@@ -8,6 +8,16 @@ let
 
   hookTests = {
     "pre-commit: no priority field when unset" = {
+      conf = {
+        package = fakeOldPreCommit;
+        hooks.shellcheck.enable = true;
+      };
+      hook = "shellcheck";
+      check = raw: !(raw ? priority);
+      expected = "'priority' absent from raw config";
+    };
+
+    "default (prek): no priority field when unset" = {
       conf.hooks.shellcheck.enable = true;
       hook = "shellcheck";
       check = raw: !(raw ? priority);
@@ -29,6 +39,13 @@ let
         package = fakePrek;
         hooks.shellcheck = { enable = true; priority = 5; };
       };
+      hook = "shellcheck";
+      check = raw: raw ? priority && raw.priority == 5;
+      expected = "priority = 5 in raw config";
+    };
+
+    "default (prek): priority field serialised when set" = {
+      conf.hooks.shellcheck = { enable = true; priority = 5; };
       hook = "shellcheck";
       check = raw: raw ? priority && raw.priority == 5;
       expected = "priority = 5 in raw config";
@@ -63,11 +80,21 @@ let
       check = raw: raw.language == "system";
       expected = "language = system";
     };
+
+    "default (prek): language defaults to system" = {
+      conf.hooks.shellcheck.enable = true;
+      hook = "shellcheck";
+      check = raw: raw.language == "system";
+      expected = "language = system";
+    };
   };
 
   assertionTests = {
     "pre-commit: setting priority triggers assertion" = {
-      conf.hooks.shellcheck = { enable = true; priority = 5; };
+      conf = {
+        package = fakeOldPreCommit;
+        hooks.shellcheck = { enable = true; priority = 5; };
+      };
       check = assertions: lib.any (a: !a.assertion) assertions;
       expected = "failed assertion about priority requiring prek";
     };
@@ -77,6 +104,12 @@ let
         package = fakePrek;
         hooks.shellcheck = { enable = true; priority = 5; };
       };
+      check = assertions: lib.all (a: a.assertion) assertions;
+      expected = "all assertions pass";
+    };
+
+    "default (prek): setting priority passes assertions" = {
+      conf.hooks.shellcheck = { enable = true; priority = 5; };
       check = assertions: lib.all (a: a.assertion) assertions;
       expected = "all assertions pass";
     };

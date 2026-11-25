@@ -55,8 +55,8 @@
     };
   };
 
-  # Use alternative pre-commit implementations
-  git-hooks.package = pkgs.prek;
+  # prek is used by default. To use upstream pre-commit instead:
+  git-hooks.package = pkgs.pre-commit;
 }
 ```
 
