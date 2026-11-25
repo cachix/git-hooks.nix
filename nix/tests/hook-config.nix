@@ -106,6 +106,48 @@ runCommand "hook-config-test" { } (
   lib.concatStrings (lib.mapAttrsToList runHookTest hookTests) +
   lib.concatStrings (lib.mapAttrsToList runAssertionTest assertionTests) +
   ''
+    ${lib.optionalString (!lib.isDerivation (run { src = null; addGcRoot = false; }).formatter) "echo 'FAILED: res.formatter is not a derivation'; exit 1"}
+    ${lib.optionalString (!lib.isDerivation (eval { }).formatter) "echo 'FAILED: (eval {}).formatter is not a derivation'; exit 1"}
+    ${lib.optionalString (!lib.isDerivation (eval { hooks.nixpkgs-fmt = { enable = true; formatter = false; }; }).formatter) "echo 'FAILED: (eval { hooks.nixpkgs-fmt.formatter = false; }).formatter is not a derivation'; exit 1"}
+    ${lib.optionalString (!lib.isDerivation (eval { hooks.nixpkgs-fmt = { enable = true; formatter = false; }; }).formatterConfigFile) "echo 'FAILED: (eval { hooks.nixpkgs-fmt.formatter = false; }).formatterConfigFile is not a derivation'; exit 1"}
+    ${
+      let
+        conf = eval {
+          hooks.nixpkgs-fmt = { enable = true; formatter = false; };
+          hooks.shfmt = { enable = true; };
+        };
+        hooksInFormatter = (builtins.elemAt conf.formatterRawConfig.repos 0).hooks;
+        hasShfmt = lib.any (h: h.id == "shfmt") hooksInFormatter;
+        hasNixpkgsFmt = lib.any (h: h.id == "nixpkgs-fmt") hooksInFormatter;
+      in
+      lib.optionalString (!hasShfmt || hasNixpkgsFmt) "echo 'FAILED: formatterRawConfig should include shfmt and exclude nixpkgs-fmt'; exit 1"
+    }
+    ${
+      let
+        conf = eval {
+          hooks.nixpkgs-fmt = { enable = true; };
+        };
+        hooksInFormatter = (builtins.elemAt conf.formatterRawConfig.repos 0).hooks;
+        hasNixpkgsFmt = lib.any (h: h.id == "nixpkgs-fmt") hooksInFormatter;
+      in
+      lib.optionalString (!hasNixpkgsFmt) "echo 'FAILED: formatterRawConfig should include nixpkgs-fmt by default'; exit 1"
+    }
+    ${
+      let
+        confDefault = eval {
+          hooks.shellcheck.enable = true;
+        };
+        hooksInFormatterDefault = (builtins.elemAt confDefault.formatterRawConfig.repos 0).hooks;
+        hasShellcheckDefault = lib.any (h: h.id == "shellcheck") hooksInFormatterDefault;
+
+        confOverride = eval {
+          hooks.shellcheck = { enable = true; formatter = true; };
+        };
+        hooksInFormatterOverride = (builtins.elemAt confOverride.formatterRawConfig.repos 0).hooks;
+        hasShellcheckOverride = lib.any (h: h.id == "shellcheck") hooksInFormatterOverride;
+      in
+      lib.optionalString (hasShellcheckDefault || !hasShellcheckOverride) "echo 'FAILED: shellcheck should be excluded from formatterRawConfig by default and included when overridden'; exit 1"
+    }
     echo "All hook config tests passed" > $out
   ''
 )

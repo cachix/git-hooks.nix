@@ -2752,6 +2752,7 @@ in
           types = [ "yaml" ];
           package = tools.actionlint;
           entry = "${hooks.actionlint.package}/bin/actionlint";
+          formatter = false;
         };
       action-validator =
         {
@@ -2761,6 +2762,7 @@ in
           types = [ "yaml" ];
           package = tools.action-validator;
           entry = "${hooks.action-validator.package}/bin/action-validator";
+          formatter = false;
         };
       air =
         {
@@ -2854,6 +2856,7 @@ in
           types_or = [ "bats" "bash" ];
           package = tools.bats;
           entry = "${hooks.bats.package}/bin/bats -p";
+          formatter = false;
         };
       beautysh =
         {
@@ -2912,6 +2915,7 @@ in
           entry = "${hooks.cargo-check.package}/bin/cargo check ${cargoManifestPathArg}";
           files = "\\.rs$";
           pass_filenames = false;
+          formatter = false;
         };
       cargo-sort =
         {
@@ -2931,6 +2935,7 @@ in
           package = tools.chart-testing;
           entry = "${hooks.chart-testing.package}/bin/ct lint --all --skip-helm-dependencies";
           pass_filenames = false;
+          formatter = false;
         };
       checkmake = {
         name = "checkmake";
@@ -2938,6 +2943,7 @@ in
         types = [ "makefile" ];
         package = tools.checkmake;
         entry = "${hooks.checkmake.package}/bin/checkmake";
+        formatter = false;
       };
       check-added-large-files =
         {
@@ -2946,6 +2952,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-added-large-files.package}/bin/check-added-large-files";
           stages = [ "pre-commit" "pre-push" "manual" ];
+          formatter = false;
         };
       check-builtin-literals =
         {
@@ -2954,6 +2961,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-builtin-literals.package}/bin/check-builtin-literals";
           types = [ "python" ];
+          formatter = false;
         };
       check-case-conflicts =
         {
@@ -2962,6 +2970,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-case-conflicts.package}/bin/check-case-conflict";
           types = [ "file" ];
+          formatter = false;
         };
       check-docstring-first =
         {
@@ -2970,6 +2979,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-docstring-first.package}/bin/check-docstring-first";
           types = [ "python" ];
+          formatter = false;
         };
       check-executables-have-shebangs =
         {
@@ -2979,6 +2989,7 @@ in
           entry = "${hooks.check-executables-have-shebangs.package}/bin/check-executables-have-shebangs";
           types = [ "text" "executable" ];
           stages = [ "pre-commit" "pre-push" "manual" ];
+          formatter = false;
         };
       check-json =
         {
@@ -2987,6 +2998,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-json.package}/bin/check-json";
           types = [ "json" ];
+          formatter = false;
         };
       check-merge-conflicts =
         {
@@ -2995,6 +3007,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-merge-conflicts.package}/bin/check-merge-conflict";
           types = [ "text" ];
+          formatter = false;
         };
       check-python =
         {
@@ -3003,6 +3016,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-python.package}/bin/check-ast";
           types = [ "python" ];
+          formatter = false;
         };
       check-shebang-scripts-are-executable =
         {
@@ -3012,6 +3026,7 @@ in
           entry = "${hooks.check-shebang-scripts-are-executable.package}/bin/check-shebang-scripts-are-executable";
           types = [ "text" ];
           stages = [ "pre-commit" "pre-push" "manual" ];
+          formatter = false;
         };
       check-symlinks =
         {
@@ -3020,6 +3035,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-symlinks.package}/bin/check-symlinks";
           types = [ "symlink" ];
+          formatter = false;
         };
       check-toml =
         {
@@ -3028,6 +3044,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-toml.package}/bin/check-toml";
           types = [ "toml" ];
+          formatter = false;
         };
       check-vcs-permalinks =
         {
@@ -3036,6 +3053,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-vcs-permalinks.package}/bin/check-vcs-permalinks";
           types = [ "text" ];
+          formatter = false;
         };
       check-xml =
         {
@@ -3044,6 +3062,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-xml.package}/bin/check-xml";
           types = [ "xml" ];
+          formatter = false;
         };
       check-yaml =
         {
@@ -3052,6 +3071,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.check-yaml.package}/bin/check-yaml --multi";
           types = [ "yaml" ];
+          formatter = false;
         };
       chktex =
         {
@@ -3060,6 +3080,7 @@ in
           types = [ "file" "tex" ];
           package = tools.chktex;
           entry = "${hooks.chktex.package}/bin/chktex";
+          formatter = false;
         };
       circleci =
         {
@@ -3082,6 +3103,7 @@ in
           '');
           files = "^.circleci/";
           types = [ "yaml" ];
+          formatter = false;
         };
       clang-format =
         {
@@ -3167,6 +3189,7 @@ in
           package = tools.commitizen;
           entry = "${hooks.commitizen.package}/bin/cz check --allow-abort --commit-msg-file";
           stages = [ "commit-msg" ];
+          formatter = false;
         };
       comrak = {
         name = "comrak";
@@ -3181,6 +3204,7 @@ in
         package = tools.conform;
         entry = "${hooks.conform.package}/bin/conform enforce --commit-msg-file";
         stages = [ "commit-msg" ];
+        formatter = false;
       };
       convco = {
         name = "convco";
@@ -3202,6 +3226,7 @@ in
             builtins.toString
             script;
         stages = [ "commit-msg" ];
+        formatter = false;
       };
       credo = {
         name = "credo";
@@ -3211,6 +3236,7 @@ in
           let strict = if hooks.credo.settings.strict then "--strict" else "";
           in "${hooks.credo.package}/bin/mix credo ${strict}";
         files = "\\.exs?$";
+        formatter = false;
       };
       crystal = {
         name = "crystal";
@@ -3232,6 +3258,7 @@ in
           description = "A Spell Checker for Code";
           package = tools.cspell;
           entry = "${hooks.cspell.package}/bin/cspell";
+          formatter = false;
         };
       dart-analyze = {
         name = "dart analyze";
@@ -3239,6 +3266,7 @@ in
         package = tools.dart;
         entry = "${hooks.dart-analyze.package}/bin/dart analyze";
         types = [ "dart" ];
+        formatter = false;
       };
       dart-format = {
         name = "dart format";
@@ -3308,6 +3336,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.detect-aws-credentials.package}/bin/detect-aws-credentials --allow-missing-credentials";
           types = [ "text" ];
+          formatter = false;
         };
       detect-private-keys =
         {
@@ -3316,6 +3345,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.detect-private-keys.package}/bin/detect-private-key";
           types = [ "text" ];
+          formatter = false;
         };
       dhall-format = {
         name = "dhall-format";
@@ -3330,6 +3360,7 @@ in
         package = tools.elixir;
         entry = "${hooks.dialyzer.package}/bin/mix dialyzer";
         files = "\\.exs?$";
+        formatter = false;
       };
       dune-fmt = {
         name = "dune-fmt";
@@ -3385,6 +3416,7 @@ in
           package = tools.editorconfig-checker;
           entry = "${hooks.editorconfig-checker.package}/bin/editorconfig-checker";
           types = [ "file" ];
+          formatter = false;
         };
       end-of-file-fixer =
         {
@@ -3419,6 +3451,7 @@ in
           entry = "${hooks.elm-test.package}/bin/elm-test";
           files = "\\.elm$";
           pass_filenames = false;
+          formatter = false;
         };
       eslint =
         {
@@ -3467,6 +3500,7 @@ in
             in
             "${binPath} --format ${hooks.flake8.settings.format} ${extendIgnoreStr}";
           types = [ "python" ];
+          formatter = false;
         };
       flake-checker = {
         name = "flake-checker";
@@ -3475,6 +3509,7 @@ in
         entry = "${hooks.flake-checker.package}/bin/flake-checker -f";
         files = "(^flake\\.nix$|^flake\\.lock$)";
         pass_filenames = false;
+        formatter = false;
       };
       flynt =
         {
@@ -3508,6 +3543,7 @@ in
           package = tools.pre-commit-hooks;
           entry = "${hooks.forbid-new-submodules.package}/bin/forbid-new-submodules";
           types = [ "directory" ];
+          formatter = false;
         };
       fourmolu =
         {
@@ -3534,6 +3570,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.gitleaks;
         args = [ "git" "--pre-commit" "--redact" "--staged" "--verbose" ];
         pass_filenames = false;
+        formatter = false;
       };
       gitlint = {
         name = "gitlint";
@@ -3541,6 +3578,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.gitlint;
         entry = "${hooks.gitlint.package}/bin/gitlint --staged --msg-filename";
         stages = [ "commit-msg" ];
+        formatter = false;
       };
       gofmt =
         {
@@ -3658,6 +3696,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         # to avoid multiple invocations of the same directory input, provide
         # all file names in a single run.
         require_serial = true;
+        formatter = false;
       };
       govet =
         {
@@ -3679,6 +3718,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           # all file names in a single run.
           require_serial = true;
           files = "\\.go$";
+          formatter = false;
         };
       gptcommit = {
         name = "gptcommit";
@@ -3701,6 +3741,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.hadolint;
           entry = "${hooks.hadolint.package}/bin/hadolint";
           files = "Dockerfile$";
+          formatter = false;
         };
       headache =
         {
@@ -3776,6 +3817,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.hunspell;
           entry = "${hooks.hunspell.package}/bin/hunspell -l";
           files = "\\.((txt)|(html)|(xml)|(md)|(org)|(rst)|(tex)|(odf)|\\d)$";
+          formatter = false;
         };
       isort =
         {
@@ -3844,6 +3886,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           types = [ "file" "tex" ];
           package = tools.lacheck;
           entry = "${script}";
+          formatter = false;
         };
       lua-ls =
         let
@@ -3887,6 +3930,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry = "${script}/bin/lua-ls-lint";
           files = "\\.lua$";
           pass_filenames = false;
+          formatter = false;
         };
       luacheck =
         {
@@ -3895,6 +3939,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           types = [ "file" "lua" ];
           package = tools.luacheck;
           entry = "${hooks.luacheck.package}/bin/luacheck";
+          formatter = false;
         };
       lychee = {
         name = "lychee";
@@ -3910,6 +3955,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           in
           "${lib.getExe hooks.lychee.package}${cmdArgs} ${hooks.lychee.settings.flags}";
         types = [ "text" ];
+        formatter = false;
       };
       markdownlint =
         {
@@ -3952,6 +3998,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.mdl.package}/bin/mdl ${cmdArgs}";
           files = "\\.md$";
+          formatter = false;
         };
       mdsh =
         let
@@ -3988,6 +4035,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.elixir;
         entry = "${hooks.mix-test.package}/bin/mix test";
         files = "\\.exs?$";
+        formatter = false;
       };
       mkdocs-linkcheck = {
         name = "mkdocs-linkcheck";
@@ -4008,6 +4056,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           in
           "${binPath}${cmdArgs}";
         types = [ "text" "markdown" ];
+        formatter = false;
       };
       mypy =
         {
@@ -4017,6 +4066,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.mypy;
           entry = migrateBinPathToPackage hooks.mypy "/bin/mypy";
           files = "\\.py$";
+          formatter = false;
         };
       name-tests-test =
         {
@@ -4025,6 +4075,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pre-commit-hooks;
           entry = "${hooks.name-tests-test.package}/bin/tests_should_end_in_test.py";
           files = "(^|/)tests/.+\\.py$";
+          formatter = false;
         };
       nbstripout =
         {
@@ -4063,6 +4114,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             builtins.toString script;
           files = "\\.nix$";
+          formatter = false;
         };
       nixf-diagnose =
         {
@@ -4071,6 +4123,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.nixf-diagnose;
           entry = "${hooks.nixf-diagnose.package}/bin/nixf-diagnose";
           files = "\\.nix$";
+          formatter = false;
         };
       nixfmt =
         {
@@ -4113,6 +4166,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.no-commit-to-branch.package}/bin/no-commit-to-branch ${cmdArgs}";
+          formatter = false;
         };
       nu-check =
         {
@@ -4125,6 +4179,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${lib.getExe hooks.nu-check.package} -c 'def main [...files: string] { mut err = false; for f in $files { if not (nu-check --debug ${asModuleFlag}($f | path expand)) { $err = true } }; if $err { exit 1 } }' --";
           files = "\\.nu$";
+          formatter = false;
         };
       nu-lint =
         {
@@ -4174,6 +4229,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.opam;
           entry = "${hooks.opam-lint.package}/bin/opam lint";
           files = "\\.opam$";
+          formatter = false;
         };
       openapi-spec-validator =
         {
@@ -4182,6 +4238,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.openapi-spec-validator;
           entry = "${hooks.openapi-spec-validator.package}/bin/openapi-spec-validator";
           files = ".*openapi.*\\.(json|yaml|yml)$";
+          formatter = false;
         };
       ormolu =
         {
@@ -4276,6 +4333,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.panache;
           entry = "${hooks.panache-lint.package}/bin/panache lint --force-exclude";
           files = "\\.(qmd|Rmd|md|markdown|mdown|mkd)$";
+          formatter = false;
         };
       php-cs-fixer =
         {
@@ -4307,6 +4365,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.phpcs;
           entry = migrateBinPathToPackage hooks.phpcs "/bin/phpcs";
           types = [ "php" ];
+          formatter = false;
         };
       phpstan =
         {
@@ -4320,6 +4379,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${binPath} analyse";
           types = [ "php" ];
+          formatter = false;
         };
       poetry-check = {
         name = "poetry check";
@@ -4328,6 +4388,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         entry = "${hooks.poetry-check.package}/bin/poetry check";
         files = "^(poetry\\.lock$|pyproject\\.toml)$";
         pass_filenames = false;
+        formatter = false;
       };
       poetry-lock = {
         name = "poetry lock";
@@ -4342,6 +4403,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.pre-commit-hook-ensure-sops;
         entry = "${hooks.pre-commit-hook-ensure-sops.package}/bin/pre-commit-hook-ensure-sops";
         files = "^secrets";
+        formatter = false;
       };
       # See all CLI flags for prettier [here](https://prettier.io/docs/en/cli.html).
       # See all options for prettier [here](https://prettier.io/docs/en/options.html).
@@ -4435,6 +4497,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.proselint.package}/bin/proselint${cmdArgs} ${hooks.proselint.settings.flags}";
+          formatter = false;
         };
       promtool-rules =
         {
@@ -4443,6 +4506,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.promtool;
           entry = "${hooks.promtool-rules.package}/bin/promtool check rules";
           types = [ "yaml" ];
+          formatter = false;
         };
       psalm =
         {
@@ -4479,6 +4543,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${binPath} ${cmdArgs}";
           types = [ "python" ];
+          formatter = false;
         };
       pyright =
         {
@@ -4488,6 +4553,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pyright;
           entry = migrateBinPathToPackage hooks.pyright "/bin/pyright";
           files = "\\.py$";
+          formatter = false;
         };
       python-debug-statements =
         {
@@ -4496,6 +4562,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           package = tools.pre-commit-hooks;
           entry = "${hooks.python-debug-statements.package}/bin/debug-statement-hook";
           types = [ "python" ];
+          formatter = false;
         };
       pyupgrade =
         {
@@ -4552,6 +4619,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           # to avoid multiple invocations of the same directory input, provide
           # all file names in a single run.
           require_serial = true;
+          formatter = false;
         };
       ripsecrets =
         {
@@ -4572,6 +4640,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
             in
             "${hooks.ripsecrets.package}/bin/ripsecrets ${cmdArgs}";
           types = [ "text" ];
+          formatter = false;
         };
       rome =
         {
@@ -4665,6 +4734,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         package = tools.selene;
         entry = "${hooks.selene.package}/bin/selene";
         args = [ "--no-summary" ];
+        formatter = false;
       };
       shellcheck =
         {
@@ -4673,6 +4743,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           types = [ "shell" ];
           package = tools.shellcheck;
           entry = "${hooks.shellcheck.package}/bin/shellcheck";
+          formatter = false;
         };
       shfmt =
         {
@@ -4791,6 +4862,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           # to avoid multiple invocations of the same directory input, provide
           # all file names in a single run.
           require_serial = true;
+          formatter = false;
         };
       statix =
         {
@@ -4839,6 +4911,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           entry = "${hooks.tagref.package}/bin/tagref";
           types = [ "text" ];
           pass_filenames = false;
+          formatter = false;
         };
       taplo =
         {
@@ -4881,6 +4954,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           files = "\\.(tf(vars)?|terraform\\.lock\\.hcl)$";
           excludes = [ "\\.terraform/.*$" ];
           require_serial = true;
+          formatter = false;
         };
       tflint =
         {
@@ -4968,6 +5042,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
 
           # trufflehog expects to run across the whole repo, not particular files
           pass_filenames = false;
+          formatter = false;
         };
       ty =
         {
@@ -5065,6 +5140,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         entry = "${hooks.uv-check.package}/bin/uv lock --check";
         files = "^(uv\\.lock$|pyproject\\.toml)$";
         pass_filenames = false;
+        formatter = false;
       };
       uv-lock = {
         name = "uv lock";
@@ -5108,6 +5184,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           in
           "${hooks.vale.package}/bin/vale${cmdArgs} ${hooks.vale.settings.flags}";
         types = [ "text" ];
+        formatter = false;
       };
       woodpecker-cli-lint = {
         name = "woodpecker-cli-lint";
@@ -5127,6 +5204,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
           in
           "${lib.getExe hooks.woodpecker-cli-lint.package} lint ${cmdArgs}";
         types = [ "file" "yaml" ];
+        formatter = false;
       };
       yamlfmt =
         {
@@ -5171,6 +5249,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
                   ]);
             in
             "${hooks.yamllint.package}/bin/yamllint ${cmdArgs}";
+          formatter = false;
         };
       zizmor = {
         name = "zizmor";
@@ -5179,6 +5258,7 @@ lib.escapeShellArgs (lib.concatMap (ext: [ "--ghc-opt" "-X${ext}" ]) hooks.fourm
         types = [ "yaml" ];
         package = tools.zizmor;
         entry = "${hooks.zizmor.package}/bin/zizmor";
+        formatter = false;
       };
       zprint =
         {
