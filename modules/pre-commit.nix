@@ -55,6 +55,20 @@ let
   formatterHooks = filterAttrs (_: value: value.formatter) enabledHooks;
   formatterExtraPackages = builtins.concatLists (mapAttrsToList (_: value: value.extraPackages) formatterHooks);
 
+  prek-shimful = pkgs.symlinkJoin {
+    name = "prek-shimful-${pkgs.prek.version}";
+    paths = [ pkgs.prek ];
+    postBuild = ''
+      ln -s prek $out/bin/pre-commit
+    '';
+    meta = pkgs.prek.meta // {
+      mainProgram = "prek";
+    };
+    passthru = pkgs.prek.passthru // {
+      pname = "prek";
+    };
+  };
+
   usingPrek = cfg.package.pname == "prek";
 
   sortHooks = hooks:
@@ -234,13 +248,10 @@ in
       package =
         mkOption {
           type = types.package;
-          description =
-            ''
-              The `pre-commit` package to use.
-            '';
-          default = pkgs.pre-commit;
-          defaultText = lib.literalExpression "pkgs.pre-commit";
-          example = lib.literalExpression "pkgs.prek";
+          description = "The `pre-commit` package to use.";
+          default = prek-shimful;
+          defaultText = lib.literalExpression "prek-shimful";
+          example = lib.literalExpression "pkgs.pre-commit";
         };
 
       gitPackage =

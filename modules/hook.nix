@@ -247,7 +247,7 @@ in
         Defines the order in which the hooks are executed. Default priority is set by the order in the list of hooks.
         Evaluation goes from 0 and up.
         If two hooks have the same priority, they’ll run in parallel.
-        This works only if cfg.package is set to prek.
+        This works when using prek (the default).
       '';
       default = null;
     };

@@ -82,7 +82,6 @@ in
           formatter = lib.mkOverride 1100 cfg.settings.formatter; # Yield to mkDefault (e.g. treefmt-nix), override default null.
           pre-commit.settings = { pkgs, ... }: {
             rootSrc = self.outPath;
-            package = lib.mkDefault pkgs.pre-commit;
             tools = import ./nix/call-tools.nix pkgs;
             hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
           };

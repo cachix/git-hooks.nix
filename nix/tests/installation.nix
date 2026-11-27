@@ -1,5 +1,5 @@
 # Test that checks whether the correct hooks are created in the hooks folder.
-{ git, perl, coreutils, runCommand, run, lib, mktemp, prek }:
+{ git, perl, coreutils, runCommand, run, lib, mktemp, prek, pre-commit }:
 let
   tests = {
     basic-test = {
@@ -11,6 +11,14 @@ let
       expectedHooks = [ "pre-commit" ];
       conf = {
         package = prek;
+        hooks.shellcheck.enable = true;
+      };
+    };
+
+    pre-commit-test = {
+      expectedHooks = [ "pre-commit" ];
+      conf = {
+        package = pre-commit;
         hooks.shellcheck.enable = true;
       };
     };
@@ -77,6 +85,10 @@ let
         read -a expectedHooks <<< "${builtins.toString test.expectedHooks}"
         if ! assertArraysEqual actualHooks expectedHooks; then
           echo "${name} failed: Expected hooks '${builtins.toString test.expectedHooks}' but found '$actualHooks'."
+          return 1
+        fi
+        if ! command -v pre-commit >/dev/null; then
+          echo "${name} failed: pre-commit command not found in PATH."
           return 1
         fi
       '')
