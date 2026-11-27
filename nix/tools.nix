@@ -36,6 +36,7 @@
 , elixir
 , elmPackages
 , eslint
+, elvis-erlang
 , flake-checker ? placeholder "flake-checker"
 , fprettify
 , git-annex
@@ -163,6 +164,7 @@ in
     editorconfig-checker
     elixir
     eslint
+    elvis-erlang
     flake-checker
     fprettify
     git-annex
