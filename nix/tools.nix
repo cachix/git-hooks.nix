@@ -268,6 +268,7 @@ in
       placeholder "purs-tidy";
   cabal2nix-dir = callPackage ./cabal2nix-dir { };
   hpack-dir = callPackage ./hpack-dir { };
+  just = callPackage ./just { };
   hunspell = callPackage ./hunspell { };
   tflint = callPackage ./tflint { };
   dune-build-opam-files = callPackage ./dune-build-opam-files {
