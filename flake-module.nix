@@ -2,7 +2,7 @@
   A module to import into flakes based on flake-parts.
   Makes integration into a flake easy and tidy.
   See https://flake.parts,
-  https://flake.parts/options/pre-commit-hooks-nix
+  https://flake.parts/options/git-hooks-nix
 */
 
 { lib, self, flake-parts-lib, ... }:
@@ -15,11 +15,21 @@ in
 {
   options = {
     perSystem = flake-parts-lib.mkPerSystemOption ({ config, options, pkgs, ... }:
-      let cfg = config.pre-commit;
+      let cfg = config.git-hooks;
       in
       {
+        # Silent alias, like cachix/devenv#1571; mkRenamedOptionModule would trace on every read.
+        imports = [
+          (lib.doRename {
+            from = [ "pre-commit" ];
+            to = [ "git-hooks" ];
+            visible = false;
+            warn = false;
+            use = lib.id;
+          })
+        ];
         options = {
-          pre-commit = {
+          git-hooks = {
             check.enable = mkOption {
               description = ''
                 Whether to add a derivation to the flake `checks`.
@@ -34,7 +44,7 @@ in
             pkgs = mkOption {
               type = types.uniq (types.lazyAttrsOf (types.raw or types.unspecified));
               description = ''
-                Nixpkgs to use in the pre-commit [`settings`](#opt-perSystem.pre-commit.settings).
+                Nixpkgs to use in the pre-commit [`settings`](#opt-perSystem.git-hooks.settings).
               '';
               default = pkgs;
               defaultText = lib.literalExpression "`pkgs` (module argument)";
@@ -72,7 +82,7 @@ in
               type = types.package;
               description = "A formatter package that runs pre-commit hooks, suitable for flake-parts `formatter`.";
               default = cfg.settings.formatter;
-              defaultText = lib.literalExpression "config.pre-commit.settings.formatter";
+              defaultText = lib.literalExpression "config.git-hooks.settings.formatter";
               readOnly = true;
             };
           };
@@ -80,12 +90,12 @@ in
         config = {
           checks = lib.optionalAttrs cfg.check.enable { pre-commit = cfg.settings.run; };
           formatter = lib.mkOverride 1100 cfg.settings.formatter; # Yield to mkDefault (e.g. treefmt-nix), override default null.
-          pre-commit.settings = { pkgs, ... }: {
+          git-hooks.settings = { pkgs, ... }: {
             rootSrc = self.outPath;
             tools = import ./nix/call-tools.nix pkgs;
             hooks.treefmt.package = lib.mkIf (options?treefmt) (lib.mkOverride 900 config.treefmt.build.wrapper);
           };
-          pre-commit.devShell = pkgs.mkShell {
+          git-hooks.devShell = pkgs.mkShell {
             inherit (cfg.settings) shellHook;
             nativeBuildInputs = cfg.settings.enabledPackages;
           };
