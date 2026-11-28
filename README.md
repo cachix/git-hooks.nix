@@ -526,6 +526,7 @@ hooks](modules/pre-commit.nix).
 ### R
 
 - [air](https://github.com/posit-dev/air)
+- [arity](https://github.com/jolars/arity)
 
 ### Rego (Open Policy Agent)
 
