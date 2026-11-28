@@ -7,6 +7,7 @@
 , air-formatter
 , alejandra
 , ansible-lint
+, badness ? placeholder "badness"
 , biome
 , cabal2nix
 , callPackage
@@ -138,6 +139,7 @@ in
     action-validator
     alejandra
     ansible-lint
+    badness
     beautysh
     biome
     cabal2nix
