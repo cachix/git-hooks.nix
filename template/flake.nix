@@ -23,19 +23,19 @@
 
           # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
           packages.hello = pkgs.hello;
-          pre-commit.settings.hooks.nixpkgs-fmt.enable = true;
+          git-hooks.settings.hooks.nixpkgs-fmt.enable = true;
           # NOTE: `formatter` is automatically configured to run enabled hooks via `nix fmt`.
-          # You can also use `config.pre-commit.formatter` explicitly if needed, or exclude
+          # You can also use `config.git-hooks.formatter` explicitly if needed, or exclude
           # specific hooks from `nix fmt` with `hooks.<name>.formatter = false;`.
-          # NOTE: You can also use `config.pre-commit.devShell`
+          # NOTE: You can also use `config.git-hooks.devShell`
           devShells.default = pkgs.mkShell {
             shellHook = ''
-              ${config.pre-commit.shellHook}
+              ${config.git-hooks.shellHook}
               echo 1>&2 "Welcome to the development shell!"
             '';
 
             # Equivalent to self.checks.${system}.pre-commit-check.enabledPackages;
-            packages = config.pre-commit.settings.enabledPackages;
+            packages = config.git-hooks.settings.enabledPackages;
           };
         };
         flake = {
