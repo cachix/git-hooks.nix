@@ -5,6 +5,9 @@ let
   mergeExcludes =
     excludes:
     if excludes == [ ] then "^$" else "(${concatStringsSep "|" excludes})";
+  mergeFiles =
+    files:
+    if files == [ ] then "" else "(${concatStringsSep "|" files})";
 in
 {
   options = {
@@ -121,12 +124,15 @@ in
     };
 
     files = mkOption {
-      type = types.str;
+      type = types.coercedTo (types.listOf types.str) mergeFiles types.str;
       description =
         ''
           The pattern of files to run on.
+
+          A list of regular expressions matches files that match any of them. An empty list matches all files.
         '';
       default = "";
+      example = [ "^flake\\.lock$" "\\.nix$" ];
     };
 
     types = mkOption {

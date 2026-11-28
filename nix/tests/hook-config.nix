@@ -87,6 +87,34 @@ let
       check = raw: raw.language == "system";
       expected = "language = system";
     };
+
+    "files: string passed through" = {
+      conf.hooks.shellcheck = { enable = true; files = "\\.sh$"; };
+      hook = "shellcheck";
+      check = raw: raw.files == "\\.sh$";
+      expected = ''files = "\\.sh$"'';
+    };
+
+    "files: list joined into one pattern" = {
+      conf.hooks.shellcheck = { enable = true; files = [ "^a\\.sh$" "^b/" ]; };
+      hook = "shellcheck";
+      check = raw: raw.files == "(^a\\.sh$|^b/)";
+      expected = ''files = "(^a\\.sh$|^b/)"'';
+    };
+
+    "files: list replaces a built-in hook's pattern" = {
+      conf.hooks.nil = { enable = true; files = [ "a" "b" ]; };
+      hook = "nil";
+      check = raw: raw.files == "(a|b)";
+      expected = ''files = "(a|b)"'';
+    };
+
+    "files: empty list gives the default pattern" = {
+      conf.hooks.shellcheck = { enable = true; files = [ ]; };
+      hook = "shellcheck";
+      check = raw: raw.files == "";
+      expected = ''files = ""'';
+    };
   };
 
   assertionTests = {
